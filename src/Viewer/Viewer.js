@@ -18,7 +18,7 @@ export function Viewer () {
                 <div className="d-flex h-100">
                     <SideContainer/>
                 </div>
-                <div className="d-flex flex-grow-1 h-100">
+                <div className="d-flex flex-grow-1 h-100 overflow-hidden">
 
                 </div>
             </div>
