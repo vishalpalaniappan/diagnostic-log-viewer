@@ -1,5 +1,6 @@
 import React from "react";
 
+import {FileViewer} from "./Components/FileViewer/FileViewer";
 import {SideContainer} from "./Components/SideContainer/SideContainer";
 
 import "./Viewer.scss";
@@ -19,7 +20,7 @@ export function Viewer () {
                     <SideContainer/>
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-
+                    <FileViewer/>
                 </div>
             </div>
             <div className="status-bar-container">
