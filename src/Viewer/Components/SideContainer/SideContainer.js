@@ -1,5 +1,7 @@
 import React, {useRef} from "react";
 
+import {DebugContainer} from "./DebugContainer/DebugContainer";
+
 import "./SideContainer.scss";
 
 /**
@@ -50,7 +52,7 @@ export function SideContainer () {
 
             </div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
-
+                <DebugContainer />
             </div>
             <div className="handle" ref={handle} onMouseDown={handleMouseDown}>
 
