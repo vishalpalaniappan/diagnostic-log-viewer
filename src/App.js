@@ -1,5 +1,6 @@
 import React from "react";
 
+import CDLProviders from "./Providers/CDLProviders";
 import {Viewer} from "./Viewer/Viewer";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,8 +13,8 @@ import "./App.scss";
  */
 export function App () {
     return (
-        <div id="app">
+        <CDLProviders>
             <Viewer />
-        </div>
+        </CDLProviders>
     );
 }
