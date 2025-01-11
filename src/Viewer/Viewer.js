@@ -1,5 +1,7 @@
 import React from "react";
 
+import {SideContainer} from "./Components/SideContainer/SideContainer";
+
 import "./Viewer.scss";
 
 /**
@@ -14,7 +16,7 @@ export function Viewer () {
             </div>
             <div className="body-container">
                 <div className="d-flex flex-row h-100">
-
+                    <SideContainer/>
                 </div>
                 <div className="d-flex flex-grow-1 h-100">
 
