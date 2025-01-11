@@ -1,6 +1,6 @@
 import React, {useRef} from "react";
 
-import {Handle} from "./Handle";
+import {VerticleHandle} from "../VerticleHandle/VerticleHandle";
 
 import "./DebugContainer.scss";
 
@@ -18,11 +18,11 @@ export function DebugContainer () {
             <div className="section" ref={variableStack}>
 
             </div>
-            <Handle topDiv={variableStack} bottomDiv={callStack}/>
+            <VerticleHandle topDiv={variableStack} bottomDiv={callStack}/>
             <div className="section" ref={callStack}>
 
             </div>
-            <Handle topDiv={callStack} bottomDiv={breakPoints}/>
+            <VerticleHandle topDiv={callStack} bottomDiv={breakPoints}/>
             <div className="section" ref={breakPoints}>
 
             </div>
