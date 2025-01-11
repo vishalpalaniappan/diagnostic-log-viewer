@@ -14,8 +14,8 @@ export function Viewer () {
             <div className="menu-container">
 
             </div>
-            <div className="body-container">
-                <div className="d-flex flex-row h-100">
+            <div className="body-container d-flex flex-row">
+                <div className="d-flex h-100">
                     <SideContainer/>
                 </div>
                 <div className="d-flex flex-grow-1 h-100">
