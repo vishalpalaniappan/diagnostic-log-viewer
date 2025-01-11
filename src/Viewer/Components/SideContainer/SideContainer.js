@@ -9,11 +9,13 @@ import "./SideContainer.scss";
 export function SideContainer () {
     const accordian = useRef();
     const handle = useRef();
+
+    const SIDE_MENU_WIDTH = 50;
+    const ACCORDIAN_WIDTH = 300;
     const MIN_ACCORDIAN_WIDTH = 200;
-    const MAX_ACCORDIAN_WIDTH = 200;
+    const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - SIDE_MENU_WIDTH - 400;
 
     let downValueX;
-
     const handleMouseDown = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -28,8 +30,7 @@ export function SideContainer () {
         e.stopPropagation();
         const delta = e.clientX - downValueX;
         const newWidth = accordian.current.getBoundingClientRect().width + delta;
-        const maxWidth = document.body.clientWidth - MAX_ACCORDIAN_WIDTH;
-        if (newWidth > MIN_ACCORDIAN_WIDTH && newWidth < maxWidth) {
+        if (newWidth > MIN_ACCORDIAN_WIDTH && newWidth < MAX_ACCORDIAN_WIDTH) {
             accordian.current.style.width = newWidth + "px";
             downValueX = e.clientX;
         }
@@ -45,13 +46,13 @@ export function SideContainer () {
 
     return (
         <div className="side-container d-flex flex-row">
-            <div className="menu">
+            <div className="menu" style={{width: SIDE_MENU_WIDTH+"px"}}>
 
             </div>
-            <div ref={accordian} className="accordian">
+            <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
 
             </div>
-            <div ref={handle} onMouseDown={handleMouseDown} className="handle">
+            <div className="handle" ref={handle} onMouseDown={handleMouseDown}>
 
             </div>
         </div>
