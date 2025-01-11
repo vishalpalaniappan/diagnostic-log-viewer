@@ -21,9 +21,6 @@ function CDLProviders ({children, filePath}) {
     useEffect(() => {
         if (filePath) {
             console.info("File Path:", filePath);
-            setAppState({
-                filePath: filePath,
-            });
         }
     }, [filePath]);
 
