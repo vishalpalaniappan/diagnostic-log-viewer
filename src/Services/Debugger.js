@@ -1,6 +1,6 @@
 import clpFfiJsModuleInit from "clp-ffi-js";
 
-import {readFileFromUrl} from "./ReadFile";
+import {readFile} from "./ReadFile";
 
 /**
  * This class accepts a CDL file object or URL and exposes the functions
@@ -8,34 +8,17 @@ import {readFileFromUrl} from "./ReadFile";
  */
 class Debugger {
     /**
-     * Initializes the debugger state.
+     * Loads the CDL file and initializes the debugger state.
      * @param {File|String} cdlFile File object or URL of CDL log file.
      */
     constructor (cdlFile) {
-        this.decompressFile(cdlFile);
+        readFile(cdlFile).then(async (data) => {
+            const module = await clpFfiJsModuleInit();
+            const streamReader = new module.ClpStreamReader(data, {});
+            const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
+            console.log(log);
+        });
     }
-
-    /**
-     * Loads and decompresses the provided CDL file.
-     * @param {File|String} cdlFile
-     */
-    decompressFile = (cdlFile) => {
-        if (cdlFile instanceof File) {
-            readFileFromObject(cdlFile).then(async (data) => {
-                const module = await clpFfiJsModuleInit();
-                const streamReader = new module.ClpStreamReader(data, {});
-                const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
-                console.log(log);
-            });
-        } else {
-            readFileFromUrl(cdlFile).then(async (data) => {
-                const module = await clpFfiJsModuleInit();
-                const streamReader = new module.ClpStreamReader(data, {});
-                const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
-                console.log(log);
-            });
-        }
-    };
 };
 
 export default Debugger;

@@ -17,6 +17,35 @@ class HTTPRequestError extends Error {
 }
 
 /**
+ * Creates a promise that downloads a file with the given URL or gets
+ * the data from input file. The given callback is called whenever
+ * the download makes progress.
+ *
+ * @param {string|object} fileInfo A File object or a file path to download
+ * @return {Promise<Uint8Array>} A promise that resolves with the file's content
+ */
+function readFile (fileInfo) {
+    return new Promise(async (resolve, reject) => {
+        if (fileInfo instanceof File) {
+            readFileFromObject(fileInfo).then((data) => {
+                resolve(data);
+            }).catch((reason) => {
+                reject(reason);
+            });
+        } else if (typeof fileInfo == "string") {
+            const name = fileInfo.split("/").pop();
+            readFileFromUrl(name).then((data) => {
+                resolve(data);
+            }).catch((reason) => {
+                reject(reason);
+            });
+        } else {
+            reject(new Error("Invalid file"));
+        }
+    });
+}
+
+/**
  * Creates a promise that downloads a file with the given URL. The given
  * callback is called whenever the download makes progress.
  *
@@ -78,4 +107,4 @@ function readFileFromObject (file) {
     });
 }
 
-export {readFileFromObject, readFileFromUrl};
+export {readFile};
