@@ -10,7 +10,8 @@ Handle.propTypes = {
 };
 
 /**
- * Contains the debugger accordian sections.
+ * Renders a vertically resizable handle for the
+ * accordian components.
  * @return {JSX.Element}
  */
 export function Handle ({topDiv, bottomDiv}) {
