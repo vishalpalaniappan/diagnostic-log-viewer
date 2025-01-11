@@ -7,16 +7,16 @@ import AppStateContext from "./AppStateContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
-    filePath: PropTypes.string,
+    fileInfo: PropTypes.string,
 };
 
 /**
  * Provides all contexts consumed by the application.
  * @param {JSX} children
- * @param {string} filePath
+ * @param {string} fileInfo
  * @return {JSX}
  */
-function CDLProviders ({children, filePath}) {
+function CDLProviders ({children, fileInfo}) {
     const [appState, setAppState] = useState();
 
     const cdlWorker = useRef(null);
@@ -32,7 +32,7 @@ function CDLProviders ({children, filePath}) {
 
     // Create worker to handle file.
     useEffect(() => {
-        if (filePath) {
+        if (fileInfo) {
             if (cdlWorker.current) {
                 cdlWorker.current.terminate();
             }
@@ -40,10 +40,10 @@ function CDLProviders ({children, filePath}) {
             cdlWorker.current.onmessage = handleWorkerMessage;
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.LOAD_FILE,
-                fileInfo: filePath,
+                fileInfo: fileInfo,
             });
         }
-    }, [filePath]);
+    }, [fileInfo]);
 
     /**
      * Handles message from the worker.

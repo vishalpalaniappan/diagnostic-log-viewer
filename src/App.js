@@ -12,16 +12,16 @@ import "./App.scss";
  * @return {JSX.Element}
  */
 export function App () {
-    const [filePath, setFilePath] = useState();
+    const [fileInfo, setFileInfo] = useState();
 
     useEffect( () => {
         const urlParams = new URLSearchParams(window.location.search);
         const fileUrl = urlParams.get("filePath");
-        setFilePath(fileUrl);
+        setFileInfo(fileUrl);
     }, []);
 
     return (
-        <CDLProviders filePath={filePath}>
+        <CDLProviders fileInfo={fileInfo}>
             <Viewer />
         </CDLProviders>
     );
