@@ -1,7 +1,7 @@
 import clpFfiJsModuleInit from "clp-ffi-js";
 
-import CDL from "./CDL";
 import {readFile} from "../helper/ReadFile";
+import CDL from "./CDL";
 
 /**
  * This class accepts a CDL file object or URL and exposes the functions

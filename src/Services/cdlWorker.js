@@ -1,6 +1,6 @@
 
 import CDL_WORKER_PROTOCOL from "./CDL_WORKER_PROTOCOL";
-import Debugger from "./classes/Debugger";
+import Debugger from "./Classes/Debugger";
 
 let debuggerInstance;
 onmessage = function (e) {
