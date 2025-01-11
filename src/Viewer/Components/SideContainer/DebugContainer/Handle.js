@@ -10,8 +10,9 @@ Handle.propTypes = {
 };
 
 /**
- * Renders a vertically resizable handle for the
- * accordian components.
+ * Renders a vertically resizable handle for the accordian
+ * components. It accepts two components which are resized
+ * when the handle is moved.
  * @return {JSX.Element}
  */
 export function Handle ({topDiv, bottomDiv}) {
@@ -20,8 +21,8 @@ export function Handle ({topDiv, bottomDiv}) {
     const MIN_CONTAINER_HEIGHT = 25;
 
     let downValueY;
-    let preHeight;
-    let postHeight;
+    let topHeight;
+    let bottomHeight;
 
     const handleMouseDown = (e) => {
         e.preventDefault();
@@ -31,8 +32,8 @@ export function Handle ({topDiv, bottomDiv}) {
         document.addEventListener("mouseup", handleMouseUp);
 
         downValueY = e.clientY;
-        preHeight = topDiv.current.getBoundingClientRect().height;
-        postHeight = bottomDiv.current.getBoundingClientRect().height;
+        topHeight = topDiv.current.getBoundingClientRect().height;
+        bottomHeight = bottomDiv.current.getBoundingClientRect().height;
 
         handleRef.current.classList.add("handle-active");
     };
@@ -42,8 +43,8 @@ export function Handle ({topDiv, bottomDiv}) {
         e.stopPropagation();
 
         const delta = e.clientY - downValueY;
-        const newPreHeight = preHeight + delta;
-        const newPostHeight = postHeight - delta;
+        const newPreHeight = topHeight + delta;
+        const newPostHeight = bottomHeight - delta;
 
         if (newPreHeight > MIN_CONTAINER_HEIGHT && newPostHeight > MIN_CONTAINER_HEIGHT) {
             topDiv.current.style.height = newPreHeight + "px";
