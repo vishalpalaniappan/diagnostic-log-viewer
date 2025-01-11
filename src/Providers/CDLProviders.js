@@ -1,6 +1,8 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
+
+import AppStateContext from "./AppStateContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
@@ -14,16 +16,21 @@ CDLProviders.propTypes = {
  * @return {JSX}
  */
 function CDLProviders ({children, filePath}) {
+    const [appState, setAppState] = useState();
+
     useEffect(() => {
         if (filePath) {
             console.info("File Path:", filePath);
+            setAppState({
+                filePath: filePath,
+            });
         }
     }, [filePath]);
 
     return (
-        <>
+        <AppStateContext.Provider value={{appState, setAppState}}>
             {children}
-        </>
+        </AppStateContext.Provider>
     );
 };
 
