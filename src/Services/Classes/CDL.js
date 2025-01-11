@@ -2,7 +2,11 @@ import CDL_LOG from "./CDL_LOG";
 import {LINE_TYPE} from "./CDL_LOG";
 
 /**
- * Given the log file, this function exposes
+ * Given a CDL log file, this function exposes the following:
+ * - Execution Sequence
+ * - Variables Values
+ * - Exception Values
+ * - FileTree
  */
 class CDL {
     /**
