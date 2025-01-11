@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import CDLProviders from "./Providers/CDLProviders";
 import {Viewer} from "./Viewer/Viewer";
@@ -12,8 +12,16 @@ import "./App.scss";
  * @return {JSX.Element}
  */
 export function App () {
+    const [filePath, setFilePath] = useState();
+
+    useEffect( () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileUrl = urlParams.get("filePath");
+        setFilePath(fileUrl);
+    }, []);
+
     return (
-        <CDLProviders>
+        <CDLProviders filePath={filePath}>
             <Viewer />
         </CDLProviders>
     );
