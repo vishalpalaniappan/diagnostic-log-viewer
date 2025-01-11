@@ -8,8 +8,7 @@ import "./Viewer.scss";
  */
 export function Viewer () {
     return (
-        <div>
-            <span>Viewer Component</span>
+        <div className="viewer">
         </div>
     );
 }
