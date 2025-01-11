@@ -1,0 +1,6 @@
+let CDL_WORKER_PROTOCOL = {
+    LOAD_FILE: 1,
+};
+CDL_WORKER_PROTOCOL = Object.freeze(CDL_WORKER_PROTOCOL);
+
+export default CDL_WORKER_PROTOCOL;
