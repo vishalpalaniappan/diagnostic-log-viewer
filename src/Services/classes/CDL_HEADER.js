@@ -14,6 +14,7 @@ class CDL_HEADER {
 
         this.logTypeMap = {};
         this.extractLogTypeMap();
+        console.log(this.logTypeMap);
     }
 
     /**
@@ -22,22 +23,32 @@ class CDL_HEADER {
      */
     extractLogTypeMap () {
         Object.keys(this.fileTree).forEach((fileName, index) => {
-            this.processSST(this.fileTree[fileName].sst);
+            this.processSST(this.fileTree[fileName].sst, "global");
         });
     }
 
-
     /**
-     * This function recursively processes the SST.
+     * Recursively processes the SST until all nodes are consumed.
      * @param {Object} root
+     * @param {string} functionLtId
      */
-    processSST (root) {
+    processSST (root, functionLtId) {
         const nodes = root.children.concat(root.siblings);
         nodes.forEach((child, index) => {
             this.logTypeMap[child.id] = child;
-
-            if (child.type === "function" || child.type === "root") {
-                this.processSST(child);
+            child.fid = functionLtId;
+            switch (child.type) {
+                case "function":
+                    this.processSST(child, child.id);
+                    break;
+                case "root":
+                    this.processSST(child, functionLtId);
+                    break;
+                case "child":
+                    break;
+                default:
+                    console.debug(`Unknown child type:${child.type}`);
+                    break;
             }
         });
     }
