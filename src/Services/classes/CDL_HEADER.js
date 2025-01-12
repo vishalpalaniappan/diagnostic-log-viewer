@@ -1,5 +1,7 @@
 import JSON5 from "json5";
 
+import LT_INFO from "./LT_INFO";
+
 /**
  *
  */
@@ -26,17 +28,6 @@ class CDL_HEADER {
         Object.keys(this.fileTree).forEach((fileName, index) => {
             this.processSST(this.fileTree[fileName].sst, "global");
         });
-
-        // Note that this information can be extracted in the previous
-        // step. It is separated here because it improves readability.
-        Object.keys(this.logTypeMap).forEach((ltIndex, index) => {
-            const ltMap = this.logTypeMap[ltIndex];
-            if (ltMap.fid in this.functions) {
-                this.functions[ltMap.fid].push(ltMap.id);
-            } else {
-                this.functions[ltMap.fid] = [ltMap.id];
-            }
-        });
     }
 
     /**
@@ -47,7 +38,7 @@ class CDL_HEADER {
     processSST (root, fid) {
         const nodes = root.children.concat(root.siblings);
         nodes.forEach((child, index) => {
-            this.logTypeMap[child.id] = child;
+            this.logTypeMap[child.id] = new LT_INFO(child);
             switch (child.type) {
                 case "function":
                     child.fid = child.id;
