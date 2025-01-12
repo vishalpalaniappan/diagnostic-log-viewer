@@ -5,14 +5,18 @@ const LINE_TYPE = {
     "IR_HEADER": 4,
 };
 
-const LINE_TYPE_IND = {
+const LINE_TYPE_DELIMITER = {
     "VARIABLE": "#",
     "EXCEPTION": "?",
     "IR_HEADER": "{",
 };
 
 /**
+ * This class accepts a line from a CDL log, classifys it and exposes
+ * the metadata from the line.
  *
+ * The types of log lines are:
+ * IRStream header, Execution, Variable and Exception.
  */
 class CDL_LOG {
     /**
@@ -21,14 +25,42 @@ class CDL_LOG {
      */
     constructor (log) {
         this.log = log;
-        this._classify();
+        this._classifyLogLine(log);
     }
 
     /**
-     *
+     * Given a log line, this function classifys and extracts its metadata.
+     * Note that the log line is in a format returned by the clp-ffi-js library.
+     * In this case, it is an array with the first element containing the
+     * log line. In the future, this can be optimized further.
+     */
+    _classifyLogLine () {
+        const fullStr = this.log[0].split("root ");
+        const log = fullStr.slice(1).join(" ").trim();
+
+        switch (log.charAt(0)) {
+            case LINE_TYPE_DELIMITER.VARIABLE:
+                this._processVariable(log);
+                break;
+            case LINE_TYPE_DELIMITER.EXCEPTION:
+                this._processExeception(log);
+                break;
+            case LINE_TYPE_DELIMITER.IR_HEADER:
+                this._processIRHeader(log);
+                break;
+            default:
+                this.type = LINE_TYPE.EXECUTION;
+                this.lt = parseInt(log);
+                break;
+        }
+    }
+
+    /**
+     * Extract metadata from variable log line.
+     * Variable: "# <lt> <variable_value>"
      * @param {String} log
      */
-    processVariable (log) {
+    _processVariable (log) {
         this.type = LINE_TYPE.VARIABLE;
         const [lt, ...variable] = log.slice(2).split(" ");
         this.value = variable.join(" ");
@@ -36,10 +68,11 @@ class CDL_LOG {
     }
 
     /**
-     *
+     * Extract metadata from exception log line.
+     * Exception: "? <lt> <exception>"
      * @param {String} log
      */
-    processExeception (log) {
+    _processExeception (log) {
         this.type = LINE_TYPE.EXCEPTION;
         const [lt, ...exception] = log.slice(2).split(" ");
         this.value = exception.join(" ");
@@ -47,35 +80,12 @@ class CDL_LOG {
     }
 
     /**
-     *
+     * Extract metadata from header log line.
      * @param {String} log
      */
-    processIRHeader (log) {
+    _processIRHeader (log) {
         this.type = LINE_TYPE.IR_HEADER;
         this.value = log;
-    }
-    /**
-     *
-     */
-    _classify () {
-        const fullStr = this.log[0].split("root ");
-        const log = fullStr.slice(1).join(" ").trim();
-
-        switch (log.charAt(0)) {
-            case LINE_TYPE_IND.VARIABLE:
-                this.processVariable(log);
-                break;
-            case LINE_TYPE_IND.EXCEPTION:
-                this.processExeception(log);
-                break;
-            case LINE_TYPE_IND.IR_HEADER:
-                this.processIRHeader(log);
-                break;
-            default:
-                this.type = LINE_TYPE.EXECUTION;
-                this.lt = parseInt(log);
-                break;
-        }
     }
 };
 
