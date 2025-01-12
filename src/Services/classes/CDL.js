@@ -1,5 +1,4 @@
-import JSON5 from "json5";
-
+import CDL_HEADER from "./CDL_HEADER";
 import CDL_LOG from "./CDL_LOG";
 import {LINE_TYPE} from "./CDL_LOG_CONSTANTS";
 
@@ -19,7 +18,7 @@ import {LINE_TYPE} from "./CDL_LOG_CONSTANTS";
  * the value is an object containing metadata about this logtype from the SST.
  * Examples of metadata are the variable names, line number etc.
  *
- * FileTree [object]: The keys of this object are the file names and the value
+ * header [object]: The keys of this object are the file names and the value
  * is the source code for the file.
  *
  * ExecutionTree [object]: This object contains a fully collapsed representation
@@ -34,7 +33,7 @@ class CDL {
         this.execution = [];
         this.variables = {};
         this.exception = {};
-        this.fileTree = {};
+        this.header = {};
         this.executionTree = {};
 
         this._processBody();
@@ -54,7 +53,7 @@ class CDL {
 
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
-                    this.fileTree = JSON5.parse(currLog.value);
+                    this.header = new CDL_HEADER(currLog.value);
                     break;
                 case LINE_TYPE.EXECUTION:
                     this._processExecutionLog(currLog);
@@ -71,7 +70,7 @@ class CDL {
             }
 
             index++;
-        } while (index < this.log.length);
+        } while (index < this.logFile.length);
     }
 
     /**
