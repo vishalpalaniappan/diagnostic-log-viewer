@@ -1,7 +1,7 @@
 import JSON5 from "json5";
 
 import CDL_LOG from "./CDL_LOG";
-import {LINE_TYPE} from "./CDL_LOG";
+import {LINE_TYPE} from "./CDL_LOG_CONSTANTS";
 
 /**
  * Given a CDL log file, this class exposes the following:

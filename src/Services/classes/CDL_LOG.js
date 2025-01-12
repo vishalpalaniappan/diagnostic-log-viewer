@@ -1,16 +1,4 @@
-const LINE_TYPE = {
-    "VARIABLE": 1,
-    "EXCEPTION": 2,
-    "EXECUTION": 3,
-    "IR_HEADER": 4,
-};
-
-const LINE_TYPE_DELIMITER = {
-    "VARIABLE": "#",
-    "EXCEPTION": "?",
-    "IR_HEADER": "{",
-};
-
+import {LINE_TYPE_DELIMITER} from "./CDL_LOG_CONSTANTS";
 /**
  * This class accepts a line from a CDL log, classifys it and exposes
  * the metadata from the line.
@@ -89,7 +77,4 @@ class CDL_LOG {
     }
 };
 
-export {
-    CDL_LOG as default,
-    LINE_TYPE
-};
+export default CDL_LOG;
