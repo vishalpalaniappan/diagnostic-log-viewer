@@ -14,7 +14,6 @@ class CDL_HEADER {
 
         this.logTypeMap = {};
         this.extractLogTypeMap();
-        console.log(this.logTypeMap);
     }
 
     /**
@@ -30,21 +29,23 @@ class CDL_HEADER {
     /**
      * Recursively processes the SST until all nodes are consumed.
      * @param {Object} root
-     * @param {string} functionLtId
+     * @param {string} fid
      */
-    processSST (root, functionLtId) {
+    processSST (root, fid) {
         const nodes = root.children.concat(root.siblings);
         nodes.forEach((child, index) => {
             this.logTypeMap[child.id] = child;
-            child.fid = functionLtId;
             switch (child.type) {
                 case "function":
+                    child.fid = child.id;
                     this.processSST(child, child.id);
                     break;
                 case "root":
-                    this.processSST(child, functionLtId);
+                    child.fid = fid;
+                    this.processSST(child, fid);
                     break;
                 case "child":
+                    child.fid = fid;
                     break;
                 default:
                     console.debug(`Unknown child type:${child.type}`);
