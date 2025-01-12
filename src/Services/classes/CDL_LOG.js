@@ -1,19 +1,15 @@
 import {LINE_TYPE_DELIMITER} from "./CDL_LOG_CONSTANTS";
 /**
  * This class accepts a line from a CDL log, classifys it and exposes
- * the metadata from the line.
- *
- * The types of log lines are:
- * IRStream header, Execution, Variable and Exception.
+ * the extracted metadata.
  */
 class CDL_LOG {
     /**
-     *
-     * @param {String} log
+     * @param {Array} logFile Array containing the contents of CDL log file.
      */
-    constructor (log) {
-        this.log = log;
-        this._classifyLogLine(log);
+    constructor (logFile) {
+        this.log = logFile;
+        this._classifyLogLine();
     }
 
     /**
