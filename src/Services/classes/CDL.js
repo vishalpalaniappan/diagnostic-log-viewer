@@ -36,6 +36,10 @@ class CDL {
         this.header = {};
         this.executionTree = {};
 
+        this.callStack = [];
+        this.callStackSyntax = [];
+        this.currFunction = null;
+
         this._processBody();
     }
 
@@ -79,6 +83,15 @@ class CDL {
      */
     _processExecutionLog (log) {
         this.execution.push(log.lt);
+
+        const lt = this.header.logTypeMap[log.lt];
+
+        if (lt.type === "function") {
+            this.callStack.push(lt);
+            this.callStackSyntax.push(lt.syntax);
+            this.currFunction = this.header.functions[lt.id];
+            console.log(lt.syntax);
+        }
     }
 
     /**
