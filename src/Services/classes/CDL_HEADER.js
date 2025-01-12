@@ -25,22 +25,23 @@ class CDL_HEADER {
      * processed to create an object that groups functions by logtype.
      */
     extractLogTypeMap () {
-        this.logTypeMap["global"] = new LT_INFO({
-            type: "global",
-            id: "global",
-            fid: "global",
+        // Add a root logtype to hold global children.
+        this.logTypeMap["root"] = new LT_INFO({
+            type: "root",
+            id: "root",
+            fid: "root",
         });
 
         Object.keys(this.fileTree).forEach((fileName, index) => {
-            this.processSST(this.fileTree[fileName].sst, "global");
+            this.processSST(this.fileTree[fileName].sst, "root");
         });
 
         // Note that this information can be extracted in the previous
         // step. It is separated here because it improves readability.
         Object.keys(this.logTypeMap).forEach((ltIndex, index) => {
-            const ltMap = this.logTypeMap[ltIndex];
-            const functionLt = this.logTypeMap[ltMap.getfId()];
-            functionLt.addChildId(ltMap.getId());
+            const lt = this.logTypeMap[ltIndex];
+            const functionLt = this.logTypeMap[lt.getfId()];
+            functionLt.addChildId(lt.getId());
         });
     }
 
