@@ -36,7 +36,6 @@ class CDL {
         this.header = {};
         this.executionTree = {};
 
-        this.callStack = [];
         this.callStacks = [];
 
         this._processBody();
@@ -50,14 +49,13 @@ class CDL {
      */
     _processBody () {
         let index = 0;
-
         do {
             const currLog = new CDL_LOG(this.logFile[index]);
 
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
                     this.header = new CDL_HEADER(currLog.value, index);
-                    this.callStack.push(this.header.logTypeMap["root"]);
+                    this.callStack = [this.header.logTypeMap["root"]];
                     break;
                 case LINE_TYPE.EXECUTION:
                     this._processExecutionLog(currLog);
