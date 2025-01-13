@@ -44,7 +44,8 @@ export function FileViewer () {
         }
     }, [files]);
 
-    // TODO: Fix tabs scroll bar, currently it affects the height of the tab.
+    // TODO: Reimplement scroll bar for tabs, I don't like
+    // the way I implemented it now.
     return (
         <div className="file-view-container d-flex flex-column">
             <div className="tabs d-flex">
