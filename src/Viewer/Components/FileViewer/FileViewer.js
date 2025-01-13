@@ -44,7 +44,7 @@ export function FileViewer () {
         }
     }, [files]);
 
-    // TODO: On small screens switch tabs to dropdown menu
+    // TODO: Fix tabs scroll bar, currently it affects the height of the tab.
     return (
         <div className="file-view-container d-flex flex-column">
             <div className="tabs d-flex">

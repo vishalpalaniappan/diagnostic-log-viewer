@@ -8,4 +8,7 @@ $tabs-height: 40px;
 .file-view-container .tabs {
     height:$tabs-height;
     background:#252526;
+    overflow-x: auto;
+    scrollbar-color: #474747 #1e1e1e;
+    scrollbar-width: thin;
 }
