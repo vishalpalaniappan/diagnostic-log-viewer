@@ -55,10 +55,11 @@ class CDL {
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
                     this.header = new CDL_HEADER(currLog.value, index);
-                    this.callStack = [this.header.logTypeMap["root"]];
+                    this.callStackFunctions = [this.header.logTypeMap["root"]];
+                    this.callStackCallers = [this.header.logTypeMap["root"]];
                     break;
                 case LINE_TYPE.EXECUTION:
-                    this._processExecutionLog(currLog);
+                    this._processExecutionLog(currLog, index);
                     break;
                 case LINE_TYPE.EXCEPTION:
                     this._processExceptionLog(currLog);
@@ -86,16 +87,19 @@ class CDL {
         const lt = this.header.logTypeMap[log.lt];
 
         if (lt.getType() === "function") {
-            this.callStack.push(lt);
+            const prevLtId = this.execution[this.execution.length - 2];
+            const prevLt = this.header.logTypeMap[prevLtId];
+            this.callStackFunctions.push(lt);
+            this.callStackCallers.push(prevLt);
         }
 
-        const cs = this.callStack;
+        const cs = this.callStackFunctions;
         while (!cs[cs.length -1].containsChild(lt.getSyntax())) {
-            this.callStack.pop();
+            this.callStackFunctions.pop();
+            this.callStackCallers.pop();
         };
-
-        const callStackIds = cs.map((c) => {return c.getId();});
-        this.callStacks.push([...callStackIds, lt.getId()]);
+        const callStackIds = this.callStackCallers.map((c) => {return c.getSyntax();});
+        this.callStacks.push([...callStackIds, lt.getSyntax()]);
     }
 
     /**
