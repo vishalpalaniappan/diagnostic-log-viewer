@@ -96,10 +96,7 @@ class CDL {
             this.callStack.pop();
         };
 
-        const callStackIds = cs.map(function (call) {
-            return call.getId();
-        });
-
+        const callStackIds = cs.map((c) => {return c.getId();});
         this.callStacks.push([...callStackIds, lt.getId()]);
     }
 
