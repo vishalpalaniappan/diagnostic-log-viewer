@@ -21,7 +21,6 @@ CDLProviders.propTypes = {
 function CDLProviders ({children, fileInfo}) {
     const [appState, setAppState] = useState();
     const [fileTree, setFileTree] = useState();
-    const [positionMetadata, setPositionMetadata] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -33,6 +32,21 @@ function CDLProviders ({children, fileInfo}) {
             }
         };
     }, []);
+
+    /**
+     * This function loads the current position metadata into
+     * the relevant states.
+     * @param {Object} metadata
+     */
+    const loadPositionMetadata = (metadata) => {
+        const currLt = metadata.currLtInfo;
+        setAppState({
+            "activeFile": currLt.lt.fileName,
+            "lineno": currLt.lt.lineno,
+            "callStack": metadata.callStack,
+            "variableStack": metadata.variableStack,
+        });
+    };
 
     // Create worker to handle file.
     useEffect(() => {
@@ -59,7 +73,7 @@ function CDLProviders ({children, fileInfo}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
-                setPositionMetadata(event.data.args);
+                loadPositionMetadata(event.data.args);
                 break;
             default:
                 break;
@@ -69,9 +83,7 @@ function CDLProviders ({children, fileInfo}) {
     return (
         <AppStateContext.Provider value={{appState, setAppState}}>
             <FileTreeContext.Provider value={{fileTree}}>
-                <PositionContext.Provider value={{positionMetadata}}>
-                    {children}
-                </PositionContext.Provider>
+                {children}
             </FileTreeContext.Provider>
         </AppStateContext.Provider>
     );

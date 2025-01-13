@@ -40,7 +40,6 @@ export function FileViewer () {
                 return <Tab key={index} fileName={file}></Tab>;
             });
             setTabs(tabs);
-            setAppState({activeFile: Object.keys(fileTree)[0]});
         }
     }, [files]);
 
