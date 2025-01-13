@@ -146,7 +146,7 @@ class CDL {
         const currlt = this.header.logTypeMap[log.lt];
 
         if (currlt.getType() === "function") {
-            const callerLt = this.getFunctionLogTypeInfoAt(this.execution.length - 2);
+            const callerLt = this.getLogTypeInfoAt(this.execution.length - 2);
             this.callStackFunctions.push(currlt);
             this.callStackCallers.push(callerLt);
         }
@@ -158,8 +158,8 @@ class CDL {
             this.callStackCallers.pop();
         }
 
-        const callStackIds = this.callStackCallers.map((c) => {return c.getId();});
-        this.callStacks.push([...callStackIds, currlt.getId()]);
+        const callStackIds = this.callStackCallers.map((c) => {return c.getSyntax();});
+        this.callStacks.push([...callStackIds, currlt.getSyntax()]);
     }
 
     /**
