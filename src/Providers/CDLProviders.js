@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import AppStateContext from "./AppStateContext";
 import FileTreeContext from "./FileTreeContext";
-import PositionContext from "./PositionMetadataContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
