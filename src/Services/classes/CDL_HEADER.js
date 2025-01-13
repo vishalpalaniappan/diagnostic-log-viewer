@@ -25,14 +25,16 @@ class CDL_HEADER {
      * processed to create an object that groups functions by logtype.
      */
     extractLogTypeMap () {
-        // Add a root logtype to hold global children.
-        this.logTypeMap["root"] = new LT_INFO({
+        const rootNode = {
             type: "function",
             id: "root",
             syntax: "",
             children: [],
             siblings: [],
-        }, "root");
+        };
+
+        // Add a root logtype to hold global children.
+        this.logTypeMap["root"] = new LT_INFO(rootNode, "root");
 
         Object.keys(this.fileTree).forEach((fileName, index) => {
             this.processSST(this.fileTree[fileName].sst, "root");
@@ -80,7 +82,7 @@ class CDL_HEADER {
     getSourceFiles () {
         const sourceTree = {};
         Object.keys(this.fileTree).forEach((fileName, index) => {
-            sourceTree[fileName] = this.fileTree[fileName].source;
+            sourceTree[fileName] = this.fileTree[fileName];
         });
         return sourceTree;
     }
