@@ -42,8 +42,7 @@ class CDL_HEADER {
         // step. It is separated here because it improves readability.
         Object.keys(this.logTypeMap).forEach((ltIndex, index) => {
             const lt = this.logTypeMap[ltIndex];
-            const functionLt = this.logTypeMap[lt.getfId()];
-            functionLt.addChildId(lt.getSyntax());
+            this.logTypeMap[lt.getfId()].addChildId(lt.getSyntax());
         });
     }
 
