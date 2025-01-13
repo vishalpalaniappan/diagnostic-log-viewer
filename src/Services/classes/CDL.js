@@ -94,12 +94,12 @@ class CDL {
         }
 
         const cs = this.callStackFunctions;
-        while (!cs[cs.length -1].containsChild(lt.getSyntax())) {
+        while (!cs[cs.length -1].containsChild(lt.getId())) {
             this.callStackFunctions.pop();
             this.callStackCallers.pop();
         };
-        const callStackIds = this.callStackCallers.map((c) => {return c.getSyntax();});
-        this.callStacks.push([...callStackIds, lt.getSyntax()]);
+        const callStackIds = this.callStackCallers.map((c) => {return c.getId();});
+        this.callStacks.push([...callStackIds, lt.getId()]);
     }
 
     /**
