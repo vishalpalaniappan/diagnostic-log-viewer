@@ -65,6 +65,17 @@ class CDL {
     }
 
     /**
+     * Given a logtype, this function returns log type info about the
+     * function it belongs to.
+     * @param {Number} lt
+     * @return {Object}
+     */
+    getFunctionOfLogType (lt) {
+        const ltInfo = this.header.logTypeMap[lt];
+        return ltInfo;
+    }
+
+    /**
      * Returns the call stack given a position.
      * @param {Number} position Position in the execution array.
      * @return {Object}
@@ -158,8 +169,11 @@ class CDL {
             this.callStackCallers.pop();
         }
 
-        const callStackIds = this.callStackCallers.map((c) => {return c.getSyntax();});
-        this.callStacks.push([...callStackIds, currlt.getSyntax()]);
+        const callStackIds = [...this.callStackCallers, currlt].map((c) => {
+            const functionLtInfo = this.getFunctionOfLogType(c.getfId());
+            return [functionLtInfo.getSyntax(), c.getSyntax()];
+        });
+        this.callStacks.push([...callStackIds]);
     }
 
     /**
