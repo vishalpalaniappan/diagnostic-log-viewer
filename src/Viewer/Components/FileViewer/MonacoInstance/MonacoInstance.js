@@ -45,6 +45,13 @@ export function MonacoInstance ({content}) {
         }
     }, [content]);
 
+    const monacoOptions = {
+        "renderWhitespace": "none",
+        "wordWrap": "on",
+        "scrollBeyondLastLine": false,
+        "glyphMargin": true,
+    };
+
 
     return (
         <Editor
@@ -52,6 +59,8 @@ export function MonacoInstance ({content}) {
             theme={"vs-dark"}
             beforeMount={handleEditorWillMount}
             onMount={handleEditorDidMount}
+            options={monacoOptions}
+            language="python"
         />
     );
 }
