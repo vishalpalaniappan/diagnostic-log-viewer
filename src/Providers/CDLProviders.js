@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import AppStateContext from "./AppStateContext";
+import FileTreeContext from "./FileTreeContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
@@ -18,6 +19,7 @@ CDLProviders.propTypes = {
  */
 function CDLProviders ({children, fileInfo}) {
     const [appState, setAppState] = useState();
+    const [fileTree, setFileTree] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -51,6 +53,9 @@ function CDLProviders ({children, fileInfo}) {
      */
     const handleWorkerMessage = useCallback((event) => {
         switch (event.data.code) {
+            case CDL_WORKER_PROTOCOL.GET_METADATA:
+                setFileTree(event.data.args.fileTree);
+                break;
             default:
                 break;
         }
@@ -58,7 +63,9 @@ function CDLProviders ({children, fileInfo}) {
 
     return (
         <AppStateContext.Provider value={{appState, setAppState}}>
-            {children}
+            <FileTreeContext.Provider value={{fileTree}}>
+                {children}
+            </FileTreeContext.Provider>
         </AppStateContext.Provider>
     );
 };
