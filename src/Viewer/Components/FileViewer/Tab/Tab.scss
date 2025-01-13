@@ -1,0 +1,19 @@
+.tab{
+    height:100%;
+    background:#2d2d2d;
+    color:#969696;
+    border-right:solid 2px #252526;
+    padding: 0 20px;
+    font-size:13px;
+    justify-content: center;
+    cursor:default;
+}
+
+.tab > .icon {
+    color:white;
+    margin-right:5px;
+}
+
+.activeTab {
+    background:#1e1e1e;
+}
