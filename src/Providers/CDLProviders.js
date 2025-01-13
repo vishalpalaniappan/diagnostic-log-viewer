@@ -56,6 +56,9 @@ function CDLProviders ({children, fileInfo}) {
             case CDL_WORKER_PROTOCOL.GET_METADATA:
                 setFileTree(event.data.args.fileTree);
                 break;
+            case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
+                console.log(event.data.args);
+                break;
             default:
                 break;
         }

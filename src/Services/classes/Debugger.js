@@ -43,15 +43,20 @@ class Debugger {
      * @param {Number} position Position in execution sequence to go to.
      */
     _goToPosition (position) {
-        const lt = this.cdl.execution[position];
-        const ltInfo = this.cdl.header.logTypeMap[lt];
+        const currLt = this.cdl.execution[position];
+        const currLtInfo = this.cdl.header.logTypeMap[currLt];
 
         const callStack = this.cdl.getCallStack(position);
         const variableStack = this.cdl.getVariableStack(position);
 
-        console.log("Log Type:", ltInfo);
-        console.log("Call Stack:", callStack);
-        console.log("Variable Stack:", variableStack);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: {
+                currLtInfo: currLtInfo,
+                callStack: callStack,
+                variableStack: variableStack,
+            },
+        });
     }
 };
 
