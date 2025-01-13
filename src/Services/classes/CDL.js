@@ -18,8 +18,8 @@ import {LINE_TYPE} from "./CDL_LOG_CONSTANTS";
  * the value is an object containing metadata about this logtype from the SST.
  * Examples of metadata are the variable names, line number etc.
  *
- * header [object]: The keys of this object are the file names and the value
- * is the source code for the file.
+ * Header [object]: This object is of type CDL_HEADER and it exposes the
+ * logtype map and the source code of the program.
  *
  * ExecutionTree [object]: This object contains a fully collapsed representation
  * of this log file.
@@ -42,6 +42,29 @@ class CDL {
     }
 
     /**
+     * Returns the logtype information at the given position.
+     * @param {Number} position Position in the execution array.
+     * @return {Object}
+     */
+    getLogTypeInfoAt (position) {
+        const lt = this.execution[position];
+        const ltInfo = this.header.logTypeMap[lt];
+        return ltInfo;
+    }
+
+    /**
+     * Returns the logtype information of the function this position belongs to.
+     * @param {Number} position Position in the execution array.
+     * @return {Object}
+     */
+    getFunctionLogTypeInfoAt (position) {
+        const ltInfo = this.getLogTypeInfoAt(position);
+        const parentId = ltInfo.getfId();
+        const parentLtInfo = this.header.logTypeMap[parentId];
+        return parentLtInfo;
+    }
+
+    /**
      * Returns the call stack given a position.
      * @param {Number} position Position in the execution array.
      * @return {Object}
@@ -58,19 +81,17 @@ class CDL {
     getVariableStack (position) {
         const variableStack = {};
 
-        let lt = this.execution[position];
-        let ltInfo = this.header.logTypeMap[lt];
+        const parentId = this.getFunctionLogTypeInfoAt(position).getfId();
 
-        const parentFunctionId = ltInfo.getfId();
-        const parent = this.header.logTypeMap[parentFunctionId];
-        const parentId = parent.getId();
+        let childLtInfo = this.getLogTypeInfoAt(position);
+        let childId = childLtInfo.getId();
 
-        while (lt != parentId&& position >= 0) {
-            lt = this.execution[position];
-            ltInfo = this.header.logTypeMap[lt];
+        while (childId != parentId && position >= 0) {
+            childLtInfo = this.getLogTypeInfoAt(position);
+            childId = childLtInfo.getId();
 
-            if (ltInfo.getfId() === parentId) {
-                ltInfo.getVariables().forEach((variable, index) => {
+            if (childLtInfo.getfId() === parentId) {
+                childLtInfo.getVariables().forEach((variable, index) => {
                     variableStack[variable] = this.variables[position][index];
                 });
             }
@@ -122,22 +143,23 @@ class CDL {
     _processExecutionLog (log, position) {
         this.execution.push(log.lt);
 
-        const lt = this.header.logTypeMap[log.lt];
+        const currlt = this.header.logTypeMap[log.lt];
 
-        if (lt.getType() === "function") {
-            const prevLtId = this.execution[this.execution.length - 2];
-            const prevLt = this.header.logTypeMap[prevLtId];
-            this.callStackFunctions.push(lt);
-            this.callStackCallers.push(prevLt);
+        if (currlt.getType() === "function") {
+            const callerLt = this.getFunctionLogTypeInfoAt(this.execution.length - 2);
+            this.callStackFunctions.push(currlt);
+            this.callStackCallers.push(callerLt);
         }
 
+        // Move up the stack until parent function of current log type is found
         const cs = this.callStackFunctions;
-        while (!cs[cs.length -1].containsChild(lt.getId())) {
+        while (!cs[cs.length -1].containsChild(currlt.getId())) {
             this.callStackFunctions.pop();
             this.callStackCallers.pop();
-        };
+        }
+
         const callStackIds = this.callStackCallers.map((c) => {return c.getId();});
-        this.callStacks.push([...callStackIds, lt.getId()]);
+        this.callStacks.push([...callStackIds, currlt.getId()]);
     }
 
     /**
