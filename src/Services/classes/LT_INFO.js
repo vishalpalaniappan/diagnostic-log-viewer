@@ -7,10 +7,12 @@ class LT_INFO {
     /**
      * @param {Array} ltInfoSST Log type information extracted from SST.
      * @param {Number} fid ID of the function this node belongs to.
+     * @param {String} fileName File this logtype belongs to.
      */
-    constructor (ltInfoSST, fid) {
+    constructor (ltInfoSST, fid, fileName) {
         this.lt = ltInfoSST;
         this.lt.fid = fid;
+        this.lt.fileName = fileName;
         this.childIds = [];
     }
 

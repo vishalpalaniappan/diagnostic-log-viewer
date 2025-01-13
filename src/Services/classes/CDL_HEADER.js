@@ -37,7 +37,7 @@ class CDL_HEADER {
         this.logTypeMap["root"] = new LT_INFO(rootNode, "root");
 
         Object.keys(this.fileTree).forEach((fileName, index) => {
-            this.processSST(this.fileTree[fileName].sst, "root");
+            this.processSST(this.fileTree[fileName].sst, "root", fileName);
         });
 
         // Note that this information can be extracted in the previous
@@ -51,22 +51,23 @@ class CDL_HEADER {
     /**
      * Recursively processes the SST until all nodes are consumed.
      * @param {Object} root
-     * @param {string} fid
+     * @param {String} fid
+     * @param {String} fileName
      */
-    processSST (root, fid) {
+    processSST (root, fid, fileName) {
         const nodes = root.children.concat(root.siblings);
         nodes.forEach((child, index) => {
             switch (child.type) {
                 case "function":
-                    this.logTypeMap[child.id] = new LT_INFO(child, child.id);
-                    this.processSST(child, child.id);
+                    this.logTypeMap[child.id] = new LT_INFO(child, child.id, fileName);
+                    this.processSST(child, child.id, fileName);
                     break;
                 case "root":
-                    this.logTypeMap[child.id] = new LT_INFO(child, fid);
-                    this.processSST(child, fid);
+                    this.logTypeMap[child.id] = new LT_INFO(child, fid, fileName);
+                    this.processSST(child, fid, fileName);
                     break;
                 case "child":
-                    this.logTypeMap[child.id] = new LT_INFO(child, fid);
+                    this.logTypeMap[child.id] = new LT_INFO(child, fid, fileName);
                     break;
                 default:
                     console.debug(`Unknown child type:${child.type}`);
