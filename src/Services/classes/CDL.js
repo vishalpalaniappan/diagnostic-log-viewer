@@ -38,7 +38,6 @@ class CDL {
 
         this.callStack = [];
         this.callStacks = [];
-        this.currFunction = null;
 
         this._processBody();
     }
@@ -58,7 +57,6 @@ class CDL {
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
                     this.header = new CDL_HEADER(currLog.value, index);
-                    this.currFunction = this.header.logTypeMap["root"];
                     this.callStack.push(this.header.logTypeMap["root"]);
                     break;
                 case LINE_TYPE.EXECUTION:
@@ -91,19 +89,18 @@ class CDL {
 
         if (lt.getType() === "function") {
             this.callStack.push(lt);
-            this.currFunction = lt;
         }
 
-        while (!this.currFunction.containsChild(lt.getSyntax())) {
+        const cs = this.callStack;
+        while (!cs[cs.length -1].containsChild(lt.getSyntax())) {
             this.callStack.pop();
-            this.currFunction = this.callStack[this.callStack.length -1];
         };
 
-        const callStackIds = this.callStack.map(function (call) {
+        const callStackIds = cs.map(function (call) {
             return call.getId();
         });
 
-        this.callStacks.push(callStackIds);
+        this.callStacks.push([...callStackIds, lt.getId()]);
     }
 
     /**
