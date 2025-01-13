@@ -27,10 +27,12 @@ class CDL_HEADER {
     extractLogTypeMap () {
         // Add a root logtype to hold global children.
         this.logTypeMap["root"] = new LT_INFO({
-            type: "root",
+            type: "function",
             id: "root",
-            fid: "root",
-        });
+            syntax: "",
+            children: [],
+            siblings: [],
+        }, "root");
 
         Object.keys(this.fileTree).forEach((fileName, index) => {
             this.processSST(this.fileTree[fileName].sst, "root");
@@ -41,7 +43,7 @@ class CDL_HEADER {
         Object.keys(this.logTypeMap).forEach((ltIndex, index) => {
             const lt = this.logTypeMap[ltIndex];
             const functionLt = this.logTypeMap[lt.getfId()];
-            functionLt.addChildId(lt.getId());
+            functionLt.addChildId(lt.getSyntax());
         });
     }
 
@@ -55,21 +57,20 @@ class CDL_HEADER {
         nodes.forEach((child, index) => {
             switch (child.type) {
                 case "function":
-                    child.fid = child.id;
+                    this.logTypeMap[child.id] = new LT_INFO(child, child.id);
                     this.processSST(child, child.id);
                     break;
                 case "root":
-                    child.fid = fid;
+                    this.logTypeMap[child.id] = new LT_INFO(child, fid);
                     this.processSST(child, fid);
                     break;
                 case "child":
-                    child.fid = fid;
+                    this.logTypeMap[child.id] = new LT_INFO(child, fid);
                     break;
                 default:
                     console.debug(`Unknown child type:${child.type}`);
                     break;
             }
-            this.logTypeMap[child.id] = new LT_INFO(child);
         });
     }
 

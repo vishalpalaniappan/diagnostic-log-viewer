@@ -37,7 +37,7 @@ class CDL {
         this.executionTree = {};
 
         this.callStack = [];
-        this.callStackSyntax = [];
+        this.callStacks = [];
         this.currFunction = null;
 
         this._processBody();
@@ -57,7 +57,9 @@ class CDL {
 
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
-                    this.header = new CDL_HEADER(currLog.value);
+                    this.header = new CDL_HEADER(currLog.value, index);
+                    this.currFunction = this.header.logTypeMap["root"];
+                    this.callStack.push(this.header.logTypeMap["root"]);
                     break;
                 case LINE_TYPE.EXECUTION:
                     this._processExecutionLog(currLog);
@@ -78,11 +80,30 @@ class CDL {
     }
 
     /**
-     * Process the execution log statement
+     * Process the execution log statement and extract the call stacks.
      * @param {CDL_LOG} log
+     * @param {Number} position
      */
-    _processExecutionLog (log) {
+    _processExecutionLog (log, position) {
         this.execution.push(log.lt);
+
+        const lt = this.header.logTypeMap[log.lt];
+
+        if (lt.getType() === "function") {
+            this.callStack.push(lt);
+            this.currFunction = lt;
+        }
+
+        while (!this.currFunction.containsChild(lt.getSyntax())) {
+            this.callStack.pop();
+            this.currFunction = this.callStack[this.callStack.length -1];
+        };
+
+        const callStackIds = this.callStack.map(function (call) {
+            return call.getId();
+        });
+
+        this.callStacks.push(callStackIds);
     }
 
     /**
