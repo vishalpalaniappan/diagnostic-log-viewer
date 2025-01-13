@@ -6,9 +6,11 @@
 class LT_INFO {
     /**
      * @param {Array} ltInfoSST Log type information extracted from SST.
+     * @param {Number} fid ID of the function this node belongs to.
      */
-    constructor (ltInfoSST) {
+    constructor (ltInfoSST, fid) {
         this.lt = ltInfoSST;
+        this.lt.fid = fid;
         this.childIds = [];
     }
 
@@ -60,17 +62,7 @@ class LT_INFO {
      * @return {Boolean}
      */
     containsChild (id) {
-        const nodes = this.lt.children.concat(this.lt.siblings);
-        let hasChild = false;
-
-        for (let i = 0; i < nodes.length; i++) {
-            const node = nodes[i];
-            if (node.id === id) {
-                hasChild = true;
-                break;
-            }
-        }
-        return hasChild;
+        return this.childIds.includes(id);
     }
 };
 
