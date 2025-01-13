@@ -40,6 +40,14 @@ class LT_INFO {
     }
 
     /**
+     * This function returns the variables of the current logtype.
+     * @return {String}
+     */
+    getVariables () {
+        return this.lt.variables;
+    }
+
+    /**
      * This function returns the type of this logtype.
      * @return {String}
      */

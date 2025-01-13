@@ -42,6 +42,44 @@ class CDL {
     }
 
     /**
+     * Returns the call stack given a position.
+     * @param {Number} position Position in the execution array.
+     * @return {Object}
+     */
+    getCallStack (position) {
+        return this.callStacks[position];
+    }
+
+    /**
+     * Returns the variable stack given a position.
+     * @param {Number} position Position in the execution array.
+     * @return {Object}
+     */
+    getVariableStack (position) {
+        const variableStack = {};
+
+        let lt = this.execution[position];
+        let ltInfo = this.header.logTypeMap[lt];
+
+        const parentFunctionId = ltInfo.getfId();
+        const parent = this.header.logTypeMap[parentFunctionId];
+        const parentId = parent.getId();
+
+        while (lt != parentId&& position >= 0) {
+            lt = this.execution[position];
+            ltInfo = this.header.logTypeMap[lt];
+
+            if (ltInfo.getfId() === parentId) {
+                ltInfo.getVariables().forEach((variable, index) => {
+                    variableStack[variable] = this.variables[position][index];
+                });
+            }
+            position--;
+        }
+        return variableStack;
+    }
+
+    /**
      * This function processes each line in the CDL log file.
      * It first classifys the line and extracts its metadata using
      * the CDL_LOG class. Then it adds the metadata to the relevant

@@ -35,6 +35,23 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
+        this._goToPosition(985);
+    }
+
+    /**
+     *
+     * @param {Number} position Position in execution sequence to go to.
+     */
+    _goToPosition (position) {
+        const lt = this.cdl.execution[position];
+        const ltInfo = this.cdl.header.logTypeMap[lt];
+
+        const callStack = this.cdl.getCallStack(position);
+        const variableStack = this.cdl.getVariableStack(position);
+
+        console.log("Log Type:", ltInfo);
+        console.log("Call Stack:", callStack);
+        console.log("Variable Stack:", variableStack);
     }
 };
 
