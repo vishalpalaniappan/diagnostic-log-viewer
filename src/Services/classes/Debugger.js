@@ -1,5 +1,6 @@
 import clpFfiJsModuleInit from "clp-ffi-js";
 
+import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
 import CDL from "./CDL";
 
@@ -28,6 +29,12 @@ class Debugger {
     parseLogAndInitializeDebugger (log) {
         this.cdl = new CDL(log);
         console.log(this.cdl);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_METADATA,
+            args: {
+                fileTree: this.cdl.header.getSourceFiles(),
+            },
+        });
     }
 };
 
