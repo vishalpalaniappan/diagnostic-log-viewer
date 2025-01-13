@@ -1,9 +1,7 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
-
-import Editor, {loader} from "@monaco-editor/react";
-import * as monaco from "monaco-editor";
+import React, {useContext, useEffect, useState} from "react";
 
 import FileTreeContext from "../../../Providers/FileTreeContext";
+import {MonacoInstance} from "./MonacoInstance/MonacoInstance";
 
 import "./FileViewer.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";
@@ -16,27 +14,6 @@ export function FileViewer () {
     const {fileTree} = useContext(FileTreeContext);
     const [files, setFiles] = useState();
 
-    const editorRef = useRef(null);
-    const monacoRef = useRef(null);
-    loader.config({monaco});
-
-    /**
-     * Called before the monaco editor is mounted.
-     * @param {object} monaco
-     */
-    function handleEditorWillMount (monaco) {
-    }
-
-    /**
-     * Called when editor is finished mounting.
-     * @param {object} editor
-     * @param {object} monaco
-     */
-    const handleEditorDidMount =(editor, monaco) => {
-        monacoRef.current = monaco;
-        editorRef.current = editor;
-    };
-
     useEffect(() => {
         if (fileTree) {
             setFiles(Object.keys(fileTree));
@@ -47,14 +24,10 @@ export function FileViewer () {
     return (
         <div className="file-view-container d-flex flex-column">
             <div className="tabs d-flex">
+                {files}
             </div>
             <div className="editor d-flex flex-grow-1">
-                <Editor
-                    defaultValue="Loading content..."
-                    theme={"vs-dark"}
-                    beforeMount={handleEditorWillMount}
-                    onMount={handleEditorDidMount}
-                />
+                <MonacoInstance content={"asdf"} />
             </div>
         </div>
     );
