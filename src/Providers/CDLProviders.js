@@ -33,8 +33,7 @@ function CDLProviders ({children, fileInfo}) {
     }, []);
 
     /**
-     * This function loads the current position metadata into
-     * the relevant states.
+     * This function loads the metadata into the app state.
      * @param {Object} metadata
      */
     const loadPositionMetadata = (metadata) => {
