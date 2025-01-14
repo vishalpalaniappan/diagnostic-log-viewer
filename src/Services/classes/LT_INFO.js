@@ -26,6 +26,22 @@ class LT_INFO {
     }
 
     /**
+     * This function returns the lineno of the current logtype.
+     * @return {String}
+     */
+    getLineNo () {
+        return this.lt.lineno;
+    }
+
+    /**
+     * This function returns the file name of the current logtype.
+     * @return {String}
+     */
+    getFileName () {
+        return this.lt.fileName;
+    }
+
+    /**
      * This function returns the id of the current logtype.
      * @return {String}
      */
