@@ -18,12 +18,14 @@ export function FileViewer () {
 
     const [files, setFiles] = useState();
     const [content, setContent] = useState("Loading...");
+    const [lineNumber, setLineNumber] = useState(1);
     const [tabs, setTabs] = useState(<></>);
 
     // Consume providers
     useEffect(() => {
         if (appState && appState.activeFile) {
             setContent(fileTree[appState.activeFile].source);
+            setLineNumber(appState.lineno);
         }
     }, [appState]);
 
@@ -51,7 +53,7 @@ export function FileViewer () {
                 {tabs}
             </div>
             <div className="editor d-flex flex-grow-1">
-                <MonacoInstance content={content} />
+                <MonacoInstance content={content} lineNumber={lineNumber} />
             </div>
         </div>
     );
