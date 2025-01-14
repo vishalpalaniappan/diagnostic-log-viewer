@@ -9,6 +9,7 @@ import "monaco-editor/min/vs/editor/editor.main.css";
 
 MonacoInstance.propTypes = {
     content: PropTypes.string,
+    lineNumber: PropTypes.number,
 };
 
 
@@ -16,7 +17,7 @@ MonacoInstance.propTypes = {
  * Contains the monaco editor.
  * @return {JSX.Element}
  */
-export function MonacoInstance ({content}) {
+export function MonacoInstance ({content, lineNumber}) {
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
     loader.config({monaco});
@@ -42,8 +43,18 @@ export function MonacoInstance ({content}) {
     useEffect(() => {
         if (content && editorRef && editorRef.current) {
             editorRef.current.setValue(content);
+            editorRef.current.revealLineInCenter(lineNumber);
+            editorRef.current.deltaDecorations([], [
+                {
+                    range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+                    options: {
+                        isWholeLine: true,
+                        className: "selectedLine",
+                    },
+                },
+            ]);
         }
-    }, [content]);
+    }, [content, lineNumber]);
 
     const monacoOptions = {
         "renderWhitespace": "none",

@@ -1,0 +1,25 @@
+.selectedLine{
+    background-color: #4b4b18;
+    width:2px;
+}
+
+.glyph-debugger-line{
+    margin-top:5px;
+    margin-left:20px;
+    height:10px !important;
+    width:10px !important;
+    background-color: #4b4b18;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+.glyph-stack-line{
+    margin-top:5px;
+    margin-left:20px;
+    height:10px !important;
+    width:10px !important;
+    background-color: #3a4e3a;
+    border-radius: 50%;
+    display: inline-block;
+}
