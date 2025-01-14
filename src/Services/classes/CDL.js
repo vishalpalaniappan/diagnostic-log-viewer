@@ -85,7 +85,31 @@ class CDL {
      * @return {Object}
      */
     getCallStack (position) {
-        return this.callStacks[position];
+        console.log(this.callStacks);
+        const cs = this.callStacks[position];
+
+        const csInfo = [];
+
+        cs.forEach((position, index) => {
+            const currLt = this.getLogTypeInfoAt(position);
+            const parent = this.getFunctionLogTypeInfoAt(position);
+            const info = {};
+
+            if (index === 0) {
+                info.functionName = "<module>";
+            } else {
+                const syntax = parent.getSyntax();
+                const functionName = syntax.split("def ")[1].split("(")[0];
+                info.functionName = functionName;
+            }
+
+            info.fileName = currLt.getFileName();
+            info.position = currLt.getLineNo();
+            csInfo.push(info);
+        });
+
+
+        return csInfo;
     }
 
     /**
@@ -175,21 +199,26 @@ class CDL {
         this.execution.push(log.lt);
 
         const currlt = this.header.logTypeMap[log.lt];
+        const position = this.execution.length - 1;
 
         if (currlt.getType() === "function") {
-            this.callStack.push(this.execution.length - 1);
+            this.callStack.push(position);
         }
 
         const cs = this.callStack;
         if (cs.length > 0) {
             let lt = this.getLogTypeInfoAt(cs[cs.length - 1]);
-            while (!lt.containsChild(currlt.getId())) {
+            while (!lt.containsChild(currlt.getId()) ) {
                 cs.pop();
                 lt = this.getLogTypeInfoAt(cs[cs.length - 1]);
             }
         }
 
-        this.callStacks.push(cs);
+        const callStackIds = [...this.callStack, position].map((position) => {
+            return position-1;
+        });
+
+        this.callStacks.push(callStackIds);
     }
 
     /**
