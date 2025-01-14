@@ -12,6 +12,13 @@ onmessage = function (e) {
                 console.log(e);
             }
             break;
+        case CDL_WORKER_PROTOCOL.GO_TO_POSITION:
+            try {
+                debuggerInstance._goToPosition(e.data.position);
+            } catch (e) {
+                console.log(e);
+            }
+            break;
         default:
             break;
     }
