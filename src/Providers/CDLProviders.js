@@ -43,6 +43,7 @@ function CDLProviders ({children, fileInfo}) {
             "lineno": currLt.lt.lineno,
             "callStack": metadata.callStack,
             "variableStack": metadata.variableStack,
+            "exceptions": metadata.exceptions,
         });
     };
 

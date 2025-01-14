@@ -34,7 +34,7 @@ class CDL {
         this.logFile = logFile;
         this.execution = [];
         this.variables = {};
-        this.exception = {};
+        this.exceptions = {};
         this.header = {};
         this.executionTree = {};
 
@@ -84,6 +84,19 @@ class CDL {
      */
     getCallStack (position) {
         return this.callStacks[position];
+    }
+
+    /**
+     * Returns the exception at the given position.
+     * @param {Number} position Position in the execution array.
+     * @return {Object}
+     */
+    getExceptions (position) {
+        if (position in this.exceptions) {
+            return this.exceptions[position];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -217,7 +230,7 @@ class CDL {
             index--;
         } while (index > 0);
 
-        const e = this.exception;
+        const e = this.exceptions;
         e[index] = (index in e)? [...e[index], log.value]: [log.value];
     }
 }

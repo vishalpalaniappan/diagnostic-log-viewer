@@ -48,6 +48,7 @@ class Debugger {
 
         const callStack = this.cdl.getCallStack(position);
         const variableStack = this.cdl.getVariableStack(position);
+        const exceptions = this.cdl.getExceptions(position);
 
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
@@ -55,6 +56,7 @@ class Debugger {
                 currLtInfo: currLtInfo,
                 callStack: callStack,
                 variableStack: variableStack,
+                exceptions: exceptions,
             },
         });
     }
