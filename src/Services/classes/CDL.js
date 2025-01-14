@@ -145,12 +145,11 @@ class CDL {
 
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
-                    this.header = new CDL_HEADER(currLog.value, position);
-                    this.callStackFunctions = [this.header.logTypeMap["root"]];
-                    this.callStackCallers = [this.header.logTypeMap["root"]];
+                    this.header = new CDL_HEADER(currLog.value);
+                    this.callStack = [];
                     break;
                 case LINE_TYPE.EXECUTION:
-                    this._processExecutionLog(currLog, position);
+                    this._processExecutionLog(currLog);
                     break;
                 case LINE_TYPE.EXCEPTION:
                     position = this._processExceptionLog(currLog, position);
@@ -172,29 +171,25 @@ class CDL {
      * @param {CDL_LOG} log
      * @param {Number} position
      */
-    _processExecutionLog (log, position) {
+    _processExecutionLog (log) {
         this.execution.push(log.lt);
 
         const currlt = this.header.logTypeMap[log.lt];
 
         if (currlt.getType() === "function") {
-            const callerLt = this.getLogTypeInfoAt(this.execution.length - 2);
-            this.callStackFunctions.push(currlt);
-            this.callStackCallers.push(callerLt);
+            this.callStack.push(this.execution.length - 1);
         }
 
-        // Move up the stack until parent function of current log type is found
-        const cs = this.callStackFunctions;
-        while (!cs[cs.length -1].containsChild(currlt.getId())) {
-            this.callStackFunctions.pop();
-            this.callStackCallers.pop();
+        const cs = this.callStack;
+        if (cs.length > 0) {
+            let lt = this.getLogTypeInfoAt(cs[cs.length - 1]);
+            while (!lt.containsChild(currlt.getId())) {
+                cs.pop();
+                lt = this.getLogTypeInfoAt(cs[cs.length - 1]);
+            }
         }
 
-        const callStackIds = [...this.callStackCallers, currlt].map((callerLtInfo) => {
-            const functionLtInfo = this.getFunctionOfLogType(callerLtInfo.getfId());
-            return [callerLtInfo, functionLtInfo];
-        });
-        this.callStacks.push([...callStackIds]);
+        this.callStacks.push(cs);
     }
 
     /**
