@@ -1,3 +1,5 @@
+import JSON5 from "json5";
+
 import CDL_HEADER from "./CDL_HEADER";
 import CDL_LOG from "./CDL_LOG";
 import {LINE_TYPE} from "./CDL_LOG_CONSTANTS";
@@ -103,7 +105,11 @@ class CDL {
 
             if (childLtInfo.getfId() === parentId) {
                 childLtInfo.getVariables().forEach((variable, index) => {
-                    variableStack[variable] = this.variables[position][index];
+                    try {
+                        variableStack[variable] = JSON5.parse(this.variables[position][index]);
+                    } catch (e) {
+                        variableStack[variable] = this.variables[position][index];
+                    }
                 });
             }
             position--;
