@@ -27,7 +27,7 @@ export function CallStackContainer () {
                 />;
                 calls.push(row);
             });
-            setCallStack(calls);
+            setCallStack(calls.reverse());
         }
     }, [appState]);
 
