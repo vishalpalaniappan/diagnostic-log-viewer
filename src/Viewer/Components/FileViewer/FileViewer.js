@@ -13,7 +13,7 @@ import "monaco-editor/min/vs/editor/editor.main.css";
  * @return {JSX.Element}
  */
 export function FileViewer () {
-    const {appState, setAppState} = useContext(AppStateContext);
+    const {appState} = useContext(AppStateContext);
     const {fileTree} = useContext(FileTreeContext);
 
     const [files, setFiles] = useState();
