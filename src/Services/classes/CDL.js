@@ -139,18 +139,18 @@ class CDL {
      * arrays.
      */
     _processBody () {
-        let index = 0;
+        let position = 0;
         do {
-            const currLog = new CDL_LOG(this.logFile[index]);
+            const currLog = new CDL_LOG(this.logFile[position]);
 
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
-                    this.header = new CDL_HEADER(currLog.value, index);
+                    this.header = new CDL_HEADER(currLog.value, position);
                     this.callStackFunctions = [this.header.logTypeMap["root"]];
                     this.callStackCallers = [this.header.logTypeMap["root"]];
                     break;
                 case LINE_TYPE.EXECUTION:
-                    this._processExecutionLog(currLog, index);
+                    this._processExecutionLog(currLog, position);
                     break;
                 case LINE_TYPE.EXCEPTION:
                     this._processExceptionLog(currLog);
@@ -163,8 +163,8 @@ class CDL {
                     break;
             }
 
-            index++;
-        } while (index < this.logFile.length);
+            position++;
+        } while (position < this.logFile.length);
     }
 
     /**
