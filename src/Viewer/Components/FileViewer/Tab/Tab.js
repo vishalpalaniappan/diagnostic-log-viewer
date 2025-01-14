@@ -30,9 +30,9 @@ export function Tab ({fileName}) {
     }, [appState]);
 
     const selectFile = (e) => {
-        setAppState({
-            "activeFile": fileName,
-        });
+        const updatedState = Object.assign({}, appState);
+        updatedState["activeFile"] = fileName;
+        setAppState(updatedState);
     };
 
     return (
