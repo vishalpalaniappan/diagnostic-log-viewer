@@ -1,5 +1,6 @@
 import React from "react";
 
+import {DebugToolKit} from "./Components/DebugToolKit/DebugToolKit";
 import {FileViewer} from "./Components/FileViewer/FileViewer";
 import {SideContainer} from "./Components/SideContainer/SideContainer";
 
@@ -12,6 +13,7 @@ import "./Viewer.scss";
 export function Viewer () {
     return (
         <div className="viewer-container">
+            <DebugToolKit />
             <div className="menu-container">
 
             </div>
