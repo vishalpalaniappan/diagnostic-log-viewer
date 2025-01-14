@@ -104,7 +104,8 @@ class CDL {
             }
 
             info.fileName = currLt.getFileName();
-            info.position = currLt.getLineNo();
+            info.lineno = currLt.getLineNo();
+            info.position = position;
             csInfo.push(info);
         });
 
