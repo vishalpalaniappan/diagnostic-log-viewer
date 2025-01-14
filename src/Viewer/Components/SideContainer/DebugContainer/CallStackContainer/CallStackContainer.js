@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import AppStateContext from "../../../../../Providers/AppStateContext";
+import {CallStackRow} from "./CallStackRow/CallStackRow";
 
 import "./CallStackContainer.scss";
 
@@ -14,15 +15,25 @@ export function CallStackContainer () {
     const {appState} = useContext(AppStateContext);
 
     useEffect(() => {
-        if (appState) {
-            console.log(appState.callStack);
-            setCallStack(appState.callStack);
+        if (appState && appState.callStack) {
+            const calls = [];
+            appState.callStack.forEach((call, index) => {
+                const row = <CallStackRow
+                    key={index}
+                    functionName={call.functionName}
+                    fileName={call.fileName}
+                    lineno={call.lineno}
+                    position={call.position}
+                />;
+                calls.push(row);
+            });
+            setCallStack(calls);
         }
     }, [appState]);
 
     return (
         <div className="callStackContainer">
-
+            {callStack}
         </div>
     );
 }
