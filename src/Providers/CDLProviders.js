@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import AppStateContext from "./AppStateContext";
 import FileTreeContext from "./FileTreeContext";
+import WorkerContext from "./WorkerContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
@@ -82,7 +83,9 @@ function CDLProviders ({children, fileInfo}) {
     return (
         <AppStateContext.Provider value={{appState, setAppState}}>
             <FileTreeContext.Provider value={{fileTree}}>
-                {children}
+                <WorkerContext.Provider value={{cdlWorker}}>
+                    {children}
+                </WorkerContext.Provider>
             </FileTreeContext.Provider>
         </AppStateContext.Provider>
     );
