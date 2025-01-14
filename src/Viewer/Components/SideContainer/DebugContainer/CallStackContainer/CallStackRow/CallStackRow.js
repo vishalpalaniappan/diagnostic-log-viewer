@@ -1,6 +1,9 @@
-import React from "react";
+import React, {useContext} from "react";
 
 import PropTypes from "prop-types";
+
+import WorkerContext from "../../../../../../Providers/WorkerContext";
+import CDL_WORKER_PROTOCOL from "../../../../../../Services/CDL_WORKER_PROTOCOL";
 
 import "./CallStackRow.scss";
 
@@ -21,8 +24,16 @@ CallStackRow.propTypes = {
  * @return {JSX}
  */
 export function CallStackRow({functionName, fileName, lineno, position}) {
+    const {cdlWorker} = useContext(WorkerContext);
     const goToLine = (e) => {
-        console.log("Going to line:", position);
+        if (cdlWorker) {
+            cdlWorker.current.postMessage({
+                code: CDL_WORKER_PROTOCOL.GO_TO_POSITION,
+                args: {
+                    position: position,
+                },
+            });
+        }
     };
 
     return (
