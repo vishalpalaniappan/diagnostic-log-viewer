@@ -25,7 +25,7 @@ export function VariableStackContainer () {
         base06: "#444",
         base07: "#c586c0", // keys
         base08: "#444",
-        base09: "#ce9178",  //String
+        base09: "#ce9178", // String
         base0A: "rgba(70, 70, 230, 1)",
         base0B: "#ce9178",
         base0C: "rgba(70, 70, 230, 1)",
