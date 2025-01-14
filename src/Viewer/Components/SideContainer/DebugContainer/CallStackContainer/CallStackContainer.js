@@ -22,7 +22,7 @@ export function CallStackContainer () {
 
     return (
         <div className="callStackContainer">
-            {callStack}
+
         </div>
     );
 }
