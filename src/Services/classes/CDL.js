@@ -153,7 +153,7 @@ class CDL {
                     this._processExecutionLog(currLog, position);
                     break;
                 case LINE_TYPE.EXCEPTION:
-                    this._processExceptionLog(currLog);
+                    position = this._processExceptionLog(currLog, position);
                     break;
                 case LINE_TYPE.VARIABLE:
                     this._processVariableLog(currLog);
@@ -222,8 +222,24 @@ class CDL {
      * contains metadata about which log type it belongs to. The execution
      * array is traversed backwards until the relevant log type is found.
      * @param {CDL_LOG} log
+     * @param {Number} position
+     * @return {Number}
      */
-    _processExceptionLog (log) {
+    _processExceptionLog (log, position) {
+        // Group exceptions as it moves down the stack
+        const exceptions = [];
+        do {
+            const currLog = new CDL_LOG(this.logFile[position]);
+            if (currLog.type === LINE_TYPE.EXCEPTION) {
+                const lt = this.header.logTypeMap[currLog.lt];
+                exceptions.push([lt, currLog.value]);
+                position++;
+            } else {
+                break;
+            }
+        } while (position < this.logFile.length);
+
+        // Find logtype this exception belongs to
         let index = this.execution.length - 1;
         do {
             if (this.execution[index] === log.lt) {
@@ -232,8 +248,11 @@ class CDL {
             index--;
         } while (index > 0);
 
+        // Save exceptions
         const e = this.exceptions;
-        e[index] = (index in e)? [...e[index], log.value]: [log.value];
+        e[index] = (index in e)? [...e[index], exceptions]: [exceptions];
+
+        return position - 1;
     }
 }
 
