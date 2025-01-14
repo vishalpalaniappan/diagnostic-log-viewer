@@ -1,0 +1,25 @@
+.stack-row{
+    background:#252526;
+    // height:20px;
+    color:white;
+    font-size: 13px;
+    margin: 3px 0px;
+    padding: 1px 20px;
+}
+
+.stack-row:hover{
+    background:#37373d;
+    cursor:pointer;
+}
+
+.file-name{
+    color:#cccccc;
+}
+
+.pill {
+    background:#4d4d4d;
+    color:#b0ccc3;
+    border-radius:5px;
+    margin-left:10px;
+    padding:0px 5px;
+}
