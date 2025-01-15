@@ -45,35 +45,35 @@ export function DebugToolKit ({}) {
         document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    const {clpWorker} = useContext(WorkerContext);
+    const {cdlWorker} = useContext(WorkerContext);
 
     const stepInto = (e) => {
-        if (clpWorker && clpWorker.current) {
-            clpWorker.current.postMessage({
+        if (cdlWorker && cdlWorker.current) {
+            cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_INTO,
             });
         }
     };
 
     const stepOut = (e) => {
-        if (clpWorker && clpWorker.current) {
-            clpWorker.current.postMessage({
+        if (cdlWorker && cdlWorker.current) {
+            cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OUT,
             });
         }
     };
 
     const stepOverForward = (e) => {
-        if (clpWorker && clpWorker.current) {
-            clpWorker.current.postMessage({
+        if (cdlWorker && cdlWorker.current) {
+            cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD,
             });
         }
     };
 
     const stepOverBackward = (e) => {
-        if (clpWorker && clpWorker.current) {
-            clpWorker.current.postMessage({
+        if (cdlWorker && cdlWorker.current) {
+            cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD,
             });
         }
