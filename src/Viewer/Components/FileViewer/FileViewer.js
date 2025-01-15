@@ -19,6 +19,7 @@ export function FileViewer () {
     const [files, setFiles] = useState();
     const [content, setContent] = useState("Loading...");
     const [lineNumber, setLineNumber] = useState(1);
+    const [exceptions, setExceptions] = useState();
     const [tabs, setTabs] = useState(<></>);
 
     // Consume providers
@@ -26,6 +27,7 @@ export function FileViewer () {
         if (appState && appState.activeFile) {
             setContent(fileTree[appState.activeFile].source);
             setLineNumber(appState.lineno);
+            setExceptions(appState.exceptions);
         }
     }, [appState]);
 
@@ -53,7 +55,11 @@ export function FileViewer () {
                 {tabs}
             </div>
             <div className="editor d-flex flex-grow-1">
-                <MonacoInstance content={content} lineNumber={lineNumber} />
+                <MonacoInstance
+                    content={content}
+                    lineNumber={lineNumber}
+                    exceptions={exceptions}
+                />
             </div>
         </div>
     );

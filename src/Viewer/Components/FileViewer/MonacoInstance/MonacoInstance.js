@@ -3,6 +3,7 @@ import React, {useEffect, useRef} from "react";
 import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import PropTypes from "prop-types";
+import {createRoot} from "react-dom/client";
 
 import "./MonacoInstance.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";
@@ -10,6 +11,7 @@ import "monaco-editor/min/vs/editor/editor.main.css";
 MonacoInstance.propTypes = {
     content: PropTypes.string,
     lineNumber: PropTypes.number,
+    exceptions: PropTypes.array,
 };
 
 
@@ -17,7 +19,7 @@ MonacoInstance.propTypes = {
  * Contains the monaco editor.
  * @return {JSX.Element}
  */
-export function MonacoInstance ({content, lineNumber}) {
+export function MonacoInstance ({content, lineNumber, exceptions}) {
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
     loader.config({monaco});
@@ -53,6 +55,31 @@ export function MonacoInstance ({content, lineNumber}) {
                     },
                 },
             ]);
+
+            if (exceptions) {
+                const exceptionMessage = exceptions[0][0][1];
+                editorRef.current.changeViewZones(function (changeAccessor) {
+                    const domNode = document.createElement("div");
+                    domNode.className = "exception-message";
+                    const l = editorRef.current.getModel().getLineContent(lineNumber);
+                    const numSpaces = l.length - l.trimStart().length;
+                    createRoot(domNode).render(
+                        <div className="d-flex" style={{marginTop: "5px"}}>
+                            <div className="d-flex flex-row">
+                                <span >
+                                    Exception: {exceptionMessage}
+                                </span>
+                            </div>
+                        </div>
+                    );
+                    changeAccessor.addZone({
+                        afterLineNumber: lineNumber,
+                        afterColumn: numSpaces,
+                        heightInPx: 50,
+                        domNode: domNode,
+                    });
+                });
+            }
         }
     }, [content, lineNumber]);
 
