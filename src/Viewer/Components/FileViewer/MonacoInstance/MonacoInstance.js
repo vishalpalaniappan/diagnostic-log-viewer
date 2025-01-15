@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
@@ -20,6 +20,8 @@ MonacoInstance.propTypes = {
  * @return {JSX.Element}
  */
 export function MonacoInstance ({content, lineNumber, exceptions}) {
+    const [zoneId, setZoneId] = useState();
+
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
     loader.config({monaco});
@@ -39,7 +41,7 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
     const handleEditorDidMount =(editor, monaco) => {
         monacoRef.current = monaco;
         editorRef.current = editor;
-        editorRef.current.setValue("test");
+        editorRef.current.setValue("");
     };
 
     useEffect(() => {
@@ -56,13 +58,12 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
                 },
             ]);
 
+            // Set exception if current position contains one.
             if (exceptions) {
                 const exceptionMessage = exceptions[0][0][1];
                 editorRef.current.changeViewZones(function (changeAccessor) {
                     const domNode = document.createElement("div");
                     domNode.className = "exception-message";
-                    const l = editorRef.current.getModel().getLineContent(lineNumber);
-                    const numSpaces = l.length - l.trimStart().length;
                     createRoot(domNode).render(
                         <div className="d-flex" style={{marginTop: "5px"}}>
                             <div className="d-flex flex-row">
@@ -72,13 +73,20 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
                             </div>
                         </div>
                     );
-                    changeAccessor.addZone({
+                    const zoneId = changeAccessor.addZone({
                         afterLineNumber: lineNumber,
-                        afterColumn: numSpaces,
                         heightInPx: 50,
                         domNode: domNode,
                     });
+                    setZoneId(zoneId);
                 });
+            } else {
+                if (zoneId) {
+                    editorRef.current.changeViewZones((changeAccessor) => {
+                        changeAccessor.removeZone(zoneId);
+                        setZoneId(null);
+                    });
+                }
             }
         }
     }, [content, lineNumber]);
