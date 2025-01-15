@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import ReactJsonView from "@microlink/react-json-view";
 
-import AppStateContext from "../../../../../Providers/AppStateContext";
+import VariableStateContext from "../../../../../Providers/VariableStateContext";
 
 import "./VariableStackContainer.scss";
 
@@ -13,7 +13,7 @@ import "./VariableStackContainer.scss";
 export function VariableStackContainer () {
     const [variableStack, setVariableStack] = useState();
 
-    const {appState} = useContext(AppStateContext);
+    const {variables} = useContext(VariableStateContext);
 
     const variableStackTheme = {
         base00: "#252526",
@@ -35,10 +35,11 @@ export function VariableStackContainer () {
     };
 
     useEffect(() => {
-        if (appState) {
-            setVariableStack(appState.variableStack);
+        if (variables) {
+            console.log(variables);
+            setVariableStack(variables);
         }
-    }, [appState]);
+    }, [variables]);
 
     return (
         <div className="variableStackContainer w-100 h-100 ">

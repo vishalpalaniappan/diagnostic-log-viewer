@@ -25,10 +25,10 @@ CallStackRow.propTypes = {
  */
 export function CallStackRow({functionName, fileName, lineno, position}) {
     const {cdlWorker} = useContext(WorkerContext);
-    const goToLine = (e) => {
+    const selectStackPosition = (e) => {
         if (cdlWorker) {
             cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.GO_TO_POSITION,
+                code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
                     position: position,
                 },
@@ -38,7 +38,7 @@ export function CallStackRow({functionName, fileName, lineno, position}) {
 
     return (
         <div
-            onClick={(e) => goToLine(e)}
+            onClick={(e) => selectStackPosition(e)}
             className="stack-row w-100 d-flex flex-row">
             <div className="w-50 ">{functionName}</div>
             <div className="w-50 d-flex justify-content-end">

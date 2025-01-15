@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import AppStateContext from "./AppStateContext";
 import FileTreeContext from "./FileTreeContext";
+import VariableStateContext from "./VariableStateContext";
 import WorkerContext from "./WorkerContext";
 
 CDLProviders.propTypes = {
@@ -20,6 +21,7 @@ CDLProviders.propTypes = {
  */
 function CDLProviders ({children, fileInfo}) {
     const [appState, setAppState] = useState();
+    const [variables, setVariables] = useState();
     const [fileTree, setFileTree] = useState();
 
     const cdlWorker = useRef(null);
@@ -34,6 +36,14 @@ function CDLProviders ({children, fileInfo}) {
     }, []);
 
     /**
+     * This function loads the variables into the variable state.
+     * @param {Object} variables
+     */
+    const loadVariables = (variables) => {
+        setVariables(variables);
+    };
+
+    /**
      * This function loads the metadata into the app state.
      * @param {Object} metadata
      */
@@ -43,7 +53,6 @@ function CDLProviders ({children, fileInfo}) {
             "activeFile": currLt.lt.fileName,
             "lineno": currLt.lt.lineno,
             "callStack": metadata.callStack,
-            "variableStack": metadata.variableStack,
             "exceptions": metadata.exceptions,
         });
     };
@@ -75,6 +84,10 @@ function CDLProviders ({children, fileInfo}) {
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
                 loadPositionMetadata(event.data.args);
                 break;
+            case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
+                console.log(event.data.args);
+                loadVariables(event.data.args.variableStack);
+                break;
             default:
                 break;
         }
@@ -84,7 +97,9 @@ function CDLProviders ({children, fileInfo}) {
         <AppStateContext.Provider value={{appState, setAppState}}>
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
-                    {children}
+                    <VariableStateContext.Provider value={{variables}}>
+                        {children}
+                    </VariableStateContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
         </AppStateContext.Provider>

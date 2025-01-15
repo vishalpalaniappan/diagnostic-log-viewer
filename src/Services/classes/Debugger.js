@@ -60,6 +60,20 @@ class Debugger {
             },
         });
     }
+
+    /**
+     * This function returns the variable stack given a position.
+     * @param {Number} position
+     */
+    getVariableStack (position) {
+        const variableStack = this.cdl.getVariableStack(position);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
+            args: {
+                variableStack: variableStack,
+            },
+        });
+    }
 };
 
 export default Debugger;

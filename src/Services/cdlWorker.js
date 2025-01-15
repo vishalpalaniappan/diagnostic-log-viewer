@@ -19,6 +19,13 @@ onmessage = function (e) {
                 console.log(e);
             }
             break;
+        case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
+            try {
+                console.log(e.data.args);
+                debuggerInstance.getVariableStack(e.data.args.position);
+            } catch (e) {
+                console.log(e);
+            }
         default:
             break;
     }
