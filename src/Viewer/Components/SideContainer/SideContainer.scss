@@ -1,22 +1,27 @@
 .side-container .menu {
     height:100%;
-    width:50px;
+    width:100%;
     background:#333333;
 }
 
-.side-container .accordian {
+.menu-icon {
+    margin:10px 0;
+    cursor:pointer;
+}
+
+.side-container > .accordian {
     height:100%;
     width:300px;
     background:#252526;
 }
 
-.side-container .handle {
+.side-container > .handle {
     height: 100%;
     width: 3px;
     background: #252526;
     cursor: ew-resize;
 }
 
-.side-container .handle-active{
+.side-container > .handle-active{
     background-color:#007acc;
 }

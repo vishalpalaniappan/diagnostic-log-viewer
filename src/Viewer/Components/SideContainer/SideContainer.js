@@ -1,4 +1,6 @@
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
+
+import {Bug, Signpost} from "react-bootstrap-icons";
 
 import {DebugContainer} from "./DebugContainer/DebugContainer";
 
@@ -9,6 +11,8 @@ import "./SideContainer.scss";
  * @return {JSX.Element}
  */
 export function SideContainer () {
+    const [activeMenu, setActiveMenu] = useState(1);
+
     const accordian = useRef();
     const handle = useRef();
 
@@ -46,13 +50,29 @@ export function SideContainer () {
         handle.current.classList.remove("handle-active");
     };
 
+    const getActiveMenuComponent = () => {
+        if (activeMenu === 1) {
+            return <DebugContainer />;
+        } else if (activeMenu === 2) {
+
+        }
+    };
+
     return (
         <div className="side-container d-flex flex-row">
-            <div className="menu" style={{width: SIDE_MENU_WIDTH+"px"}}>
-
+            <div className="menu d-flex flex-column align-items-center"
+                style={{width: SIDE_MENU_WIDTH+"px"}}>
+                <Bug
+                    className="menu-icon" size={25}
+                    onClick={(e) => {setActiveMenu(1);}}
+                    style={{color: activeMenu == 1 ? "white": "grey"}}/>
+                <Signpost
+                    className="menu-icon" size={25}
+                    onClick={(e) => {setActiveMenu(2);}}
+                    style={{color: activeMenu == 2 ? "white": "grey"}}/>
             </div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
-                <DebugContainer />
+                {getActiveMenuComponent()}
             </div>
             <div className="handle" ref={handle} onMouseDown={handleMouseDown}>
 
