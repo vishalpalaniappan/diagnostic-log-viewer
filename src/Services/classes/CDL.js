@@ -214,9 +214,10 @@ class CDL {
             }
         }
 
-        const callStackIds = [...this.callStack, position].map((position) => {
+        const callStackIds = [...this.callStack].map((position) => {
             return position-1;
         });
+        callStackIds.push(position);
 
         this.callStacks.push(callStackIds);
     }
