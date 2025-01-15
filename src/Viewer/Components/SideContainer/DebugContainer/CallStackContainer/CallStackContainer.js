@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import AppStateContext from "../../../../../Providers/AppStateContext";
+import PositionStateContext from "../../../../../Providers/PositionStateContext";
 import WorkerContext from "../../../../../Providers/WorkerContext";
 import CDL_WORKER_PROTOCOL from "../../../../../Services/CDL_WORKER_PROTOCOL";
 import {CallStackRow} from "./CallStackRow/CallStackRow";
@@ -14,12 +14,12 @@ import "./CallStackContainer.scss";
 export function CallStackContainer () {
     const [callStack, setCallStack] = useState();
 
-    const {appState} = useContext(AppStateContext);
+    const {positionState} = useContext(PositionStateContext);
     const {cdlWorker} = useContext(WorkerContext);
 
     useEffect(() => {
-        if (appState && appState.callStack) {
-            const stack = appState.callStack;
+        if (positionState && positionState.callStack) {
+            const stack = positionState.callStack;
             const calls = [];
             stack.forEach((call, index) => {
                 const row = <CallStackRow
@@ -40,7 +40,7 @@ export function CallStackContainer () {
                 },
             });
         }
-    }, [appState]);
+    }, [positionState]);
 
     return (
         <div className="callStackContainer">

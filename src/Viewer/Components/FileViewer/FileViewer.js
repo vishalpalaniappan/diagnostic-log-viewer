@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import AppStateContext from "../../../Providers/AppStateContext";
 import FileTreeContext from "../../../Providers/FileTreeContext";
+import PositionStateContext from "../../../Providers/PositionStateContext";
 import {MonacoInstance} from "./MonacoInstance/MonacoInstance";
 import {Tab} from "./Tab/Tab";
 
@@ -13,7 +13,7 @@ import "monaco-editor/min/vs/editor/editor.main.css";
  * @return {JSX.Element}
  */
 export function FileViewer () {
-    const {appState} = useContext(AppStateContext);
+    const {positionState} = useContext(PositionStateContext);
     const {fileTree} = useContext(FileTreeContext);
 
     const [files, setFiles] = useState();
@@ -24,12 +24,12 @@ export function FileViewer () {
 
     // Consume providers
     useEffect(() => {
-        if (appState && appState.activeFile) {
-            setContent(fileTree[appState.activeFile].source);
-            setLineNumber(appState.lineno);
-            setExceptions(appState.exceptions);
+        if (positionState && positionState.activeFile) {
+            setContent(fileTree[positionState.activeFile].source);
+            setLineNumber(positionState.lineno);
+            setExceptions(positionState.exceptions);
         }
-    }, [appState]);
+    }, [positionState]);
 
     useEffect(() => {
         if (fileTree) {

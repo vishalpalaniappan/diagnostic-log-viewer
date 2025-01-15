@@ -3,8 +3,8 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import PropTypes from "prop-types";
 
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
-import AppStateContext from "./AppStateContext";
 import FileTreeContext from "./FileTreeContext";
+import PositionStateContext from "./PositionStateContext";
 import VariableStateContext from "./VariableStateContext";
 import WorkerContext from "./WorkerContext";
 
@@ -20,7 +20,7 @@ CDLProviders.propTypes = {
  * @return {JSX}
  */
 function CDLProviders ({children, fileInfo}) {
-    const [appState, setAppState] = useState();
+    const [positionState, setPositionState] = useState();
     const [variables, setVariables] = useState();
     const [fileTree, setFileTree] = useState();
 
@@ -49,7 +49,7 @@ function CDLProviders ({children, fileInfo}) {
      */
     const loadPositionMetadata = (metadata) => {
         const currLt = metadata.currLtInfo;
-        setAppState({
+        setPositionState({
             "activeFile": currLt.lt.fileName,
             "lineno": currLt.lt.lineno,
             "callStack": metadata.callStack,
@@ -94,7 +94,7 @@ function CDLProviders ({children, fileInfo}) {
     });
 
     return (
-        <AppStateContext.Provider value={{appState, setAppState}}>
+        <PositionStateContext.Provider value={{positionState}}>
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
                     <VariableStateContext.Provider value={{variables}}>
@@ -102,7 +102,7 @@ function CDLProviders ({children, fileInfo}) {
                     </VariableStateContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
-        </AppStateContext.Provider>
+        </PositionStateContext.Provider>
     );
 };
 
