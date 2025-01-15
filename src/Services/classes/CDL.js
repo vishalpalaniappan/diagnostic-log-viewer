@@ -85,7 +85,6 @@ class CDL {
      * @return {Object}
      */
     getCallStack (position) {
-        console.log(this.callStacks);
         const cs = this.callStacks[position];
 
         const csInfo = [];
