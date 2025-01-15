@@ -14,14 +14,12 @@ export function DebugContainer () {
     const debugContainerRef = useRef();
     const variableStackRef = useRef();
     const callStackRef = useRef();
-    const breakPointsRef = useRef();
 
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
-        const containerHeight = Math.floor(height/3) + "px";
+        const containerHeight = Math.floor(height/2) + "px";
         callStackRef.current.style.height = containerHeight;
         variableStackRef.current.style.height = containerHeight;
-        breakPointsRef.current.style.height = containerHeight;
     };
 
     useEffect(() => {
@@ -36,10 +34,6 @@ export function DebugContainer () {
             <VerticleHandle topDiv={variableStackRef} bottomDiv={callStackRef}/>
             <div className="section" ref={callStackRef}>
                 <CallStackContainer />
-            </div>
-            <VerticleHandle topDiv={callStackRef} bottomDiv={breakPointsRef}/>
-            <div className="section" ref={breakPointsRef}>
-
             </div>
         </div>
     );
