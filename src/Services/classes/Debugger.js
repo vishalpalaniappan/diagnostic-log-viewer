@@ -35,7 +35,8 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this._goToPosition(985);
+        this.position = this.cdl.execution.length - 1;
+        this._goToPosition(this.position);
     }
 
     /**
@@ -47,7 +48,6 @@ class Debugger {
         const currLtInfo = this.cdl.header.logTypeMap[currLt];
 
         const callStack = this.cdl.getCallStack(position);
-        const variableStack = this.cdl.getVariableStack(position);
         const exceptions = this.cdl.getExceptions(position);
 
         postMessage({
@@ -55,7 +55,6 @@ class Debugger {
             args: {
                 currLtInfo: currLtInfo,
                 callStack: callStack,
-                variableStack: variableStack,
                 exceptions: exceptions,
             },
         });
@@ -73,6 +72,26 @@ class Debugger {
                 variableStack: variableStack,
             },
         });
+    }
+
+    /**
+     * This function steps into the next position.
+     * @param {Number} position
+     */
+    stepInto () {
+        if (this.position < this.cdl.execution.length - 1) {
+            this._goToPosition(++this.position);
+        } else {
+            console.log("Reached end of file.");
+        }
+    }
+
+    /**
+     * This function steps out the next position.
+     * @param {Number} position
+     */
+    stepOut () {
+        this._goToPosition(--this.position);
     }
 };
 
