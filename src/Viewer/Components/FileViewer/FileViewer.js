@@ -35,7 +35,6 @@ export function FileViewer () {
 
     useEffect(() => {
         if (stackPositionState && stackPositionState.activeFile) {
-            console.log(stackPositionState);
             setContent(fileTree[stackPositionState.activeFile].source);
             setLineNumber(stackPositionState.lineno);
             setExceptions(stackPositionState.exceptions);
