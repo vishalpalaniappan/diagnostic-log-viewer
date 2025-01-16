@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import FileTreeContext from "./FileTreeContext";
 import PositionStateContext from "./PositionStateContext";
+import StackStateContext from "./StackStateContext";
 import VariableStateContext from "./VariableStateContext";
 import WorkerContext from "./WorkerContext";
 
@@ -21,7 +22,7 @@ CDLProviders.propTypes = {
  */
 function CDLProviders ({children, fileInfo}) {
     const [positionState, setPositionState] = useState();
-    const [stackPosition, setStackPosition] = useState();
+    const [stackPositionState, setStackPositionState] = useState();
     const [variables, setVariables] = useState();
     const [fileTree, setFileTree] = useState();
 
@@ -89,9 +90,8 @@ function CDLProviders ({children, fileInfo}) {
                 loadVariables(event.data.args.variableStack);
                 break;
             case CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA:
-                console.log(event.data.args);
                 const currLt = event.data.args.currLtInfo;
-                setStackPosition({
+                setStackPositionState({
                     "activeFile": currLt.lt.fileName,
                     "lineno": currLt.lt.lineno,
                     "exceptions": event.data.args.exceptions,
@@ -107,7 +107,9 @@ function CDLProviders ({children, fileInfo}) {
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
                     <VariableStateContext.Provider value={{variables}}>
-                        {children}
+                        <StackStateContext.Provider value={{stackPositionState}}>
+                            {children}
+                        </StackStateContext.Provider>
                     </VariableStateContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
