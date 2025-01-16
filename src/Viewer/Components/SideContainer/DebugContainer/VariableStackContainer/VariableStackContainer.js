@@ -36,7 +36,6 @@ export function VariableStackContainer () {
 
     useEffect(() => {
         if (variables) {
-            console.log(variables);
             setVariableStack(variables);
         }
     }, [variables]);
