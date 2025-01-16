@@ -3,7 +3,6 @@ import React, {useEffect, useRef, useState} from "react";
 import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import PropTypes from "prop-types";
-import {createRoot} from "react-dom/client";
 
 import "./MonacoInstance.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";
@@ -42,25 +41,6 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
         monacoRef.current = monaco;
         editorRef.current = editor;
         editorRef.current.setValue("");
-    };
-
-    const getExceptionMessage = (exceptionMessage) => {
-        const domNode = document.createElement("div");
-        domNode.className = "exception-message";
-        domNode.onmousemove = (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-        };
-        createRoot(domNode).render(
-            <div className="d-flex" style={{marginTop: "5px"}}>
-                <div className="d-flex flex-row">
-                    <span>
-                        Exception: {exceptionMessage}
-                    </span>
-                </div>
-            </div>
-        );
-        return domNode;
     };
 
     useEffect(() => {
@@ -105,7 +85,6 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
         "scrollBeyondLastLine": false,
         "glyphMargin": true,
     };
-
 
     return (
         <Editor
