@@ -4,6 +4,8 @@ import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import PropTypes from "prop-types";
 
+import {getExceptionMessage} from "./helper";
+
 import "./MonacoInstance.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";
 
