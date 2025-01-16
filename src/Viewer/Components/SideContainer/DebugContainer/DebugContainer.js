@@ -30,16 +30,12 @@ export function DebugContainer () {
 
     return (
         <div ref={debugContainerRef} className="debug-container w-100 d-flex flex-column">
-            <div className="w-100 title" style={{height: "20px"}}>
-                Variable Stack
-            </div>
+            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Variable Stack</div>
             <div className="section" ref={variableStackRef}>
                 <VariableStackContainer />
             </div>
             <VerticleHandle topDiv={variableStackRef} bottomDiv={callStackRef}/>
-            <div className="w-100 title" style={{height: "20px"}}>
-                Call Stack
-            </div>
+            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Call Stack</div>
             <div className="section" ref={callStackRef}>
                 <CallStackContainer />
             </div>
