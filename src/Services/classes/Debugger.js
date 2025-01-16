@@ -36,14 +36,14 @@ class Debugger {
             },
         });
         this.position = this.cdl.execution.length - 1;
-        this._goToPosition(this.position);
+        this.getPositionData(this.position);
     }
 
     /**
      *
      * @param {Number} position Position in execution sequence to go to.
      */
-    _goToPosition (position) {
+    getPositionData (position) {
         const currLt = this.cdl.execution[position];
         const currLtInfo = this.cdl.header.logTypeMap[currLt];
 
@@ -56,6 +56,32 @@ class Debugger {
                 currLtInfo: currLtInfo,
                 callStack: callStack,
                 exceptions: exceptions,
+            },
+        });
+    }
+
+    /**
+     *
+     * @param {Number} position Position in execution sequence to go to.
+     */
+    getStackData (position) {
+        const currLt = this.cdl.execution[position];
+        const currLtInfo = this.cdl.header.logTypeMap[currLt];
+
+        const exceptions = this.cdl.getExceptions(position);
+        const variableStack = this.cdl.getVariableStack(position);
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA,
+            args: {
+                currLtInfo: currLtInfo,
+                exceptions: exceptions,
+            },
+        });
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
+            args: {
+                variableStack: variableStack,
             },
         });
     }
@@ -80,7 +106,7 @@ class Debugger {
      */
     stepInto () {
         if (this.position < this.cdl.execution.length - 1) {
-            this._goToPosition(++this.position);
+            this.getPositionData(++this.position);
         } else {
             console.log("Reached end of file.");
         }
@@ -91,7 +117,7 @@ class Debugger {
      * @param {Number} position
      */
     stepOut () {
-        this._goToPosition(--this.position);
+        this.getPositionData(--this.position);
     }
 };
 

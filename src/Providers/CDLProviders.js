@@ -21,6 +21,7 @@ CDLProviders.propTypes = {
  */
 function CDLProviders ({children, fileInfo}) {
     const [positionState, setPositionState] = useState();
+    const [stackPosition, setStackPosition] = useState();
     const [variables, setVariables] = useState();
     const [fileTree, setFileTree] = useState();
 
@@ -85,8 +86,16 @@ function CDLProviders ({children, fileInfo}) {
                 loadPositionMetadata(event.data.args);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                console.log(event.data.args);
                 loadVariables(event.data.args.variableStack);
+                break;
+            case CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA:
+                console.log(event.data.args);
+                const currLt = event.data.args.currLtInfo;
+                setStackPosition({
+                    "activeFile": currLt.lt.fileName,
+                    "lineno": currLt.lt.lineno,
+                    "exceptions": event.data.args.exceptions,
+                });
                 break;
             default:
                 break;

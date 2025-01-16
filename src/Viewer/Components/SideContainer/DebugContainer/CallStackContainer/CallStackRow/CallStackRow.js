@@ -28,7 +28,7 @@ export function CallStackRow({functionName, fileName, lineno, position}) {
     const selectStackPosition = (e) => {
         if (cdlWorker) {
             cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
+                code: CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA,
                 args: {
                     position: position,
                 },

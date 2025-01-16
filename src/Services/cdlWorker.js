@@ -14,7 +14,14 @@ onmessage = function (e) {
             break;
         case CDL_WORKER_PROTOCOL.GO_TO_POSITION:
             try {
-                debuggerInstance._goToPosition(e.data.args.position);
+                debuggerInstance.getPositionData(e.data.args.position);
+            } catch (e) {
+                console.error(e);
+            }
+            break;
+        case CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA:
+            try {
+                debuggerInstance.getStackData(e.data.args.position);
             } catch (e) {
                 console.error(e);
             }
