@@ -15,11 +15,13 @@ export function DebugContainer () {
     const variableStackRef = useRef();
     const callStackRef = useRef();
 
+    const TITLE_HEIGHT = 20;
+
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
-        const containerHeight = Math.floor(height/2) + "px";
-        callStackRef.current.style.height = containerHeight;
-        variableStackRef.current.style.height = containerHeight;
+        const containerHeight = Math.floor(height/2);
+        callStackRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
+        variableStackRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
     };
 
     useEffect(() => {
@@ -28,10 +30,16 @@ export function DebugContainer () {
 
     return (
         <div ref={debugContainerRef} className="debug-container w-100 d-flex flex-column">
+            <div className="w-100 title" style={{height: "20px"}}>
+                Variable Stack
+            </div>
             <div className="section" ref={variableStackRef}>
                 <VariableStackContainer />
             </div>
             <VerticleHandle topDiv={variableStackRef} bottomDiv={callStackRef}/>
+            <div className="w-100 title" style={{height: "20px"}}>
+                Call Stack
+            </div>
             <div className="section" ref={callStackRef}>
                 <CallStackContainer />
             </div>
