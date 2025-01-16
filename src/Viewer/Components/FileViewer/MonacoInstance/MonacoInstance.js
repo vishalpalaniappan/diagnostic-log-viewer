@@ -44,6 +44,25 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
         editorRef.current.setValue("");
     };
 
+    const getExceptionMessage = (exceptionMessage) => {
+        const domNode = document.createElement("div");
+        domNode.className = "exception-message";
+        domNode.onmousemove = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+        };
+        createRoot(domNode).render(
+            <div className="d-flex" style={{marginTop: "5px"}}>
+                <div className="d-flex flex-row">
+                    <span>
+                        Exception: {exceptionMessage}
+                    </span>
+                </div>
+            </div>
+        );
+        return domNode;
+    };
+
     useEffect(() => {
         if (content && editorRef && editorRef.current) {
             editorRef.current.setValue(content);
@@ -62,21 +81,10 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
             if (exceptions) {
                 const exceptionMessage = exceptions[0][0][1];
                 editorRef.current.changeViewZones(function (changeAccessor) {
-                    const domNode = document.createElement("div");
-                    domNode.className = "exception-message";
-                    createRoot(domNode).render(
-                        <div className="d-flex" style={{marginTop: "5px"}}>
-                            <div className="d-flex flex-row">
-                                <span >
-                                    Exception: {exceptionMessage}
-                                </span>
-                            </div>
-                        </div>
-                    );
                     const zoneId = changeAccessor.addZone({
                         afterLineNumber: lineNumber,
                         heightInPx: 50,
-                        domNode: domNode,
+                        domNode: getExceptionMessage(exceptionMessage),
                     });
                     setZoneId(zoneId);
                 });
