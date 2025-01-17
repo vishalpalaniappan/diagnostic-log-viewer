@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useRef} from "react";
 import PropTypes from "prop-types";
 import {FiletypePy} from "react-bootstrap-icons";
 
-import PositionStateContext from "../../../../Providers/PositionStateContext";
+import PositionStateContext from "../../../../../Providers/PositionStateContext";
 
 import "./Tab.scss";
 
@@ -12,7 +12,7 @@ Tab.propTypes = {
 };
 
 /**
- * Contains the monaco editor.
+ * Tab Component.
  * @return {JSX.Element}
  */
 export function Tab ({fileName}) {

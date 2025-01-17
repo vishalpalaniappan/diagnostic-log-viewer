@@ -1,0 +1,10 @@
+$tabs-height: 40px;
+
+.tabs {
+    height:$tabs-height;
+    background:#252526;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: #47474766 #1e1e1e;
+    scrollbar-width: thin;
+}
