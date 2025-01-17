@@ -10,9 +10,10 @@ import "./MonacoInstance.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";
 
 MonacoInstance.propTypes = {
+    activeFile: PropTypes.string,
     content: PropTypes.string,
-    lineNumber: PropTypes.number,
-    exceptions: PropTypes.array,
+    stackPositionInfo: PropTypes.object,
+    debuggerPositionInfo: PropTypes.object,
 };
 
 
@@ -20,11 +21,12 @@ MonacoInstance.propTypes = {
  * Contains the monaco editor.
  * @return {JSX.Element}
  */
-export function MonacoInstance ({content, lineNumber, exceptions}) {
+export function MonacoInstance ({activeFile, content, stackPositionInfo, debuggerPositionInfo}) {
     const [zoneId, setZoneId] = useState();
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
+
     loader.config({monaco});
 
     /**
@@ -48,38 +50,32 @@ export function MonacoInstance ({content, lineNumber, exceptions}) {
     useEffect(() => {
         if (content && editorRef && editorRef.current) {
             editorRef.current.setValue(content);
-            editorRef.current.revealLineInCenter(lineNumber);
-            editorRef.current.deltaDecorations([], [
-                {
-                    range: new monaco.Range(lineNumber, 1, lineNumber, 1),
-                    options: {
-                        isWholeLine: true,
-                        className: "selectedLine",
-                    },
-                },
-            ]);
-
-            // Set exception if current position contains one.
-            if (exceptions) {
-                const exceptionMessage = exceptions[0][0][1];
-                editorRef.current.changeViewZones(function (changeAccessor) {
-                    const zoneId = changeAccessor.addZone({
-                        afterLineNumber: lineNumber,
-                        heightInPx: 50,
-                        domNode: getExceptionMessage(exceptionMessage),
-                    });
-                    setZoneId(zoneId);
-                });
-            } else {
-                if (zoneId) {
-                    editorRef.current.changeViewZones((changeAccessor) => {
-                        changeAccessor.removeZone(zoneId);
-                        setZoneId(null);
-                    });
-                }
-            }
         }
-    }, [content, lineNumber]);
+    }, [content]);
+
+    useEffect(() => {
+        if (content && editorRef && editorRef.current) {
+            editorRef.current.setValue(content);
+            if (debuggerPositionInfo && activeFile === debuggerPositionInfo.fileName) {
+                const lineno = debuggerPositionInfo.lineno;
+                editorRef.current.deltaDecorations([], [{
+                    range: new monaco.Range(lineno, 1, lineno, 1),
+                    options: {isWholeLine: true, className: "selectedLine"},
+                }]);
+                editorRef.current.revealLineInCenter(lineno);
+            }
+            if (stackPositionInfo && activeFile === stackPositionInfo.fileName) {
+                const debuggerLineno = debuggerPositionInfo.lineno;
+                const lineno = stackPositionInfo.lineno;
+                const lineClass = (debuggerLineno === lineno)?"selectedLine":"stackLine";
+                editorRef.current.deltaDecorations([], [{
+                    range: new monaco.Range(lineno, 1, lineno, 1),
+                    options: {isWholeLine: true, className: lineClass},
+                }]);
+                editorRef.current.revealLineInCenter(lineno);
+            };
+        };
+    }, [stackPositionInfo, debuggerPositionInfo]);
 
     const monacoOptions = {
         "renderWhitespace": "none",

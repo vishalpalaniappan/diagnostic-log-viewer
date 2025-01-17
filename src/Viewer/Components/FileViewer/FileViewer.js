@@ -4,7 +4,7 @@ import FileTreeContext from "../../../Providers/FileTreeContext";
 import PositionStateContext from "../../../Providers/PositionStateContext";
 import StackStateContext from "../../../Providers/StackStateContext";
 import {MonacoInstance} from "./MonacoInstance/MonacoInstance";
-import {Tab} from "./Tab/Tab";
+import {Tabs} from "./Tabs/Tabs";
 
 import "./FileViewer.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";
@@ -18,57 +18,46 @@ export function FileViewer () {
     const {positionState} = useContext(PositionStateContext);
     const {fileTree} = useContext(FileTreeContext);
 
-    const [files, setFiles] = useState();
-    const [content, setContent] = useState("Loading...");
-    const [lineNumber, setLineNumber] = useState(1);
-    const [exceptions, setExceptions] = useState();
-    const [tabs, setTabs] = useState(<></>);
+    const [activeFile, setActiveFile] = useState("Loading...");
+    const [debuggerPositionInfo, setDebuggerPositionInfo] = useState();
+    const [stackPositionInfo, setStackPositionInfo] = useState();
+    const [content, setContent] = useState("");
 
     // Consume providers
     useEffect(() => {
         if (positionState && positionState.activeFile) {
+            setActiveFile(positionState.activeFile);
             setContent(fileTree[positionState.activeFile].source);
-            setLineNumber(positionState.lineno);
-            setExceptions(positionState.exceptions);
+            setDebuggerPositionInfo({
+                fileName: positionState.activeFile,
+                lineno: positionState.lineno,
+                exceptions: positionState.exceptions,
+            });
         }
     }, [positionState]);
 
     useEffect(() => {
         if (stackPositionState && stackPositionState.activeFile) {
+            setActiveFile(stackPositionState.activeFile);
             setContent(fileTree[stackPositionState.activeFile].source);
-            setLineNumber(stackPositionState.lineno);
-            setExceptions(stackPositionState.exceptions);
+            setStackPositionInfo({
+                fileName: stackPositionState.activeFile,
+                lineno: stackPositionState.lineno,
+                exceptions: stackPositionState.exceptions,
+            });
         }
     }, [stackPositionState]);
 
-    useEffect(() => {
-        if (fileTree) {
-            setFiles(Object.keys(fileTree));
-        }
-    }, [fileTree]);
 
-    // React to state changes
-    useEffect(() => {
-        if (files) {
-            const tabs = files.map((file, index) => {
-                return <Tab key={index} fileName={file}></Tab>;
-            });
-            setTabs(tabs);
-        }
-    }, [files]);
-
-    // TODO: Reimplement scroll bar for tabs, I don't like
-    // the way I implemented it now.
     return (
         <div className="file-view-container d-flex flex-column">
-            <div className="tabs d-flex">
-                {tabs}
-            </div>
+            <Tabs />
             <div className="editor d-flex flex-grow-1">
                 <MonacoInstance
+                    activeFile={activeFile}
                     content={content}
-                    lineNumber={lineNumber}
-                    exceptions={exceptions}
+                    stackPositionInfo={stackPositionInfo}
+                    debuggerPositionInfo={debuggerPositionInfo}
                 />
             </div>
         </div>
