@@ -33,7 +33,7 @@ export function CallStackRow({index, functionName, fileName, lineno, position}) 
     const {cdlWorker} = useContext(WorkerContext);
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stack} = useContext(StackContext);
-    const {setActiveFile} = useContext(ActiveFileContext);
+    const {activeFile, setActiveFile} = useContext(ActiveFileContext);
 
     const selectStackPosition = (e) => {
         if (cdlWorker) {
@@ -44,8 +44,8 @@ export function CallStackRow({index, functionName, fileName, lineno, position}) 
                 },
             });
         }
-        setStackPosition(index);
         setActiveFile(stack[index].fileName);
+        setStackPosition(index);
     };
 
     useEffect(() => {
