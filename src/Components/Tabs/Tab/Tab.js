@@ -17,7 +17,7 @@ Tab.propTypes = {
  */
 export function Tab ({fileName}) {
     const tabRef = useRef();
-    const {stackPosition, setStackPosition} = useContext(StackPositionContext);
+    const {stackPosition} = useContext(StackPositionContext);
 
     useEffect(() => {
         if (stackPosition) {
