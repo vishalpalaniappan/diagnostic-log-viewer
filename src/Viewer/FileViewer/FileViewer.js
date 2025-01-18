@@ -1,7 +1,7 @@
 import React from "react";
 
-import {MonacoInstance} from "../../../Components/MonacoInstance/MonacoInstance";
-import {Tabs} from "../../../Components/Tabs/Tabs";
+import {MonacoInstance} from "../../Components/MonacoInstance/MonacoInstance";
+import {Tabs} from "../../Components/Tabs/Tabs";
 
 import "./FileViewer.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";

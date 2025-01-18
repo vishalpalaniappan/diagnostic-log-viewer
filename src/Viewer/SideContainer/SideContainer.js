@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 
 import {Bug, Signpost} from "react-bootstrap-icons";
 
-import {DebugContainer} from "../../../Components/DebugContainer/DebugContainer";
+import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
 
 import "./SideContainer.scss";
 
