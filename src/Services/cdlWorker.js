@@ -19,16 +19,8 @@ onmessage = function (e) {
                 console.error(e);
             }
             break;
-        case CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA:
-            try {
-                debuggerInstance.getStackData(e.data.args.position);
-            } catch (e) {
-                console.error(e);
-            }
-            break;
         case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
             try {
-                console.log(e.data.args);
                 debuggerInstance.getVariableStack(e.data.args.position);
             } catch (e) {
                 console.error(e);

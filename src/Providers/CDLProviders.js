@@ -21,8 +21,8 @@ CDLProviders.propTypes = {
  * @return {JSX}
  */
 function CDLProviders ({children, fileInfo}) {
-    const [positionState, setPositionState] = useState();
-    const [stackPositionState, setStackPositionState] = useState();
+    const [stack, setStack] = useState();
+    const [stackPosition, setStackPosition] = useState();
     const [variables, setVariables] = useState();
     const [fileTree, setFileTree] = useState();
 
@@ -36,28 +36,6 @@ function CDLProviders ({children, fileInfo}) {
             }
         };
     }, []);
-
-    /**
-     * This function loads the variables into the variable state.
-     * @param {Object} variables
-     */
-    const loadVariables = (variables) => {
-        setVariables(variables);
-    };
-
-    /**
-     * This function loads the metadata into the app state.
-     * @param {Object} metadata
-     */
-    const loadPositionMetadata = (metadata) => {
-        const currLt = metadata.currLtInfo;
-        setPositionState({
-            "activeFile": currLt.lt.fileName,
-            "lineno": currLt.lt.lineno,
-            "callStack": metadata.callStack,
-            "exceptions": metadata.exceptions,
-        });
-    };
 
     // Create worker to handle file.
     useEffect(() => {
@@ -84,18 +62,13 @@ function CDLProviders ({children, fileInfo}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
-                loadPositionMetadata(event.data.args);
+                setStack(event.data.args.callStack);
+                setStackPosition(0);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                loadVariables(event.data.args.variableStack);
+                setVariables(event.data.args.variableStack);
                 break;
             case CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA:
-                const currLt = event.data.args.currLtInfo;
-                setStackPositionState({
-                    "activeFile": currLt.lt.fileName,
-                    "lineno": currLt.lt.lineno,
-                    "exceptions": event.data.args.exceptions,
-                });
                 break;
             default:
                 break;
@@ -103,11 +76,11 @@ function CDLProviders ({children, fileInfo}) {
     });
 
     return (
-        <PositionStateContext.Provider value={{positionState}}>
+        <PositionStateContext.Provider value={{stackPosition, setStackPosition}}>
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
                     <VariableStateContext.Provider value={{variables}}>
-                        <StackStateContext.Provider value={{stackPositionState}}>
+                        <StackStateContext.Provider value={{stack}}>
                             {children}
                         </StackStateContext.Provider>
                     </VariableStateContext.Provider>

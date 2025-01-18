@@ -1,6 +1,6 @@
 import React from "react";
 
-import {DebugToolKit} from "./Components/DebugToolKit/DebugToolKit";
+import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
 import {FileViewer} from "./Components/FileViewer/FileViewer";
 import {SideContainer} from "./Components/SideContainer/SideContainer";
 

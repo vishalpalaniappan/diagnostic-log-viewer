@@ -7,8 +7,11 @@
     padding: 1px 20px;
 }
 
+.active-row{
+    background:#184b2d;
+}
+
 .stack-row:hover{
-    background:#37373d;
     cursor:pointer;
 }
 

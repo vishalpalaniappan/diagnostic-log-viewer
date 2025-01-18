@@ -3,8 +3,8 @@ import React, {useContext, useRef} from "react";
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat,
     ArrowRightShort, ArrowUpShort, Play, Stop, ThreeDotsVertical} from "react-bootstrap-icons";
 
-import WorkerContext from "../../../Providers/WorkerContext";
-import CDL_WORKER_PROTOCOL from "../../../Services/CDL_WORKER_PROTOCOL";
+import WorkerContext from "../../Providers/WorkerContext";
+import CDL_WORKER_PROTOCOL from "../../Services/CDL_WORKER_PROTOCOL";
 
 import "./DebugToolKit.scss";
 

@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useRef} from "react";
 import PropTypes from "prop-types";
 import {FiletypePy} from "react-bootstrap-icons";
 
-import PositionStateContext from "../../../../../Providers/PositionStateContext";
+import PositionStateContext from "../../../Providers/PositionStateContext";
 
 import "./Tab.scss";
 

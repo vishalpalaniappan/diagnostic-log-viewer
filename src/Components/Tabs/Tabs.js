@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import FileTreeContext from "../../../../Providers/FileTreeContext";
+import FileTreeContext from "../../Providers/FileTreeContext";
 import {Tab} from "./Tab/Tab";
 
 import "./Tabs.scss";

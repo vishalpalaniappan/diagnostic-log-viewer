@@ -92,6 +92,7 @@ class CDL {
         cs.forEach((position, index) => {
             const currLt = this.getLogTypeInfoAt(position);
             const parent = this.getFunctionLogTypeInfoAt(position);
+            const exceptions = this.exceptions[position];
             const info = {};
 
             if (index === 0) {
@@ -105,11 +106,11 @@ class CDL {
             info.fileName = currLt.getFileName();
             info.lineno = currLt.getLineNo();
             info.position = position;
+            info.exceptions = exceptions;
             csInfo.push(info);
         });
 
-
-        return csInfo;
+        return csInfo.reverse();
     }
 
     /**
