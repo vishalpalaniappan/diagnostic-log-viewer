@@ -4,6 +4,7 @@ import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import PropTypes from "prop-types";
 
+import ActiveFileContext from "../../Providers/ActiveFileContext";
 import FileTreeContext from "../../Providers/FileTreeContext";
 import StackContext from "../../Providers/StackContext";
 import PositionStateContext from "../../Providers/StackPositionContext";
@@ -28,9 +29,12 @@ export function MonacoInstance ({}) {
     const {stackPosition} = useContext(PositionStateContext);
     const {stack} = useContext(StackContext);
     const {fileTree} = useContext(FileTreeContext);
+    const {activeFile} = useContext(ActiveFileContext);
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
+
+    let decorations = [];
 
     const addException = (stackPosition) => {
         if (stackPosition.exceptions) {
@@ -44,40 +48,46 @@ export function MonacoInstance ({}) {
                 setZoneId(zoneId);
             });
         } else {
-            if (zoneId) {
-                editorRef.current.changeViewZones((changeAccessor) => {
-                    changeAccessor.removeZone(zoneId);
-                    setZoneId(null);
-                });
-            }
+            clearExceptions();
+        }
+    };
+
+    const clearExceptions = () => {
+        if (zoneId) {
+            editorRef.current.changeViewZones((changeAccessor) => {
+                changeAccessor.removeZone(zoneId);
+                setZoneId(null);
+            });
         }
     };
 
     const loadContent = () => {
         if (stack) {
-            const _class = (stackPosition === 0)?"selectedLine":"stackLine";
-
             const currStack = stack[stackPosition];
-            editorRef.current.setValue(fileTree[currStack.fileName].source);
-            editorRef.current.revealLineInCenter(currStack.lineno);
-            editorRef.current.deltaDecorations([], [
-                {
-                    range: new monaco.Range(currStack.lineno, 1, currStack.lineno, 1),
-                    options: {
-                        isWholeLine: true,
-                        className: _class,
-                        glyphMarginClassName: "bi bi-filetype-py",
+            editorRef.current.setValue(fileTree[activeFile].source);
+            clearExceptions();
+            if (activeFile === currStack.fileName) {
+                const _class = (stackPosition === 0)?"selectedLine":"stackLine";
+                editorRef.current.setValue(fileTree[currStack.fileName].source);
+                editorRef.current.revealLineInCenter(currStack.lineno);
+                decorations = editorRef.current.deltaDecorations(decorations, [
+                    {
+                        range: new monaco.Range(currStack.lineno, 1, currStack.lineno, 1),
+                        options: {
+                            isWholeLine: true,
+                            className: _class,
+                            glyphMarginClassName: "bi bi-filetype-py",
+                        },
                     },
-                },
-            ]);
-
-            addException(currStack);
+                ]);
+                addException(currStack);
+            }
         }
     };
 
     useEffect(() => {
         loadContent();
-    }, [stackPosition, stack]);
+    }, [stackPosition, stack, activeFile]);
 
 
     loader.config({monaco});

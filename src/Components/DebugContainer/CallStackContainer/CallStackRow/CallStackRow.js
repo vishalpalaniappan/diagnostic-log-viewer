@@ -2,6 +2,8 @@ import React, {useContext, useEffect, useRef} from "react";
 
 import PropTypes from "prop-types";
 
+import ActiveFileContext from "../../../../Providers/ActiveFileContext";
+import StackContext from "../../../../Providers/StackContext";
 import StackPositionContext from "../../../../Providers/StackPositionContext";
 import WorkerContext from "../../../../Providers/WorkerContext";
 import CDL_WORKER_PROTOCOL from "../../../../Services/CDL_WORKER_PROTOCOL";
@@ -30,6 +32,8 @@ export function CallStackRow({index, functionName, fileName, lineno, position}) 
 
     const {cdlWorker} = useContext(WorkerContext);
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
+    const {stack} = useContext(StackContext);
+    const {setActiveFile} = useContext(ActiveFileContext);
 
     const selectStackPosition = (e) => {
         if (cdlWorker) {
@@ -41,6 +45,7 @@ export function CallStackRow({index, functionName, fileName, lineno, position}) 
             });
         }
         setStackPosition(index);
+        setActiveFile(stack[index].fileName);
     };
 
     useEffect(() => {

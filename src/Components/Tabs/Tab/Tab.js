@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useRef} from "react";
 import PropTypes from "prop-types";
 import {FiletypePy} from "react-bootstrap-icons";
 
-import StackPositionContext from "../../../Providers/StackPositionContext";
+import ActiveFileContext from "../../../Providers/ActiveFileContext";
 
 import "./Tab.scss";
 
@@ -17,22 +17,20 @@ Tab.propTypes = {
  */
 export function Tab ({fileName}) {
     const tabRef = useRef();
-    const {stackPosition} = useContext(StackPositionContext);
+    const {activeFile, setActiveFile} = useContext(ActiveFileContext);
 
     useEffect(() => {
-        if (stackPosition) {
-            if (stackPosition.activeFile === fileName) {
+        if (activeFile) {
+            if (activeFile === fileName) {
                 tabRef.current.classList.add("activeTab");
             } else {
                 tabRef.current.classList.remove("activeTab");
             }
         }
-    }, [stackPosition]);
+    }, [activeFile]);
 
     const selectFile = (e) => {
-        const updatedState = Object.assign({}, positionState);
-        updatedState["activeFile"] = fileName;
-        setPositionState(updatedState);
+        setActiveFile(fileName);
     };
 
     return (

@@ -84,7 +84,7 @@ function CDLProviders ({children, fileInfo}) {
                 <WorkerContext.Provider value={{cdlWorker}}>
                     <VariablesContext.Provider value={{variables}}>
                         <StackContext.Provider value={{stack}}>
-                            <ActiveFileContext.Provider value={{activeFile}}>
+                            <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
                                 {children}
                             </ActiveFileContext.Provider>
                         </StackContext.Provider>
