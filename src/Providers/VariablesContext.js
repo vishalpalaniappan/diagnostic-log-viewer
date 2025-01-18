@@ -1,7 +1,7 @@
 import {createContext} from "react";
 
-
-// Stores the global state of the application.
+// This context stores the variables for the current stack position.
+// It is consumed by the variables container.
 const VariablesContext = createContext();
 
 export default VariablesContext;

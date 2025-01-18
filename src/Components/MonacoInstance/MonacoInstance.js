@@ -5,8 +5,8 @@ import * as monaco from "monaco-editor";
 import PropTypes from "prop-types";
 
 import FileTreeContext from "../../Providers/FileTreeContext";
-import PositionStateContext from "../../Providers/StackPositionContext";
 import StackContext from "../../Providers/StackContext";
+import PositionStateContext from "../../Providers/StackPositionContext";
 import {getExceptionMessage} from "./helper";
 
 import "./MonacoInstance.scss";

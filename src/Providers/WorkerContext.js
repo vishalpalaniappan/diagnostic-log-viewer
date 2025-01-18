@@ -1,7 +1,7 @@
 import {createContext} from "react";
 
-
-// Stores the global state of the application.
+// This context stores a reference to the current worker.
+// It is consumed by child components which need to send messages to the worker.
 const WorkerContext = createContext();
 
 export default WorkerContext;
