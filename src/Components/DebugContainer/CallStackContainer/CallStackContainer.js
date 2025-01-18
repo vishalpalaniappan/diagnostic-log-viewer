@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import StackStateContext from "../../../Providers/StackStateContext";
+import StackContext from "../../../Providers/StackContext";
 import WorkerContext from "../../../Providers/WorkerContext";
 import CDL_WORKER_PROTOCOL from "../../../Services/CDL_WORKER_PROTOCOL";
 import {CallStackRow} from "./CallStackRow/CallStackRow";
@@ -14,7 +14,7 @@ import "./CallStackContainer.scss";
 export function CallStackContainer () {
     const [callStack, setCallStack] = useState();
 
-    const {stack} = useContext(StackStateContext);
+    const {stack} = useContext(StackContext);
     const {cdlWorker} = useContext(WorkerContext);
 
     useEffect(() => {

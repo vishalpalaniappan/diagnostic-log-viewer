@@ -2,8 +2,8 @@ import {createContext} from "react";
 
 
 // Stores the global state of the application.
-const PositionStateContext = createContext({
+const StackPositionContext = createContext({
     activeFile: null,
 });
 
-export default PositionStateContext;
+export default StackPositionContext;

@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import FileTreeContext from "./FileTreeContext";
-import PositionStateContext from "./PositionStateContext";
-import StackStateContext from "./StackStateContext";
-import VariableStateContext from "./VariableStateContext";
+import StackContext from "./StackContext";
+import StackPositionContext from "./StackPositionContext";
+import VariablesContext from "./VariablesContext";
 import WorkerContext from "./WorkerContext";
 
 CDLProviders.propTypes = {
@@ -76,17 +76,17 @@ function CDLProviders ({children, fileInfo}) {
     });
 
     return (
-        <PositionStateContext.Provider value={{stackPosition, setStackPosition}}>
+        <StackPositionContext.Provider value={{stackPosition, setStackPosition}}>
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
-                    <VariableStateContext.Provider value={{variables}}>
-                        <StackStateContext.Provider value={{stack}}>
+                    <VariablesContext.Provider value={{variables}}>
+                        <StackContext.Provider value={{stack}}>
                             {children}
-                        </StackStateContext.Provider>
-                    </VariableStateContext.Provider>
+                        </StackContext.Provider>
+                    </VariablesContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
-        </PositionStateContext.Provider>
+        </StackPositionContext.Provider>
     );
 };
 

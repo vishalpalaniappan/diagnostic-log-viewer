@@ -4,9 +4,9 @@ import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import PropTypes from "prop-types";
 
-import PositionStateContext from "../../Providers/PositionStateContext";
-import StackStateContext from "../../Providers/StackStateContext";
 import FileTreeContext from "../../Providers/FileTreeContext";
+import PositionStateContext from "../../Providers/StackPositionContext";
+import StackContext from "../../Providers/StackContext";
 import {getExceptionMessage} from "./helper";
 
 import "./MonacoInstance.scss";
@@ -26,7 +26,7 @@ MonacoInstance.propTypes = {
 export function MonacoInstance ({}) {
     const [zoneId, setZoneId] = useState();
     const {stackPosition} = useContext(PositionStateContext);
-    const {stack} = useContext(StackStateContext);
+    const {stack} = useContext(StackContext);
     const {fileTree} = useContext(FileTreeContext);
 
     const editorRef = useRef(null);

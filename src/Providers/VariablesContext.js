@@ -2,6 +2,6 @@ import {createContext} from "react";
 
 
 // Stores the global state of the application.
-const VariableStateContext = createContext();
+const VariablesContext = createContext();
 
-export default VariableStateContext;
+export default VariablesContext;

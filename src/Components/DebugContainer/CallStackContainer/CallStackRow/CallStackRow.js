@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef} from "react";
 
 import PropTypes from "prop-types";
 
-import PositionStateContext from "../../../../Providers/PositionStateContext";
+import StackPositionContext from "../../../../Providers/StackPositionContext";
 import WorkerContext from "../../../../Providers/WorkerContext";
 import CDL_WORKER_PROTOCOL from "../../../../Services/CDL_WORKER_PROTOCOL";
 
@@ -29,7 +29,7 @@ export function CallStackRow({index, functionName, fileName, lineno, position}) 
     const rowRef = useRef();
 
     const {cdlWorker} = useContext(WorkerContext);
-    const {stackPosition, setStackPosition} = useContext(PositionStateContext);
+    const {stackPosition, setStackPosition} = useContext(StackPositionContext);
 
     const selectStackPosition = (e) => {
         if (cdlWorker) {

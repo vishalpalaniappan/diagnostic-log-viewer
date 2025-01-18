@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import ReactJsonView from "@microlink/react-json-view";
 
-import VariableStateContext from "../../../Providers/VariableStateContext";
+import VariablesContext from "../../../Providers/VariablesContext";
 
 import "./VariableStackContainer.scss";
 
@@ -13,7 +13,7 @@ import "./VariableStackContainer.scss";
 export function VariableStackContainer () {
     const [variableStack, setVariableStack] = useState();
 
-    const {variables} = useContext(VariableStateContext);
+    const {variables} = useContext(VariablesContext);
 
     const variableStackTheme = {
         base00: "#252526",
