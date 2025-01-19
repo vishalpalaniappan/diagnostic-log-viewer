@@ -6,30 +6,23 @@ import {Tab} from "./Tab/Tab";
 import "./Tabs.scss";
 
 /**
- * Contains the tabs.
+ * Renders the tabs.
  * @return {JSX.Element}
  */
 export function Tabs ({}) {
     const {fileTree} = useContext(FileTreeContext);
 
     const [tabs, setTabs] = useState();
-    const [files, setFiles] = useState();
 
     useEffect(() => {
         if (fileTree) {
-            setFiles(Object.keys(fileTree));
-        }
-    }, [fileTree]);
-
-    useEffect(() => {
-        if (files) {
+            const files = Object.keys(fileTree);
             const tabsJSX = files.map((file, index) => {
-                console.log(file);
                 return <Tab key={index} fileName={file}></Tab>;
             });
             setTabs(tabsJSX);
         }
-    }, [files]);
+    }, [fileTree]);
 
     // TODO: Reimplement scroll bar for tabs.
     return (

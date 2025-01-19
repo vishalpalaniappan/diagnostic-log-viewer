@@ -14,7 +14,7 @@ Tab.propTypes = {
 };
 
 /**
- * Tab Component.
+ * Renders a Tab.
  * @return {JSX.Element}
  */
 export function Tab ({fileName}) {
@@ -24,7 +24,7 @@ export function Tab ({fileName}) {
     const {stackPosition} = useContext(StackPositionContext);
 
     const renderTab = () => {
-        if (activeFile) {
+        if (activeFile != undefined) {
             if (activeFile === fileName) {
                 tabRef.current.classList.add("activeTab");
             } else {
