@@ -1,4 +1,4 @@
-import React, {useContext, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRightShort,
     ArrowUpShort, ThreeDotsVertical} from "react-bootstrap-icons";
@@ -42,9 +42,33 @@ export function DebugToolKit ({}) {
     const handleMouseMove = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        container.current.style.left = e.clientX - deltaX + "px";
-        container.current.style.top = e.clientY - deltaY + "px";
+        const rect = container.current.getBoundingClientRect();
+        const newX = e.clientX - deltaX;
+        const newY = e.clientY - deltaY;
+
+        // Bound the container to stay within the screen width
+        if (newX + rect.width < document.body.clientWidth && newX >= 0) {
+            container.current.style.left = e.clientX - deltaX + "px";
+        } else if (newX <= 0) {
+            container.current.style.left = 0;
+        } else {
+            container.current.style.left = document.body.clientWidth - rect.width + "px";
+        }
+
+        // Bound the container to stay within the screen height
+        if (newY + rect.height < document.body.clientHeight && newY >= 0) {
+            container.current.style.top = e.clientY - deltaY + "px";
+        } else if (newY <= 0) {
+            container.current.style.top = 0;
+        } else {
+            container.current.style.top = document.body.clientHeight - rect.height + "px";
+        }
     };
+
+    useEffect(() => {
+        container.current.style.top = "100px";
+        container.current.style.left = document.body.clientWidth - 300 + "px";
+    }, []);
 
     const handleMouseUp = (e) => {
         e.preventDefault();
