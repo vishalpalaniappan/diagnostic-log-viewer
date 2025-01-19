@@ -3,7 +3,8 @@ import JSON5 from "json5";
 import LtInfo from "./LtInfo";
 
 /**
- *
+ * This class processes the header of the CDL file and exposes the
+ * extracted metadata.
  */
 class CdlHeader {
     /**
@@ -15,14 +16,14 @@ class CdlHeader {
         this.fileTree = header;
 
         this.logTypeMap = {};
-        this.functions = {};
         this.extractLogTypeMap();
     }
 
     /**
      * Extracts the logtype map for this program by processing the
      * sst of each file in the file tree. The logtype map is then
-     * processed to create an object that groups functions by logtype.
+     * processed to create an object that groups logtype id's by
+     * function.
      */
     extractLogTypeMap () {
         const rootNode = {
