@@ -36,7 +36,7 @@ class Debugger {
             },
         });
         const position = this.cdl.execution.length - 1 - 19;
-        this.getPositionData(16);
+        this.getPositionData(position);
     }
 
     /**
@@ -118,6 +118,13 @@ class Debugger {
      * @param {Number} position
      */
     stepOut (position) {
+        const callStack = this.cdl.getCallStack(position);
+        console.log(callStack);
+
+        if (callStack.length <= 1) {
+            return;
+        }
+        this.getPositionData(callStack[1].position);
     }
 
     /**
