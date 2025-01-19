@@ -26,18 +26,18 @@ class CDL_HEADER {
      */
     extractLogTypeMap () {
         const rootNode = {
-            type: "function",
-            id: "root",
+            type: "root",
+            id: 0,
             syntax: "",
             children: [],
             siblings: [],
         };
 
-        // Add a root logtype to hold global children.
-        this.logTypeMap["root"] = new LT_INFO(rootNode, "root");
+        // Add a root logtype with id 0.
+        this.logTypeMap[0] = new LT_INFO(rootNode, 0);
 
         Object.keys(this.fileTree).forEach((fileName, index) => {
-            this.processSST(this.fileTree[fileName].sst, "root", fileName);
+            this.processSST(this.fileTree[fileName].sst, 0, fileName);
         });
 
         // Note that this information can be extracted in the previous

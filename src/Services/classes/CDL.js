@@ -84,7 +84,7 @@ class CDL {
      * @param {Number} position Position in the execution array.
      * @return {Object}
      */
-    getCallStack (position) {
+    getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
 
         const csInfo = [];
@@ -118,7 +118,7 @@ class CDL {
      * @param {Number} position Position in the execution array.
      * @return {Object}
      */
-    getExceptions (position) {
+    getExceptionsAtPosition (position) {
         if (position in this.exceptions) {
             return this.exceptions[position];
         } else {
@@ -131,7 +131,7 @@ class CDL {
      * @param {Number} position Position in the execution array.
      * @return {Object}
      */
-    getVariableStack (position) {
+    getVariableStackAtPosition (position) {
         const variableStack = {};
 
         const parentId = this.getFunctionLogTypeInfoAtPosition(position).getfId();

@@ -46,8 +46,8 @@ class Debugger {
         const currLt = this.cdl.execution[position];
         const currLtInfo = this.cdl.header.logTypeMap[currLt];
 
-        const callStack = this.cdl.getCallStack(position);
-        const exceptions = this.cdl.getExceptions(position);
+        const callStack = this.cdl.getCallStackAtPosition(position);
+        const exceptions = this.cdl.getExceptionsAtPosition(position);
 
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
@@ -64,7 +64,7 @@ class Debugger {
      * @param {Number} position
      */
     getVariableStack (position) {
-        const variableStack = this.cdl.getVariableStack(position);
+        const variableStack = this.cdl.getVariableStackAtPosition(position);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
@@ -91,7 +91,7 @@ class Debugger {
      * @param {Number} position
      */
     stepOut (position) {
-        const callStack = this.cdl.getCallStack(position);
+        const callStack = this.cdl.getCallStackAtPosition(position);
         if (callStack.length <= 1) {
             return;
         }
@@ -105,9 +105,11 @@ class Debugger {
     stepOverForward (position) {
         const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
         const childIds = parentlt.childIds;
-
         const lt = this.cdl.getLogTypeInfoAtPosition(position);
-        if (lt.getId() === childIds[childIds.length - 1]) {
+
+        /* If parent is the root node or its the last instruction in the
+           function then go to the next position. */
+        if (parentlt.getId() === 0 || lt.getId() === childIds[childIds.length - 1]) {
             this.getPositionData(position + 1);
             return;
         }
