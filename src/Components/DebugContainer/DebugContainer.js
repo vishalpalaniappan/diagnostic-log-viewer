@@ -1,8 +1,8 @@
 import React, {useEffect, useRef} from "react";
 
-import {VerticleHandle} from "../../Viewer/SideContainer/VerticleHandle/VerticleHandle";
 import {CallStackContainer} from "./CallStackContainer/CallStackContainer";
 import {VariableStackContainer} from "./VariableStackContainer/VariableStackContainer";
+import {VerticleHandle} from "./VerticleHandle/VerticleHandle";
 
 import "./DebugContainer.scss";
 
