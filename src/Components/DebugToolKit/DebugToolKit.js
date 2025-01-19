@@ -1,8 +1,10 @@
 import React, {useContext, useRef} from "react";
 
-import {ArrowDownShort, ArrowLeftShort, ArrowRepeat,
-    ArrowRightShort, ArrowUpShort, Play, Stop, ThreeDotsVertical} from "react-bootstrap-icons";
+import {ArrowDownShort, ArrowLeftShort, ArrowRightShort,
+    ArrowUpShort, ThreeDotsVertical} from "react-bootstrap-icons";
 
+import StackContext from "../../Providers/StackContext";
+import StackPositionContext from "../../Providers/StackPositionContext";
 import WorkerContext from "../../Providers/WorkerContext";
 import CDL_WORKER_PROTOCOL from "../../Services/CDL_WORKER_PROTOCOL";
 
@@ -17,6 +19,9 @@ import "./DebugToolKit.scss";
  */
 export function DebugToolKit ({}) {
     const container = useRef();
+
+    const {stackPosition} = useContext(StackPositionContext);
+    const {stack} = useContext(StackContext);
 
     const blueColor = "#75beff";
     const greenColor = "#88d084";
@@ -51,6 +56,9 @@ export function DebugToolKit ({}) {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_INTO,
+                args: {
+                    position: stack[stackPosition].position,
+                },
             });
         }
     };
@@ -59,6 +67,9 @@ export function DebugToolKit ({}) {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OUT,
+                args: {
+                    position: stack[stackPosition].position,
+                },
             });
         }
     };
@@ -67,6 +78,9 @@ export function DebugToolKit ({}) {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD,
+                args: {
+                    position: stack[stackPosition].position,
+                },
             });
         }
     };
@@ -75,6 +89,9 @@ export function DebugToolKit ({}) {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD,
+                args: {
+                    position: stack[stackPosition].position,
+                },
             });
         }
     };
@@ -88,12 +105,9 @@ export function DebugToolKit ({}) {
                     className="icon"
                     style={{color: greyColor, cursor: "move"}}
                     size={20} />
-                <Play
-                    className="me-1 icon"
-                    style={{color: blueColor}}
-                    size={22} />
                 <ArrowLeftShort
                     className="me-1 icon"
+                    title="Step Backwards (CTRL + Left Arrow)"
                     onClick={stepOverBackward}
                     style={{color: blueColor}}
                     size={22} />
@@ -111,13 +125,6 @@ export function DebugToolKit ({}) {
                     className="me-1 icon"
                     onClick={stepInto}
                     style={{color: blueColor}}
-                    size={22} />
-                <ArrowRepeat
-                    className="me-1 icon"
-                    style={{color: greenColor}}
-                    size={20} />
-                <Stop className="me-1 icon"
-                    style={{color: redColor}}
                     size={22} />
             </div>
         </div>

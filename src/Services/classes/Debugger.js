@@ -35,8 +35,8 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this.position = this.cdl.execution.length - 1;
-        this.getPositionData(this.position);
+        const position = this.cdl.execution.length - 1 - 19;
+        this.getPositionData(16);
     }
 
     /**
@@ -104,9 +104,10 @@ class Debugger {
      * This function steps into the next position.
      * @param {Number} position
      */
-    stepInto () {
-        if (this.position < this.cdl.execution.length - 1) {
-            this.getPositionData(++this.position);
+    stepInto (position) {
+        if (position < this.cdl.execution.length - 1) {
+            this.position = position + 1;
+            this.getPositionData(this.position);
         } else {
             console.log("Reached end of file.");
         }
@@ -116,8 +117,55 @@ class Debugger {
      * This function steps out the next position.
      * @param {Number} position
      */
-    stepOut () {
-        this.getPositionData(--this.position);
+    stepOut (position) {
+    }
+
+    /**
+     * This function steps over any function calls.
+     * @param {Number} position
+     */
+    stepOverForward (position) {
+        const parentlt = this.cdl.getFunctionLogTypeInfoAt(position);
+        const childIds = parentlt.childIds;
+
+        const lt = this.cdl.getLogTypeInfoAt(position);
+        if (lt.getId() === childIds[childIds.length - 1]) {
+            this.getPositionData(position + 1);
+            return;
+        }
+
+        do {
+            position++;
+            const lt = this.cdl.getLogTypeInfoAt(position);
+            if (childIds.includes(lt.getId())) {
+                break;
+            }
+        } while (position < this.cdl.execution.length - 1);
+        this.getPositionData(position);
+    }
+
+    /**
+     * This function steps over any function calls backwards.
+     * @param {Number} position
+     */
+    stepOverBackward (position) {
+        const parentlt = this.cdl.getFunctionLogTypeInfoAt(position);
+        const childIds = parentlt.childIds;
+
+        const lt = this.cdl.getLogTypeInfoAt(position);
+        if (lt.getId() === childIds[0]) {
+            this.getPositionData(position - 1);
+            return;
+        }
+
+        do {
+            position--;
+            const lt = this.cdl.getLogTypeInfoAt(position);
+            if (parentlt.childIds.includes(lt.getId())) {
+                break;
+            }
+        } while (position >= 0);
+        this.getPositionData(position);
     }
 };
 

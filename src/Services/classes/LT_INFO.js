@@ -22,7 +22,11 @@ class LT_INFO {
      * @param {Number} id
      */
     addChildId (id) {
-        this.childIds.push(id);
+        /** TODO: I think its better to start logtype id at 1 and
+        reserve 1 for "root" logtype. */
+        if (id !== "root") {
+            this.childIds.push(id);
+        }
     }
 
     /**
