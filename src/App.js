@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 
+import DropFile from "./Components/DropFile/DropFile";
 import CDLProviders from "./Providers/CDLProviders";
 import {Viewer} from "./Viewer/Viewer";
 
@@ -12,17 +13,44 @@ import "./App.scss";
  * @return {JSX.Element}
  */
 export function App () {
-    const [fileInfo, setFileInfo] = useState();
+    const APP_STATE = {
+        FILE_PROMPT: 0,
+        FILE_VIEW: 1,
+    };
 
-    useEffect( () => {
+    const [appMode, setAppMode] = useState(null);
+    const [fileInfo, setFileInfo] = useState(null);
+
+    useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const fileUrl = urlParams.get("filePath");
-        setFileInfo(fileUrl);
+        const filePath = urlParams.get("filePath");
+
+        // If filePath is provided, then it is passed to the provider.
+        // If filePath is not provided, a prompt to load the file is provided.
+        if (filePath) {
+            setFileInfo(filePath);
+            setAppMode(APP_STATE.FILE_VIEW);
+        } else {
+            setAppMode(APP_STATE.FILE_PROMPT);
+        }
     }, []);
 
+    /**
+     * Handles the file being changed
+     * @param {File} file
+     */
+    const handleFileChange = (file) => {
+        setFileInfo(file);
+        setAppMode(APP_STATE.FILE_VIEW);
+    };
+
     return (
-        <CDLProviders fileInfo={fileInfo}>
-            <Viewer />
-        </CDLProviders>
+        <DropFile handleFileDrop={handleFileChange}>
+            {(APP_STATE.FILE_VIEW === appMode) &&
+                <CDLProviders fileInfo={fileInfo}>
+                    <Viewer/>
+                </CDLProviders>
+            }
+        </DropFile>
     );
 }
