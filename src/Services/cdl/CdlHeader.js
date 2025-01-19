@@ -26,23 +26,17 @@ class CdlHeader {
      * function.
      */
     extractLogTypeMap () {
-        const rootNode = {
-            type: "root",
-            id: 0,
-            syntax: "",
-            children: [],
-            siblings: [],
-        };
-
         // Add a root logtype with id 0.
+        const rootNode = {type: "root", id: 0, syntax: "", children: [], siblings: []};
         this.logTypeMap[0] = new LtInfo(rootNode, 0);
 
+        // Process each SST.
         Object.keys(this.fileTree).forEach((fileName, index) => {
             this.processSST(this.fileTree[fileName].sst, 0, fileName);
         });
 
-        // Note that this information can be extracted in the previous
-        // step. It is separated here because it improves readability.
+        /* Group all logtypes into their parent function. This information
+        is used when extracting call stack, stepping over, etc.*/
         Object.keys(this.logTypeMap).forEach((ltIndex, index) => {
             const lt = this.logTypeMap[ltIndex];
             this.logTypeMap[lt.getfId()].addChildId(lt.getId());
