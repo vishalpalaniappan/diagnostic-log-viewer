@@ -61,32 +61,6 @@ class Debugger {
     }
 
     /**
-     *
-     * @param {Number} position Position in execution sequence to go to.
-     */
-    getStackData (position) {
-        const currLt = this.cdl.execution[position];
-        const currLtInfo = this.cdl.header.logTypeMap[currLt];
-
-        const exceptions = this.cdl.getExceptions(position);
-        const variableStack = this.cdl.getVariableStack(position);
-
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA,
-            args: {
-                currLtInfo: currLtInfo,
-                exceptions: exceptions,
-            },
-        });
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
-            args: {
-                variableStack: variableStack,
-            },
-        });
-    }
-
-    /**
      * This function returns the variable stack given a position.
      * @param {Number} position
      */
