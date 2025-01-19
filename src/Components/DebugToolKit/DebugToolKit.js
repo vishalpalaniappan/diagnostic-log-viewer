@@ -22,6 +22,7 @@ export function DebugToolKit ({}) {
 
     const {stackPosition} = useContext(StackPositionContext);
     const {stack} = useContext(StackContext);
+    const {cdlWorker} = useContext(WorkerContext);
 
     const blueColor = "#75beff";
     const greyColor = "#7c7c7c";
@@ -65,11 +66,6 @@ export function DebugToolKit ({}) {
         }
     };
 
-    useEffect(() => {
-        container.current.style.top = "100px";
-        container.current.style.left = document.body.clientWidth - 300 + "px";
-    }, []);
-
     const handleMouseUp = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -77,9 +73,40 @@ export function DebugToolKit ({}) {
         document.removeEventListener("mouseup", handleMouseUp);
     };
 
-    const {cdlWorker} = useContext(WorkerContext);
+    // Set initial position of container
+    useEffect(() => {
+        container.current.style.top = "100px";
+        container.current.style.left = document.body.clientWidth - 300 + "px";
+    }, []);
 
-    const stepInto = (e) => {
+    // Add keydown event listener
+    useEffect(() => {
+        document.addEventListener("keydown", keydown, false);
+        return () => {
+            document.removeEventListener("keydown", keydown, false);
+        };
+    }, [stack, stackPosition]);
+
+    const keydown = (e) => {
+        switch (e.code) {
+            case "ArrowRight":
+                stepOverForward();
+                break;
+            case "ArrowLeft":
+                stepOverBackward();
+                break;
+            case "ArrowUp":
+                stepOut();
+                break;
+            case "ArrowDown":
+                stepInto();
+                break;
+            default:
+                break;
+        }
+    };
+
+    const stepInto = () => {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_INTO,
@@ -90,7 +117,7 @@ export function DebugToolKit ({}) {
         }
     };
 
-    const stepOut = (e) => {
+    const stepOut = () => {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OUT,
@@ -101,7 +128,7 @@ export function DebugToolKit ({}) {
         }
     };
 
-    const stepOverForward = (e) => {
+    const stepOverForward = () => {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD,
@@ -112,7 +139,7 @@ export function DebugToolKit ({}) {
         }
     };
 
-    const stepOverBackward = (e) => {
+    const stepOverBackward = () => {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD,
