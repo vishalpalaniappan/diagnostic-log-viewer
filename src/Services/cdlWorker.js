@@ -28,7 +28,6 @@ onmessage = function (e) {
             break;
         case CDL_WORKER_PROTOCOL.STEP_INTO:
             try {
-                console.log("Step into:", e.data.args);
                 debuggerInstance.stepInto(e.data.args.position);
             } catch (e) {
                 console.error(e);
@@ -36,7 +35,6 @@ onmessage = function (e) {
             break;
         case CDL_WORKER_PROTOCOL.STEP_OUT:
             try {
-                console.log("Step out:", e.data.args);
                 debuggerInstance.stepOut(e.data.args.position);
             } catch (e) {
                 console.error(e);
@@ -44,7 +42,6 @@ onmessage = function (e) {
             break;
         case CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD:
             try {
-                console.log("Step over forward:", e.data.args);
                 debuggerInstance.stepOverForward(e.data.args.position);
             } catch (e) {
                 console.error(e);
@@ -52,7 +49,6 @@ onmessage = function (e) {
             break;
         case CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD:
             try {
-                console.log("Step over backward:", e.data.args);
                 debuggerInstance.stepOverBackward(e.data.args.position);
             } catch (e) {
                 console.error(e);
