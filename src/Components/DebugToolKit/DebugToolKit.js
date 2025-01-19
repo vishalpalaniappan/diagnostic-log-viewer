@@ -24,12 +24,17 @@ export function DebugToolKit ({}) {
     const {stack} = useContext(StackContext);
 
     const blueColor = "#75beff";
-    const greenColor = "#88d084";
-    const redColor = "#f48771";
     const greyColor = "#7c7c7c";
+
+    let deltaX;
+    let deltaY;
 
     const handleMouseDown = (e) => {
         console.log(e);
+        console.log(container.current.getBoundingClientRect());
+        const rect = container.current.getBoundingClientRect();
+        deltaX = e.clientX - rect.x;
+        deltaY = e.clientY - rect.y;
         e.preventDefault();
         e.stopPropagation();
         document.addEventListener("mousemove", handleMouseMove);
@@ -37,10 +42,12 @@ export function DebugToolKit ({}) {
     };
 
     const handleMouseMove = (e) => {
+        console.log(e);
+        console.log(container.current.getBoundingClientRect());
         e.preventDefault();
         e.stopPropagation();
-        container.current.style.top = e.clientY + "px";
-        container.current.style.left = e.clientX + "px";
+        container.current.style.left = e.clientX - deltaX + "px";
+        container.current.style.top = e.clientY - deltaY + "px";
     };
 
     const handleMouseUp = (e) => {
