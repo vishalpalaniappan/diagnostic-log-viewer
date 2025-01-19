@@ -7,7 +7,7 @@ import "./FileViewer.scss";
 import "monaco-editor/min/vs/editor/editor.main.css";
 
 /**
- * Contains the monaco editor and file tabs.
+ * Renders the monaco editor and the tabs.
  * @return {JSX.Element}
  */
 export function FileViewer () {
