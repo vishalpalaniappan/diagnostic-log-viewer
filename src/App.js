@@ -22,11 +22,7 @@ export function App () {
     const [fileInfo, setFileInfo] = useState(null);
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const filePath = urlParams.get("filePath");
-
-        // If filePath is provided, then it is passed to the provider.
-        // If filePath is not provided, a prompt to load the file is provided.
+        const filePath = new URLSearchParams(window.location.search).get("filePath");
         if (filePath) {
             setFileInfo(filePath);
             setAppMode(APP_STATE.FILE_VIEW);
