@@ -10,7 +10,7 @@ VerticleHandle.propTypes = {
 };
 
 /**
- * Renders a vertically resizable handle for the accordian
+ * Renders a horizontally resizable handle for the accordian
  * components. It accepts two components which are resized
  * when the handle is moved.
  * @return {JSX.Element}
