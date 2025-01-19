@@ -64,11 +64,11 @@ export function MonacoInstance ({}) {
     const loadContent = () => {
         if (stack) {
             const currStack = stack[stackPosition];
-            editorRef.current.setValue(fileTree[activeFile].source);
+            editorRef.current.setValue(fileTree[activeFile]);
             clearExceptions();
             if (activeFile === currStack.fileName) {
                 const _class = (stackPosition === 0)?"selectedLine":"stackLine";
-                editorRef.current.setValue(fileTree[currStack.fileName].source);
+                editorRef.current.setValue(fileTree[currStack.fileName]);
                 editorRef.current.revealLineInCenter(currStack.lineno);
                 decorations = editorRef.current.deltaDecorations(decorations, [
                     {

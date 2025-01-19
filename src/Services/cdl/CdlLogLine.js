@@ -1,9 +1,9 @@
-import {LINE_TYPE, LINE_TYPE_DELIMITER} from "./CDL_LOG_CONSTANTS";
+import {LINE_TYPE, LINE_TYPE_DELIMITER} from "./CDL_CONSTANTS";
 /**
  * This class accepts a line from a CDL log, classifys it and exposes
  * the extracted metadata.
  */
-class CDL_LOG {
+class CdlLogLine {
     /**
      * @param {Array} logFile Array containing the contents of CDL log file.
      */
@@ -73,4 +73,4 @@ class CDL_LOG {
     }
 };
 
-export default CDL_LOG;
+export default CdlLogLine;

@@ -2,7 +2,7 @@ import clpFfiJsModuleInit from "clp-ffi-js";
 
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
-import CDL from "./CDL";
+import CdlLog from "./CdlLog";
 
 /**
  * This class accepts a CDL file object or URL and exposes the functions
@@ -27,7 +27,7 @@ class Debugger {
      * @param {Array} log Contents of decompressed CDL log file.
      */
     parseLogAndInitializeDebugger (log) {
-        this.cdl = new CDL(log);
+        this.cdl = new CdlLog(log);
         console.log(this.cdl);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,

@@ -1,11 +1,11 @@
 import JSON5 from "json5";
 
-import LT_INFO from "./LT_INFO";
+import LtInfo from "./LtInfo";
 
 /**
  *
  */
-class CDL_HEADER {
+class CdlHeader {
     /**
      * @param {Array} IRStreamHeader Object containing the contents
      * of CDL IRStream header.
@@ -34,7 +34,7 @@ class CDL_HEADER {
         };
 
         // Add a root logtype with id 0.
-        this.logTypeMap[0] = new LT_INFO(rootNode, 0);
+        this.logTypeMap[0] = new LtInfo(rootNode, 0);
 
         Object.keys(this.fileTree).forEach((fileName, index) => {
             this.processSST(this.fileTree[fileName].sst, 0, fileName);
@@ -59,15 +59,15 @@ class CDL_HEADER {
         nodes.forEach((child, index) => {
             switch (child.type) {
                 case "function":
-                    this.logTypeMap[child.id] = new LT_INFO(child, child.id, fileName);
+                    this.logTypeMap[child.id] = new LtInfo(child, child.id, fileName);
                     this.processSST(child, child.id, fileName);
                     break;
                 case "root":
-                    this.logTypeMap[child.id] = new LT_INFO(child, fid, fileName);
+                    this.logTypeMap[child.id] = new LtInfo(child, fid, fileName);
                     this.processSST(child, fid, fileName);
                     break;
                 case "child":
-                    this.logTypeMap[child.id] = new LT_INFO(child, fid, fileName);
+                    this.logTypeMap[child.id] = new LtInfo(child, fid, fileName);
                     break;
                 default:
                     console.debug(`Unknown SST Node Type:${child.type}`);
@@ -83,10 +83,10 @@ class CDL_HEADER {
     getSourceFiles () {
         const sourceTree = {};
         Object.keys(this.fileTree).forEach((fileName, index) => {
-            sourceTree[fileName] = this.fileTree[fileName];
+            sourceTree[fileName] = this.fileTree[fileName].source;
         });
         return sourceTree;
     }
 }
 
-export default CDL_HEADER;
+export default CdlHeader;

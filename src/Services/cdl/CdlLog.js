@@ -1,8 +1,8 @@
 import JSON5 from "json5";
 
-import CDL_HEADER from "./CDL_HEADER";
-import CDL_LOG from "./CDL_LOG";
-import {LINE_TYPE} from "./CDL_LOG_CONSTANTS";
+import {LINE_TYPE} from "./CDL_CONSTANTS";
+import CdlHeader from "./CdlHeader";
+import CdlLogLine from "./CdlLogLine";
 
 /**
  * Given a CDL log file, this class exposes the following:
@@ -26,7 +26,7 @@ import {LINE_TYPE} from "./CDL_LOG_CONSTANTS";
  * ExecutionTree [object]: This object contains a fully collapsed representation
  * of this log file.
  */
-class CDL {
+class CdlLog {
     /**
      * @param {Array} logFile Array containing lines of the log file.
      */
@@ -166,11 +166,11 @@ class CDL {
     _processBody () {
         let position = 0;
         do {
-            const currLog = new CDL_LOG(this.logFile[position]);
+            const currLog = new CdlLogLine(this.logFile[position]);
 
             switch (currLog.type) {
                 case LINE_TYPE.IR_HEADER:
-                    this.header = new CDL_HEADER(currLog.value);
+                    this.header = new CdlHeader(currLog.value);
                     this.callStack = [];
                     break;
                 case LINE_TYPE.EXECUTION:
@@ -193,7 +193,7 @@ class CDL {
 
     /**
      * Process the execution log statement and extract the call stacks.
-     * @param {CDL_LOG} log
+     * @param {CdlLogLine} log
      * @param {Number} position
      */
     _processExecutionLog (log) {
@@ -227,7 +227,7 @@ class CDL {
      * Process the variable log statement. Each variable log line contains
      * metadata about which log type it belongs to. The execution array is
      * traversed backwards until the relevant log type is found.
-     * @param {CDL_LOG} log
+     * @param {CdlLogLine} log
      */
     _processVariableLog (log) {
         let position = this.execution.length - 1;
@@ -247,7 +247,7 @@ class CDL {
      * Processes an exception from log statement. Each exception log line
      * contains metadata about which log type it belongs to. The execution
      * array is traversed backwards until the relevant log type is found.
-     * @param {CDL_LOG} log
+     * @param {CdlLogLine} log
      * @param {Number} position
      * @return {Number}
      */
@@ -255,7 +255,7 @@ class CDL {
         // Group exceptions as it moves down the stack
         const exceptions = [];
         do {
-            const currLog = new CDL_LOG(this.logFile[position]);
+            const currLog = new CdlLogLine(this.logFile[position]);
             if (currLog.type === LINE_TYPE.EXCEPTION) {
                 const lt = this.header.logTypeMap[currLog.lt];
                 exceptions.push([lt, currLog.value]);
@@ -282,4 +282,4 @@ class CDL {
     }
 }
 
-export default CDL;
+export default CdlLog;
