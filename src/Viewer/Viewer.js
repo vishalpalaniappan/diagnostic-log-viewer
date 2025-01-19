@@ -3,20 +3,19 @@ import React from "react";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
 import {FileViewer} from "./FileViewer/FileViewer";
 import {SideContainer} from "./SideContainer/SideContainer";
+import {StatusBar} from "./StatusBar/StatusBar";
 
 import "./Viewer.scss";
 
 /**
- * Renders the diagnostic log viewer.
+ * Renders the Diagnostic Log Viewer.
  * @return {JSX.Element}
  */
 export function Viewer () {
     return (
         <div className="viewer-container">
             <DebugToolKit />
-            <div className="menu-container">
-
-            </div>
+            <div className="menu-container"></div>
             <div className="body-container d-flex flex-row">
                 <div className="d-flex h-100">
                     <SideContainer/>
@@ -26,7 +25,7 @@ export function Viewer () {
                 </div>
             </div>
             <div className="status-bar-container">
-
+                <StatusBar/>
             </div>
         </div>
     );
