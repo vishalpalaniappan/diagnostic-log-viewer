@@ -35,8 +35,7 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        const position = this.cdl.execution.length - 1 - 19;
-        this.getPositionData(position);
+        this.getPositionData(this.cdl.execution.length - 1);
     }
 
     /**
@@ -93,8 +92,6 @@ class Debugger {
      */
     stepOut (position) {
         const callStack = this.cdl.getCallStack(position);
-        console.log(callStack);
-
         if (callStack.length <= 1) {
             return;
         }
@@ -106,10 +103,10 @@ class Debugger {
      * @param {Number} position
      */
     stepOverForward (position) {
-        const parentlt = this.cdl.getFunctionLogTypeInfoAt(position);
+        const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
         const childIds = parentlt.childIds;
 
-        const lt = this.cdl.getLogTypeInfoAt(position);
+        const lt = this.cdl.getLogTypeInfoAtPosition(position);
         if (lt.getId() === childIds[childIds.length - 1]) {
             this.getPositionData(position + 1);
             return;
@@ -117,7 +114,7 @@ class Debugger {
 
         do {
             position++;
-            const lt = this.cdl.getLogTypeInfoAt(position);
+            const lt = this.cdl.getLogTypeInfoAtPosition(position);
             if (childIds.includes(lt.getId())) {
                 break;
             }
@@ -130,10 +127,10 @@ class Debugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
-        const parentlt = this.cdl.getFunctionLogTypeInfoAt(position);
+        const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
         const childIds = parentlt.childIds;
 
-        const lt = this.cdl.getLogTypeInfoAt(position);
+        const lt = this.cdl.getLogTypeInfoAtPosition(position);
         if (lt.getId() === childIds[0]) {
             this.getPositionData(position - 1);
             return;
@@ -141,7 +138,7 @@ class Debugger {
 
         do {
             position--;
-            const lt = this.cdl.getLogTypeInfoAt(position);
+            const lt = this.cdl.getLogTypeInfoAtPosition(position);
             if (parentlt.childIds.includes(lt.getId())) {
                 break;
             }

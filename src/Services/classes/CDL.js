@@ -48,7 +48,7 @@ class CDL {
      * @param {Number} position Position in the execution array.
      * @return {Object}
      */
-    getLogTypeInfoAt (position) {
+    getLogTypeInfoAtPosition (position) {
         const lt = this.execution[position];
         const ltInfo = this.header.logTypeMap[lt];
         return ltInfo;
@@ -59,8 +59,8 @@ class CDL {
      * @param {Number} position Position in the execution array.
      * @return {Object}
      */
-    getFunctionLogTypeInfoAt (position) {
-        const ltInfo = this.getLogTypeInfoAt(position);
+    getFunctionLogTypeInfoAtPosition (position) {
+        const ltInfo = this.getLogTypeInfoAtPosition(position);
         const parentId = ltInfo.getfId();
         const parentLtInfo = this.header.logTypeMap[parentId];
         return parentLtInfo;
@@ -90,8 +90,8 @@ class CDL {
         const csInfo = [];
 
         cs.forEach((position, index) => {
-            const currLt = this.getLogTypeInfoAt(position);
-            const parent = this.getFunctionLogTypeInfoAt(position);
+            const currLt = this.getLogTypeInfoAtPosition(position);
+            const parent = this.getFunctionLogTypeInfoAtPosition(position);
             const exceptions = this.exceptions[position];
             const info = {};
 
@@ -134,13 +134,13 @@ class CDL {
     getVariableStack (position) {
         const variableStack = {};
 
-        const parentId = this.getFunctionLogTypeInfoAt(position).getfId();
+        const parentId = this.getFunctionLogTypeInfoAtPosition(position).getfId();
 
-        let childLtInfo = this.getLogTypeInfoAt(position);
+        let childLtInfo = this.getLogTypeInfoAtPosition(position);
         let childId = childLtInfo.getId();
 
         while (childId != parentId && position >= 0) {
-            childLtInfo = this.getLogTypeInfoAt(position);
+            childLtInfo = this.getLogTypeInfoAtPosition(position);
             childId = childLtInfo.getId();
 
             if (childLtInfo.getfId() === parentId) {
@@ -208,10 +208,10 @@ class CDL {
 
         const cs = this.callStack;
         if (cs.length > 0) {
-            let lt = this.getLogTypeInfoAt(cs[cs.length - 1]);
+            let lt = this.getLogTypeInfoAtPosition(cs[cs.length - 1]);
             while (!lt.containsChild(currlt.getId()) ) {
                 cs.pop();
-                lt = this.getLogTypeInfoAt(cs[cs.length - 1]);
+                lt = this.getLogTypeInfoAtPosition(cs[cs.length - 1]);
             }
         }
 
