@@ -10,9 +10,8 @@ VerticleHandle.propTypes = {
 };
 
 /**
- * Renders a horizontally resizable handle for the accordian
- * components. It accepts two components which are resized
- * when the handle is moved.
+ * Renders a horizontally resizable handle for the accordian components.
+ * It accepts two components which are resized when the handle is moved.
  * @return {JSX.Element}
  */
 export function VerticleHandle ({topDiv, bottomDiv}) {
@@ -20,6 +19,7 @@ export function VerticleHandle ({topDiv, bottomDiv}) {
 
     const MIN_CONTAINER_HEIGHT = 25;
 
+    // Initial values used to calculate delta on mouse move.
     let downValueY;
     let topHeight;
     let bottomHeight;
