@@ -30,8 +30,6 @@ export function DebugToolKit ({}) {
     let deltaY;
 
     const handleMouseDown = (e) => {
-        console.log(e);
-        console.log(container.current.getBoundingClientRect());
         const rect = container.current.getBoundingClientRect();
         deltaX = e.clientX - rect.x;
         deltaY = e.clientY - rect.y;
@@ -42,8 +40,6 @@ export function DebugToolKit ({}) {
     };
 
     const handleMouseMove = (e) => {
-        console.log(e);
-        console.log(container.current.getBoundingClientRect());
         e.preventDefault();
         e.stopPropagation();
         container.current.style.left = e.clientX - deltaX + "px";

@@ -70,7 +70,7 @@ class CDL_HEADER {
                     this.logTypeMap[child.id] = new LT_INFO(child, fid, fileName);
                     break;
                 default:
-                    console.debug(`Unknown child type:${child.type}`);
+                    console.debug(`Unknown SST Node Type:${child.type}`);
                     break;
             }
         });
