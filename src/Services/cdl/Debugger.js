@@ -35,8 +35,7 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        // this.getPositionData(this.cdl.execution.length - 1);
-        this.getPositionData(30);
+        this.getPositionData(this.cdl.execution.length - 1);
     }
 
     /**
@@ -108,11 +107,11 @@ class Debugger {
         }
 
         const originalPosition = position;
-        const currStack = this.cdl.getCallStackAtPosition(position);
+        const stack = this.cdl.getCallStackAtPosition(position);
 
         while (++position < this.cdl.execution.length) {
-            const stack = this.cdl.getCallStackAtPosition(position);
-            if (currStack.length >= stack.length) {
+            const currStack = this.cdl.getCallStackAtPosition(position);
+            if (stack.length >= currStack.length) {
                 this.getPositionData(position);
                 return;
             }
@@ -131,11 +130,11 @@ class Debugger {
         }
 
         const originalPosition = position;
-        const currStack = this.cdl.getCallStackAtPosition(position);
+        const stack = this.cdl.getCallStackAtPosition(position);
 
         while (--position >= 0) {
-            const stack = this.cdl.getCallStackAtPosition(position);
-            if (currStack.length >= stack.length) {
+            const currStack = this.cdl.getCallStackAtPosition(position);
+            if (stack.length >= currStack.length) {
                 this.getPositionData(position);
                 return;
             }
