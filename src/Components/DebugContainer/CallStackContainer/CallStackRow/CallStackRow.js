@@ -20,7 +20,7 @@ CallStackRow.propTypes = {
 
 
 /**
- * test
+ * Renders a call stack row.
  * @param {String} functionName
  * @param {String} fileName
  * @param {Number} lineno
@@ -33,8 +33,12 @@ export function CallStackRow({index, functionName, fileName, lineno, position}) 
     const {cdlWorker} = useContext(WorkerContext);
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stack} = useContext(StackContext);
-    const {activeFile, setActiveFile} = useContext(ActiveFileContext);
+    const {setActiveFile} = useContext(ActiveFileContext);
 
+    /**
+     * Callback when stack position is selected.
+     * @param {Event} e
+     */
     const selectStackPosition = (e) => {
         if (cdlWorker) {
             cdlWorker.current.postMessage({
@@ -48,11 +52,17 @@ export function CallStackRow({index, functionName, fileName, lineno, position}) 
         setStackPosition(index);
     };
 
+    // Update row style based on the active stack position
     useEffect(() => {
         if (stackPosition === index) {
-            rowRef.current.classList.add("active-row");
+            if (index === 0) {
+                rowRef.current.classList.add("active-row-first");
+            } else {
+                rowRef.current.classList.add("active-row");
+            }
         } else {
             rowRef.current.classList.remove("active-row");
+            rowRef.current.classList.remove("active-row-first");
         }
     }, [stackPosition]);
 
