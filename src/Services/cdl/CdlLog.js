@@ -16,11 +16,11 @@ import CdlLogLine from "./CdlLogLine";
  * Exception [object]: The keys of this object are the position in the
  * execution array and the value is the exception.
  *
- * LogTypeMap [object]: The keys of this object are the logtype id and
+ * LogTypeMap [LtInfo]: The keys of this object are the logtype id and
  * the value is an object containing metadata about this logtype from the SST.
  * Examples of metadata are the variable names, line number etc.
  *
- * Header [object]: This object is of type CDL_HEADER and it exposes the
+ * Header [CdlHeader]: This object is of type CDL_HEADER and it exposes the
  * logtype map and the source code of the program.
  */
 class CdlLog {
