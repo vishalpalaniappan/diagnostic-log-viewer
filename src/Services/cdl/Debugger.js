@@ -109,8 +109,6 @@ class Debugger {
         const childIds = parentlt.childIds;
         const lt = this.cdl.getLogTypeInfoAtPosition(position);
 
-        /* If parent is the root node or its the last instruction in the
-           function then go to the next position. */
         if (parentlt.getId() === 0 || lt.getId() === childIds[childIds.length - 1]) {
             this.getPositionData(position + 1);
             return;
@@ -121,15 +119,12 @@ class Debugger {
             scanPosition++;
             const lt = this.cdl.getLogTypeInfoAtPosition(scanPosition);
             if (childIds.includes(lt.getId())) {
-                break;
+                this.getPositionData(scanPosition);
+                return;
             }
         } while (scanPosition < this.cdl.execution.length - 1);
 
-        if (scanPosition === this.cdl.execution.length - 1) {
-            this.getPositionData(position + 1);
-        } else {
-            this.getPositionData(scanPosition);
-        }
+        this.getPositionData(position + 1);
     }
 
     /**
@@ -142,8 +137,7 @@ class Debugger {
         const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
         const childIds = parentlt.childIds;
 
-        const lt = this.cdl.getLogTypeInfoAtPosition(position);
-        if (lt.getId() === childIds[0]) {
+        if (this.cdl.getLogTypeInfoAtPosition(position).getId() === childIds[0]) {
             this.getPositionData(position - 1);
             return;
         }
@@ -153,15 +147,12 @@ class Debugger {
             scanPosition--;
             const lt = this.cdl.getLogTypeInfoAtPosition(scanPosition);
             if (parentlt.childIds.includes(lt.getId())) {
-                break;
+                this.getPositionData(scanPosition);
+                return;
             }
         } while (scanPosition >= 0);
 
-        if (scanPosition === 0) {
-            this.getPositionData(position - 1);
-        } else {
-            this.getPositionData(scanPosition);
-        }
+        this.getPositionData(position - 1);
     }
 };
 
