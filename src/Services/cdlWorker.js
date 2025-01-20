@@ -54,6 +54,20 @@ onmessage = function (e) {
                 console.error(e);
             }
             break;
+        case CDL_WORKER_PROTOCOL.GO_TO_START:
+            try {
+                debuggerInstance.goToStart();
+            } catch (e) {
+                console.error(e);
+            }
+            break;
+        case CDL_WORKER_PROTOCOL.GO_TO_END:
+            try {
+                debuggerInstance.goToEnd();
+            } catch (e) {
+                console.error(e);
+            }
+            break;
         default:
             break;
     }

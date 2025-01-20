@@ -74,6 +74,20 @@ class Debugger {
     }
 
     /**
+     * This function moves to the end of the file.
+     */
+    goToStart () {
+        this.getPositionData(0);
+    }
+
+    /**
+     * This function moves to the start of the file.
+     */
+    goToEnd () {
+        this.getPositionData(this.cdl.execution.length - 1);
+    }
+
+    /**
      * This function steps into the next position.
      * @param {Number} position
      */
