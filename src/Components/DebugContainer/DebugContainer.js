@@ -19,8 +19,8 @@ export function DebugContainer () {
 
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
-        const containerHeight = Math.floor(height/2);
-        callStackRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
+        const containerHeight = height - 200;
+        callStackRef.current.style.height = 200 - TITLE_HEIGHT + "px";
         variableStackRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
     };
 
@@ -30,7 +30,7 @@ export function DebugContainer () {
 
     return (
         <div ref={debugContainerRef} className="debug-container w-100 d-flex flex-column">
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Variable Stack</div>
+            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Variables</div>
             <div className="section" ref={variableStackRef}>
                 <VariableStackContainer />
             </div>
