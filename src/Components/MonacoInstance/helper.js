@@ -10,12 +10,8 @@ const getExceptionMessage = (exceptionMessage) => {
         e.preventDefault();
     };
     createRoot(domNode).render(
-        <div className="d-flex" style={{marginTop: "5px"}}>
-            <div className="d-flex flex-row">
-                <span>
-                    Exception: {exceptionMessage}
-                </span>
-            </div>
+        <div className="d-flex flex-column" style={{marginTop: "5px", paddingLeft: "28px"}}>
+            {exceptionMessage}
         </div>
     );
     return domNode;
