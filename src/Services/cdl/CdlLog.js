@@ -88,23 +88,14 @@ class CdlLog {
 
         cs.forEach((position, index) => {
             const currLt = this.getLogTypeInfoAtPosition(position);
-            const parent = this.getFunctionLogTypeInfoAtPosition(position);
             const exceptions = this.exceptions[position];
-            const info = {};
-
-            if (index === 0) {
-                info.functionName = "<module>";
-            } else {
-                const syntax = parent.getSyntax();
-                const functionName = syntax.split("def ")[1].split("(")[0];
-                info.functionName = functionName;
-            }
-
-            info.fileName = currLt.getFileName();
-            info.lineno = currLt.getLineNo();
-            info.position = position;
-            info.exceptions = exceptions;
-            csInfo.push(info);
+            csInfo.push({
+                functionName: currLt.getFuncName(),
+                fileName: currLt.getFileName(),
+                lineno: currLt.getLineNo(),
+                position: position,
+                exceptions: exceptions,
+            });
         });
 
         return csInfo.reverse();
