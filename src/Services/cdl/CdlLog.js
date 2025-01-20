@@ -22,9 +22,6 @@ import CdlLogLine from "./CdlLogLine";
  *
  * Header [object]: This object is of type CDL_HEADER and it exposes the
  * logtype map and the source code of the program.
- *
- * ExecutionTree [object]: This object contains a fully collapsed representation
- * of this log file.
  */
 class CdlLog {
     /**
