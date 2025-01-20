@@ -249,6 +249,7 @@ class CdlLog {
                 exceptions.push([lt, currLog.value]);
                 position++;
             } else {
+                position--;
                 break;
             }
         } while (position < this.logFile.length);
@@ -266,7 +267,7 @@ class CdlLog {
         const e = this.exceptions;
         e[index] = (index in e)? [...e[index], exceptions]: [exceptions];
 
-        return position - 1;
+        return position;
     }
 }
 
