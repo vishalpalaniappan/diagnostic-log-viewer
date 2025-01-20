@@ -38,6 +38,27 @@ class LtInfo {
     }
 
     /**
+     * This function returns the syntax
+     * @return {String}
+     */
+    getfName () {
+        return this.lt.lineno;
+    }
+
+    /**
+     * This function sets the function name
+     * @param {String} funcName
+     */
+    setFuncName (funcName) {
+        if (funcName.includes("def")) {
+            this.lt.funcName = funcName.split("def ")[1].split("(")[0];
+        } else {
+            this.lt.funcName = funcName;
+        }
+    }
+
+
+    /**
      * This function returns the file name of the current logtype.
      * @return {String}
      */
