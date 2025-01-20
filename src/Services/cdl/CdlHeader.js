@@ -55,7 +55,7 @@ class CdlHeader {
             switch (child.type) {
                 case "function":
                     this.logTypeMap[child.id] = new LtInfo(child, child.id, fileName);
-                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[fid].getSyntax());
+                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[child.id].getSyntax());
                     this.processSST(child, child.id, fileName);
                     break;
                 case "root":
