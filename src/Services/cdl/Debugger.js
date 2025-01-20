@@ -35,7 +35,8 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this.getPositionData(this.cdl.execution.length - 1);
+        // this.getPositionData(this.cdl.execution.length - 1);
+        this.getPositionData(30);
     }
 
     /**
@@ -78,12 +79,11 @@ class Debugger {
      * @param {Number} position
      */
     stepInto (position) {
-        if (position < this.cdl.execution.length - 1) {
-            this.position = position + 1;
-            this.getPositionData(this.position);
-        } else {
-            console.log("Reached end of file.");
+        if (position + 1 >= this.cdl.execution.length) {
+            return;
         }
+        const callStack = this.cdl.getCallStackAtPosition(position + 1);
+        this.getPositionData(callStack[0].position);
     }
 
     /**
@@ -103,28 +103,22 @@ class Debugger {
      * @param {Number} position
      */
     stepOverForward (position) {
-        /* TODO: Reimplement step over functions, there is a more efficient
-        way to implement this.*/
-        const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
-        const childIds = parentlt.childIds;
-        const lt = this.cdl.getLogTypeInfoAtPosition(position);
-
-        if (parentlt.getId() === 0 || lt.getId() === childIds[childIds.length - 1]) {
-            this.getPositionData(position + 1);
+        if (position + 1 >= this.cdl.execution.length) {
             return;
         }
 
-        let scanPosition = position;
-        do {
-            scanPosition++;
-            const lt = this.cdl.getLogTypeInfoAtPosition(scanPosition);
-            if (childIds.includes(lt.getId())) {
-                this.getPositionData(scanPosition);
+        const originalPosition = position;
+        const currStack = this.cdl.getCallStackAtPosition(position);
+
+        while (++position < this.cdl.execution.length) {
+            const stack = this.cdl.getCallStackAtPosition(position);
+            if (currStack.length >= stack.length) {
+                this.getPositionData(position);
                 return;
             }
-        } while (scanPosition < this.cdl.execution.length - 1);
+        }
 
-        this.getPositionData(position + 1);
+        this.getPositionData(originalPosition + 1);
     }
 
     /**
@@ -132,27 +126,22 @@ class Debugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
-        /* TODO: Reimplement step over functions, there is a more efficient
-        way to implement this.*/
-        const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
-        const childIds = parentlt.childIds;
-
-        if (this.cdl.getLogTypeInfoAtPosition(position).getId() === childIds[0]) {
-            this.getPositionData(position - 1);
+        if (position - 1 < 0) {
             return;
         }
 
-        let scanPosition = position;
-        do {
-            scanPosition--;
-            const lt = this.cdl.getLogTypeInfoAtPosition(scanPosition);
-            if (parentlt.childIds.includes(lt.getId())) {
-                this.getPositionData(scanPosition);
+        const originalPosition = position;
+        const currStack = this.cdl.getCallStackAtPosition(position);
+
+        while (--position >= 0) {
+            const stack = this.cdl.getCallStackAtPosition(position);
+            if (currStack.length >= stack.length) {
+                this.getPositionData(position);
                 return;
             }
-        } while (scanPosition >= 0);
+        }
 
-        this.getPositionData(position - 1);
+        this.getPositionData(originalPosition - 1);
     }
 };
 
