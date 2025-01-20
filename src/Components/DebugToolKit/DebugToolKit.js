@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef} from "react";
 
-import {ArrowDownShort, ArrowLeftShort, ArrowRightShort,
-    ArrowUpShort, ThreeDotsVertical} from "react-bootstrap-icons";
+import {ArrowDownShort, ArrowLeftShort, ArrowRightShort, ArrowUpShort,
+    ThreeDotsVertical} from "react-bootstrap-icons";
 
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -20,7 +20,7 @@ import "./DebugToolKit.scss";
 export function DebugToolKit ({}) {
     const container = useRef();
 
-    const {stackPosition} = useContext(StackPositionContext);
+    const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stack} = useContext(StackContext);
     const {cdlWorker} = useContext(WorkerContext);
 
@@ -90,16 +90,32 @@ export function DebugToolKit ({}) {
     const keydown = (e) => {
         switch (e.code) {
             case "ArrowRight":
-                stepOverForward();
+                if (e.ctrlKey) {
+                    goToEnd();
+                } else {
+                    stepOverForward();
+                }
                 break;
             case "ArrowLeft":
-                stepOverBackward();
+                if (e.ctrlKey) {
+                    goToStart();
+                } else {
+                    stepOverBackward();
+                }
                 break;
             case "ArrowUp":
-                stepOut();
+                if (e.ctrlKey) {
+                    moveUpStack();
+                } else {
+                    stepOut();
+                }
                 break;
             case "ArrowDown":
-                stepInto();
+                if (e.ctrlKey) {
+                    moveDownStack();
+                } else {
+                    stepInto();
+                }
                 break;
             default:
                 break;
@@ -147,6 +163,34 @@ export function DebugToolKit ({}) {
                     position: stack[stackPosition].position,
                 },
             });
+        }
+    };
+
+    const goToStart = () => {
+        if (cdlWorker && cdlWorker.current) {
+            cdlWorker.current.postMessage({
+                code: CDL_WORKER_PROTOCOL.GO_TO_START,
+            });
+        }
+    };
+
+    const goToEnd = () => {
+        if (cdlWorker && cdlWorker.current) {
+            cdlWorker.current.postMessage({
+                code: CDL_WORKER_PROTOCOL.GO_TO_END,
+            });
+        }
+    };
+
+    const moveUpStack = () => {
+        if (stackPosition + 1 < stack.length) {
+            setStackPosition(stackPosition + 1);
+        }
+    };
+
+    const moveDownStack = () => {
+        if (stackPosition - 1 >= 0) {
+            setStackPosition(stackPosition - 1);
         }
     };
 
