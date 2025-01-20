@@ -57,6 +57,14 @@ class LtInfo {
         }
     }
 
+    /**
+     * This function returns the function name
+     * @return {String}
+     */
+    getFuncName () {
+        return this.lt.funcName;
+    }
+
 
     /**
      * This function returns the file name of the current logtype.
