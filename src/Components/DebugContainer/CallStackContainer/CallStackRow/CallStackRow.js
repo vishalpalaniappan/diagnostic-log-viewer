@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 
@@ -27,12 +27,13 @@ CallStackRow.propTypes = {
  * @return {JSX}
  */
 export function CallStackRow ({index, functionName, fileName, lineno, position}) {
-    const rowRef = useRef();
-
     const {cdlWorker} = useContext(WorkerContext);
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stack} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
+
+    const [rowStyle, setRowStyle] = useState();
+    const [nameStyle, setNameStyle] = useState();
 
     /**
      * Callback when stack position is selected.
@@ -51,27 +52,38 @@ export function CallStackRow ({index, functionName, fileName, lineno, position})
         setStackPosition(index);
     };
 
-    // Update row style based on the active stack position
-    useEffect(() => {
-        if (stackPosition === index) {
-            if (index === 0) {
-                rowRef.current.classList.add("active-row-first");
+    const setStyle = () => {
+        const hasException = (stack[index].exceptions && stack[index].exceptions.length > 0);
+        if (index === stackPosition) {
+            setNameStyle();
+            if (index === 0 && hasException) {
+                setRowStyle({backgroundColor: "#420b0e"});
+            } else if (index === 0) {
+                setRowStyle({backgroundColor: "#4b4b18"});
             } else {
-                rowRef.current.classList.add("active-row");
+                setRowStyle({backgroundColor: "#184b2d"});
             }
         } else {
-            rowRef.current.classList.remove("active-row");
-            rowRef.current.classList.remove("active-row-first");
+            setRowStyle();
+            if (hasException) {
+                setNameStyle({color: "#ff8c92"});
+            } else {
+                setNameStyle({color: "white"});
+            }
         }
-    }, [stackPosition]);
+    };
+
+    useEffect(() => {
+        if (stack && index < stack.length) {
+            setStyle();
+        }
+    }, [stack, stackPosition]);
 
     return (
-        <div
-            ref={rowRef}
-            onClick={(e) => selectStackPosition(e)}
+        <div style={rowStyle} onClick={(e) => selectStackPosition(e)}
             className="stack-row w-100 d-flex flex-row">
-            <div className="w-50 ">{functionName}</div>
-            <div className="w-50 d-flex justify-content-end">
+            <div style={nameStyle}>{functionName}</div>
+            <div className="flex-grow-1 d-flex justify-content-end">
                 <div className="file-name">{fileName}</div>
                 <div className="pill">{lineno}:1</div>
             </div>
