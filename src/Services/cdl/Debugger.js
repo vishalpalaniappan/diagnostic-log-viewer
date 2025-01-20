@@ -6,7 +6,7 @@ import CdlLog from "./CdlLog";
 
 /**
  * This class accepts a CDL file object or URL and exposes the functions
- * needed to debug the program using the log file.
+ * needed to interact with the program.
  */
 class Debugger {
     /**
@@ -28,7 +28,7 @@ class Debugger {
      */
     parseLogAndInitializeDebugger (log) {
         this.cdl = new CdlLog(log);
-        console.log(this.cdl);
+        console.info(this.cdl);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
             args: {
@@ -103,6 +103,8 @@ class Debugger {
      * @param {Number} position
      */
     stepOverForward (position) {
+        /* TODO: Reimplement step over functions, there is a more efficient
+        way to implement this.*/
         const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
         const childIds = parentlt.childIds;
         const lt = this.cdl.getLogTypeInfoAtPosition(position);
@@ -114,14 +116,20 @@ class Debugger {
             return;
         }
 
+        let scanPosition = position;
         do {
-            position++;
-            const lt = this.cdl.getLogTypeInfoAtPosition(position);
+            scanPosition++;
+            const lt = this.cdl.getLogTypeInfoAtPosition(scanPosition);
             if (childIds.includes(lt.getId())) {
                 break;
             }
-        } while (position < this.cdl.execution.length - 1);
-        this.getPositionData(position);
+        } while (scanPosition < this.cdl.execution.length - 1);
+
+        if (scanPosition === this.cdl.execution.length - 1) {
+            this.getPositionData(position + 1);
+        } else {
+            this.getPositionData(scanPosition);
+        }
     }
 
     /**
@@ -129,6 +137,8 @@ class Debugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
+        /* TODO: Reimplement step over functions, there is a more efficient
+        way to implement this.*/
         const parentlt = this.cdl.getFunctionLogTypeInfoAtPosition(position);
         const childIds = parentlt.childIds;
 
@@ -138,14 +148,20 @@ class Debugger {
             return;
         }
 
+        let scanPosition = position;
         do {
-            position--;
-            const lt = this.cdl.getLogTypeInfoAtPosition(position);
+            scanPosition--;
+            const lt = this.cdl.getLogTypeInfoAtPosition(scanPosition);
             if (parentlt.childIds.includes(lt.getId())) {
                 break;
             }
-        } while (position >= 0);
-        this.getPositionData(position);
+        } while (scanPosition >= 0);
+
+        if (scanPosition === 0) {
+            this.getPositionData(position - 1);
+        } else {
+            this.getPositionData(scanPosition);
+        }
     }
 };
 
