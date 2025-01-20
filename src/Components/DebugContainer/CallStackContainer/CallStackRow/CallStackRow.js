@@ -18,7 +18,6 @@ CallStackRow.propTypes = {
     position: PropTypes.number,
 };
 
-
 /**
  * Renders a call stack row.
  * @param {String} functionName
@@ -27,7 +26,7 @@ CallStackRow.propTypes = {
  * @param {Number} position
  * @return {JSX}
  */
-export function CallStackRow({index, functionName, fileName, lineno, position}) {
+export function CallStackRow ({index, functionName, fileName, lineno, position}) {
     const rowRef = useRef();
 
     const {cdlWorker} = useContext(WorkerContext);
