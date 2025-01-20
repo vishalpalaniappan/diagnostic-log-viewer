@@ -90,96 +90,60 @@ export function DebugToolKit ({}) {
     const keydown = (e) => {
         switch (e.code) {
             case "ArrowRight":
-                if (e.ctrlKey) {
-                    goToEnd();
-                } else {
-                    stepOverForward();
-                }
+                (e.ctrlKey)?goToEnd():stepOverForward();
                 break;
             case "ArrowLeft":
-                if (e.ctrlKey) {
-                    goToStart();
-                } else {
-                    stepOverBackward();
-                }
+                (e.ctrlKey)?goToStart():stepOverBackward();
                 break;
             case "ArrowUp":
-                if (e.ctrlKey) {
-                    moveUpStack();
-                } else {
-                    stepOut();
-                }
+                (e.ctrlKey)?moveUpStack():stepOut();
                 break;
             case "ArrowDown":
-                if (e.ctrlKey) {
-                    moveDownStack();
-                } else {
-                    stepInto();
-                }
+                (e.ctrlKey)?moveDownStack():stepInto();
                 break;
             default:
                 break;
         }
     };
 
-    const stepInto = () => {
+    const sendToWorker = (code, args) => {
         if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.STEP_INTO,
-                args: {
-                    position: stack[stackPosition].position,
-                },
-            });
+            cdlWorker.current.postMessage({code: code, args: args});
         }
+    };
+
+    const stepInto = () => {
+        const code = CDL_WORKER_PROTOCOL.STEP_INTO;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
     };
 
     const stepOut = () => {
-        if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.STEP_OUT,
-                args: {
-                    position: stack[stackPosition].position,
-                },
-            });
-        }
+        const code = CDL_WORKER_PROTOCOL.STEP_OUT;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
     };
 
     const stepOverForward = () => {
-        if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD,
-                args: {
-                    position: stack[stackPosition].position,
-                },
-            });
-        }
+        const code = CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
     };
 
     const stepOverBackward = () => {
-        if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD,
-                args: {
-                    position: stack[stackPosition].position,
-                },
-            });
-        }
+        const code = CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
     };
 
     const goToStart = () => {
-        if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.GO_TO_START,
-            });
-        }
+        const code = CDL_WORKER_PROTOCOL.GO_TO_START;
+        sendToWorker(code, null);
     };
 
     const goToEnd = () => {
-        if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.GO_TO_END,
-            });
-        }
+        const code = CDL_WORKER_PROTOCOL.GO_TO_END;
+        sendToWorker(code, null);
     };
 
     const moveUpStack = () => {
