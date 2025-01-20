@@ -24,8 +24,8 @@ MonacoInstance.propTypes = {
  * Contains the monaco editor.
  * @return {JSX.Element}
  */
-export function MonacoInstance ({}) {
-    const [zoneId, setZoneId] = useState();
+export function MonacoInstance () {
+    const [zoneIds, setZoneIds] = useState([]);
     const {stackPosition} = useContext(PositionStateContext);
     const {stack} = useContext(StackContext);
     const {fileTree} = useContext(FileTreeContext);
@@ -34,53 +34,71 @@ export function MonacoInstance ({}) {
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
 
-    let decorations = [];
-
+    /**
+     * Add's exceptions to the given position.
+     * @param {Number} stackPosition
+     */
     const addException = (stackPosition) => {
         if (stackPosition.exceptions) {
-            const exceptionMessage = stackPosition.exceptions[0][0][1];
             editorRef.current.changeViewZones(function (changeAccessor) {
+                const exceptionZoneInfo = getExceptionMessage(stackPosition.exceptions);
                 const zoneId = changeAccessor.addZone({
                     afterLineNumber: stackPosition.lineno,
-                    heightInPx: 25,
-                    domNode: getExceptionMessage(exceptionMessage),
+                    heightInPx: (exceptionZoneInfo.numLines * 19),
+                    domNode: exceptionZoneInfo.domNode,
                 });
-                setZoneId(zoneId);
+                setZoneIds([...zoneIds, zoneId]);
             });
-        } else {
-            clearExceptions();
         }
     };
 
+    /**
+     * Clear the current exceptions.
+     */
     const clearExceptions = () => {
-        if (zoneId) {
+        if (zoneIds && zoneIds.length > 0) {
             editorRef.current.changeViewZones((changeAccessor) => {
-                changeAccessor.removeZone(zoneId);
-                setZoneId(null);
+                zoneIds.forEach((zoneId, index) => {
+                    changeAccessor.removeZone(zoneId);
+                });
+                setZoneIds([]);
             });
         }
     };
 
+    /**
+     * This function selects the given line and applys the given class.
+     * @param {Number} lineno Line number to select.
+     * @param {String} className Class to apply to the selected line.
+     */
+    const selectLine = (lineno, className) => {
+        editorRef.current.revealLineInCenter(lineno);
+        editorRef.current.deltaDecorations([], [
+            {
+                range: new monaco.Range(lineno, 1, lineno, 1),
+                options: {isWholeLine: true, className: className},
+            },
+        ]);
+    };
+
+    /**
+     * This function loads the content into the monaco editor.
+     *  - Highlight stack position if it is in current active file
+     *  - Clear existing exceptions and load new ones if they exist
+     */
     const loadContent = () => {
         if (stack) {
-            const currStack = stack[stackPosition];
-            editorRef.current.setValue(fileTree[activeFile]);
             clearExceptions();
-            if (activeFile === currStack.fileName) {
-                const _class = (stackPosition === 0)?"selectedLine":"stackLine";
-                editorRef.current.setValue(fileTree[currStack.fileName]);
-                editorRef.current.revealLineInCenter(currStack.lineno);
-                decorations = editorRef.current.deltaDecorations(decorations, [
-                    {
-                        range: new monaco.Range(currStack.lineno, 1, currStack.lineno, 1),
-                        options: {
-                            isWholeLine: true,
-                            className: _class,
-                            glyphMarginClassName: "bi bi-filetype-py",
-                        },
-                    },
-                ]);
-                addException(currStack);
+            editorRef.current.setValue(fileTree[activeFile]);
+
+            if (stack[0].fileName === activeFile) {
+                selectLine(stack[0].lineno, "selectedLine");
+                addException(stack[0]);
+            }
+
+            if (stackPosition > 0 && activeFile === stack[stackPosition].fileName) {
+                selectLine(stack[stackPosition].lineno, "stackLine");
+                addException(stack[stackPosition]);
             }
         }
     };
@@ -93,13 +111,6 @@ export function MonacoInstance ({}) {
     loader.config({monaco});
 
     /**
-     * Called before the monaco editor is mounted.
-     * @param {object} monaco
-     */
-    function handleEditorWillMount (monaco) {
-    }
-
-    /**
      * Called when editor is finished mounting.
      * @param {object} editor
      * @param {object} monaco
@@ -110,20 +121,17 @@ export function MonacoInstance ({}) {
         editorRef.current.setValue("");
     };
 
-    const monacoOptions = {
-        "renderWhitespace": "none",
-        "wordWrap": "on",
-        "scrollBeyondLastLine": false,
-        "glyphMargin": true,
-    };
-
     return (
         <Editor
             defaultValue="Loading content..."
             theme={"vs-dark"}
-            beforeMount={handleEditorWillMount}
             onMount={handleEditorDidMount}
-            options={monacoOptions}
+            options={{
+                "renderWhitespace": "none",
+                "wordWrap": "on",
+                "scrollBeyondLastLine": false,
+                "glyphMargin": true,
+            }}
             language="python"
         />
     );
