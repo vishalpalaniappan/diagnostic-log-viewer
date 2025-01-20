@@ -27,7 +27,7 @@ class CdlHeader {
      */
     extractLogTypeMap () {
         // Add a root logtype with id 0.
-        const rootNode = {type: "root", id: 0, syntax: "", children: [], siblings: []};
+        const rootNode = {type: "root", id: 0, syntax: "<module>", children: [], siblings: []};
         this.logTypeMap[0] = new LtInfo(rootNode, 0);
 
         // Process each SST.
@@ -55,14 +55,17 @@ class CdlHeader {
             switch (child.type) {
                 case "function":
                     this.logTypeMap[child.id] = new LtInfo(child, child.id, fileName);
+                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[fid].getSyntax());
                     this.processSST(child, child.id, fileName);
                     break;
                 case "root":
                     this.logTypeMap[child.id] = new LtInfo(child, fid, fileName);
+                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[fid].getSyntax());
                     this.processSST(child, fid, fileName);
                     break;
                 case "child":
                     this.logTypeMap[child.id] = new LtInfo(child, fid, fileName);
+                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[fid].getSyntax());
                     break;
                 default:
                     console.debug(`Unknown SST Node Type:${child.type}`);
