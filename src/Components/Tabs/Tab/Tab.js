@@ -4,8 +4,6 @@ import PropTypes from "prop-types";
 import {FiletypePy} from "react-bootstrap-icons";
 
 import ActiveFileContext from "../../../Providers/ActiveFileContext";
-import StackContext from "../../../Providers/StackContext";
-import StackPositionContext from "../../../Providers/StackPositionContext";
 
 import "./Tab.scss";
 
@@ -20,8 +18,6 @@ Tab.propTypes = {
 export function Tab ({fileName}) {
     const tabRef = useRef();
     const {activeFile, setActiveFile} = useContext(ActiveFileContext);
-    const {stack} = useContext(StackContext);
-    const {stackPosition} = useContext(StackPositionContext);
 
     const renderTab = () => {
         if (activeFile != undefined) {
@@ -31,18 +27,11 @@ export function Tab ({fileName}) {
                 tabRef.current.classList.remove("activeTab");
             }
         }
-        if (stackPosition != undefined) {
-            if (stack[stackPosition].fileName === fileName) {
-                tabRef.current.classList.add("stackTab");
-            } else {
-                tabRef.current.classList.remove("stackTab");
-            }
-        }
     };
 
     useEffect(() => {
         renderTab();
-    }, [activeFile, stackPosition]);
+    }, [activeFile]);
 
     const selectFile = (e) => {
         setActiveFile(fileName);
