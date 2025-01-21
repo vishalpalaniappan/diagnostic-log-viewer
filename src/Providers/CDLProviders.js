@@ -39,6 +39,18 @@ function CDLProviders ({children, fileInfo}) {
         };
     }, []);
 
+    // Get new variable stack if stack position changes
+    useEffect(() => {
+        if (cdlWorker && stackPosition !== undefined) {
+            cdlWorker.current.postMessage({
+                code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
+                args: {
+                    position: stack[stackPosition].position,
+                },
+            });
+        }
+    }, [stackPosition, stack]);
+
     // Create worker to handle file.
     useEffect(() => {
         if (fileInfo) {

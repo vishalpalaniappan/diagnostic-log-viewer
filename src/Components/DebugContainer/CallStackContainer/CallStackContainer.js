@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import StackContext from "../../../Providers/StackContext";
-import WorkerContext from "../../../Providers/WorkerContext";
-import CDL_WORKER_PROTOCOL from "../../../Services/CDL_WORKER_PROTOCOL";
 import {CallStackRow} from "./CallStackRow/CallStackRow";
 
 import "./CallStackContainer.scss";
@@ -15,7 +13,6 @@ export function CallStackContainer () {
     const [callStack, setCallStack] = useState();
 
     const {stack} = useContext(StackContext);
-    const {cdlWorker} = useContext(WorkerContext);
 
     useEffect(() => {
         if (stack) {
@@ -32,15 +29,6 @@ export function CallStackContainer () {
                 calls.push(row);
             });
             setCallStack(calls);
-
-            if (cdlWorker) {
-                cdlWorker.current.postMessage({
-                    code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
-                    args: {
-                        position: stack[0].position,
-                    },
-                });
-            }
         }
     }, [stack]);
 

@@ -27,7 +27,6 @@ CallStackRow.propTypes = {
  * @return {JSX}
  */
 export function CallStackRow ({index, functionName, fileName, lineno, position}) {
-    const {cdlWorker} = useContext(WorkerContext);
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stack} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
@@ -40,14 +39,6 @@ export function CallStackRow ({index, functionName, fileName, lineno, position})
      * @param {Event} e
      */
     const selectStackPosition = (e) => {
-        if (cdlWorker) {
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
-                args: {
-                    position: position,
-                },
-            });
-        }
         setActiveFile(stack[index].fileName);
         setStackPosition(index);
     };
