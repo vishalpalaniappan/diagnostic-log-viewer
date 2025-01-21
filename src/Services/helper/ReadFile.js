@@ -33,8 +33,7 @@ function readFile (fileInfo) {
                 reject(reason);
             });
         } else if (typeof fileInfo == "string") {
-            const name = fileInfo.split("/").pop();
-            readFileFromUrl(name).then((data) => {
+            readFileFromUrl(fileInfo).then((data) => {
                 resolve(data);
             }).catch((reason) => {
                 reject(reason);
