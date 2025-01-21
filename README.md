@@ -15,6 +15,8 @@ A demo of the viewer is available here.
 
 CDL files are generated through a process called Diagnostic Logging (DL) in which the logtype, variable values and exceptions for each instruction are logged.Diagnostic logging is practically enabled by Automated Diagnostic Log Injector(ADLI) tool which automatically insert the necessary log statements to extract the diagnostic information. 
 
+![Simplified ASP System Diagram](docs/Simplified_System_Diagram_ASP.png)
+
 The ADLI tool uses Abstract Syntax Trees (AST's) to traverse through the structure of the program to insert the necessary log statements. The ADLI tool appends a Simplified Syntax Tree (SST) of the program in the header of the CDL file and provides a logtype ID map which can be used when inserting the necessary log statements. This effectively compressing the logtypes at the source while logging. When diagnostic logs are ingested by CLP, the performance will be much better compared to unstructured/JSON logs and the implementation will be simpler. It will be possible to further compress the logs by grouping variable values since a map of all variables are provided in the SST.
 
 Using Diagnostic Logging, it will be possible to build a fully automated log based diagnostic solution that can perform automated root cause analysis.
