@@ -1,7 +1,9 @@
 
 /**
  * This class accepts an SST node and exposes functions to extract
- * metadata from it.
+ * metadata from it. Each node in the SST contains the logtype id,
+ * type(root, child etc.), lineno, syntax, variables, children and
+ * siblings.
  */
 class LtInfo {
     /**
