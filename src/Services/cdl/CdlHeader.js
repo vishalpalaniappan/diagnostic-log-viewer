@@ -21,9 +21,8 @@ class CdlHeader {
 
     /**
      * Extracts the logtype map for this program by processing the
-     * sst of each file in the file tree. The logtype map is then
-     * processed to create an object that groups logtype id's by
-     * function.
+     * sst of each file in the file tree. It then groups all logtypes
+     * into their parent function.
      */
     extractLogTypeMap () {
         // Add a root logtype with id 0.
