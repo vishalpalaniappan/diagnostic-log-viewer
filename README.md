@@ -26,7 +26,7 @@ The React application contains a CDL Provider which exposes all relevant data th
 > [!NOTE]  
 > A more detailed introduction to diagnostic logging and the diagnostic tools it enables is in development.
 
-CDL files are generated through a process called Diagnostic Logging (DL) in which the log type, variable values and exceptions for each statement in the program are logged. Diagnostic logging is enabled by Automated Diagnostic Log Injector (ADLI) tools, which automatically insert the necessary log statements to extract the diagnostic information.
+CDL files are generated through a process called Diagnostic Logging (DL) in which the log type, variable values and exceptions for each statement in the program are logged. Diagnostic logging is enabled by Automated Diagnostic Log Injector (ADLI) tools (coming soon!), which automatically insert the necessary log statements to extract the diagnostic information.
 
 The ADLI tool uses Abstract Syntax Trees (AST's) to traverse through the structure of the program to extract variable names and insert the necessary log statements. It surrounds each statement in the program with a try structure to catch and log exceptions. It also inserts a log statement to inject the Simplified Syntax Tree (SST) of the program into the header of the CDL file. The SST maps every logtype and variable to a line in the program. The enables us to only log the logtype id, effectively compressing the logtypes by default.
 
