@@ -41,13 +41,15 @@ function CDLProviders ({children, fileInfo}) {
 
     // Get new variable stack if stack position changes
     useEffect(() => {
-        if (cdlWorker && stackPosition !== undefined) {
+        if (cdlWorker?.current && stackPosition !== undefined && stack?.[stackPosition]) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
                     position: stack[stackPosition].position,
                 },
             });
+        } else {
+            console.warn('Invalid stack position or stack not initialized');
         }
     }, [stackPosition, stack]);
 
