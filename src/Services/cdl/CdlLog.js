@@ -77,7 +77,7 @@ class CdlLog {
     }
 
     /**
-     * Returns the call stack given a position.
+     * Returns the call stack at the given position.
      * @param {Number} position Position in the execution array.
      * @return {Object}
      */
