@@ -169,23 +169,26 @@ export function DebugToolKit ({}) {
                     size={20} />
                 <ArrowLeftShort
                     className="me-1 icon"
-                    title="Step Backwards (CTRL + Left Arrow)"
+                    title="Step Backwards (← Key)"
                     onClick={stepOverBackward}
                     style={{color: blueColor}}
                     size={22} />
                 <ArrowRightShort
                     className="me-1 icon"
+                    title="Step Forwards (→ Key)"
                     onClick={stepOverForward}
                     style={{color: blueColor}}
                     size={22} />
                 <ArrowUpShort
                     className="me-1 icon"
+                    title="Step Out (↑ Key)"
                     onClick={stepOut}
                     style={{color: blueColor}}
                     size={22} />
                 <ArrowDownShort
                     className="me-1 icon"
                     onClick={stepInto}
+                    title="Step Into (↓ Key)"
                     style={{color: blueColor}}
                     size={22} />
             </div>
