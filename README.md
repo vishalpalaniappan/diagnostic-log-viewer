@@ -33,7 +33,7 @@ The ADLI tool uses Abstract Syntax Trees (AST's) to traverse through the structu
 
 When diagnostic logs are ingested by CLP, the performance will be much better compared to unstructured/JSON logs and the implementation will be simpler. It will be possible to further compress the logs by grouping variable values since a map of all variables are provided in the SST.
 
-Using Diagnostic Logging, it will be possible to build a fully automated log based diagnostic solution that can perform fully automated root cause analysis. 
+Using Diagnostic Logging, it will be possible to build a automated log based diagnostic solution that can perform fully automated root cause analysis. 
 
 # Providing feedback
 
