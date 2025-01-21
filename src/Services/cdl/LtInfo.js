@@ -24,11 +24,7 @@ class LtInfo {
      * @param {Number} id
      */
     addChildId (id) {
-        /** TODO: I think its better to start logtype id at 1 and
-        reserve 1 for "root" logtype. */
-        if (id !== "root") {
-            this.childIds.push(id);
-        }
+        this.childIds.push(id);
     }
 
     /**
