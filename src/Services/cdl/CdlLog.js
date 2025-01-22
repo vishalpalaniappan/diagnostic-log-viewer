@@ -196,12 +196,14 @@ class CdlLog {
             this.callStack.push(position);
         }
 
-        const cs = this.callStack;
-        if (cs.length > 0) {
-            let lt = this.getLogTypeInfoAtPosition(cs[cs.length - 1]);
-            while (!lt.containsChild(currlt.getId()) ) {
-                cs.pop();
-                lt = this.getLogTypeInfoAtPosition(cs[cs.length - 1]);
+        const childId = currlt.getId();
+        while (this.callStack.length >= 1) {
+            const stackTopPosition = this.callStack[this.callStack.length - 1];
+            const stackTopLt = this.getLogTypeInfoAtPosition(stackTopPosition);
+            if (stackTopLt.containsChild(childId)) {
+                break;
+            } else {
+                this.callStack.pop();
             }
         }
 
