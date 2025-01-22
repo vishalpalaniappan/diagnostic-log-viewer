@@ -5,8 +5,6 @@ import PropTypes from "prop-types";
 import ActiveFileContext from "../../../../Providers/ActiveFileContext";
 import StackContext from "../../../../Providers/StackContext";
 import StackPositionContext from "../../../../Providers/StackPositionContext";
-import WorkerContext from "../../../../Providers/WorkerContext";
-import CDL_WORKER_PROTOCOL from "../../../../Services/CDL_WORKER_PROTOCOL";
 
 import "./CallStackRow.scss";
 
