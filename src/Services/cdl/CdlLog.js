@@ -133,10 +133,12 @@ class CdlLog {
 
             if (childLtInfo.getfId() === parentId) {
                 childLtInfo.getVariables().forEach((variable, index) => {
-                    try {
-                        variableStack[variable] = JSON5.parse(this.variables[position][index]);
-                    } catch (e) {
-                        variableStack[variable] = this.variables[position][index];
+                    if (!(variable in variableStack)) {
+                        try {
+                            variableStack[variable] = JSON5.parse(this.variables[position][index]);
+                        } catch (e) {
+                            variableStack[variable] = this.variables[position][index];
+                        }
                     }
                 });
             }
