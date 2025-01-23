@@ -22,6 +22,7 @@ CDLProviders.propTypes = {
  * @return {JSX}
  */
 function CDLProviders ({children, fileInfo}) {
+    const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
     const [stack, setStack] = useState();
     const [stackPosition, setStackPosition] = useState();
@@ -65,16 +66,24 @@ function CDLProviders ({children, fileInfo}) {
     // Create worker to handle file.
     useEffect(() => {
         if (fileInfo) {
+            // TODO: Use loading state to show loading animation.
+            setIsLoading(true);
             initializeStates();
-            if (cdlWorker.current) {
-                cdlWorker.current.terminate();
+            try {
+                if (cdlWorker.current) {
+                    cdlWorker.current.terminate();
+                }
+                cdlWorker.current = new Worker(
+                    new URL("../Services/cdlWorker.js", import.meta.url)
+                );
+                cdlWorker.current.onmessage = handleWorkerMessage;
+                cdlWorker.current.postMessage({
+                    code: CDL_WORKER_PROTOCOL.LOAD_FILE,
+                    fileInfo: fileInfo,
+                });
+            } catch (error) {
+                console.error("Failed to initialize worker:", error);
             }
-            cdlWorker.current = new Worker(new URL("../Services/cdlWorker.js", import.meta.url));
-            cdlWorker.current.onmessage = handleWorkerMessage;
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.LOAD_FILE,
-                fileInfo: fileInfo,
-            });
         }
     }, [fileInfo]);
 
@@ -85,6 +94,7 @@ function CDLProviders ({children, fileInfo}) {
     const handleWorkerMessage = useCallback((event) => {
         switch (event.data.code) {
             case CDL_WORKER_PROTOCOL.GET_METADATA:
+                setIsLoading(false);
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
