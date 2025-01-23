@@ -22,6 +22,7 @@ CDLProviders.propTypes = {
  * @return {JSX}
  */
 function CDLProviders ({children, fileInfo}) {
+    const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
     const [stack, setStack] = useState();
     const [stackPosition, setStackPosition] = useState();
@@ -49,22 +50,40 @@ function CDLProviders ({children, fileInfo}) {
                 },
             });
         } else {
-            console.warn('Invalid stack position or stack not initialized');
+            console.warn("Invalid stack position or stack not initialized");
         }
     }, [stackPosition, stack]);
+
+    // Resets the state variables before loading new file.
+    const initializeStates = () => {
+        setFileTree(undefined);
+        setVariables(undefined);
+        setStackPosition(undefined);
+        setStack(undefined);
+        setActiveFile(undefined);
+    };
 
     // Create worker to handle file.
     useEffect(() => {
         if (fileInfo) {
-            if (cdlWorker.current) {
-                cdlWorker.current.terminate();
+            // TODO: Use loading state to show loading animation.
+            setIsLoading(true);
+            initializeStates();
+            try {
+                if (cdlWorker.current) {
+                    cdlWorker.current.terminate();
+                }
+                cdlWorker.current = new Worker(
+                    new URL("../Services/cdlWorker.js", import.meta.url)
+                );
+                cdlWorker.current.onmessage = handleWorkerMessage;
+                cdlWorker.current.postMessage({
+                    code: CDL_WORKER_PROTOCOL.LOAD_FILE,
+                    fileInfo: fileInfo,
+                });
+            } catch (error) {
+                console.error("Failed to initialize worker:", error);
             }
-            cdlWorker.current = new Worker(new URL("../Services/cdlWorker.js", import.meta.url));
-            cdlWorker.current.onmessage = handleWorkerMessage;
-            cdlWorker.current.postMessage({
-                code: CDL_WORKER_PROTOCOL.LOAD_FILE,
-                fileInfo: fileInfo,
-            });
         }
     }, [fileInfo]);
 
@@ -75,6 +94,7 @@ function CDLProviders ({children, fileInfo}) {
     const handleWorkerMessage = useCallback((event) => {
         switch (event.data.code) {
             case CDL_WORKER_PROTOCOL.GET_METADATA:
+                setIsLoading(false);
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
