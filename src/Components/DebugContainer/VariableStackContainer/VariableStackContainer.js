@@ -11,8 +11,6 @@ import "./VariableStackContainer.scss";
  * @return {JSX.Element}
  */
 export function VariableStackContainer () {
-    const [variableStack, setVariableStack] = useState();
-
     const {variables} = useContext(VariablesContext);
 
     const variableStackTheme = {
@@ -34,16 +32,10 @@ export function VariableStackContainer () {
         base0F: "#a7ce8a",
     };
 
-    useEffect(() => {
-        if (variables) {
-            setVariableStack(variables);
-        }
-    }, [variables]);
-
     return (
         <div className="variableStackContainer w-100 h-100 ">
             <ReactJsonView
-                src={variableStack}
+                src={variables}
                 theme={variableStackTheme}
                 collapsed={1}
                 name={null}
