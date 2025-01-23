@@ -49,13 +49,23 @@ function CDLProviders ({children, fileInfo}) {
                 },
             });
         } else {
-            console.warn('Invalid stack position or stack not initialized');
+            console.warn("Invalid stack position or stack not initialized");
         }
     }, [stackPosition, stack]);
+
+    // Resets the state variables before loading new file.
+    const initializeStates = () => {
+        setFileTree(undefined);
+        setVariables(undefined);
+        setStackPosition(undefined);
+        setStack(undefined);
+        setActiveFile(undefined);
+    };
 
     // Create worker to handle file.
     useEffect(() => {
         if (fileInfo) {
+            initializeStates();
             if (cdlWorker.current) {
                 cdlWorker.current.terminate();
             }
