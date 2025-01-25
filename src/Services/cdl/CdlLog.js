@@ -133,7 +133,9 @@ class CdlLog {
 
             if (childLtInfo.getfId() === parentId) {
                 childLtInfo.getVariables().forEach((variable, index) => {
-                    if (!(variable in variableStack)) {
+                    // When the program crashes, the variable values for the
+                    // line which created the exception is not logged.
+                    if (!(variable in variableStack) && this.variables[position]) {
                         try {
                             variableStack[variable] = JSON5.parse(this.variables[position][index]);
                         } catch (e) {
@@ -258,14 +260,8 @@ class CdlLog {
             }
         } while (position < this.logFile.length);
 
-        // Find logtype this exception belongs to
-        let index = this.execution.length - 1;
-        do {
-            if (this.execution[index] === log.lt) {
-                break;
-            }
-            index--;
-        } while (index > 0);
+        // Assign exception to the last executed instruction
+        const index = this.execution.length - 1;
 
         // Save exceptions
         const e = this.exceptions;
