@@ -8,7 +8,7 @@ import {createRoot} from "react-dom/client";
  * by the monaco instance. It also returns the number of lines to set the height
  * of the exception container.
  *
- * @param {Object} exception  Array containing the exception for the
+ * @param {Array} exception  Array containing the exception for the
  *                            current position.
  * @return {Object}
  */
