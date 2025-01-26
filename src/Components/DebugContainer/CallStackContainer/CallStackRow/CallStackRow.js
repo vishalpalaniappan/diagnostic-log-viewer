@@ -37,7 +37,7 @@ export function CallStackRow ({index, functionName, fileName, lineno, position})
      * @param {Event} e
      */
     const selectStackPosition = (e) => {
-        setActiveFile(stack[index].fileName);
+        setActiveFile(stack[index].filePath);
         setStackPosition(index);
     };
 

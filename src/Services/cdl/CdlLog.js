@@ -91,6 +91,7 @@ class CdlLog {
             const exceptions = this.exceptions[position];
             csInfo.push({
                 functionName: currLt.getFuncName(),
+                filePath: currLt.getFilePath(),
                 fileName: currLt.getFileName(),
                 lineno: currLt.getLineNo(),
                 position: position,

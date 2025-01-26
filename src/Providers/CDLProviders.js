@@ -100,7 +100,7 @@ function CDLProviders ({children, fileInfo}) {
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
                 setStack(event.data.args.callStack);
                 setStackPosition(0);
-                setActiveFile(event.data.args.callStack[0].fileName);
+                setActiveFile(event.data.args.callStack[0].filePath);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
                 setVariables(event.data.args.variableStack);

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import PropTypes from "prop-types";
 import {FiletypePy} from "react-bootstrap-icons";
@@ -8,6 +8,7 @@ import ActiveFileContext from "../../../Providers/ActiveFileContext";
 import "./Tab.scss";
 
 Tab.propTypes = {
+    filePath: PropTypes.string,
     fileName: PropTypes.string,
 };
 
@@ -15,13 +16,13 @@ Tab.propTypes = {
  * Renders a Tab.
  * @return {JSX.Element}
  */
-export function Tab ({fileName}) {
+export function Tab ({filePath, fileName}) {
     const tabRef = useRef();
     const {activeFile, setActiveFile} = useContext(ActiveFileContext);
 
     const renderTab = () => {
         if (activeFile != undefined) {
-            if (activeFile === fileName) {
+            if (activeFile === filePath) {
                 tabRef.current.classList.add("activeTab");
             } else {
                 tabRef.current.classList.remove("activeTab");
@@ -34,7 +35,7 @@ export function Tab ({fileName}) {
     }, [activeFile]);
 
     const selectFile = (e) => {
-        setActiveFile(fileName);
+        setActiveFile(filePath);
     };
 
     return (

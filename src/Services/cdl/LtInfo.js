@@ -9,12 +9,13 @@ class LtInfo {
     /**
      * @param {Array} ltInfoSST Log type information extracted from SST.
      * @param {Number} fid ID of the function this node belongs to.
-     * @param {String} fileName File this logtype belongs to.
+     * @param {String} filePath File this logtype belongs to.
      */
-    constructor (ltInfoSST, fid, fileName) {
+    constructor (ltInfoSST, fid, filePath) {
         this.lt = ltInfoSST;
         this.lt.fid = fid;
-        this.lt.fileName = fileName;
+        this.lt.filePath = filePath;
+        this.lt.fileName = filePath.split("/").pop();
         this.childIds = [];
     }
 
@@ -61,6 +62,15 @@ class LtInfo {
      */
     getFuncName () {
         return this.lt.funcName;
+    }
+
+
+    /**
+     * This function returns the file path of the current logtype.
+     * @return {String}
+     */
+    getFilePath () {
+        return this.lt.filePath;
     }
 
 

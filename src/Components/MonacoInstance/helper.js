@@ -19,9 +19,9 @@ const getExceptionMessage = (exception) => {
             numLines: 0,
         };
     }
-    const exceptionValue = exception[0];
+    const exceptionValue = exception[0].split("\n").pop();
     const exceptionMessage = [
-        <span key={0} style={{marginBottom: "10px", whiteSpace: "pre-wrap"}}>
+        <span key={0} style={{whiteSpace: "pre-wrap"}}>
             {exceptionValue}
         </span>,
     ];
@@ -29,7 +29,7 @@ const getExceptionMessage = (exception) => {
     const domNode = document.createElement("div");
     domNode.className = "exception-message";
     createRoot(domNode).render(
-        <div className="d-flex flex-column" style={{marginTop: "5px", paddingLeft: "28px"}}>
+        <div className="d-flex flex-column" style={{marginTop: "7px", paddingLeft: "10px"}}>
             {exceptionMessage}
         </div>
     );
