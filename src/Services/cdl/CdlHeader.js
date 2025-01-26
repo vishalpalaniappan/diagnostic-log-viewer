@@ -27,7 +27,7 @@ class CdlHeader {
     extractLogTypeMap () {
         // Add a root logtype with id 0.
         const rootNode = {type: "root", id: 0, syntax: "<module>", children: [], siblings: []};
-        this.logTypeMap[0] = new LtInfo(rootNode, 0);
+        this.logTypeMap[0] = new LtInfo(rootNode, 0, "");
 
         // Process each SST.
         Object.keys(this.fileTree).forEach((fileName, index) => {

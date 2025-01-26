@@ -44,7 +44,7 @@ export function MonacoInstance () {
                 const exceptionZoneInfo = getExceptionMessage(stackPosition.exceptions);
                 const zoneId = changeAccessor.addZone({
                     afterLineNumber: stackPosition.lineno,
-                    heightInPx: (exceptionZoneInfo.numLines * 19),
+                    heightInPx: ((exceptionZoneInfo.numLines + 1) * 18),
                     domNode: exceptionZoneInfo.domNode,
                 });
                 setZoneIds([...zoneIds, zoneId]);
@@ -87,16 +87,16 @@ export function MonacoInstance () {
      *  - Clear existing exceptions and load new ones if they exist
      */
     const loadContent = () => {
-        if (stack) {
+        if (editorRef?.current && stack) {
             clearExceptions();
             editorRef.current.setValue(fileTree[activeFile]);
 
-            if (stack[0].fileName === activeFile) {
+            if (stack[0].filePath === activeFile) {
                 selectLine(stack[0].lineno, "selectedLine");
                 addException(stack[0]);
             }
 
-            if (stackPosition > 0 && activeFile === stack[stackPosition].fileName) {
+            if (stackPosition > 0 && activeFile === stack[stackPosition].filePath) {
                 selectLine(stack[stackPosition].lineno, "stackLine");
                 addException(stack[stackPosition]);
             }

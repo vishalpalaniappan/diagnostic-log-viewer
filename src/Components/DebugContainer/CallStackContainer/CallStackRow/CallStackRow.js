@@ -11,6 +11,7 @@ import "./CallStackRow.scss";
 CallStackRow.propTypes = {
     index: PropTypes.number,
     functionName: PropTypes.string,
+    filePath: PropTypes.string,
     fileName: PropTypes.string,
     lineno: PropTypes.number,
     position: PropTypes.number,
@@ -19,12 +20,13 @@ CallStackRow.propTypes = {
 /**
  * Renders a call stack row.
  * @param {String} functionName
+ * @param {String} filePath
  * @param {String} fileName
  * @param {Number} lineno
  * @param {Number} position
  * @return {JSX}
  */
-export function CallStackRow ({index, functionName, fileName, lineno, position}) {
+export function CallStackRow ({index, functionName, filePath, fileName, lineno, position}) {
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stack} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
@@ -37,7 +39,7 @@ export function CallStackRow ({index, functionName, fileName, lineno, position})
      * @param {Event} e
      */
     const selectStackPosition = (e) => {
-        setActiveFile(stack[index].fileName);
+        setActiveFile(stack[index].filePath);
         setStackPosition(index);
     };
 

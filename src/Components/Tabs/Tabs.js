@@ -16,9 +16,9 @@ export function Tabs ({}) {
 
     useEffect(() => {
         if (fileTree) {
-            const files = Object.keys(fileTree);
-            const tabsJSX = files.map((file, index) => {
-                return <Tab key={index} fileName={file}></Tab>;
+            const tabsJSX = Object.keys(fileTree).map((filePath, index) => {
+                const fileName = filePath.split("/").pop();
+                return <Tab key={index} filePath={filePath} fileName={fileName}></Tab>;
             });
             setTabs(tabsJSX);
         }
