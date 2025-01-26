@@ -23,6 +23,7 @@ export function CallStackContainer () {
                     index={index}
                     functionName={call.functionName}
                     fileName={call.fileName}
+                    filePath={call.filePath}
                     lineno={call.lineno}
                     position={call.position}
                 />;
