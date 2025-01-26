@@ -8,15 +8,15 @@ import {createRoot} from "react-dom/client";
  * by the monaco instance. It also returns the number of lines to set the height
  * of the exception container.
  *
- * @param {Object} exceptions Object containing the exception for the
+ * @param {Object} exception  Array containing the exception for the
  *                            current position.
  * @return {Object}
  */
-const getExceptionMessage = (exceptions) => {
-    const exception = exceptions[0][0][1];
+const getExceptionMessage = (exception) => {
+    const exceptionValue = exception[0];
     const exceptionMessage = [
         <span key={0} style={{marginBottom: "10px", whiteSpace: "pre-wrap"}}>
-            {exception}
+            {exceptionValue}
         </span>,
     ];
 
@@ -29,7 +29,7 @@ const getExceptionMessage = (exceptions) => {
     );
     return {
         domNode: domNode,
-        numLines: exception.split("\n").length,
+        numLines: exceptionValue.split("\n").length,
     };
 };
 

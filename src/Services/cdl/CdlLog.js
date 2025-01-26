@@ -247,25 +247,15 @@ class CdlLog {
      */
     _processExceptionLog (log, position) {
         // Group exceptions as it moves down the stack
-        const exceptions = [];
-        do {
-            const currLog = new CdlLogLine(this.logFile[position]);
-            if (currLog.type === LINE_TYPE.EXCEPTION) {
-                const lt = this.header.logTypeMap[currLog.lt];
-                exceptions.push([lt, currLog.value]);
-                position++;
-            } else {
-                position--;
-                break;
-            }
-        } while (position < this.logFile.length);
+        const exceptionLog = new CdlLogLine(this.logFile[position]);
+        const exception = exceptionLog.value;
 
         // Assign exception to the last executed instruction
         const index = this.execution.length - 1;
 
         // Save exceptions
         const e = this.exceptions;
-        e[index] = (index in e)? [...e[index], exceptions]: [exceptions];
+        e[index] = (index in e)? [...e[index], exception]: [exception];
 
         return position;
     }
