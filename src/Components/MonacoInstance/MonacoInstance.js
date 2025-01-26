@@ -44,7 +44,7 @@ export function MonacoInstance () {
                 const exceptionZoneInfo = getExceptionMessage(stackPosition.exceptions);
                 const zoneId = changeAccessor.addZone({
                     afterLineNumber: stackPosition.lineno,
-                    heightInPx: ((exceptionZoneInfo.numLines + 1) * 20),
+                    heightInPx: ((exceptionZoneInfo.numLines + 2) * 20),
                     domNode: exceptionZoneInfo.domNode,
                 });
                 setZoneIds([...zoneIds, zoneId]);

@@ -13,6 +13,12 @@ import {createRoot} from "react-dom/client";
  * @return {Object}
  */
 const getExceptionMessage = (exception) => {
+    if (!exception || !exception.length) {
+        return {
+            domNode: document.createElement("div"),
+            numLines: 0,
+        };
+    }
     const exceptionValue = exception[0];
     const exceptionMessage = [
         <span key={0} style={{marginBottom: "10px", whiteSpace: "pre-wrap"}}>
