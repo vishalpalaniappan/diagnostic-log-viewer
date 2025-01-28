@@ -26,8 +26,10 @@ export function Tabs ({}) {
             // If fileName occurs more than once, then use filepath as tabName.
             const tabsJSX = Object.keys(fileTree).map((filePath, index) => {
                 const count = getFrequencyOfItem(fileNames, fileNames[index]);
-                const tabName = (count === 1)?fileNames[index]:filePath;
-                return <Tab key={index} filePath={filePath} tabName={tabName}></Tab>;
+                const tabName = count === 1
+                    ? fileNames[index]
+                    : filePath;
+                return <Tab key={filePath} filePath={filePath} tabName={tabName}></Tab>;
             });
             setTabs(tabsJSX);
         }
