@@ -14,18 +14,18 @@ export function Tabs ({}) {
 
     const [tabs, setTabs] = useState();
 
-    const getFrequency = (arr, item) => {
+    const getFrequencyOfItem = (arr, item) => {
         return arr.filter((x) => x === item).length;
     };
 
     useEffect(() => {
         if (fileTree) {
-            const filePaths = Object.keys(fileTree);
-            const fileNames = filePaths.map((path, index) => {
+            const fileNames = Object.keys(fileTree).map((path, index) => {
                 return path.split("/").pop();
             });
-            const tabsJSX = filePaths.map((filePath, index) => {
-                const count = getFrequency(fileNames, fileNames[index]);
+            // If fileName occurs more than once, then use filepath as tabName.
+            const tabsJSX = Object.keys(fileTree).map((filePath, index) => {
+                const count = getFrequencyOfItem(fileNames, fileNames[index]);
                 const tabName = (count === 1)?fileNames[index]:filePath;
                 return <Tab key={index} filePath={filePath} tabName={tabName}></Tab>;
             });
