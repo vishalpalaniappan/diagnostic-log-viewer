@@ -14,11 +14,20 @@ export function Tabs ({}) {
 
     const [tabs, setTabs] = useState();
 
+    const getFrequency = (arr, item) => {
+        return arr.filter((x) => x === item).length;
+    };
+
     useEffect(() => {
         if (fileTree) {
-            const tabsJSX = Object.keys(fileTree).map((filePath, index) => {
-                const fileName = filePath.split("/").pop();
-                return <Tab key={index} filePath={filePath} fileName={fileName}></Tab>;
+            const filePaths = Object.keys(fileTree);
+            const fileNames = filePaths.map((path, index) => {
+                return path.split("/").pop();
+            });
+            const tabsJSX = filePaths.map((filePath, index) => {
+                const count = getFrequency(fileNames, fileNames[index]);
+                const tabName = (count === 1)?fileNames[index]:filePath;
+                return <Tab key={index} filePath={filePath} tabName={tabName}></Tab>;
             });
             setTabs(tabsJSX);
         }

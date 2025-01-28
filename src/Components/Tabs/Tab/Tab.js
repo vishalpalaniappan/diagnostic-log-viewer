@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 
 import PropTypes from "prop-types";
 import {FiletypePy} from "react-bootstrap-icons";
@@ -9,14 +9,14 @@ import "./Tab.scss";
 
 Tab.propTypes = {
     filePath: PropTypes.string,
-    fileName: PropTypes.string,
+    tabName: PropTypes.string,
 };
 
 /**
  * Renders a Tab.
  * @return {JSX.Element}
  */
-export function Tab ({filePath, fileName}) {
+export function Tab ({filePath, tabName}) {
     const tabRef = useRef();
     const {activeFile, setActiveFile} = useContext(ActiveFileContext);
 
@@ -40,7 +40,7 @@ export function Tab ({filePath, fileName}) {
 
     return (
         <div ref={tabRef} className="tab d-flex align-items-center" onClick={selectFile}>
-            <FiletypePy className="icon"/> {fileName}
+            <FiletypePy className="icon"/> {tabName}
         </div>
     );
 }
