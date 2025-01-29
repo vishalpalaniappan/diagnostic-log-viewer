@@ -26,7 +26,7 @@ The React application contains a CDL Provider which exposes all relevant data th
 > [!NOTE]  
 > A more detailed introduction to diagnostic logging and the diagnostic tools it enables is in development.
 
-CDL files are generated through a process called Diagnostic Logging (DL) in which the log type, variable values and exceptions for each statement in the program are logged. Diagnostic logging is enabled by Automated Diagnostic Log Injector (ADLI) tools (coming soon!), which automatically insert the necessary log statements to extract the diagnostic information.
+CDL files are generated through a process called Diagnostic Logging (DL) in which the log type, variable values and exceptions for each statement in the program are logged. Diagnostic logging is enabled by [Automated Diagnostic Log Injector][adli-url] (ADLI) tools, which automatically insert the necessary log statements to extract the diagnostic information.
 
 The ADLI tool uses Abstract Syntax Trees (AST's) to traverse through the structure of the program to extract variable names and insert the necessary log statements for logtypes and variables. It inserts try except statements to catch any exceptions which occured when running the program and logs it. It also inserts a log statement to inject the Simplified Syntax Tree (SST) of the program into the header of the CDL file. The SST maps every logtype and variable to a line in the program. The enables us to only log the logtype id, effectively compressing the logtypes by default.
 
@@ -53,3 +53,4 @@ In development.
 [feature-req]: https://github.com/vishalpalaniappan/diagnostic-log-viewer/issues
 [yscope-previews]: https://github.com/y-scope/yscope-previews/blob/main/clp-s-s3/scripts/compress.py
 [demo-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/compress.cdl
+[adli-url]: https://github.com/vishalpalaniappan/asp-adli-python
