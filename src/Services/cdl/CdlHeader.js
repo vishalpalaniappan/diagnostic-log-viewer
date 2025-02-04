@@ -12,65 +12,58 @@ class CdlHeader {
      * of CDL IRStream header.
      */
     constructor (IRStreamHeader) {
-        const header = JSON5.parse(IRStreamHeader);
-        this.fileTree = header;
-
+        this.header = JSON5.parse(IRStreamHeader);
+        this.fileTree = this.header.fileTree;
         this.logTypeMap = {};
-        this.extractLogTypeMap();
+        this.variableMap = {};
+
+        this.functionMap = {};
+        this.parseHeader();
     }
 
     /**
-     * Extracts the logtype map for this program by processing the
-     * sst of each file in the file tree. It then groups all logtypes
-     * into their parent function.
+     * Prase the header of the CDL file and extract the following:
+     * - LogTypeMap
+     * - FunctionMap
+     * - VariableMap
      */
-    extractLogTypeMap () {
-        // Add a root logtype with id 0.
-        const rootNode = {type: "root", id: 0, syntax: "<module>", children: [], siblings: []};
-        this.logTypeMap[0] = new LtInfo(rootNode, 0, "");
+    parseHeader () {
+        Object.keys(this.header.ltMap).forEach((logtype, index) => {
+            const fileName = this._getFileFromLogType(logtype);
+            const ltInfo = this.header.ltMap[logtype];
+            this.logTypeMap[logtype] = new LtInfo(ltInfo, ltInfo.funcid, fileName);
 
-        // Process each SST.
-        Object.keys(this.fileTree).forEach((fileName, index) => {
-            this.processSST(this.fileTree[fileName].sst, 0, fileName);
-        });
-
-        /* Group all logtypes into their parent function. This information
-        is used when extracting call stack, stepping over, etc.*/
-        Object.keys(this.logTypeMap).forEach((ltIndex, index) => {
-            const lt = this.logTypeMap[ltIndex];
-            this.logTypeMap[lt.getfId()].addChildId(lt.getId());
-        });
-    }
-
-    /**
-     * Recursively processes the SST until all nodes are consumed.
-     * @param {Object} root
-     * @param {String} fid
-     * @param {String} fileName
-     */
-    processSST (root, fid, fileName) {
-        const nodes = root.children.concat(root.siblings);
-        nodes.forEach((child, index) => {
-            switch (child.type) {
-                case "function":
-                    this.logTypeMap[child.id] = new LtInfo(child, child.id, fileName);
-                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[child.id].getSyntax());
-                    this.processSST(child, child.id, fileName);
-                    break;
-                case "root":
-                    this.logTypeMap[child.id] = new LtInfo(child, fid, fileName);
-                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[fid].getSyntax());
-                    this.processSST(child, fid, fileName);
-                    break;
-                case "child":
-                    this.logTypeMap[child.id] = new LtInfo(child, fid, fileName);
-                    this.logTypeMap[child.id].setFuncName(this.logTypeMap[fid].getSyntax());
-                    break;
-                default:
-                    console.debug(`Unknown SST Node Type:${child.type}`);
-                    break;
+            if (ltInfo.funcid in this.functionMap) {
+                this.functionMap[ltInfo.funcid].push(logtype);
+            } else {
+                this.functionMap[ltInfo.funcid] = [logtype];
             }
+
+            ltInfo.vars.forEach((varInfo, index) => {
+                this.variableMap[varInfo.varId] = {
+                    name: varInfo.name,
+                    logType: logtype,
+                };
+            });
         });
+    }
+
+    /**
+     * Returns the file which this logtype belongs to.
+     *
+     * @param {Number} logtype
+     * @return {String}
+     */
+    _getFileFromLogType (logtype) {
+        for (const fileName in this.header.fileTree) {
+            if (fileName) {
+                const minLt = this.fileTree[fileName].minLt;
+                const maxLt = this.fileTree[fileName].maxLt;
+                if (minLt <= logtype && maxLt >= logtype) {
+                    return fileName;
+                }
+            }
+        }
     }
 
     /**
@@ -79,8 +72,8 @@ class CdlHeader {
      */
     getSourceFiles () {
         const sourceTree = {};
-        Object.keys(this.fileTree).forEach((fileName, index) => {
-            sourceTree[fileName] = this.fileTree[fileName].source;
+        Object.keys(this.header.fileTree).forEach((fileName, index) => {
+            sourceTree[fileName] = this.header.fileTree[fileName].source;
         });
         return sourceTree;
     }
