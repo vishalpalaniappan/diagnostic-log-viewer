@@ -56,7 +56,9 @@ class CdlHeader {
             this.logTypeMap[logtype] = new LtInfo(ltInfo, ltInfo.funcid, fileName);
 
             // Add to function map
-            !(ltInfo.funcid in this.functionMap) && (this.functionMap[ltInfo.funcid] = []);
+            if (!(ltInfo.funcid in this.functionMap)) {
+                this.functionMap[ltInfo.funcid] = [];
+            }
             this.functionMap[ltInfo.funcid].push(logtype);
 
             // Add to variable map
