@@ -12,11 +12,21 @@ class CdlHeader {
      * of CDL IRStream header.
      */
     constructor (IRStreamHeader) {
-        this.header = JSON5.parse(IRStreamHeader);
-        this.logTypeMap = {};
-        this.variableMap = {};
-        this.functionMap = {};
-        this.parseHeader();
+        if (!IRStreamHeader) {
+            throw new Error('IRStreamHeader is required.');
+        }
+        try {
+            this.header = JSON5.parse(IRStreamHeader);
+            if (!this.header || typeof this.header !== 'object') {
+                throw new Error('Invalid header format.');
+            }
+            this.logTypeMap = {};
+            this.variableMap = {};
+            this.functionMap = {};
+            this.parseHeader();
+        } catch (error) {
+            throw new Error(`Failed to parse header: ${error.message}.`);
+        }
     }
 
     /**
@@ -24,22 +34,37 @@ class CdlHeader {
      * logtype map, function map and variable map.
      */
     parseHeader () {
+        if (!this.header?.ltMap) {
+            throw new Error('Invalid header: ltMap is missing.');
+        }
+
         Object.keys(this.header.ltMap).forEach((logtype, index) => {
+
+            //Get file name for current logtype
+            const fileName = this._getFileFromLogType(logtype);
+            if (!fileName) {
+                throw new Error(`Could not determine file for logtype: ${logtype}.`);
+            }
+
+            // Get logtype info for current logtype
             const ltInfo = this.header.ltMap[logtype];
+            if (!ltInfo?.funcid === undefined || !Array.isArray(ltInfo.vars)) {
+                throw new Error(`Invalid ltInfo structure for logtype: ${logtype}.`);
+            }
 
             // Add to logtype map
-            this.logTypeMap[logtype] = new LtInfo(
-                ltInfo,
-                ltInfo.funcid,
-                this._getFileFromLogType(logtype)
-            );
+            this.logTypeMap[logtype] = new LtInfo(ltInfo, ltInfo.funcid, fileName);
 
-            // Add logtype to function map
+            // Add to function map
             !(ltInfo.funcid in this.functionMap) && (this.functionMap[ltInfo.funcid] = []);
             this.functionMap[ltInfo.funcid].push(logtype);
 
-            // Add variables to variable map
+            // Add to variable map
             ltInfo.vars.forEach((varInfo, index) => {
+                if (!varInfo?.varId || !varInfo?.name) {
+                    throw new Error(`Invalid variable info in logtype: ${logtype}.`);
+                }
+
                 this.variableMap[varInfo.varId] = {
                     name: varInfo.name,
                     logType: logtype,
