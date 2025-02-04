@@ -48,7 +48,7 @@ class CdlHeader {
 
             // Get logtype info for current logtype
             const ltInfo = this.header.ltMap[logtype];
-            if (!ltInfo?.funcid === undefined || !Array.isArray(ltInfo.vars)) {
+            if (ltInfo?.funcid === undefined || !Array.isArray(ltInfo.vars)) {
                 throw new Error(`Invalid ltInfo structure for logtype: ${logtype}.`);
             }
 
