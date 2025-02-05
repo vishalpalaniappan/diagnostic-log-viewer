@@ -35,12 +35,11 @@ class CdlHeader {
      */
     parseHeader () {
         if (!this.header?.ltMap) {
-            throw new Error('Invalid header: ltMap is missing.');
+            throw new Error("Invalid header: ltMap is missing.");
         }
 
         Object.keys(this.header.ltMap).forEach((logtype, index) => {
-
-            //Get file name for current logtype
+            // Get file name for current logtype
             const fileName = this._getFileFromLogType(logtype);
             if (!fileName) {
                 throw new Error(`Could not determine file for logtype: ${logtype}.`);
@@ -53,13 +52,7 @@ class CdlHeader {
             }
 
             // Add to logtype map
-            this.logTypeMap[logtype] = new LtInfo(ltInfo, ltInfo.funcid, fileName);
-
-            // Add to function map
-            if (!(ltInfo.funcid in this.functionMap)) {
-                this.functionMap[ltInfo.funcid] = [];
-            }
-            this.functionMap[ltInfo.funcid].push(logtype);
+            this.logTypeMap[logtype] = new LtInfo(ltInfo, fileName);
 
             // Add to variable map
             ltInfo.vars.forEach((varInfo, index) => {

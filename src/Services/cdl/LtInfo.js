@@ -11,9 +11,8 @@ class LtInfo {
      * @param {Number} fid ID of the function this node belongs to.
      * @param {String} filePath File this logtype belongs to.
      */
-    constructor (ltInfoSST, fid, filePath) {
+    constructor (ltInfoSST, filePath) {
         this.lt = ltInfoSST;
-        this.lt.fid = fid;
         this.lt.filePath = filePath;
         this.lt.fileName = filePath.split("/").pop();
         this.childIds = [];
@@ -26,6 +25,14 @@ class LtInfo {
      */
     addChildId (id) {
         this.childIds.push(id);
+    }
+
+    /**
+     * Indicates if the current logtype is a function definition
+     * @return {Boolean}
+     */
+    isFunction() {
+        return this.lt.type === "function";
     }
 
     /**
@@ -95,7 +102,7 @@ class LtInfo {
      * @return {String}
      */
     getfId () {
-        return this.lt.fid;
+        return this.lt.funcid;
     }
 
     /**
@@ -103,7 +110,7 @@ class LtInfo {
      * @return {String}
      */
     getVariables () {
-        return this.lt.variables;
+        return this.lt.vars;
     }
 
     /**

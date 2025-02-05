@@ -41,14 +41,14 @@ class CdlLogLine {
 
     /**
      * Extract metadata from variable log line.
-     * Variable: "# <lt> <variable_value>"
+     * Variable: "# <var_id> <variable_value>"
      * @param {String} log
      */
     _processVariable (log) {
         this.type = LINE_TYPE.VARIABLE;
-        const [lt, ...variable] = log.slice(2).split(" ");
+        const [varid, ...variable] = log.slice(2).split(" ");
         this.value = variable.join(" ");
-        this.lt = parseInt(lt);
+        this.varid = parseInt(varid);
     }
 
     /**
