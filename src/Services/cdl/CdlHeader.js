@@ -61,7 +61,7 @@ class CdlHeader {
 
                 this.variableMap[varInfo.varId] = {
                     name: varInfo.name,
-                    logType: logtype,
+                    logType: Number(logtype),
                 };
             });
         });

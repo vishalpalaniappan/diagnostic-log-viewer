@@ -13,22 +13,21 @@ class CdlLog {
      */
     constructor (logFile) {
         this.logFile = logFile;
-        this.execution = [];
+
         this.exception = null;
         this.header = {};
         this.executionTree = {};
-
         this.callStacks = {};
 
-        this._processHeader();
-        this._processException();
+        this._extractHeader();
+        this._extractException();
         this._extractCallStack();
 
-        console.log(this.callStacks);
+        this._getVariablesAtPosition(this.logFile.length - 1);
     }
 
 
-    _processHeader() {
+    _extractHeader() {
         const firstLog = new CdlLogLine(this.logFile[0]);
 
         if (firstLog.type === LINE_TYPE.IR_HEADER) {
@@ -39,7 +38,7 @@ class CdlLog {
         }
     }
 
-    _processException() {
+    _extractException() {
         const lastLog = new CdlLogLine(this.logFile[this.logFile.length - 1]);
 
         if (lastLog.type === LINE_TYPE.EXCEPTION) {
@@ -77,6 +76,40 @@ class CdlLog {
             }
         } while (++position < this.logFile.length);
     }
+
+    /**
+     * Returns the variables in the current function given a starting position.
+     * @param {Number} position 
+     */
+    _getVariablesAtPosition(position) {
+        const startLog = new CdlLogLine(this.logFile[position]);
+        const startLt = this.header.logTypeMap[startLog.lt];
+        const startFunc = startLt.getfId()
+        const variables = {};
+        do {
+            const currLog = new CdlLogLine(this.logFile[position]);
+
+            if (currLog.type === LINE_TYPE.EXECUTION) {
+                const currLt = this.header.logTypeMap[currLog.lt];
+                if (currLt.getId() === startFunc) {
+                    break;
+                }
+            } 
+            
+            if (currLog.type === LINE_TYPE.VARIABLE) {
+                const variable = this.header.variableMap[currLog.varid];
+                const currLt = this.header.logTypeMap[variable.logType];
+
+                if (currLt.getfId() === startFunc) {
+                    variables[variable.name] = currLog.value;
+                }
+            }
+        } while (--position > 0);
+
+        console.log(variables);
+
+    }
+
 }
 
 export default CdlLog;
