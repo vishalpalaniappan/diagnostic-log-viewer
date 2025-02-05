@@ -22,7 +22,6 @@ class CdlHeader {
             }
             this.logTypeMap = {};
             this.variableMap = {};
-            this.functionMap = {};
             this.parseHeader();
         } catch (error) {
             throw new Error(`Failed to parse header: ${error.message}.`);
