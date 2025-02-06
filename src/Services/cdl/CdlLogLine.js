@@ -19,6 +19,7 @@ class CdlLogLine {
      * log line. In the future, this can be optimized further.
      */
     _classifyLogLine () {
+        // FIXME: There is a better way to implement this.
         const fullStr = this.log[0].split("root ");
         const log = fullStr.slice(1).join(" ").trim();
 
@@ -47,7 +48,7 @@ class CdlLogLine {
     _processVariable (log) {
         this.type = LINE_TYPE.VARIABLE;
         const [varid, ...variable] = log.slice(2).split(" ");
-        this.value = variable.join(" ");
+        this.value = this._parseVariableIfJSON(variable.join(" "));
         this.varid = parseInt(varid);
     }
 
@@ -70,6 +71,17 @@ class CdlLogLine {
     _processIRHeader (log) {
         this.type = LINE_TYPE.IR_HEADER;
         this.value = log;
+    }
+
+    /**
+     * Parses the variable value if it is a JSON string.
+     */
+    _parseVariableIfJSON (variable) {
+        try{
+            return JSON.parse(variable);
+        } catch (exception) {
+            return variable;
+        }
     }
 };
 
