@@ -1,6 +1,7 @@
 import JSON5 from "json5";
 
 import LtInfo from "./LtInfo";
+import VarInfo from "./VarInfo.js"
 
 /**
  * This class processes the header of the CDL file and exposes the
@@ -59,10 +60,7 @@ class CdlHeader {
                     throw new Error(`Invalid variable info in logtype: ${logtype}.`);
                 }
 
-                this.variableMap[varInfo.varId] = {
-                    name: varInfo.name,
-                    logType: Number(logtype),
-                };
+                this.variableMap[varInfo.varId] = new VarInfo(varInfo, logtype);
             });
         });
     }
