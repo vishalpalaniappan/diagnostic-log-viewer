@@ -1,29 +1,21 @@
 
 /**
- * This class accepts an SST node and exposes functions to extract
- * metadata from it. Each node in the SST contains the logtype id,
- * type(root, child etc.), lineno, syntax, variables, children and
- * siblings.
+ * This class contains all the metadata for each node extracted by the 
+ * ADLI tool (lineno, variables, logtypeid etc..).It also saves the 
+ * filename and file path. 
  */
 class LtInfo {
     /**
-     * @param {Array} ltInfoSST Log type information extracted from SST.
+     * @param {Array} ltInfo Log type information extracted from SST.
      * @param {String} filePath File this logtype belongs to.
      */
-    constructor (ltInfoSST, filePath) {
-        this.lt = ltInfoSST;
-        this.lt.filePath = filePath;
-        this.lt.fileName = filePath.split("/").pop();
-        this.childIds = [];
-    }
+    constructor (ltInfo, filePath) {
 
-    /**
-     * This function adds child elements which belong to this function.
-     * This includes id's that are contained in child nodes.
-     * @param {Number} id
-     */
-    addChildId (id) {
-        this.childIds.push(id);
+        for (var key in ltInfo) {
+            this[key] = ltInfo[key];
+        }
+        this.filePath = filePath;
+        this.fileName = filePath.split("/").pop();
     }
 
     /**
@@ -31,7 +23,7 @@ class LtInfo {
      * @return {Boolean}
      */
     isFunction() {
-        return this.lt.type === "function";
+        return this.type === "function";
     }
 
     /**
@@ -39,27 +31,7 @@ class LtInfo {
      * @return {String}
      */
     getLineNo () {
-        return this.lt.lineno;
-    }
-
-    /**
-     * This function returns the syntax
-     * @return {String}
-     */
-    getfName () {
-        return this.lt.lineno;
-    }
-
-    /**
-     * This function sets the function name
-     * @param {String} funcName
-     */
-    setFuncName (funcName) {
-        if (funcName.includes("def")) {
-            this.lt.funcName = funcName.split("def ")[1].split("(")[0];
-        } else {
-            this.lt.funcName = funcName;
-        }
+        return this.lineno;
     }
 
     /**
@@ -67,7 +39,7 @@ class LtInfo {
      * @return {String}
      */
     getFuncName () {
-        return this.lt.funcName;
+        return this.name;
     }
 
 
@@ -76,7 +48,7 @@ class LtInfo {
      * @return {String}
      */
     getFilePath () {
-        return this.lt.filePath;
+        return this.filePath;
     }
 
 
@@ -85,7 +57,7 @@ class LtInfo {
      * @return {String}
      */
     getFileName () {
-        return this.lt.fileName;
+        return this.fileName;
     }
 
     /**
@@ -93,7 +65,7 @@ class LtInfo {
      * @return {String}
      */
     getId () {
-        return this.lt.id;
+        return this.id;
     }
 
     /**
@@ -101,15 +73,15 @@ class LtInfo {
      * @return {String}
      */
     getfId () {
-        return this.lt.funcid;
+        return this.funcid;
     }
 
     /**
      * This function returns the variables of the current logtype.
-     * @return {String}
+     * @return {Array|Object}
      */
     getVariables () {
-        return this.lt.vars;
+        return this.vars;
     }
 
     /**
@@ -117,7 +89,7 @@ class LtInfo {
      * @return {String}
      */
     getType () {
-        return this.lt.type;
+        return this.type;
     }
 
     /**
@@ -125,17 +97,7 @@ class LtInfo {
      * @return {String}
      */
     getSyntax () {
-        return this.lt.syntax;
-    }
-
-    /**
-     * This function indicates if this log type contains a child
-     * with the provided id.
-     * @param {Number} id
-     * @return {Boolean}
-     */
-    containsChild (id) {
-        return this.childIds.includes(id);
+        return this.syntax;
     }
 };
 
