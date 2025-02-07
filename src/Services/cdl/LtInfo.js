@@ -10,7 +10,6 @@ class LtInfo {
      * @param {String} filePath File this logtype belongs to.
      */
     constructor (ltInfo, filePath) {
-
         for (var key in ltInfo) {
             this[key] = ltInfo[key];
         }
