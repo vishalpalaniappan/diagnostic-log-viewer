@@ -75,7 +75,7 @@ class CdlHeader {
         for (const fileName in this.header.fileTree) {
             const minLt = this.header.fileTree[fileName].minLt;
             const maxLt = this.header.fileTree[fileName].maxLt;
-            if (minLt <= logtype && maxLt >= logtype) {
+            if (minLt < logtype && maxLt >= logtype) {
                 return fileName;
             }
         }
