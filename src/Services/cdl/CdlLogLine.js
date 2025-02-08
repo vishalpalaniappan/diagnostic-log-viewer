@@ -5,22 +5,10 @@ import {LINE_TYPE, LINE_TYPE_DELIMITER} from "./CDL_CONSTANTS";
  */
 class CdlLogLine {
     /**
-     * @param {Array} logFile Array containing the contents of CDL log file.
+     * @param {Array} logLine The contents of a single log line.
      */
-    constructor (logFile) {
-        this.log = logFile;
-        this._classifyLogLine();
-    }
-
-    /**
-     * Given a log line, this function classifys and extracts its metadata.
-     * Note that the log line is in a format returned by the clp-ffi-js library.
-     * In this case, it is an array with the first element containing the
-     * log line. In the future, this can be optimized further.
-     */
-    _classifyLogLine () {
-        // FIXME: There is a better way to implement this.
-        const fullStr = this.log[0].split("root ");
+    constructor (logLine) {
+        const fullStr = logLine[0].split("root ");
         const log = fullStr.slice(1).join(" ").trim();
 
         switch (log.charAt(0)) {
