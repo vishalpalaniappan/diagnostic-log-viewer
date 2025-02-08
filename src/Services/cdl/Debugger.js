@@ -35,28 +35,7 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this.getPositionData(this.cdl.execution.length - 1);
-    }
-
-    /**
-     *
-     * @param {Number} position Position in execution sequence to go to.
-     */
-    getPositionData (position) {
-        const currLt = this.cdl.execution[position];
-        const currLtInfo = this.cdl.header.logTypeMap[currLt];
-
-        const callStack = this.cdl.getCallStackAtPosition(position);
-        const exceptions = this.cdl.getExceptionsAtPosition(position);
-
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: {
-                currLtInfo: currLtInfo,
-                callStack: callStack,
-                exceptions: exceptions,
-            },
-        });
+        this.cdl.getPositionData(this.cdl.execution.length - 1);
     }
 
     /**
@@ -64,11 +43,10 @@ class Debugger {
      * @param {Number} position
      */
     getVariableStack (position) {
-        const variableStack = this.cdl.getVariableStackAtPosition(position);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
-                variableStack: variableStack,
+                variableStack: this.cdl.getVariablesAtPosition(position),
             },
         });
     }
@@ -77,14 +55,14 @@ class Debugger {
      * This function moves to the end of the file.
      */
     goToStart () {
-        this.getPositionData(0);
+        this.cdl.getPositionData(0);
     }
 
     /**
      * This function moves to the start of the file.
      */
     goToEnd () {
-        this.getPositionData(this.cdl.execution.length - 1);
+        this.cdl.getPositionData(this.cdl.execution.length - 1);
     }
 
     /**
@@ -95,8 +73,9 @@ class Debugger {
         if (position + 1 >= this.cdl.execution.length) {
             return;
         }
-        const callStack = this.cdl.getCallStackAtPosition(position + 1);
-        this.getPositionData(callStack[0].position);
+        const nextPosition = this.cdl._getNextPosition(position);
+        const callStack = this.cdl.getCallStackAtPosition(nextPosition);
+        this.cdl.getPositionData(callStack[0].position);
     }
 
     /**
@@ -108,7 +87,7 @@ class Debugger {
         if (callStack.length <= 1) {
             return;
         }
-        this.getPositionData(callStack[1].position);
+        this.cdl.getPositionData(callStack[1].position);
     }
 
     /**
@@ -123,15 +102,18 @@ class Debugger {
         const originalPosition = position;
         const stack = this.cdl.getCallStackAtPosition(position);
 
-        while (++position < this.cdl.execution.length) {
+        while (position < this.cdl.execution.length) {
+            position = this.cdl._getNextPosition(position);
             const currStack = this.cdl.getCallStackAtPosition(position);
             if (stack.length >= currStack.length) {
-                this.getPositionData(position);
+                this.cdl.getPositionData(position);
                 return;
             }
         }
 
-        this.getPositionData(originalPosition + 1);
+        this.cdl.getPositionData(
+            this.cdl._getNextPosition(originalPosition)
+        );
     }
 
     /**
@@ -146,15 +128,18 @@ class Debugger {
         const originalPosition = position;
         const stack = this.cdl.getCallStackAtPosition(position);
 
-        while (--position >= 0) {
+        while (position >= 0) {
+            position = this.cdl._getPreviousPosition(position);
             const currStack = this.cdl.getCallStackAtPosition(position);
             if (stack.length >= currStack.length) {
-                this.getPositionData(position);
+                this.cdl.getPositionData(position);
                 return;
             }
         }
 
-        this.getPositionData(originalPosition - 1);
+        this.cdl.getPositionData(
+            this.cdl._getPreviousPosition(originalPosition)
+        );
     }
 };
 

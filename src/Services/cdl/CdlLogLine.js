@@ -47,9 +47,7 @@ class CdlLogLine {
      */
     _processExeception (log) {
         this.type = LINE_TYPE.EXCEPTION;
-        const [lt, ...exception] = log.slice(1).split(" ");
-        this.value = exception.join(" ");
-        this.lt = parseInt(lt);
+        this.value = log.slice(2);
     }
 
     /**
