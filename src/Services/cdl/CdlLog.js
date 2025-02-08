@@ -1,5 +1,3 @@
-import JSON5 from "json5";
-
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {LINE_TYPE} from "./CDL_CONSTANTS";
 import CdlHeader from "./CdlHeader";
