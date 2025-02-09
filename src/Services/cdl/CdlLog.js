@@ -57,26 +57,23 @@ class CdlLog {
     _addToCallStacks (currLog) {
         const position = this.execution.length - 1;
         const currLt = this.header.logTypeMap[currLog.lt];
+        const cs = this.callStack;
         
-        if (currLt.isFunction()) {
-            this.callStack.push(position);
+        if (currLt.isFunction() && currLt.getfId() != 0) {
+            cs.push(position);
         }
         
-        //Move down the call stack until parent function is found.
-        while (!currLt.isFunction() && this.callStack.length > 0) {
-            const stackTop = this.callStack[this.callStack.length - 1];
-            const lt = this.execution[stackTop].lt;
-            if (lt ===  currLt.getfId()) {
+        while (cs.length > 0) {
+            const currFunction = cs[cs.length - 1];
+            if (this.execution[currFunction].lt ===  currLt.getfId()) {
                 break;
             }
-            this.callStack.pop();
+            cs.pop();
         }
-
         
-        this.callStacks[position] = this.callStack.map((position, index) => {
+        this.callStacks[position] = cs.map((position, index) => {
             return this._getPreviousPosition(position);
         });
-
         this.callStacks[position].push(position);
     }
 
@@ -100,35 +97,27 @@ class CdlLog {
      * @returns {Object} Returns the variables belonging to current function.
      */
     getVariablesAtPosition(position) {
-        const ltMap = this.header.logTypeMap;
-        const varMap = this.header.variableMap;
-
         const variables = {};
-
-        // Get current function
         const startLog = this.execution[position];
-        const currFunc = ltMap[startLog.lt].getfId();
+        const currFuncId = this.header.logTypeMap[startLog.lt].getfId();
 
         do {
             const currLog = this.execution[position];
             
-            if (currLog.type === LINE_TYPE.EXECUTION) {
-                // Break if we reached the start of the function
-                if (ltMap[currLog.lt].getId() === currFunc) {
-                    break;
-                }
+            // If the start of the function is reached, break.
+            if (currLog.type === LINE_TYPE.EXECUTION && currLog.lt === currFuncId) {
+                break;
             }
             
+            // If var is in curr function and it is the first visit, save var.
             if (currLog.type === LINE_TYPE.VARIABLE) {
-                const _var = varMap[currLog.varid];
-                const _varLt = ltMap[_var.logType];
+                const _var = this.header.variableMap[currLog.varid];
+                const _varFuncId = this.header.logTypeMap[_var.logType].getfId();
 
-                // If var is in curr function and it is the first visit, save var.
-                if (_varLt.getfId() === currFunc && !(_var.name in variables)) {
+                if (_varFuncId === currFuncId && !(_var.name in variables)) {
                     variables[_var.name] = currLog.value;
                 }
             }
-
         } while (--position > 0);
 
         return variables;
