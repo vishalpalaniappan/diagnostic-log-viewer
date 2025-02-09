@@ -8,8 +8,8 @@ class CdlLogLine {
      * @param {Array} logLine The contents of a single log line.
      */
     constructor (logLine) {
-        const fullStr = logLine[0].split("root ");
-        const log = fullStr.slice(1).join(" ").trim();
+        const pattern  = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/gm;
+        const log = pattern.exec(logLine[0])[1]
 
         switch (log.charAt(0)) {
             case LINE_TYPE_DELIMITER.VARIABLE:
@@ -35,9 +35,10 @@ class CdlLogLine {
      */
     _processVariable (log) {
         this.type = LINE_TYPE.VARIABLE;
-        const [varid, ...variable] = log.slice(2).split(" ");
-        this.value = this._parseVariableIfJSON(variable.join(" "));
-        this.varid = parseInt(varid);
+        const pattern = /^# ([0-9]+) (.*$)/gm;
+        const parsedInfo = pattern.exec(log);
+        this.value = this._parseVariableIfJSON(parsedInfo[2]);
+        this.varid = parseInt(parsedInfo[1]);
     }
 
     /**
