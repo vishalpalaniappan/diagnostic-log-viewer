@@ -140,6 +140,58 @@ class Debugger {
     }
 
     /**
+     * Play the program from the start.
+     * @param {Number} position 
+     */
+    replayProgram (position) {
+        this.playForward(0);
+    }
+
+    /**
+     * Play the program forward from the given position.
+     * @param {Number} position 
+     * @returns 
+     */
+    playForward (position) {
+        do {
+            position = this.cdl._getNextPosition(position);
+
+            if (position == null) {
+                return;
+            }
+
+            for (let breakpoint of this.breakpoints) {
+                if (breakpoint.id === this.cdl.execution[position].lt) {
+                    this.cdl.getPositionData(position);
+                    return;
+                }
+            };
+        } while (position < this.cdl.execution.length)
+    }
+
+    /**
+     * Play the program backward from the given position.
+     * @param {Number} position 
+     * @returns 
+     */
+    playBackward (position) {
+        do {
+            position = this.cdl._getPreviousPosition(position);
+
+            if (position == null) {
+                return;
+            }
+
+            for (let breakpoint of this.breakpoints) {
+                if (breakpoint.id === this.cdl.execution[position].lt) {
+                    this.cdl.getPositionData(position);
+                    return;
+                }
+            };
+        } while (position < this.cdl.execution.length)
+    }
+
+    /**
      * Toggles the breakpoint at the given filename and line number.
      * @param {String} fileName 
      * @param {Number} lineNumber 

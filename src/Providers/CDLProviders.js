@@ -85,7 +85,9 @@ function CDLProviders ({children, fileInfo}) {
                 cdlWorker.current.onmessage = handleWorkerMessage;
                 cdlWorker.current.postMessage({
                     code: CDL_WORKER_PROTOCOL.LOAD_FILE,
-                    fileInfo: fileInfo,
+                    args: {
+                        fileInfo: fileInfo,
+                    }
                 });
             } catch (error) {
                 console.error("Failed to initialize worker:", error);

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRightShort, ArrowUpShort,
-    ThreeDotsVertical} from "react-bootstrap-icons";
+    ThreeDotsVertical, Play, ArrowRepeat} from "react-bootstrap-icons";
 
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -26,6 +26,7 @@ export function DebugToolKit ({}) {
 
     const blueColor = "#75beff";
     const greyColor = "#7c7c7c";
+    const greenColor = "#00BB00";
 
     let deltaX;
     let deltaY;
@@ -89,6 +90,15 @@ export function DebugToolKit ({}) {
 
     const keydown = (e) => {
         switch (e.code) {
+            case "KeyR":
+                replayProgram();
+                break;
+            case "BracketLeft":
+                playBackward();
+                break;
+            case "BracketRight":
+                playForward();
+                break;
             case "ArrowRight":
                 (e.ctrlKey)?goToEnd():stepOverForward();
                 break;
@@ -146,6 +156,24 @@ export function DebugToolKit ({}) {
         sendToWorker(code, null);
     };
 
+    const playForward = () => { 
+        const code = CDL_WORKER_PROTOCOL.PLAY_FORWARD;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
+    }
+
+    const playBackward = () => { 
+        const code = CDL_WORKER_PROTOCOL.PLAY_BACKWARD;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
+    }
+
+    const replayProgram = () => { 
+        const code = CDL_WORKER_PROTOCOL.REPLAY;
+        const args = {};
+        sendToWorker(code, args);
+    }
+
     const moveUpStack = () => {
         if (stackPosition + 1 < stack.length) {
             setStackPosition(stackPosition + 1);
@@ -167,6 +195,12 @@ export function DebugToolKit ({}) {
                     className="icon"
                     style={{color: greyColor, cursor: "move"}}
                     size={20} />
+                <Play
+                    className="me-1 icon"
+                    title="Play (Right Bracket Key)"
+                    onClick={playForward}
+                    style={{color: blueColor}}
+                    size={22} />
                 <ArrowLeftShort
                     className="me-1 icon"
                     title="Step Over Backward (← Key)"
@@ -190,6 +224,12 @@ export function DebugToolKit ({}) {
                     onClick={stepInto}
                     title="Step Into (↓ Key)"
                     style={{color: blueColor}}
+                    size={22} />
+                <ArrowRepeat
+                    className="me-1 icon"
+                    title="Restart (R Key)"
+                    onClick={replayProgram}
+                    style={{color: greenColor}}
                     size={22} />
             </div>
         </div>
