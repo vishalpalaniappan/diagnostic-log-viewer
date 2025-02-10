@@ -64,8 +64,8 @@ class CdlLog {
         }
         
         while (cs.length > 0) {
-            const currFunction = cs[cs.length - 1];
-            if (this.execution[currFunction].lt ===  currLt.getfId()) {
+            const currFunctionPosition = cs[cs.length - 1];
+            if (this.execution[currFunctionPosition].lt ===  currLt.getfId()) {
                 break;
             }
             cs.pop();
