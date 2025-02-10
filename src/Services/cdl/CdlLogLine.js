@@ -1,3 +1,5 @@
+import JSON5 from "json5";
+
 import {LINE_TYPE, LINE_TYPE_DELIMITER} from "./CDL_CONSTANTS";
 /**
  * This class accepts a line from a CDL log, classifys it and exposes
@@ -65,7 +67,7 @@ class CdlLogLine {
      */
     _parseVariableIfJSON (variable) {
         try{
-            return JSON.parse(variable);
+            return JSON5.parse(variable);
         } catch (exception) {
             return variable;
         }
