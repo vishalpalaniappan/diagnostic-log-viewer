@@ -70,12 +70,14 @@ class Debugger {
      * @param {Number} position
      */
     stepInto (position) {
-        if (position + 1 >= this.cdl.execution.length) {
+        const nextPosition = this.cdl._getNextPosition(position);
+
+        if (nextPosition == null) {
+            // End of file has been reached 
             return;
         }
-        const nextPosition = this.cdl._getNextPosition(position);
         const callStack = this.cdl.getCallStackAtPosition(nextPosition);
-        this.cdl.getPositionData(callStack[0].position);
+        this.cdl.getPositionData(callStack[callStack.length - 1].position);
     }
 
     /**
@@ -87,7 +89,7 @@ class Debugger {
         if (callStack.length <= 1) {
             return;
         }
-        this.cdl.getPositionData(callStack[1].position);
+        this.cdl.getPositionData(callStack[callStack.length - 2].position);
     }
 
     /**
@@ -95,25 +97,21 @@ class Debugger {
      * @param {Number} position
      */
     stepOverForward (position) {
-        if (position + 1 >= this.cdl.execution.length) {
-            return;
-        }
-
-        const originalPosition = position;
-        const stack = this.cdl.getCallStackAtPosition(position);
+        const originalStack = this.cdl.getCallStackAtPosition(position);
 
         while (position < this.cdl.execution.length) {
             position = this.cdl._getNextPosition(position);
-            const currStack = this.cdl.getCallStackAtPosition(position);
-            if (stack.length >= currStack.length) {
+            
+            if (position == null) {
+                // The end of the file has been reached
+                return;
+            }
+
+            if (this.cdl.getCallStackAtPosition(position).length <= originalStack.length) {
                 this.cdl.getPositionData(position);
                 return;
             }
         }
-
-        this.cdl.getPositionData(
-            this.cdl._getNextPosition(originalPosition)
-        );
     }
 
     /**
@@ -121,25 +119,21 @@ class Debugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
-        if (position - 1 < 0) {
-            return;
-        }
-
-        const originalPosition = position;
-        const stack = this.cdl.getCallStackAtPosition(position);
+        const originalStack = this.cdl.getCallStackAtPosition(position);
 
         while (position >= 0) {
             position = this.cdl._getPreviousPosition(position);
-            const currStack = this.cdl.getCallStackAtPosition(position);
-            if (stack.length >= currStack.length) {
+            
+            if (position == null) {
+                // Start of file has been reached
+                return;
+            }
+
+            if (this.cdl.getCallStackAtPosition(position).length <= originalStack.length) {
                 this.cdl.getPositionData(position);
                 return;
             }
         }
-
-        this.cdl.getPositionData(
-            this.cdl._getPreviousPosition(originalPosition)
-        );
     }
 };
 

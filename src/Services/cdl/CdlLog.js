@@ -111,11 +111,11 @@ class CdlLog {
             
             // If var is in curr function and it is the first visit, save var.
             if (currLog.type === LINE_TYPE.VARIABLE) {
-                const _var = this.header.variableMap[currLog.varid];
-                const _varFuncId = this.header.logTypeMap[_var.logType].getfId();
+                const variable = this.header.variableMap[currLog.varid];
+                const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
-                if (_varFuncId === currFuncId && !(_var.name in variables)) {
-                    variables[_var.name] = currLog.value;
+                if (varFuncId === currFuncId && !(variable.name in variables)) {
+                    variables[variable.name] = currLog.value;
                 }
             }
         } while (--position > 0);
@@ -129,13 +129,13 @@ class CdlLog {
      * @returns 
      */
     _getPreviousPosition(position) { 
-        while(--position > 0) {
+        while(--position >= 0) {
             const line = this.execution[position];
             if (line.type === LINE_TYPE.EXECUTION) {
                 return position;
             }
         }
-        return position;
+        return null;
     }
     
     /**
@@ -150,7 +150,7 @@ class CdlLog {
                 return position;
             }
         }
-        return position;
+        return null;
     }
 
 
@@ -173,7 +173,7 @@ class CdlLog {
                 exceptions: exception,
             });
         });
-        return csInfo.reverse();
+        return csInfo;
     }
 
     /**
@@ -184,12 +184,11 @@ class CdlLog {
             const positionData = this.execution[position];
 
             if (positionData.type === LINE_TYPE.EXECUTION) {
-                const lt = positionData.lt;
                 postMessage({
                     code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
                     args: {
-                        currLtInfo: this.header.logTypeMap[lt],
-                        callStack: this.getCallStackAtPosition(position),
+                        currLtInfo: this.header.logTypeMap[positionData.lt],
+                        callStack: this.getCallStackAtPosition(position).reverse(),
                         exceptions: this.exception,
                     },
                 });
