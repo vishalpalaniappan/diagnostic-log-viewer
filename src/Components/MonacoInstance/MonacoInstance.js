@@ -39,6 +39,7 @@ export function MonacoInstance () {
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
+    const activeFileRef = useRef();
 
     /**
      * Add's exceptions to the given position.
@@ -130,6 +131,10 @@ export function MonacoInstance () {
         loadContent();
     }, [stackPosition, stack, activeFile, breakPoints]);
 
+    useEffect(() => {
+        activeFileRef.current = activeFile;
+    }, [activeFile]);
+
 
     loader.config({monaco});
 
@@ -149,19 +154,11 @@ export function MonacoInstance () {
      * @param {Event} e 
      */
     const toggleBreakpoint = (e) => {
-        /* TODO: I am using setActiveFile to get the latest value of active 
-        file in the mousedown callback function. This can be implemented
-        in a better way. */
-        let _activeFile;
-        setActiveFile((activeFile, val) => {
-            _activeFile = activeFile;
-            return _activeFile;
-        });
-        if (_activeFile && e.target.type === 2) {
+        if (activeFileRef.current && e.target.type === 2) {
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT,
                 args: {
-                    fileName: _activeFile,
+                    fileName: activeFileRef.current,
                     lineNumber: e.target.position.lineNumber,  
                 },
             });
