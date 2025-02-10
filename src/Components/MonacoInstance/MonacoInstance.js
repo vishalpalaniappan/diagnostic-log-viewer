@@ -175,6 +175,7 @@ export function MonacoInstance () {
                 "wordWrap": "on",
                 "scrollBeyondLastLine": false,
                 "glyphMargin": true,
+                "readOnly": true,
             }}
             language="python"
         />
