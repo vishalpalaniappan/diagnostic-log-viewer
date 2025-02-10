@@ -4,10 +4,14 @@ import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import PropTypes from "prop-types";
 
+import CDL_WORKER_PROTOCOL from "../../Services/CDL_WORKER_PROTOCOL";
+
 import ActiveFileContext from "../../Providers/ActiveFileContext";
 import FileTreeContext from "../../Providers/FileTreeContext";
 import StackContext from "../../Providers/StackContext";
 import PositionStateContext from "../../Providers/StackPositionContext";
+import WorkerContext from "../../Providers/WorkerContext";
+import BreakpointsContext from "../../Providers/BreakpointsContext";
 import {getExceptionMessage} from "./helper";
 
 import "./MonacoInstance.scss";
@@ -29,7 +33,9 @@ export function MonacoInstance () {
     const {stackPosition} = useContext(PositionStateContext);
     const {stack} = useContext(StackContext);
     const {fileTree} = useContext(FileTreeContext);
-    const {activeFile} = useContext(ActiveFileContext);
+    const {breakPoints} = useContext(BreakpointsContext);
+    const {activeFile, setActiveFile} = useContext(ActiveFileContext);
+    const {cdlWorker} = useContext(WorkerContext);
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
@@ -100,12 +106,29 @@ export function MonacoInstance () {
                 selectLine(stack[stackPosition].lineno, "stackLine");
                 addException(stack[stackPosition]);
             }
+
+            if (breakPoints) {
+                for (const breakPoint of breakPoints) {
+                    if (breakPoint.filePath === activeFile) {
+                        editorRef.current.createDecorationsCollection([
+                            {
+                                range: new monaco.Range(
+                                    breakPoint.lineno, 1,breakPoint.lineno, 1
+                                ),
+                                options: {
+                                    glyphMarginClassName: "glyph-debugger-line",
+                                },
+                            },
+                        ]);
+                    }
+                }
+            }
         }
     };
 
     useEffect(() => {
         loadContent();
-    }, [stackPosition, stack, activeFile]);
+    }, [stackPosition, stack, activeFile, breakPoints]);
 
 
     loader.config({monaco});
@@ -118,7 +141,31 @@ export function MonacoInstance () {
     const handleEditorDidMount =(editor, monaco) => {
         monacoRef.current = monaco;
         editorRef.current = editor;
-        editorRef.current.setValue("");
+        editorRef.current.onMouseDown(toggleBreakpoint);
+    };
+
+    /**
+     * Toggles a breakpoint when glyph margin is clicked
+     * @param {Event} e 
+     */
+    const toggleBreakpoint = (e) => {
+        /* TODO: I am using setActiveFile to get the latest value of active 
+        file in the mousedown callback function. This can be implemented
+        in a better way. */
+        let _activeFile;
+        setActiveFile((activeFile, val) => {
+            _activeFile = activeFile;
+            return _activeFile;
+        });
+        if (_activeFile && e.target.type === 2) {
+            cdlWorker.current.postMessage({
+                code: CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT,
+                args: {
+                    fileName: _activeFile,
+                    lineNumber: e.target.position.lineNumber,  
+                },
+            });
+        }
     };
 
     return (

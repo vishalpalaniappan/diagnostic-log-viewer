@@ -61,6 +61,16 @@ onmessage = function (e) {
                 console.error(e);
             }
             break;
+        case CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT:
+            try {
+                debuggerInstance.toggleBreakpoint(
+                    e.data.args.fileName, 
+                    e.data.args.lineNumber
+                )
+            } catch (e) {
+                console.error(e);
+            }
+            break;
         default:
             break;
     }

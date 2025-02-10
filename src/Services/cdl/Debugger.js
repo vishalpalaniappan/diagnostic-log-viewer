@@ -28,6 +28,7 @@ class Debugger {
      */
     parseLogAndInitializeDebugger (log) {
         this.cdl = new CdlLog(log);
+        this.breakpoints = [];
         console.info(this.cdl);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
@@ -136,6 +137,32 @@ class Debugger {
                 return;
             }
         }
+    }
+
+    /**
+     * Toggles the breakpoint at the given filename and line number.
+     * @param {String} fileName 
+     * @param {Number} lineNumber 
+     */
+    toggleBreakpoint(fileName, lineNumber) {
+        const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
+
+        if (lt === null) {
+            return;
+        }
+
+        if (this.breakpoints.includes(lt)) {
+            this.breakpoints.splice(this.breakpoints.indexOf(lt), 1)
+        } else {
+            this.breakpoints.push(lt);
+        }
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.BREAKPOINTS,
+            args: {
+                breakpoints: this.breakpoints,
+            },
+        });
     }
 };
 

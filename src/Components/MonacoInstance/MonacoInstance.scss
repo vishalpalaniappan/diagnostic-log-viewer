@@ -1,40 +1,19 @@
 .selectedLine{
     background-color: #4b4b18;
     width:2px;
-    color:red;
 }
 
 .stackLine{
     background-color: #184b2d;
     width:2px;
-    color:red;
 }
 
 .glyph-debugger-line{
     margin-top:5px;
-    margin-left:20px;
+    margin-left:7px;
     height:10px !important;
     width:10px !important;
-    background-color: #4b4b18;
+    background-color: red;
     border-radius: 50%;
     display: inline-block;
 }
-
-
-.glyph-stack-line{
-    margin-top:5px;
-    margin-left:20px;
-    height:10px !important;
-    width:10px !important;
-    background-color: #3a4e3a;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.exception-message{
-    font-size:14px;
-    background-color: #420b0e;
-    color:#ede2f0;
-    font-weight: 400;
-    font-size: 14px;
-  }

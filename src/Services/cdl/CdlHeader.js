@@ -66,6 +66,25 @@ class CdlHeader {
     }
 
     /**
+     * Returns the logtype given the filename and line number if it exists.
+     * @param {String} fileName 
+     * @param {Number} lineNumber 
+     */
+    getLogTypeFromLineNumber (fileName, lineNumber) {
+        const minLt = this.header.fileTree[fileName].minLt;
+        const maxLt = this.header.fileTree[fileName].maxLt;
+
+        for (let i = minLt; i < maxLt; i++) {
+            const startLineNo = this.logTypeMap[i].lineno;
+            if (lineNumber == startLineNo) {
+                return this.logTypeMap[i];
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the file which this logtype belongs to.
      *
      * @param {Number} logtype

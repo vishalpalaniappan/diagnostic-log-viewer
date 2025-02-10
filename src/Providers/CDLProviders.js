@@ -10,6 +10,7 @@ import StackPositionContext from "./StackPositionContext";
 import VariablesContext from "./VariablesContext";
 import GlobalVariablesContext from "./GlobalVariablesContext";
 import WorkerContext from "./WorkerContext";
+import BreakpointsContext from "./BreakpointsContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
@@ -30,6 +31,7 @@ function CDLProviders ({children, fileInfo}) {
     const [localVariables, setLocalVariables] = useState();
     const [globalVariables, setGlobalVariables] = useState();
     const [fileTree, setFileTree] = useState();
+    const [breakPoints, setBreakPoints] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -64,6 +66,7 @@ function CDLProviders ({children, fileInfo}) {
         setStackPosition(undefined);
         setStack(undefined);
         setActiveFile(undefined);
+        setBreakPoints(undefined);
     };
 
     // Create worker to handle file.
@@ -109,7 +112,8 @@ function CDLProviders ({children, fileInfo}) {
                 setLocalVariables(event.data.args.localVariables);
                 setGlobalVariables(event.data.args.globalVariables);
                 break;
-            case CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA:
+            case CDL_WORKER_PROTOCOL.BREAKPOINTS:
+                setBreakPoints(event.data.args.breakpoints);
                 break;
             default:
                 break;
@@ -122,11 +126,13 @@ function CDLProviders ({children, fileInfo}) {
                 <WorkerContext.Provider value={{cdlWorker}}>
                     <GlobalVariablesContext.Provider value={{globalVariables}}>
                         <VariablesContext.Provider value={{localVariables}}>
-                            <StackContext.Provider value={{stack}}>
-                                <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
-                                    {children}
-                                </ActiveFileContext.Provider>
-                            </StackContext.Provider>
+                            <BreakpointsContext.Provider value={{breakPoints}}>
+                                <StackContext.Provider value={{stack}}>
+                                    <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
+                                        {children}
+                                    </ActiveFileContext.Provider>
+                                </StackContext.Provider>
+                            </BreakpointsContext.Provider>
                         </VariablesContext.Provider>
                     </GlobalVariablesContext.Provider>
                 </WorkerContext.Provider>
