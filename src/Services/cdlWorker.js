@@ -66,7 +66,7 @@ onmessage = function (e) {
                 debuggerInstance.toggleBreakpoint(
                     e.data.args.fileName, 
                     e.data.args.lineNumber
-                )
+                );
             } catch (e) {
                 console.error(e);
             }

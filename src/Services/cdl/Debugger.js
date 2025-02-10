@@ -152,7 +152,7 @@ class Debugger {
         }
 
         if (this.breakpoints.includes(lt)) {
-            this.breakpoints.splice(this.breakpoints.indexOf(lt), 1)
+            this.breakpoints.splice(this.breakpoints.indexOf(lt), 1);
         } else {
             this.breakpoints.push(lt);
         }
