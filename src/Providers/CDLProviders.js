@@ -8,6 +8,7 @@ import FileTreeContext from "./FileTreeContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
 import VariablesContext from "./VariablesContext";
+import GlobalVariablesContext from "./GlobalVariablesContext";
 import WorkerContext from "./WorkerContext";
 
 CDLProviders.propTypes = {
@@ -26,7 +27,8 @@ function CDLProviders ({children, fileInfo}) {
     const [activeFile, setActiveFile] = useState();
     const [stack, setStack] = useState();
     const [stackPosition, setStackPosition] = useState();
-    const [variables, setVariables] = useState();
+    const [localVariables, setLocalVariables] = useState();
+    const [globalVariables, setGlobalVariables] = useState();
     const [fileTree, setFileTree] = useState();
 
     const cdlWorker = useRef(null);
@@ -57,7 +59,8 @@ function CDLProviders ({children, fileInfo}) {
     // Resets the state variables before loading new file.
     const initializeStates = () => {
         setFileTree(undefined);
-        setVariables(undefined);
+        setLocalVariables(undefined);
+        setGlobalVariables(undefined);
         setStackPosition(undefined);
         setStack(undefined);
         setActiveFile(undefined);
@@ -103,7 +106,9 @@ function CDLProviders ({children, fileInfo}) {
                 setActiveFile(event.data.args.callStack[0].filePath);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                setVariables(event.data.args.variableStack);
+                console.log(event.data.args);
+                setLocalVariables(event.data.args.localVariables);
+                setGlobalVariables(event.data.args.globalVariables);
                 break;
             case CDL_WORKER_PROTOCOL.GET_STACK_POSITION_DATA:
                 break;
@@ -116,13 +121,15 @@ function CDLProviders ({children, fileInfo}) {
         <StackPositionContext.Provider value={{stackPosition, setStackPosition}}>
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
-                    <VariablesContext.Provider value={{variables}}>
-                        <StackContext.Provider value={{stack}}>
-                            <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
-                                {children}
-                            </ActiveFileContext.Provider>
-                        </StackContext.Provider>
-                    </VariablesContext.Provider>
+                    <GlobalVariablesContext.Provider value={{globalVariables}}>
+                        <VariablesContext.Provider value={{localVariables}}>
+                            <StackContext.Provider value={{stack}}>
+                                <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
+                                    {children}
+                                </ActiveFileContext.Provider>
+                            </StackContext.Provider>
+                        </VariablesContext.Provider>
+                    </GlobalVariablesContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
         </StackPositionContext.Provider>

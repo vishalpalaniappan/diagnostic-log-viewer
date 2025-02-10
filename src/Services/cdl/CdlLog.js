@@ -97,30 +97,28 @@ class CdlLog {
      * @returns {Object} Returns the variables belonging to current function.
      */
     getVariablesAtPosition(position) {
-        const variables = {};
+        const localVariables = {};
+        const globalVariables = {};
         const startLog = this.execution[position];
-        const currFuncId = this.header.logTypeMap[startLog.lt].getfId();
+        const funcId = this.header.logTypeMap[startLog.lt].getfId();
 
         do {
             const currLog = this.execution[position];
-            
-            // If the start of the function is reached, break.
-            if (currLog.type === LINE_TYPE.EXECUTION && currLog.lt === currFuncId) {
-                break;
-            }
             
             // If var is in curr function and it is the first visit, save var.
             if (currLog.type === LINE_TYPE.VARIABLE) {
                 const variable = this.header.variableMap[currLog.varid];
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
-                if (varFuncId === currFuncId && !(variable.name in variables)) {
-                    variables[variable.name] = currLog.value;
-                }
+                if ((varFuncId == 0 || variable.isGlobal()) && !(variable.name in globalVariables)) {
+                    globalVariables[variable.name] = currLog.value;
+                } else if (varFuncId === funcId && !(variable.name in localVariables)) {
+                    localVariables[variable.name] = currLog.value;
+                }   
             }
-        } while (--position > 0);
+        } while (--position >= 0);
 
-        return variables;
+        return [localVariables, globalVariables];
     }
 
     /**

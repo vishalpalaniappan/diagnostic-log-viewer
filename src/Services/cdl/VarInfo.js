@@ -33,6 +33,14 @@ class VarInfo {
     getVarId () {
         return this.varId;
     }
+
+    /**
+     * This function indicates if this is a global variable.
+     * @return {Boolean}
+     */
+    isGlobal () {
+        return "global" in this && this.global === true
+    }
 };
 
 export default VarInfo;

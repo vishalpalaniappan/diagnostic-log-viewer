@@ -43,10 +43,12 @@ class Debugger {
      * @param {Number} position
      */
     getVariableStack (position) {
+        const [localVariables, globalVariables] = this.cdl.getVariablesAtPosition(position);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
-                variableStack: this.cdl.getVariablesAtPosition(position),
+                localVariables: localVariables,
+                globalVariables: globalVariables
             },
         });
     }
