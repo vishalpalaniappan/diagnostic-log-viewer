@@ -160,13 +160,13 @@ class Debugger {
                 return;
             }
 
-            for (let breakpoint of this.breakpoints) {
+            for (const breakpoint of this.breakpoints) {
                 if (breakpoint.id === this.cdl.execution[position].lt) {
                     this.cdl.getPositionData(position);
                     return;
                 }
             };
-        } while (position < this.cdl.execution.length)
+        } while (position < this.cdl.execution.length);
     }
 
     /**
@@ -182,13 +182,13 @@ class Debugger {
                 return;
             }
 
-            for (let breakpoint of this.breakpoints) {
+            for (const breakpoint of this.breakpoints) {
                 if (breakpoint.id === this.cdl.execution[position].lt) {
                     this.cdl.getPositionData(position);
                     return;
                 }
             };
-        } while (position < this.cdl.execution.length)
+        } while (position < this.cdl.execution.length);
     }
 
     /**
