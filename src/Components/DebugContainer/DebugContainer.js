@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from "react";
 
 import {CallStackContainer} from "./CallStackContainer/CallStackContainer";
 import {VariableStackContainer} from "./VariableStackContainer/VariableStackContainer";
+import {BreakPointContainer} from "./BreakPointContainer/BreakPointContainer";
 import {VerticleHandle} from "./VerticleHandle/VerticleHandle";
 
 import "./DebugContainer.scss";
@@ -14,13 +15,15 @@ export function DebugContainer () {
     const debugContainerRef = useRef();
     const variableStackRef = useRef();
     const callStackRef = useRef();
+    const breakPointRef = useRef();
 
     const TITLE_HEIGHT = 20;
 
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
-        const containerHeight = height - 200;
-        callStackRef.current.style.height = 200 - TITLE_HEIGHT + "px";
+        const containerHeight = height - 300;
+        callStackRef.current.style.height = 150 - TITLE_HEIGHT + "px";
+        breakPointRef.current.style.height = 150 - TITLE_HEIGHT + "px";
         variableStackRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
     };
 
@@ -38,6 +41,11 @@ export function DebugContainer () {
             <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Call Stack</div>
             <div className="section" ref={callStackRef}>
                 <CallStackContainer />
+            </div>
+            <VerticleHandle topDiv={callStackRef} bottomDiv={breakPointRef}/>
+            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Breakpoints</div>
+            <div className="section" ref={breakPointRef}>
+                <BreakPointContainer />
             </div>
         </div>
     );
