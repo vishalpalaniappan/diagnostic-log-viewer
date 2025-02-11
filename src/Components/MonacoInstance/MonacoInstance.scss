@@ -8,9 +8,9 @@
     width:2px;
 }
 
-.glyph-debugger-line{
+.glyph-debugger-icon{
     margin-top:5px;
-    margin-left:7px;
+    margin-left:10px;
     height:10px !important;
     width:10px !important;
     background-color: #e51400;
@@ -18,10 +18,30 @@
     display: inline-block;
 }
 
-
-.glyph-debugger-line-hover{
+.glyph-debugger-icon-disabled{
     margin-top:5px;
-    margin-left:7px;
+    margin-left:10px;
+    height:10px !important;
+    width:10px !important;
+    background-color: grey;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+.glyph-debugger-icon-hover{
+    margin-top:5px;
+    margin-left:10px;
+    height:10px !important;
+    width:10px !important;
+    background-color: #420600;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.glyph-debugger-icon-hover{
+    margin-top:5px;
+    margin-left:10px;
     height:10px !important;
     width:10px !important;
     background-color: #e51400;
