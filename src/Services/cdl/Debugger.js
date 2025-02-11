@@ -36,7 +36,7 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this.cdl.getPositionData(this.cdl.execution.length - 1);
+        this.replayProgram();
     }
 
     /**
@@ -65,7 +65,7 @@ class Debugger {
      * This function moves to the start of the file.
      */
     goToEnd () {
-        this.cdl.getPositionData(this.cdl.execution.length - 1);
+        this.cdl.getPositionData(this.cdl.lastPosition);
     }
 
     /**
@@ -74,7 +74,6 @@ class Debugger {
      */
     stepInto (position) {
         const nextPosition = this.cdl._getNextPosition(position);
-
         if (nextPosition == null) {
             // End of file has been reached 
             return;
@@ -84,7 +83,7 @@ class Debugger {
     }
 
     /**
-     * This function steps out the next position.
+     * This function steps out of the current position.
      * @param {Number} position
      */
     stepOut (position) {
@@ -157,6 +156,8 @@ class Debugger {
             position = this.cdl._getNextPosition(position);
 
             if (position == null) {
+                // End of file has been reached
+                this.cdl.getPositionData(this.cdl.lastPosition);
                 return;
             }
 
@@ -179,6 +180,8 @@ class Debugger {
             position = this.cdl._getPreviousPosition(position);
 
             if (position == null) {
+                // Start of file has been reached
+                this.cdl.getPositionData(0);
                 return;
             }
 
@@ -202,7 +205,7 @@ class Debugger {
         if (lt === null) {
             return;
         }
-
+        
         if (this.breakpoints.includes(lt)) {
             this.breakpoints.splice(this.breakpoints.indexOf(lt), 1);
         } else {

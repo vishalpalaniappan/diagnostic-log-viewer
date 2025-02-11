@@ -21,6 +21,9 @@ class CdlLog {
         this.globalVariables = {};
 
         this._processLog(logFile);
+
+        // Used to go to the end of the file
+        this.lastPosition = this.getLastPosition();
     }
 
     _processLog (logFile) {
@@ -196,6 +199,17 @@ class CdlLog {
         } while (--position > 0);
     }
 
+    /**
+     * Returns the last position with an execution log type
+     */
+    getLastPosition () {
+        let position = this.execution.length - 1;
+        do {
+            if (this.execution[position].type === LINE_TYPE.EXECUTION) {
+                return position;
+            }
+        } while(--position >= 0);
+    }
 }
 
 export default CdlLog;
