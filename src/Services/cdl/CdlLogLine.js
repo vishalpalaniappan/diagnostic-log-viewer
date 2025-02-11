@@ -10,7 +10,7 @@ class CdlLogLine {
      * @param {Array} logLine The contents of a single log line.
      */
     constructor (logLine) {
-        const pattern  = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/gm;
+        const pattern  = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/sgm;
         const log = pattern.exec(logLine[0])[1]
 
         switch (log.charAt(0)) {
