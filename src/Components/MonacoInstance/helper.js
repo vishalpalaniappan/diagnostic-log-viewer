@@ -42,15 +42,17 @@ const getExceptionMessage = (exception) => {
 };
 
 /**
+ * Creates a line decoration object for Monaco editor.
  * 
- * @param {Number} line 
- * @param {String} className 
+ * @param {Number} line The line number to decorate
+ * @param {String} className The CSS class name for the glyph margin
+ * @returns {Object} The decoration object with range and options
  */
 const getLineDecoration = (line, className) => {
     return {
-        range: new monaco.Range(line, 1,line, 1),
-        options: {glyphMarginClassName: className},
-    }
-}
+        range: new monaco.Range(line, 1, line, 1),
+        options: {glyphMarginClassName: className}
+    };
+};
 
 export {getExceptionMessage, getLineDecoration};
