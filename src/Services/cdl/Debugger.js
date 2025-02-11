@@ -228,8 +228,20 @@ class Debugger {
      * @param {Boolean} isEnabled 
      */
     enableBreakPoint(fileName, lineNumber, isEnabled) {
+        if (!fileName || typeof lineNumber !== 'number' || typeof isEnabled !== 'boolean') {
+            console.warn('Invalid parameters for enableBreakPoint');
+            return;
+        }
         const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
+        if (lt === null) {
+            console.warn('Breakpoint not found');
+            return;
+        }
         const index = this.breakpoints.indexOf(lt);
+        if (index === -1) {
+            console.warn('Breakpoint not in active breakpoints list');
+            return;
+        }
         this.breakpoints[index].enabled = isEnabled;
 
         postMessage({
