@@ -19,7 +19,8 @@ const getExceptionMessage = (exception) => {
             numLines: 0,
         };
     }
-    const exceptionValue = exception.split("\n").pop();
+
+    const exceptionValue = exception.trim().split("\n").pop();
     const exceptionMessage = [
         <span key={0} style={{whiteSpace: "pre-wrap"}}>
             {exceptionValue}
