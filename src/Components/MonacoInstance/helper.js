@@ -1,5 +1,6 @@
 import React from "react";
 
+import * as monaco from "monaco-editor";
 import {createRoot} from "react-dom/client";
 
 
@@ -40,4 +41,16 @@ const getExceptionMessage = (exception) => {
     };
 };
 
-export {getExceptionMessage};
+/**
+ * 
+ * @param {Number} line 
+ * @param {String} className 
+ */
+const getLineDecoration = (line, className) => {
+    return {
+        range: new monaco.Range(line, 1,line, 1),
+        options: {glyphMarginClassName: className},
+    }
+}
+
+export {getExceptionMessage, getLineDecoration};
