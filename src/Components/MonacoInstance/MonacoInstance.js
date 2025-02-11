@@ -30,11 +30,15 @@ MonacoInstance.propTypes = {
  */
 export function MonacoInstance () {
     const [zoneIds, setZoneIds] = useState([]);
+    const [decorations, setDecorations] = useState([]);
+    const [hoverDecorations, setHoverDecorations] = useState([]);
+    const [lineDecorations, setLineDecorations] = useState([]);
+
     const {stackPosition} = useContext(PositionStateContext);
     const {stack} = useContext(StackContext);
     const {fileTree} = useContext(FileTreeContext);
     const {breakPoints} = useContext(BreakpointsContext);
-    const {activeFile, setActiveFile} = useContext(ActiveFileContext);
+    const {activeFile} = useContext(ActiveFileContext);
     const {cdlWorker} = useContext(WorkerContext);
 
     const editorRef = useRef(null);
@@ -80,18 +84,21 @@ export function MonacoInstance () {
      */
     const selectLine = (lineno, className) => {
         editorRef.current.revealLineInCenter(lineno);
-        editorRef.current.deltaDecorations([], [
-            {
-                range: new monaco.Range(lineno, 1, lineno, 1),
-                options: {isWholeLine: true, className: className},
-            },
-        ]);
+        setLineDecorations(
+            editorRef.current.deltaDecorations(lineDecorations, [
+                {
+                    range: new monaco.Range(lineno, 1, lineno, 1),
+                    options: {isWholeLine: true, className: className},
+                },
+            ])
+        );
     };
 
     /**
      * This function loads the content into the monaco editor.
      *  - Highlight stack position if it is in current active file
      *  - Clear existing exceptions and load new ones if they exist
+     *  - Drawbreak points
      */
     const loadContent = () => {
         if (editorRef?.current && stack) {
@@ -108,28 +115,33 @@ export function MonacoInstance () {
                 addException(stack[stackPosition]);
             }
 
-            if (breakPoints) {
-                for (const breakPoint of breakPoints) {
-                    if (breakPoint.filePath === activeFile) {
-                        editorRef.current.createDecorationsCollection([
-                            {
-                                range: new monaco.Range(
-                                    breakPoint.lineno, 1,breakPoint.lineno, 1
-                                ),
-                                options: {
-                                    glyphMarginClassName: "glyph-debugger-line",
-                                },
-                            },
-                        ]);
-                    }
-                }
-            }
+            drawBreakPoints();
         }
     };
 
+
+    const drawBreakPoints = () => {
+        if (editorRef?.current && breakPoints) {
+            const decos = [];
+            for (const breakPoint of breakPoints) {
+                if (breakPoint.filePath === activeFile) {
+                    decos.push({
+                        range: new monaco.Range(breakPoint.lineno, 1,breakPoint.lineno, 1),
+                        options: {glyphMarginClassName: "glyph-debugger-line"},
+                    });
+                }
+            }
+            setDecorations(editorRef.current.deltaDecorations(decorations, decos));
+        }
+    }
+
     useEffect(() => {
         loadContent();
-    }, [stackPosition, stack, activeFile, breakPoints]);
+    }, [stackPosition, stack, activeFile]);
+
+    useEffect(() => {
+        drawBreakPoints();
+    }, [breakPoints]);
 
     useEffect(() => {
         activeFileRef.current = activeFile;
@@ -147,12 +159,36 @@ export function MonacoInstance () {
         monacoRef.current = monaco;
         editorRef.current = editor;
         editorRef.current.onMouseDown(toggleBreakpoint);
+        editorRef.current.onMouseMove(onGlyphMove);
+        editorRef.current.onMouseLeave(onGlyphExit);
     };
 
-    /**
-     * Toggles a breakpoint when glyph margin is clicked
-     * @param {Event} e 
-     */
+    let hov = [];
+    let currentLine;
+    const onGlyphMove = (e) => {
+        if (e.target.type !== 2) {
+            hov = editorRef.current.deltaDecorations(hov, []); 
+            return;
+        }
+        
+        const lineNumber = e.target.position.lineNumber;
+        if (currentLine && currentLine === lineNumber) {
+            return;
+        }
+
+        currentLine = lineNumber;
+        hov = editorRef.current.deltaDecorations(hov, []); 
+        hov = editorRef.current.deltaDecorations(hov, [{
+            range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+            options: {glyphMarginClassName: "glyph-debugger-line"},
+        }]);
+    };
+
+    const onGlyphExit = (e) => {
+        hov = editorRef.current.deltaDecorations(hov, []); 
+    };
+
+    
     const toggleBreakpoint = (e) => {
         if (activeFileRef.current && e.target.type === 2) {
             cdlWorker.current.postMessage({

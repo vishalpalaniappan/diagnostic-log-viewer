@@ -13,7 +13,24 @@
     margin-left:7px;
     height:10px !important;
     width:10px !important;
-    background-color: red;
+    background-color: #e51400;
     border-radius: 50%;
     display: inline-block;
+}
+
+
+.glyph-debugger-line-hover{
+    margin-top:5px;
+    margin-left:7px;
+    height:10px !important;
+    width:10px !important;
+    background-color: #e51400;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.exception-message{
+    background:#420b0e;
+    font-size:14px;
+    text-align: center;
 }
