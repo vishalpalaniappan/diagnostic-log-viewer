@@ -162,7 +162,7 @@ class Debugger {
             }
 
             for (const breakpoint of this.breakpoints) {
-                if (breakpoint.id === this.cdl.execution[position].lt) {
+                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].lt) {
                     this.cdl.getPositionData(position);
                     return;
                 }
@@ -186,7 +186,7 @@ class Debugger {
             }
 
             for (const breakpoint of this.breakpoints) {
-                if (breakpoint.id === this.cdl.execution[position].lt) {
+                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].lt) {
                     this.cdl.getPositionData(position);
                     return;
                 }
@@ -209,8 +209,28 @@ class Debugger {
         if (this.breakpoints.includes(lt)) {
             this.breakpoints.splice(this.breakpoints.indexOf(lt), 1);
         } else {
+            lt.enabled = true;
             this.breakpoints.push(lt);
         }
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.BREAKPOINTS,
+            args: {
+                breakpoints: this.breakpoints,
+            },
+        });
+    }
+
+    /**
+     * Enables/Disables the breakpoint given a fileName and lineNumber.
+     * @param {String} fileName 
+     * @param {Number} lineNumber 
+     * @param {Boolean} isEnabled 
+     */
+    enableBreakPoint(fileName, lineNumber, isEnabled) {
+        const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
+        const index = this.breakpoints.indexOf(lt);
+        this.breakpoints[index].enabled = isEnabled;
 
         postMessage({
             code: CDL_WORKER_PROTOCOL.BREAKPOINTS,
