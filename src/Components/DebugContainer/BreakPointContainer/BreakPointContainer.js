@@ -33,7 +33,7 @@ export function BreakPointContainer () {
     }, [breakPoints]);
 
     return (
-        <div className="callStackContainer">
+        <div className="breakPointContainer">
             {breakPointStack}
         </div>
     );

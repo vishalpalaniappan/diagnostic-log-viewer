@@ -28,10 +28,6 @@ export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled})
 
     const {cdlWorker} = useContext(WorkerContext);
 
-    const goToBreakPoint = (e) => {
-        // Go to breakpoint in viewer
-    }
-
     const toggleEnabled = (e) => {
         cdlWorker.current.postMessage({
             code: CDL_WORKER_PROTOCOL.ENABLE_BREAKPOINT,
@@ -55,7 +51,7 @@ export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled})
     }
 
     return (
-        <div onClick={goToBreakPoint}  className="breakpoint-row w-100 d-flex flex-row" >
+        <div className="breakpoint-row w-100 d-flex flex-row" >
 
             <div className="check">
                 <Form.Check type="checkbox" onChange={toggleEnabled} defaultChecked={enabled} />
