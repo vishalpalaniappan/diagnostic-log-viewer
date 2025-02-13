@@ -44,7 +44,7 @@ export function ShortcutContainer ({}) {
                     <Col>Step Out</Col>
                     <Col><kbd>↑</kbd></Col>
                 </Row>
-                <Row className="mb-2 mt-3">
+                <Row className="mb-2">
                     <Col>Move Down Stack</Col>
                     <Col><kbd>CTRL</kbd> + <kbd>↓</kbd></Col>
                 </Row>
@@ -52,13 +52,29 @@ export function ShortcutContainer ({}) {
                     <Col>Move Up Stack</Col>
                     <Col><kbd>CTRL</kbd> + <kbd>↑</kbd></Col>
                 </Row>
+                
+                <hr/>
                 <Row className="mb-2">
-                    <Col>Go To Start</Col>
+                    <Col>Play Forward</Col>
+                    <Col><kbd>CTRL</kbd> + <kbd>→</kbd></Col>
+                </Row>
+                <Row className="mb-2">
+                    <Col>Play Backward</Col>
                     <Col><kbd>CTRL</kbd> + <kbd>←</kbd></Col>
                 </Row>
                 <Row className="mb-2">
-                    <Col>Go To End</Col>
-                    <Col><kbd>CTRL</kbd> + <kbd>→</kbd></Col>
+                    <Col>Replay Program</Col>
+                    <Col><kbd>R</kbd></Col>
+                </Row>
+
+                <hr/>
+                <Row className="mb-2">
+                    <Col>Toggle Breakpoint</Col>
+                    <Col><kbd>B</kbd></Col>
+                </Row>
+                <Row className="mb-2">
+                    <Col>Enable/Disable Breakpoint</Col>
+                    <Col><kbd>D</kbd></Col>
                 </Row>
             </div>
         </div>

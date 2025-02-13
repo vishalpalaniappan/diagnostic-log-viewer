@@ -1,40 +1,51 @@
 .selectedLine{
     background-color: #4b4b18;
     width:2px;
-    color:red;
 }
 
 .stackLine{
     background-color: #184b2d;
     width:2px;
-    color:red;
 }
 
-.glyph-debugger-line{
+.glyph-debugger-icon{
     margin-top:5px;
-    margin-left:20px;
+    margin-left:10px;
     height:10px !important;
     width:10px !important;
-    background-color: #4b4b18;
+    background-color: #e51400;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.glyph-debugger-icon-disabled{
+    margin-top:5px;
+    margin-left:10px;
+    height:10px !important;
+    width:10px !important;
+    background-color: grey;
     border-radius: 50%;
     display: inline-block;
 }
 
 
-.glyph-stack-line{
+.glyph-debugger-icon-hover{
     margin-top:5px;
-    margin-left:20px;
+    margin-left:10px;
     height:10px !important;
     width:10px !important;
-    background-color: #3a4e3a;
+    background-color: #e51400;
     border-radius: 50%;
     display: inline-block;
 }
 
 .exception-message{
+    background:#420b0e;
     font-size:14px;
-    background-color: #420b0e;
-    color:#ede2f0;
-    font-weight: 400;
-    font-size: 14px;
-  }
+    text-align: center;
+}
+
+// Hides "cannot edit in read only mode"
+.monaco-editor-overlaymessage {
+ display: none !important;
+}

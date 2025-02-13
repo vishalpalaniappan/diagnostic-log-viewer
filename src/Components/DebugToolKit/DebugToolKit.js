@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRightShort, ArrowUpShort,
-    ThreeDotsVertical} from "react-bootstrap-icons";
+    ThreeDotsVertical, Play, ArrowRepeat} from "react-bootstrap-icons";
 
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -26,6 +26,7 @@ export function DebugToolKit ({}) {
 
     const blueColor = "#75beff";
     const greyColor = "#7c7c7c";
+    const greenColor = "#00BB00";
 
     let deltaX;
     let deltaY;
@@ -89,11 +90,20 @@ export function DebugToolKit ({}) {
 
     const keydown = (e) => {
         switch (e.code) {
+            case "KeyB":
+                toggleBreakpoint();
+                break;
+            case "KeyD":
+                disableBreakpoint();
+                break;
+            case "KeyR":
+                replayProgram();
+                break;
             case "ArrowRight":
-                (e.ctrlKey)?goToEnd():stepOverForward();
+                (e.ctrlKey)?playForward():stepOverForward();
                 break;
             case "ArrowLeft":
-                (e.ctrlKey)?goToStart():stepOverBackward();
+                (e.ctrlKey)?playBackward():stepOverBackward();
                 break;
             case "ArrowUp":
                 (e.ctrlKey)?moveUpStack():stepOut();
@@ -111,6 +121,24 @@ export function DebugToolKit ({}) {
             cdlWorker.current.postMessage({code: code, args: args});
         }
     };
+
+    const toggleBreakpoint = () => {
+        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
+        const args = {
+            fileName: stack[stackPosition].filePath, 
+            lineNumber: stack[stackPosition].lineno
+        };
+        sendToWorker(code, args);
+    }
+
+    const disableBreakpoint = () => {
+        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
+        const args = {
+            fileName: stack[stackPosition].filePath, 
+            lineNumber: stack[stackPosition].lineno
+        };
+        sendToWorker(code, args);
+    }
 
     const stepInto = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_INTO;
@@ -146,6 +174,24 @@ export function DebugToolKit ({}) {
         sendToWorker(code, null);
     };
 
+    const playForward = () => { 
+        const code = CDL_WORKER_PROTOCOL.PLAY_FORWARD;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
+    }
+
+    const playBackward = () => { 
+        const code = CDL_WORKER_PROTOCOL.PLAY_BACKWARD;
+        const args = {position: stack[stackPosition].position};
+        sendToWorker(code, args);
+    }
+
+    const replayProgram = () => { 
+        const code = CDL_WORKER_PROTOCOL.REPLAY;
+        const args = {};
+        sendToWorker(code, args);
+    }
+
     const moveUpStack = () => {
         if (stackPosition + 1 < stack.length) {
             setStackPosition(stackPosition + 1);
@@ -167,6 +213,12 @@ export function DebugToolKit ({}) {
                     className="icon"
                     style={{color: greyColor, cursor: "move"}}
                     size={20} />
+                <Play
+                    className="me-1 icon"
+                    title="Play (Right Bracket Key)"
+                    onClick={playForward}
+                    style={{color: blueColor}}
+                    size={22} />
                 <ArrowLeftShort
                     className="me-1 icon"
                     title="Step Over Backward (← Key)"
@@ -190,6 +242,12 @@ export function DebugToolKit ({}) {
                     onClick={stepInto}
                     title="Step Into (↓ Key)"
                     style={{color: blueColor}}
+                    size={22} />
+                <ArrowRepeat
+                    className="me-1 icon"
+                    title="Restart (R Key)"
+                    onClick={replayProgram}
+                    style={{color: greenColor}}
                     size={22} />
             </div>
         </div>

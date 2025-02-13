@@ -1,135 +1,102 @@
 
 /**
- * This class accepts an SST node and exposes functions to extract
- * metadata from it. Each node in the SST contains the logtype id,
- * type(root, child etc.), lineno, syntax, variables, children and
- * siblings.
+ * This class contains all the metadata for each node extracted by the 
+ * ADLI tool (lineno, variables, logtypeid etc..).It also saves the 
+ * filename and file path. 
  */
 class LtInfo {
     /**
-     * @param {Array} ltInfoSST Log type information extracted from SST.
-     * @param {Number} fid ID of the function this node belongs to.
+     * @param {Array} ltInfo Log type information extracted from SST.
      * @param {String} filePath File this logtype belongs to.
      */
-    constructor (ltInfoSST, fid, filePath) {
-        this.lt = ltInfoSST;
-        this.lt.fid = fid;
-        this.lt.filePath = filePath;
-        this.lt.fileName = filePath.split("/").pop();
-        this.childIds = [];
+    constructor (ltInfo, filePath) {
+        for (var key in ltInfo) {
+            this[key] = ltInfo[key];
+        }
+        this.filePath = filePath;
+        this.fileName = filePath.split("/").pop();
     }
 
     /**
-     * This function adds child elements which belong to this function.
-     * This includes id's that are contained in child nodes.
-     * @param {Number} id
+     * Indicates if the current logtype is a function definition
+     * @return {Boolean}
      */
-    addChildId (id) {
-        this.childIds.push(id);
+    isFunction() {
+        return this.type === "function";
     }
 
     /**
-     * This function returns the lineno of the current logtype.
+     * Returns the line number of logtype.
      * @return {String}
      */
     getLineNo () {
-        return this.lt.lineno;
+        return this.lineno;
     }
 
     /**
-     * This function returns the syntax
-     * @return {String}
-     */
-    getfName () {
-        return this.lt.lineno;
-    }
-
-    /**
-     * This function sets the function name
-     * @param {String} funcName
-     */
-    setFuncName (funcName) {
-        if (funcName.includes("def")) {
-            this.lt.funcName = funcName.split("def ")[1].split("(")[0];
-        } else {
-            this.lt.funcName = funcName;
-        }
-    }
-
-    /**
-     * This function returns the function name
+     * Returns the function name.
      * @return {String}
      */
     getFuncName () {
-        return this.lt.funcName;
+        return this.name;
     }
 
 
     /**
-     * This function returns the file path of the current logtype.
+     * Returns the file path this logtype belongs to.
      * @return {String}
      */
     getFilePath () {
-        return this.lt.filePath;
+        return this.filePath;
     }
 
 
     /**
-     * This function returns the file name of the current logtype.
+     * This function returns the file name.
      * @return {String}
      */
     getFileName () {
-        return this.lt.fileName;
+        return this.fileName;
     }
 
     /**
-     * This function returns the id of the current logtype.
+     * Returns the logtype id.
      * @return {String}
      */
     getId () {
-        return this.lt.id;
+        return this.id;
     }
 
     /**
-     * This function returns the function id of the current logtype.
+     * Returns the function logtype this logtype belongs to.
      * @return {String}
      */
     getfId () {
-        return this.lt.fid;
+        return this.funcid;
     }
 
     /**
-     * This function returns the variables of the current logtype.
-     * @return {String}
+     * Returns an array of variables belonging to this logtype.
+     * @return {Array|Object}
      */
     getVariables () {
-        return this.lt.variables;
+        return this.vars;
     }
 
     /**
-     * This function returns the type of this logtype.
+     * Returns this type of log type (function, child etc).
      * @return {String}
      */
     getType () {
-        return this.lt.type;
+        return this.type;
     }
 
     /**
-     * This function returns the syntax of this logtype.
+     * Returns the syntax for this log type (this will be deprecated soon).
      * @return {String}
      */
     getSyntax () {
-        return this.lt.syntax;
-    }
-
-    /**
-     * This function indicates if this log type contains a child
-     * with the provided id.
-     * @param {Number} id
-     * @return {Boolean}
-     */
-    containsChild (id) {
-        return this.childIds.includes(id);
+        return this.syntax;
     }
 };
 

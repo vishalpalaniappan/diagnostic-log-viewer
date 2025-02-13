@@ -1,3 +1,5 @@
+import JSON5 from "json5";
+
 import {LINE_TYPE, LINE_TYPE_DELIMITER} from "./CDL_CONSTANTS";
 /**
  * This class accepts a line from a CDL log, classifys it and exposes
@@ -5,22 +7,12 @@ import {LINE_TYPE, LINE_TYPE_DELIMITER} from "./CDL_CONSTANTS";
  */
 class CdlLogLine {
     /**
-     * @param {Array} logFile Array containing the contents of CDL log file.
+     * Identify the log line type and process the line.
+     * @param {Array} logLine The contents of a single log line.
      */
-    constructor (logFile) {
-        this.log = logFile;
-        this._classifyLogLine();
-    }
-
-    /**
-     * Given a log line, this function classifys and extracts its metadata.
-     * Note that the log line is in a format returned by the clp-ffi-js library.
-     * In this case, it is an array with the first element containing the
-     * log line. In the future, this can be optimized further.
-     */
-    _classifyLogLine () {
-        const fullStr = this.log[0].split("root ");
-        const log = fullStr.slice(1).join(" ").trim();
+    constructor (logLine) {
+        const pattern  = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/sgm;
+        const log = pattern.exec(logLine[0])[1]
 
         switch (log.charAt(0)) {
             case LINE_TYPE_DELIMITER.VARIABLE:
@@ -41,14 +33,15 @@ class CdlLogLine {
 
     /**
      * Extract metadata from variable log line.
-     * Variable: "# <lt> <variable_value>"
+     * Variable: "# <var_id> <variable_value>"
      * @param {String} log
      */
     _processVariable (log) {
         this.type = LINE_TYPE.VARIABLE;
-        const [lt, ...variable] = log.slice(2).split(" ");
-        this.value = variable.join(" ");
-        this.lt = parseInt(lt);
+        const pattern = /^# ([0-9]+) (.*$)/gm;
+        const parsedInfo = pattern.exec(log);
+        this.value = this._parseVariableIfJSON(parsedInfo[2]);
+        this.varid = parseInt(parsedInfo[1]);
     }
 
     /**
@@ -58,9 +51,7 @@ class CdlLogLine {
      */
     _processExeception (log) {
         this.type = LINE_TYPE.EXCEPTION;
-        const [lt, ...exception] = log.slice(1).split(" ");
-        this.value = exception.join(" ");
-        this.lt = parseInt(lt);
+        this.value = log.slice(2);
     }
 
     /**
@@ -70,6 +61,17 @@ class CdlLogLine {
     _processIRHeader (log) {
         this.type = LINE_TYPE.IR_HEADER;
         this.value = log;
+    }
+
+    /**
+     * Parses the variable value if it is a JSON string.
+     */
+    _parseVariableIfJSON (variable) {
+        try{
+            return JSON5.parse(variable);
+        } catch (exception) {
+            return variable;
+        }
     }
 };
 
