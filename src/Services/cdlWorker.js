@@ -56,7 +56,7 @@ onmessage = function (e) {
                 break;
 
             case CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED:
-                debuggerInstance.toggleBreakpointEnabled(args.fileName, args.lineNumber, args.isEnabled);
+                debuggerInstance.toggleBreakpointEnabled(args.fileName, args.lineNumber);
                 break;
 
             default:
