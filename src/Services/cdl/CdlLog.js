@@ -14,10 +14,8 @@ class CdlLog {
         this.exception = null;
         this.header = {};
         this.execution = [];
-        this.executionTree = {};
         this.callStacks = {};
         this.callStack = [];
-
         this.globalVariables = {};
 
         this._processLog(logFile);
@@ -26,6 +24,10 @@ class CdlLog {
         this.lastPosition = this.getLastPosition();
     }
 
+    /**
+     * Processes the log file one line at a time.
+     * @param {Array} logFile 
+     */
     _processLog (logFile) {
         let position = 0; 
         do {
@@ -53,7 +55,7 @@ class CdlLog {
 
 
     /**
-     * Add to call stack while processing log.
+     * Add to call stack while processing execution log.
      * @param {CdlLogLine} currLog 
      * @param {Number} position 
      */
@@ -155,6 +157,10 @@ class CdlLog {
     }
 
 
+    /**
+     * Gets the call stack at a given position.
+     * @param {Number} position
+     */
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
         const csInfo = [];
@@ -179,6 +185,7 @@ class CdlLog {
 
     /**
      * Returns the last executed instruction in the program.
+     * @param {Number} position
      */
     getPositionData (position) {
         do {

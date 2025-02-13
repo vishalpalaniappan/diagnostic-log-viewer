@@ -23,7 +23,7 @@ class Debugger {
     }
 
     /**
-     * This function parses the CDL log file and intializes debugger state.
+     * This function parses the CDL log file and intializes the debugger state.
      * @param {Array} log Contents of decompressed CDL log file.
      */
     parseLogAndInitializeDebugger (log) {
@@ -40,7 +40,7 @@ class Debugger {
     }
 
     /**
-     * This function returns the variable stack given a position.
+     * This function returns the variable stack at a given position.
      * @param {Number} position
      */
     getVariableStack (position) {
@@ -227,20 +227,18 @@ class Debugger {
      * @param {Number} lineNumber 
      */
     toggleBreakpointEnabled(fileName, lineNumber) {
-        if (!fileName || typeof lineNumber !== 'number') {
-            console.warn('Invalid parameters for enableBreakPoint');
-            return;
-        }
         const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
         if (lt === null) {
             console.warn('Breakpoint not found');
             return;
         }
+
         const index = this.breakpoints.indexOf(lt);
         if (index === -1) {
             console.warn('Breakpoint not in active breakpoints list');
             return;
         }
+
         this.breakpoints[index].enabled = !this.breakpoints[index].enabled;
 
         postMessage({

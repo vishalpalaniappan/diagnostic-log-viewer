@@ -7,6 +7,7 @@ import {LINE_TYPE, LINE_TYPE_DELIMITER} from "./CDL_CONSTANTS";
  */
 class CdlLogLine {
     /**
+     * Identify the log line type and process the line.
      * @param {Array} logLine The contents of a single log line.
      */
     constructor (logLine) {

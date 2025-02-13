@@ -5,7 +5,7 @@ import VarInfo from "./VarInfo.js";
 
 /**
  * This class processes the header of the CDL file and exposes the
- * extracted metadata.
+ * logtype and variable maps.
  */
 class CdlHeader {
     /**
@@ -86,7 +86,7 @@ class CdlHeader {
 
     /**
      * Returns the file which this logtype belongs to.
-     *
+     * Minimum LT is not included in the comparison window.
      * @param {Number} logtype
      * @return {String}
      */
@@ -103,7 +103,6 @@ class CdlHeader {
 
     /**
      * Returns the source of each file in the header.
-     *
      * @return {object} sourceTree
      */
     getSourceFiles () {

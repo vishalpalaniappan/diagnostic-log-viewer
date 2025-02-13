@@ -26,7 +26,7 @@ class LtInfo {
     }
 
     /**
-     * This function returns the lineno of the current logtype.
+     * Returns the line number of logtype.
      * @return {String}
      */
     getLineNo () {
@@ -34,7 +34,7 @@ class LtInfo {
     }
 
     /**
-     * This function returns the function name
+     * Returns the function name.
      * @return {String}
      */
     getFuncName () {
@@ -43,7 +43,7 @@ class LtInfo {
 
 
     /**
-     * This function returns the file path of the current logtype.
+     * Returns the file path this logtype belongs to.
      * @return {String}
      */
     getFilePath () {
@@ -52,7 +52,7 @@ class LtInfo {
 
 
     /**
-     * This function returns the file name of the current logtype.
+     * This function returns the file name.
      * @return {String}
      */
     getFileName () {
@@ -60,7 +60,7 @@ class LtInfo {
     }
 
     /**
-     * This function returns the id of the current logtype.
+     * Returns the logtype id.
      * @return {String}
      */
     getId () {
@@ -68,7 +68,7 @@ class LtInfo {
     }
 
     /**
-     * This function returns the function id of the current logtype.
+     * Returns the function logtype this logtype belongs to.
      * @return {String}
      */
     getfId () {
@@ -76,7 +76,7 @@ class LtInfo {
     }
 
     /**
-     * This function returns the variables of the current logtype.
+     * Returns an array of variables belonging to this logtype.
      * @return {Array|Object}
      */
     getVariables () {
@@ -84,7 +84,7 @@ class LtInfo {
     }
 
     /**
-     * This function returns the type of this logtype.
+     * Returns this type of log type (function, child etc).
      * @return {String}
      */
     getType () {
@@ -92,7 +92,7 @@ class LtInfo {
     }
 
     /**
-     * This function returns the syntax of this logtype.
+     * Returns the syntax for this log type (this will be deprecated soon).
      * @return {String}
      */
     getSyntax () {

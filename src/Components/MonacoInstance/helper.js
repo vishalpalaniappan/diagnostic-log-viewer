@@ -5,12 +5,11 @@ import {createRoot} from "react-dom/client";
 
 
 /**
- * This function returns a DOM node which contains the excetption to be rendered
+ * This function returns a DOM node which contains the exception to be rendered
  * by the monaco instance. It also returns the number of lines to set the height
  * of the exception container.
  *
- * @param {Array} exception  Array containing the exception for the
- *                            current position.
+ * @param {Array} exception  Array containing the exception for the current position.
  * @return {Object}
  */
 const getExceptionMessage = (exception) => {
