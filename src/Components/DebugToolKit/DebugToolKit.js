@@ -99,17 +99,11 @@ export function DebugToolKit ({}) {
             case "KeyR":
                 replayProgram();
                 break;
-            case "BracketLeft":
-                playBackward();
-                break;
-            case "BracketRight":
-                playForward();
-                break;
             case "ArrowRight":
-                (e.ctrlKey)?goToEnd():stepOverForward();
+                (e.ctrlKey)?playForward():stepOverForward();
                 break;
             case "ArrowLeft":
-                (e.ctrlKey)?goToStart():stepOverBackward();
+                (e.ctrlKey)?playBackward():stepOverBackward();
                 break;
             case "ArrowUp":
                 (e.ctrlKey)?moveUpStack():stepOut();
