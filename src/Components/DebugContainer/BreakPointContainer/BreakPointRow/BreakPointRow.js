@@ -28,6 +28,7 @@ BreakPointRow.propTypes = {
 export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled}) {
 
     const {cdlWorker} = useContext(WorkerContext);
+    const [isEnabled, setIsEnabled] = useState();
 
     const toggleEnabled = (e) => {
         cdlWorker.current.postMessage({
@@ -47,14 +48,17 @@ export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled})
                 lineNumber: lineNumber,  
             },
         });
-
     }
+
+    useEffect(() => {
+        setIsEnabled(enabled);
+    }, [enabled]);
 
     return (
         <div className="breakpoint-row w-100 d-flex flex-row" >
 
             <div className="check">
-                <Form.Check type="checkbox" onChange={toggleEnabled} defaultChecked={enabled} />
+                <Form.Check type="checkbox" onChange={toggleEnabled} defaultChecked={isEnabled} />
             </div>
             
             {filePath}
