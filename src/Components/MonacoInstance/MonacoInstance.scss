@@ -34,16 +34,6 @@
     margin-left:10px;
     height:10px !important;
     width:10px !important;
-    background-color: #420600;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.glyph-debugger-icon-hover{
-    margin-top:5px;
-    margin-left:10px;
-    height:10px !important;
-    width:10px !important;
     background-color: #e51400;
     border-radius: 50%;
     display: inline-block;
@@ -53,4 +43,9 @@
     background:#420b0e;
     font-size:14px;
     text-align: center;
+}
+
+// Hides "cannot edit in read only mode"
+.monaco-editor-overlaymessage {
+ display: none !important;
 }
