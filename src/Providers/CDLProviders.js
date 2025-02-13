@@ -44,9 +44,10 @@ function CDLProviders ({children, fileInfo}) {
         };
     }, []);
 
-    // Get new variable stack if stack position changes
+    // Get new variable stack if stack position changes and update active file
     useEffect(() => {
         if (cdlWorker?.current && stackPosition !== undefined && stack?.[stackPosition]) {
+            setActiveFile(stack[stackPosition].filePath);   
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
@@ -56,6 +57,7 @@ function CDLProviders ({children, fileInfo}) {
         } else {
             console.warn("Invalid stack position or stack not initialized");
         }
+        
     }, [stackPosition, stack]);
 
     // Resets the state variables before loading new file.
@@ -108,7 +110,6 @@ function CDLProviders ({children, fileInfo}) {
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
                 setStack(event.data.args.callStack);
                 setStackPosition(0);
-                setActiveFile(event.data.args.callStack[0].filePath);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
                 setLocalVariables(event.data.args.localVariables);
