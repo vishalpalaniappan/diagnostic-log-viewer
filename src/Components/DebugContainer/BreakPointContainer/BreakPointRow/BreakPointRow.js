@@ -10,6 +10,7 @@ import CDL_WORKER_PROTOCOL from "../../../../Services/CDL_WORKER_PROTOCOL";
 import "./BreakPointRow.scss";
 
 BreakPointRow.propTypes = {
+    index: PropTypes.number,
     fileName: PropTypes.string,
     filePath: PropTypes.string,
     lineNumber: PropTypes.number,
