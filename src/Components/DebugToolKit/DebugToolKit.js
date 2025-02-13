@@ -138,7 +138,6 @@ export function DebugToolKit ({}) {
     }
 
     const disableBreakpoint = () => {
-        console.log("disabling");
         const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
         const args = {
             fileName: stack[stackPosition].filePath, 
