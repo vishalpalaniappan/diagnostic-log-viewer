@@ -31,11 +31,10 @@ export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled})
 
     const toggleEnabled = (e) => {
         cdlWorker.current.postMessage({
-            code: CDL_WORKER_PROTOCOL.ENABLE_BREAKPOINT,
+            code: CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED,
             args: {
                 fileName: filePath,
-                lineNumber: lineNumber,  
-                isEnabled: e.target.checked
+                lineNumber: lineNumber
             },
         });
     }

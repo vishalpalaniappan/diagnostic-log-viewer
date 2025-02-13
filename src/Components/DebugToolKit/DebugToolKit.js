@@ -90,6 +90,12 @@ export function DebugToolKit ({}) {
 
     const keydown = (e) => {
         switch (e.code) {
+            case "KeyB":
+                toggleBreakpoint();
+                break;
+            case "KeyD":
+                disableBreakpoint();
+                break;
             case "KeyR":
                 replayProgram();
                 break;
@@ -121,6 +127,25 @@ export function DebugToolKit ({}) {
             cdlWorker.current.postMessage({code: code, args: args});
         }
     };
+
+    const toggleBreakpoint = () => {
+        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
+        const args = {
+            fileName: stack[stackPosition].filePath, 
+            lineNumber: stack[stackPosition].lineno
+        };
+        sendToWorker(code, args);
+    }
+
+    const disableBreakpoint = () => {
+        console.log("disabling");
+        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
+        const args = {
+            fileName: stack[stackPosition].filePath, 
+            lineNumber: stack[stackPosition].lineno
+        };
+        sendToWorker(code, args);
+    }
 
     const stepInto = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_INTO;

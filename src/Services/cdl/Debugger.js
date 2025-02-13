@@ -55,14 +55,14 @@ class Debugger {
     }
 
     /**
-     * This function moves to the end of the file.
+     * This function moves to the start of the file.
      */
     goToStart () {
         this.cdl.getPositionData(0);
     }
 
     /**
-     * This function moves to the start of the file.
+     * This function moves to the end of the file.
      */
     goToEnd () {
         this.cdl.getPositionData(this.cdl.lastPosition);
@@ -225,10 +225,9 @@ class Debugger {
      * Enables/Disables the breakpoint given a fileName and lineNumber.
      * @param {String} fileName 
      * @param {Number} lineNumber 
-     * @param {Boolean} isEnabled 
      */
-    enableBreakPoint(fileName, lineNumber, isEnabled) {
-        if (!fileName || typeof lineNumber !== 'number' || typeof isEnabled !== 'boolean') {
+    toggleBreakpointEnabled(fileName, lineNumber) {
+        if (!fileName || typeof lineNumber !== 'number') {
             console.warn('Invalid parameters for enableBreakPoint');
             return;
         }
@@ -242,7 +241,7 @@ class Debugger {
             console.warn('Breakpoint not in active breakpoints list');
             return;
         }
-        this.breakpoints[index].enabled = isEnabled;
+        this.breakpoints[index].enabled = !this.breakpoints[index].enabled;
 
         postMessage({
             code: CDL_WORKER_PROTOCOL.BREAKPOINTS,
