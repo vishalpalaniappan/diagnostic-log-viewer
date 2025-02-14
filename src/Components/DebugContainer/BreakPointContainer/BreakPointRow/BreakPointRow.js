@@ -58,7 +58,7 @@ export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled})
         <div className="breakpoint-row w-100 d-flex flex-row" >
 
             <div className="check">
-                <Form.Check type="checkbox" onChange={toggleEnabled} defaultChecked={isEnabled} />
+                <Form.Check type="checkbox" onClick={toggleEnabled} defaultChecked={isEnabled} />
             </div>
             
             {filePath}
