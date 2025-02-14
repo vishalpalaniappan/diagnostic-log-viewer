@@ -4,7 +4,8 @@ import CdlHeader from "./CdlHeader";
 import CdlLogLine from "./CdlLogLine";
 
 /**
- *
+ * This class processes a CDL log file and exposes functions to 
+ * interact with the log file given a starting position.
  */
 class CdlLog {
     /**
@@ -106,9 +107,13 @@ class CdlLog {
         const globalVariables = {};
         const startLog = this.execution[position];
         const funcId = this.header.logTypeMap[startLog.lt].getfId();
+        let startOfFuncReached = false;
 
         do {
             const currLog = this.execution[position];
+            if (currLog.type === LINE_TYPE.EXECUTION && currLog.lt === funcId) {
+                startOfFuncReached = true;
+            }
             
             // If var is in curr function and it is the first visit, save var.
             if (currLog.type === LINE_TYPE.VARIABLE) {
@@ -117,7 +122,7 @@ class CdlLog {
 
                 if ((varFuncId == 0 || variable.isGlobal()) && !(variable.name in globalVariables)) {
                     globalVariables[variable.name] = currLog.value;
-                } else if (varFuncId === funcId && !(variable.name in localVariables)) {
+                } else if (varFuncId === funcId && !(variable.name in localVariables) && !startOfFuncReached) {
                     localVariables[variable.name] = currLog.value;
                 }   
             }
