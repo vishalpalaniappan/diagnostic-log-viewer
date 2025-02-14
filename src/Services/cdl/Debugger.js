@@ -23,11 +23,12 @@ class Debugger {
     }
 
     /**
-     * This function parses the CDL log file and intializes debugger state.
+     * This function parses the CDL log file and intializes the debugger state.
      * @param {Array} log Contents of decompressed CDL log file.
      */
     parseLogAndInitializeDebugger (log) {
         this.cdl = new CdlLog(log);
+        this.breakpoints = [];
         console.info(this.cdl);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
@@ -35,56 +36,36 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this.getPositionData(this.cdl.execution.length - 1);
+        this.replayProgram();
     }
 
     /**
-     *
-     * @param {Number} position Position in execution sequence to go to.
-     */
-    getPositionData (position) {
-        const currLt = this.cdl.execution[position];
-        const currLtInfo = this.cdl.header.logTypeMap[currLt];
-
-        const callStack = this.cdl.getCallStackAtPosition(position);
-        const exceptions = this.cdl.getExceptionsAtPosition(position);
-
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: {
-                currLtInfo: currLtInfo,
-                callStack: callStack,
-                exceptions: exceptions,
-            },
-        });
-    }
-
-    /**
-     * This function returns the variable stack given a position.
+     * This function returns the variable stack at a given position.
      * @param {Number} position
      */
     getVariableStack (position) {
-        const variableStack = this.cdl.getVariableStackAtPosition(position);
+        const [localVariables, globalVariables] = this.cdl.getVariablesAtPosition(position);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
-                variableStack: variableStack,
+                localVariables: localVariables,
+                globalVariables: globalVariables
             },
         });
-    }
-
-    /**
-     * This function moves to the end of the file.
-     */
-    goToStart () {
-        this.getPositionData(0);
     }
 
     /**
      * This function moves to the start of the file.
      */
+    goToStart () {
+        this.cdl.getPositionData(0);
+    }
+
+    /**
+     * This function moves to the end of the file.
+     */
     goToEnd () {
-        this.getPositionData(this.cdl.execution.length - 1);
+        this.cdl.getPositionData(this.cdl.lastPosition);
     }
 
     /**
@@ -92,15 +73,17 @@ class Debugger {
      * @param {Number} position
      */
     stepInto (position) {
-        if (position + 1 >= this.cdl.execution.length) {
+        const nextPosition = this.cdl._getNextPosition(position);
+        if (nextPosition == null) {
+            // End of file has been reached 
             return;
         }
-        const callStack = this.cdl.getCallStackAtPosition(position + 1);
-        this.getPositionData(callStack[0].position);
+        const callStack = this.cdl.getCallStackAtPosition(nextPosition);
+        this.cdl.getPositionData(callStack[callStack.length - 1].position);
     }
 
     /**
-     * This function steps out the next position.
+     * This function steps out of the current position.
      * @param {Number} position
      */
     stepOut (position) {
@@ -108,7 +91,7 @@ class Debugger {
         if (callStack.length <= 1) {
             return;
         }
-        this.getPositionData(callStack[1].position);
+        this.cdl.getPositionData(callStack[callStack.length - 2].position);
     }
 
     /**
@@ -116,22 +99,21 @@ class Debugger {
      * @param {Number} position
      */
     stepOverForward (position) {
-        if (position + 1 >= this.cdl.execution.length) {
-            return;
-        }
+        const originalStack = this.cdl.getCallStackAtPosition(position);
 
-        const originalPosition = position;
-        const stack = this.cdl.getCallStackAtPosition(position);
+        while (position < this.cdl.execution.length) {
+            position = this.cdl._getNextPosition(position);
+            
+            if (position == null) {
+                // The end of the file has been reached
+                return;
+            }
 
-        while (++position < this.cdl.execution.length) {
-            const currStack = this.cdl.getCallStackAtPosition(position);
-            if (stack.length >= currStack.length) {
-                this.getPositionData(position);
+            if (this.cdl.getCallStackAtPosition(position).length <= originalStack.length) {
+                this.cdl.getPositionData(position);
                 return;
             }
         }
-
-        this.getPositionData(originalPosition + 1);
     }
 
     /**
@@ -139,22 +121,132 @@ class Debugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
-        if (position - 1 < 0) {
-            return;
-        }
+        const originalStack = this.cdl.getCallStackAtPosition(position);
 
-        const originalPosition = position;
-        const stack = this.cdl.getCallStackAtPosition(position);
+        while (position >= 0) {
+            position = this.cdl._getPreviousPosition(position);
+            
+            if (position == null) {
+                // Start of file has been reached
+                return;
+            }
 
-        while (--position >= 0) {
-            const currStack = this.cdl.getCallStackAtPosition(position);
-            if (stack.length >= currStack.length) {
-                this.getPositionData(position);
+            if (this.cdl.getCallStackAtPosition(position).length <= originalStack.length) {
+                this.cdl.getPositionData(position);
                 return;
             }
         }
+    }
 
-        this.getPositionData(originalPosition - 1);
+    /**
+     * Play the program from the start.
+     * @param {Number} position 
+     */
+    replayProgram (position) {
+        this.playForward(0);
+    }
+
+    /**
+     * Play the program forward from the given position.
+     * @param {Number} position 
+     * @returns 
+     */
+    playForward (position) {
+        do {
+            position = this.cdl._getNextPosition(position);
+
+            if (position == null) {
+                // End of file has been reached
+                this.cdl.getPositionData(this.cdl.lastPosition);
+                return;
+            }
+
+            for (const breakpoint of this.breakpoints) {
+                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].lt) {
+                    this.cdl.getPositionData(position);
+                    return;
+                }
+            };
+        } while (position < this.cdl.execution.length);
+    }
+
+    /**
+     * Play the program backward from the given position.
+     * @param {Number} position 
+     * @returns 
+     */
+    playBackward (position) {
+        do {
+            position = this.cdl._getPreviousPosition(position);
+
+            if (position == null) {
+                // Start of file has been reached
+                this.cdl.getPositionData(0);
+                return;
+            }
+
+            for (const breakpoint of this.breakpoints) {
+                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].lt) {
+                    this.cdl.getPositionData(position);
+                    return;
+                }
+            };
+        } while (position >= 0);
+    }
+
+    /**
+     * Toggles the breakpoint at the given filename and line number.
+     * @param {String} fileName 
+     * @param {Number} lineNumber 
+     */
+    toggleBreakpoint(fileName, lineNumber) {
+        const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
+
+        if (lt === null) {
+            return;
+        }
+        
+        if (this.breakpoints.includes(lt)) {
+            this.breakpoints.splice(this.breakpoints.indexOf(lt), 1);
+        } else {
+            lt.enabled = true;
+            this.breakpoints.push(lt);
+        }
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.BREAKPOINTS,
+            args: {
+                breakpoints: this.breakpoints,
+            },
+        });
+    }
+
+    /**
+     * Enables/Disables the breakpoint given a fileName and lineNumber.
+     * @param {String} fileName 
+     * @param {Number} lineNumber 
+     */
+    toggleBreakpointEnabled(fileName, lineNumber) {
+        const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
+        if (lt === null) {
+            console.warn('Breakpoint not found');
+            return;
+        }
+
+        const index = this.breakpoints.indexOf(lt);
+        if (index === -1) {
+            console.warn('Breakpoint not in active breakpoints list');
+            return;
+        }
+
+        this.breakpoints[index].enabled = !this.breakpoints[index].enabled;
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.BREAKPOINTS,
+            args: {
+                breakpoints: this.breakpoints,
+            },
+        });
     }
 };
 

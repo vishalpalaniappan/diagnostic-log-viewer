@@ -32,6 +32,8 @@ export function Tabs ({}) {
                 return <Tab key={filePath} filePath={filePath} tabName={tabName}></Tab>;
             });
             setTabs(tabsJSX);
+        } else {
+            setTabs([]);
         }
     }, [fileTree]);
 

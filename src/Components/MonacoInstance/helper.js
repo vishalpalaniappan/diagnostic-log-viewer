@@ -1,15 +1,15 @@
 import React from "react";
 
+import * as monaco from "monaco-editor";
 import {createRoot} from "react-dom/client";
 
 
 /**
- * This function returns a DOM node which contains the excetption to be rendered
+ * This function returns a DOM node which contains the exception to be rendered
  * by the monaco instance. It also returns the number of lines to set the height
  * of the exception container.
  *
- * @param {Array} exception  Array containing the exception for the
- *                            current position.
+ * @param {Array} exception  Array containing the exception for the current position.
  * @return {Object}
  */
 const getExceptionMessage = (exception) => {
@@ -19,7 +19,8 @@ const getExceptionMessage = (exception) => {
             numLines: 0,
         };
     }
-    const exceptionValue = exception[0].split("\n").pop();
+
+    const exceptionValue = exception.trim().split("\n").pop();
     const exceptionMessage = [
         <span key={0} style={{whiteSpace: "pre-wrap"}}>
             {exceptionValue}
@@ -39,4 +40,18 @@ const getExceptionMessage = (exception) => {
     };
 };
 
-export {getExceptionMessage};
+/**
+ * Creates a line decoration object for Monaco editor.
+ * 
+ * @param {Number} line The line number to decorate
+ * @param {String} className The CSS class name for the glyph margin
+ * @returns {Object} The decoration object with range and options
+ */
+const getLineDecoration = (line, className) => {
+    return {
+        range: new monaco.Range(line, 1, line, 1),
+        options: {glyphMarginClassName: className}
+    };
+};
+
+export {getExceptionMessage, getLineDecoration};
