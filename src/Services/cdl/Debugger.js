@@ -191,7 +191,7 @@ class Debugger {
                     return;
                 }
             };
-        } while (position < this.cdl.execution.length);
+        } while (position >= 0);
     }
 
     /**
