@@ -74,7 +74,7 @@ class CdlHeader {
         const minLt = this.header.fileTree[fileName].minLt;
         const maxLt = this.header.fileTree[fileName].maxLt;
 
-        for (let i = minLt + 1; i < maxLt; i++) {
+        for (let i = minLt + 1; i <= maxLt; i++) {
             const startLineNo = this.logTypeMap[i].lineno;
             if (lineNumber == startLineNo) {
                 return this.logTypeMap[i];
