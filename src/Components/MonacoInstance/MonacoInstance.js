@@ -122,21 +122,25 @@ export function MonacoInstance () {
      *  - Drawbreak points
      */
     const loadContent = () => {
-        if (editorRef?.current && stack && activeFile) {
-            clearExceptions();
-            editorRef.current.setValue(fileTree[activeFile]);
-
-            if (stack[0].filePath === activeFile) {
-                selectLine(stack[0].lineno, "selectedLine");
-                addException(stack[0]);
+        if (editorRef?.current) {
+            if (stack && activeFile) {
+                clearExceptions();
+                editorRef.current.setValue(fileTree[activeFile]);
+    
+                if (stack[0].filePath === activeFile) {
+                    selectLine(stack[0].lineno, "selectedLine");
+                    addException(stack[0]);
+                }
+    
+                if (stackPosition > 0 && activeFile === stack[stackPosition].filePath) {
+                    selectLine(stack[stackPosition].lineno, "stackLine");
+                    addException(stack[stackPosition]);
+                }
+    
+                drawBreakPoints();
+            } else {
+                editorRef.current.setValue("Loading content...");
             }
-
-            if (stackPosition > 0 && activeFile === stack[stackPosition].filePath) {
-                selectLine(stack[stackPosition].lineno, "stackLine");
-                addException(stack[stackPosition]);
-            }
-
-            drawBreakPoints();
         }
     };
 

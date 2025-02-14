@@ -29,6 +29,8 @@ export function BreakPointContainer () {
                 _breakPoints.push(row);
             });
             setBreakPointStack(_breakPoints);
+        } else {
+            setBreakPointStack([]);
         }
     }, [breakPoints]);
 

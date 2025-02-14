@@ -30,6 +30,8 @@ export function CallStackContainer () {
                 calls.push(row);
             });
             setCallStack(calls);
+        } else {
+            setCallStack([]);
         }
     }, [stack]);
 
