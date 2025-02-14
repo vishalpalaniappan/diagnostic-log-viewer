@@ -1,6 +1,6 @@
 # Diagnostic Log Viewer
 
-The Diagnostic Log Viewer (DLV) is a tool which can be used to view and interact with Compressed Diagnostic Log (CDL) files. See background for more information on [CDL files](#Background). The DLV can be used to step through the execution sequence of a program using the debug toolkit while investigating the call stack, variables and exceptions.
+The Diagnostic Log Viewer (DLV) is a tool which can be used to view and interact with Compressed Diagnostic Log (CDL) files. See background for more information on [CDL files](#Background). The DLV can be used to step through the execution sequence of a program using the debug toolkit while investigating the call stack, variables and exceptions. It can also be used to set breakpoints and investigate specific parts of the program.
 
 # Demo 
 
