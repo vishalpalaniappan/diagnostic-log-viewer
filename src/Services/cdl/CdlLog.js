@@ -98,35 +98,74 @@ class CdlLog {
     }
 
     /**
-     * Returns the variables in the current function given a starting position.
-     * @param {Number} position 
-     * @returns {Object} Returns the variables belonging to current function.
+     * Given an array of keys, the stack is updated with the value.
+     *
+     * Ex: keys:['a','b','c'] stack:{} value:10
+     *
+     * {'a': {'b': {'c': 10} } }
+     *
+     *
+     * @param {String} keys
+     * @param {Array} stack
+     * @param {Object} value
      */
-    getVariablesAtPosition(position) {
+    _updateVariable (keys, stack, value) {
+        if (keys.length === 1) {
+            stack[keys[0]] = value;
+            return;
+        }
+
+        const key = keys.shift();
+        if (!(key in stack)) {
+            stack[key] = {};
+        }
+        this._updateVariable(keys, stack[key], value);
+
+        return;
+    }
+
+    /**
+     * Returns the variables in the current function given a starting position.
+     * @param {Number} position
+     * @return {Object} Returns the variables belonging to current function.
+     */
+    getVariablesAtPosition (position) {
         const localVariables = {};
         const globalVariables = {};
         const startLog = this.execution[position];
         const funcId = this.header.logTypeMap[startLog.lt].getfId();
-        let startOfFuncReached = false;
 
+        let currPosition = 0;
         do {
-            const currLog = this.execution[position];
-            if (currLog.type === LINE_TYPE.EXECUTION && currLog.lt === funcId) {
-                startOfFuncReached = true;
-            }
-            
-            // If var is in curr function and it is the first visit, save var.
+            const currLog = this.execution[currPosition];
+
             if (currLog.type === LINE_TYPE.VARIABLE) {
                 const variable = this.header.variableMap[currLog.varid];
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
-                if ((varFuncId == 0 || variable.isGlobal()) && !(variable.name in globalVariables)) {
-                    globalVariables[variable.name] = currLog.value;
-                } else if (varFuncId === funcId && !(variable.name in localVariables) && !startOfFuncReached) {
-                    localVariables[variable.name] = currLog.value;
-                }   
+                if ((varFuncId == 0 || variable.isGlobal())) {
+                    // Global Variables
+                    if (variable.keys.length == 0) {
+                        globalVariables[variable.name] = currLog.value;
+                    } else {
+                        const currVal = Object.assign({}, globalVariables[variable.name]);
+                        const val = JSON.parse(JSON.stringify(currLog.value));
+                        this._updateVariable(variable.keys.slice(), currVal, val);
+                        globalVariables[variable.name] = currVal;
+                    }
+                } else if (varFuncId === funcId) {
+                    // Local Vriables
+                    if (variable.keys.length == 0) {
+                        localVariables[variable.name] = currLog.value;
+                    } else {
+                        const currVal = Object.assign({}, localVariables[variable.name]);
+                        const val = JSON.parse(JSON.stringify(currLog.value));
+                        this._updateVariable(variable.keys.slice(), currVal, val);
+                        localVariables[variable.name] = currVal;
+                    }
+                }
             }
-        } while (--position >= 0);
+        } while (++currPosition <= position);
 
         return [localVariables, globalVariables];
     }
