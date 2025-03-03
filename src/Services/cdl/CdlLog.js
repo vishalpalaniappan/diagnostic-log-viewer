@@ -127,7 +127,6 @@ class CdlLog {
             } else {
                 newStack[key.value] = value;
             }
-            newStack[key.value] = {};
         }
         this._updateVariable(keys, newStack[key.value], value, existingStack);
 
