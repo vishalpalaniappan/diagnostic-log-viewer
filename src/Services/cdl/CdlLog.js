@@ -112,7 +112,7 @@ class CdlLog {
      */
     _updateVariable (keys, newStack, value, existingStack) {
         if (keys.length === 1) {
-            if (keys[0].type === "variable") {
+            if (keys[0].type === "variable" || keys[0].type === "temp_variable") {
                 newStack[existingStack[keys[0].value]] = value;
             } else {
                 newStack[keys[0].value] = value;
@@ -121,12 +121,10 @@ class CdlLog {
         }
 
         const key = keys.shift();
-        if (!(key in newStack)) {
-            if (key.type === "variable") {
-                newStack[existingStack[key.value]] = value;
-            } else {
-                newStack[key.value] = value;
-            }
+        if (key.type === "variable" || key.type === "temp_variable") {
+            newStack[existingStack[key.value]] = value;
+        } else {
+            newStack[key.value] = value;
         }
         this._updateVariable(keys, newStack[key.value], value, existingStack);
 
@@ -163,7 +161,7 @@ class CdlLog {
                         globalVariables[variable.name] = currVal;
                     }
                 } else if (varFuncId === funcId) {
-                    // Local Vriables
+                    // Local Variables
                     if (variable.keys.length == 0) {
                         localVariables[variable.name] = currLog.value;
                     } else {
