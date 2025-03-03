@@ -128,13 +128,10 @@ class CdlLog {
         let newKey;
         if (key.type === "variable") {
             newKey = existingStack[key.value];
-            newStack[newKey] = {};
         } else if (key.type === "temp_variable") {
             newKey = existingTempStack[key.value];
-            newStack[newKey] = {};
         } else {
             newKey = key.value;
-            newStack[newKey] = {};
         }
 
         this._updateVariable(
