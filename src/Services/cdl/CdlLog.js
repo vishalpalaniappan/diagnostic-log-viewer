@@ -109,24 +109,37 @@ class CdlLog {
      * @param {Object} newStack
      * @param {Object|String|Number} value
      * @param {Object} existingStack
+     * @param {Object} existingTempStack
      */
-    _updateVariable (keys, newStack, value, existingStack) {
+    _updateVariable (keys, newStack, value, existingStack, existingTempStack) {
         if (keys.length === 1) {
-            if (keys[0].type === "variable" || keys[0].type === "temp_variable") {
-                newStack[existingStack[keys[0].value]] = value;
+            const key = keys[0];
+            if (key.type === "variable") {
+                newStack[existingStack[key.value]] = value;
+            } else if (key.type === "temp_variable") {
+                newStack[existingTempStack[key.value]] = value;
             } else {
-                newStack[keys[0].value] = value;
+                newStack[key.value] = value;
             }
             return;
         }
 
         const key = keys.shift();
-        if (key.type === "variable" || key.type === "temp_variable") {
-            newStack[existingStack[key.value]] = value;
+        let newKey;
+        if (key.type === "variable") {
+            newKey = existingStack[key.value];
+            newStack[newKey] = {};
+        } else if (key.type === "temp_variable") {
+            newKey = existingTempStack[key.value];
+            newStack[newKey] = {};
         } else {
-            newStack[key.value] = value;
+            newKey = key.value;
+            newStack[newKey] = {};
         }
-        this._updateVariable(keys, newStack[key.value], value, existingStack);
+
+        this._updateVariable(
+            keys, newStack[newKey], value, existingStack, existingTempStack
+        );
 
         return;
     }
@@ -139,6 +152,7 @@ class CdlLog {
     getVariablesAtPosition (position) {
         const localVariables = {};
         const globalVariables = {};
+        const tempVariables = {};
         const startLog = this.execution[position];
         const funcId = this.header.logTypeMap[startLog.lt].getfId();
 
@@ -150,14 +164,18 @@ class CdlLog {
                 const variable = this.header.variableMap[currLog.varid];
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
-                if ((varFuncId == 0 || variable.isGlobal())) {
+                if (variable.isTemp) {
+                    tempVariables[variable.name] = currLog.value;
+                } else if ((varFuncId == 0 || variable.isGlobal())) {
                     // Global Variables
                     if (variable.keys.length == 0) {
                         globalVariables[variable.name] = currLog.value;
                     } else {
                         const currVal = Object.assign({}, globalVariables[variable.name]);
                         const val = JSON.parse(JSON.stringify(currLog.value));
-                        this._updateVariable(variable.keys.slice(), currVal, val, globalVariables);
+                        this._updateVariable(
+                            variable.keys.slice(), currVal, val, globalVariables, tempVariables
+                        );
                         globalVariables[variable.name] = currVal;
                     }
                 } else if (varFuncId === funcId) {
@@ -167,7 +185,9 @@ class CdlLog {
                     } else {
                         const currVal = Object.assign({}, localVariables[variable.name]);
                         const val = JSON.parse(JSON.stringify(currLog.value));
-                        this._updateVariable(variable.keys.slice(), currVal, val, localVariables);
+                        this._updateVariable(
+                            variable.keys.slice(), currVal, val, localVariables, tempVariables
+                        );
                         localVariables[variable.name] = currVal;
                     }
                 }
