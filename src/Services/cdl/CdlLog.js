@@ -27,10 +27,10 @@ class CdlLog {
 
     /**
      * Processes the log file one line at a time.
-     * @param {Array} logFile 
+     * @param {Array} logFile
      */
     _processLog (logFile) {
-        let position = 0; 
+        let position = 0;
         do {
             const currLog = new CdlLogLine(logFile[position]);
             switch (currLog.type) {
@@ -57,26 +57,26 @@ class CdlLog {
 
     /**
      * Add to call stack while processing execution log.
-     * @param {CdlLogLine} currLog 
-     * @param {Number} position 
+     * @param {CdlLogLine} currLog
+     * @param {Number} position
      */
     _addToCallStacks (currLog) {
         const position = this.execution.length - 1;
         const currLt = this.header.logTypeMap[currLog.lt];
         const cs = this.callStack;
-        
+
         if (currLt.isFunction() && currLt.getfId() != 0) {
             cs.push(position);
         }
-        
+
         while (cs.length > 0) {
             const currFunctionPosition = cs[cs.length - 1];
-            if (this.execution[currFunctionPosition].lt ===  currLt.getfId()) {
+            if (this.execution[currFunctionPosition].lt === currLt.getfId()) {
                 break;
             }
             cs.pop();
         }
-        
+
         this.callStacks[position] = cs.map((position, index) => {
             return this._getPreviousPosition(position);
         });
@@ -85,7 +85,7 @@ class CdlLog {
 
     /**
      * Save global variables while processing the log file.
-     * @param {Object} currLog 
+     * @param {Object} currLog
      */
     _saveGlobalVariables (currLog) {
         const _var = this.header.variableMap[currLog.varid];
@@ -105,21 +105,31 @@ class CdlLog {
      * {'a': {'b': {'c': 10} } }
      *
      *
-     * @param {String} keys
-     * @param {Array} stack
-     * @param {Object} value
+     * @param {Array} keys
+     * @param {Object} newStack
+     * @param {Object|String|Number} value
+     * @param {Object} existingStack
      */
-    _updateVariable (keys, stack, value) {
+    _updateVariable (keys, newStack, value, existingStack) {
         if (keys.length === 1) {
-            stack[keys[0]] = value;
+            if (keys[0].type === "variable") {
+                newStack[existingStack[keys[0].value]] = value;
+            } else {
+                newStack[keys[0].value] = value;
+            }
             return;
         }
 
         const key = keys.shift();
-        if (!(key in stack)) {
-            stack[key] = {};
+        if (!(key in newStack)) {
+            if (key.type === "variable") {
+                newStack[existingStack[key.value]] = value;
+            } else {
+                newStack[key.value] = value;
+            }
+            newStack[key.value] = {};
         }
-        this._updateVariable(keys, stack[key], value);
+        this._updateVariable(keys, newStack[key.value], value, existingStack);
 
         return;
     }
@@ -150,7 +160,7 @@ class CdlLog {
                     } else {
                         const currVal = Object.assign({}, globalVariables[variable.name]);
                         const val = JSON.parse(JSON.stringify(currLog.value));
-                        this._updateVariable(variable.keys.slice(), currVal, val);
+                        this._updateVariable(variable.keys.slice(), currVal, val, globalVariables);
                         globalVariables[variable.name] = currVal;
                     }
                 } else if (varFuncId === funcId) {
@@ -160,7 +170,7 @@ class CdlLog {
                     } else {
                         const currVal = Object.assign({}, localVariables[variable.name]);
                         const val = JSON.parse(JSON.stringify(currLog.value));
-                        this._updateVariable(variable.keys.slice(), currVal, val);
+                        this._updateVariable(variable.keys.slice(), currVal, val, localVariables);
                         localVariables[variable.name] = currVal;
                     }
                 }
@@ -172,11 +182,11 @@ class CdlLog {
 
     /**
      * Returns the previous position with an execution log type.
-     * @param {Number} position 
-     * @returns 
+     * @param {Number} position
+     * @return {null|int}
      */
-    _getPreviousPosition(position) { 
-        while(--position >= 0) {
+    _getPreviousPosition (position) {
+        while (--position >= 0) {
             const line = this.execution[position];
             if (line.type === LINE_TYPE.EXECUTION) {
                 return position;
@@ -184,14 +194,14 @@ class CdlLog {
         }
         return null;
     }
-    
+
     /**
-     * Returns the next position wth an execution log type. 
-     * @param {Number} position 
-     * @returns 
+     * Returns the next position wth an execution log type.
+     * @param {Number} position
+     * @return {null|int}
      */
-    _getNextPosition(position) { 
-        while(++position < this.execution.length) {
+    _getNextPosition (position) {
+        while (++position < this.execution.length) {
             const line = this.execution[position];
             if (line.type === LINE_TYPE.EXECUTION) {
                 return position;
@@ -204,6 +214,7 @@ class CdlLog {
     /**
      * Gets the call stack at a given position.
      * @param {Number} position
+     * @return {object}
      */
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
@@ -246,12 +257,12 @@ class CdlLog {
                 });
                 break;
             }
-            
         } while (--position > 0);
     }
 
     /**
      * Returns the last position with an execution log type
+     * @return {int}
      */
     getLastPosition () {
         let position = this.execution.length - 1;
@@ -259,7 +270,7 @@ class CdlLog {
             if (this.execution[position].type === LINE_TYPE.EXECUTION) {
                 return position;
             }
-        } while(--position >= 0);
+        } while (--position >= 0);
     }
 }
 
