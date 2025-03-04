@@ -10,8 +10,10 @@ class LtInfo {
      * @param {String} filePath File this logtype belongs to.
      */
     constructor (ltInfo, filePath) {
-        for (var key in ltInfo) {
-            this[key] = ltInfo[key];
+        for (const key in ltInfo) {
+            if (key) {
+                this[key] = ltInfo[key];
+            }
         }
         this.filePath = filePath;
         this.fileName = filePath.split("/").pop();
@@ -21,7 +23,7 @@ class LtInfo {
      * Indicates if the current logtype is a function definition
      * @return {Boolean}
      */
-    isFunction() {
+    isFunction () {
         return this.type === "function";
     }
 
