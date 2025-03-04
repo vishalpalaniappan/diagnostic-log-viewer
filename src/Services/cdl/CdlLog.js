@@ -91,8 +91,7 @@ class CdlLog {
         const _var = this.header.variableMap[currLog.varid];
         const _varLt = this.header.logTypeMap[_var.logType];
 
-        // Save the first variable value since we are scanning backwards.
-        if (_varLt.getfId() === 0 && !(_var.name in this.globalVariables)) {
+        if (_varLt.getfId() === 0) {
             this.globalVariables[_var.name] = currLog.value;
         }
     }
@@ -106,20 +105,20 @@ class CdlLog {
      *
      *
      * @param {Array} keys
-     * @param {Object} newStack
+     * @param {Object} currVar
      * @param {Object|String|Number} value
-     * @param {Object} existingStack
+     * @param {Object} existingVarStack
      * @param {Object} existingTempStack
      */
-    _updateVariable (keys, newStack, value, existingStack, existingTempStack) {
+    _updateVariable (keys, currVar, value, existingVarStack, existingTempStack) {
         if (keys.length === 1) {
             const key = keys[0];
             if (key.type === "variable") {
-                newStack[existingStack[key.value]] = value;
+                currVar[existingVarStack[key.value]] = value;
             } else if (key.type === "temp_variable") {
-                newStack[existingTempStack[key.value]] = value;
+                currVar[existingTempStack[key.value]] = value;
             } else {
-                newStack[key.value] = value;
+                currVar[key.value] = value;
             }
             return;
         }
@@ -127,7 +126,7 @@ class CdlLog {
         const key = keys.shift();
         let newKey;
         if (key.type === "variable") {
-            newKey = existingStack[key.value];
+            newKey = existingVarStack[key.value];
         } else if (key.type === "temp_variable") {
             newKey = existingTempStack[key.value];
         } else {
@@ -135,7 +134,7 @@ class CdlLog {
         }
 
         this._updateVariable(
-            keys, newStack[newKey], value, existingStack, existingTempStack
+            keys, currVar[newKey], value, existingVarStack, existingTempStack
         );
 
         return;
@@ -147,9 +146,9 @@ class CdlLog {
      * @return {Object} Returns the variables belonging to current function.
      */
     getVariablesAtPosition (position) {
-        const localVariables = {};
-        const globalVariables = {};
-        const tempVariables = {};
+        const localVars = {};
+        const globalVars = {};
+        const tempVars = {};
         const startLog = this.execution[position];
         const funcId = this.header.logTypeMap[startLog.lt].getfId();
 
@@ -162,36 +161,35 @@ class CdlLog {
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
                 if (variable.isTemp) {
-                    tempVariables[variable.name] = currLog.value;
+                    // Temporary variables (introduced by ADLI tool)
+                    tempVars[variable.name] = currLog.value;
                 } else if ((varFuncId == 0 || variable.isGlobal())) {
                     // Global Variables
                     if (variable.keys.length == 0) {
-                        globalVariables[variable.name] = currLog.value;
+                        globalVars[variable.name] = currLog.value;
                     } else {
-                        const currVal = Object.assign({}, globalVariables[variable.name]);
-                        const val = JSON.parse(JSON.stringify(currLog.value));
+                        const currVal = Object.assign({}, globalVars[variable.name]);
                         this._updateVariable(
-                            variable.keys.slice(), currVal, val, globalVariables, tempVariables
+                            variable.keys.slice(), currVal, currLog.value, globalVars, tempVars
                         );
-                        globalVariables[variable.name] = currVal;
+                        globalVars[variable.name] = currVal;
                     }
                 } else if (varFuncId === funcId) {
                     // Local Variables
                     if (variable.keys.length == 0) {
-                        localVariables[variable.name] = currLog.value;
+                        localVars[variable.name] = currLog.value;
                     } else {
-                        const currVal = Object.assign({}, localVariables[variable.name]);
-                        const val = JSON.parse(JSON.stringify(currLog.value));
+                        const currVar = Object.assign({}, localVars[variable.name]);
                         this._updateVariable(
-                            variable.keys.slice(), currVal, val, localVariables, tempVariables
+                            variable.keys.slice(), currVar, currLog.value, localVars, tempVars
                         );
-                        localVariables[variable.name] = currVal;
+                        localVars[variable.name] = currVar;
                     }
                 }
             }
         } while (++currPosition <= position);
 
-        return [localVariables, globalVariables];
+        return [localVars, globalVars];
     }
 
     /**
