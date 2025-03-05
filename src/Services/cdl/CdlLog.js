@@ -27,10 +27,10 @@ class CdlLog {
 
     /**
      * Processes the log file one line at a time.
-     * @param {Array} logFile 
+     * @param {Array} logFile
      */
     _processLog (logFile) {
-        let position = 0; 
+        let position = 0;
         do {
             const currLog = new CdlLogLine(logFile[position]);
             switch (currLog.type) {
@@ -57,26 +57,26 @@ class CdlLog {
 
     /**
      * Add to call stack while processing execution log.
-     * @param {CdlLogLine} currLog 
-     * @param {Number} position 
+     * @param {CdlLogLine} currLog
+     * @param {Number} position
      */
     _addToCallStacks (currLog) {
         const position = this.execution.length - 1;
         const currLt = this.header.logTypeMap[currLog.lt];
         const cs = this.callStack;
-        
+
         if (currLt.isFunction() && currLt.getfId() != 0) {
             cs.push(position);
         }
-        
+
         while (cs.length > 0) {
             const currFunctionPosition = cs[cs.length - 1];
-            if (this.execution[currFunctionPosition].lt ===  currLt.getfId()) {
+            if (this.execution[currFunctionPosition].lt === currLt.getfId()) {
                 break;
             }
             cs.pop();
         }
-        
+
         this.callStacks[position] = cs.map((position, index) => {
             return this._getPreviousPosition(position);
         });
@@ -85,59 +85,111 @@ class CdlLog {
 
     /**
      * Save global variables while processing the log file.
-     * @param {Object} currLog 
+     * @param {Object} currLog
      */
     _saveGlobalVariables (currLog) {
         const _var = this.header.variableMap[currLog.varid];
         const _varLt = this.header.logTypeMap[_var.logType];
 
-        // Save the first variable value since we are scanning backwards.
-        if (_varLt.getfId() === 0 && !(_var.name in this.globalVariables)) {
+        if (_varLt.getfId() === 0) {
             this.globalVariables[_var.name] = currLog.value;
         }
     }
 
     /**
-     * Returns the variables in the current function given a starting position.
-     * @param {Number} position 
-     * @returns {Object} Returns the variables belonging to current function.
+     * Given an array of keys, the stack is updated with the value.
+     *
+     * Ex: keys:['a','b','c'] stack:{} value:10
+     *
+     * {'a': {'b': {'c': 10} } }
+     *
+     *
+     * @param {Array} variable
+     * @param {Object} value
+     * @param {Object} varStack
+     * @param {Object} tempStack
      */
-    getVariablesAtPosition(position) {
-        const localVariables = {};
-        const globalVariables = {};
+    _updateVariable (variable, value, varStack, tempStack) {
+        if (variable.keys.length == 0) {
+            varStack[variable.name] = value;
+        } else {
+            const currVal = variable.name in varStack ?
+                Object.assign({}, varStack[variable.name]) : {};
+
+            let temp = currVal;
+            for (let i = 0; i < variable.keys.length; i++) {
+                const key = variable.keys[i];
+
+                let newKey;
+                if (key.type === "variable") {
+                    newKey = varStack[key.value];
+                } else if (key.type === "temp_variable") {
+                    newKey = tempStack[key.value];
+                } else {
+                    newKey = key.value;
+                }
+
+                if (!(newKey in temp) || typeof temp[newKey] !== "object") {
+                    temp[newKey] = {};
+                }
+
+                if (i === variable.keys.length - 1) {
+                    switch (typeof value) {
+                        case "object":
+                            temp[newKey] = Object.assign({}, value);
+                            break;
+                        default:
+                            temp[newKey] = value.valueOf();
+                            break;
+                    }
+                } else {
+                    temp = temp[newKey];
+                }
+            }
+            varStack[variable.name] = Object.assign({}, currVal);
+        }
+    }
+
+    /**
+     * Returns the variables in the current function given a starting position.
+     * @param {Number} position
+     * @return {Object} Returns the variables belonging to current function.
+     */
+    getVariablesAtPosition (position) {
+        const localVars = {};
+        const globalVars = {};
+        const tempVars = {};
         const startLog = this.execution[position];
         const funcId = this.header.logTypeMap[startLog.lt].getfId();
-        let startOfFuncReached = false;
 
+        let currPosition = 0;
         do {
-            const currLog = this.execution[position];
-            if (currLog.type === LINE_TYPE.EXECUTION && currLog.lt === funcId) {
-                startOfFuncReached = true;
-            }
-            
-            // If var is in curr function and it is the first visit, save var.
+            const currLog = this.execution[currPosition];
+
             if (currLog.type === LINE_TYPE.VARIABLE) {
                 const variable = this.header.variableMap[currLog.varid];
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
-                if ((varFuncId == 0 || variable.isGlobal()) && !(variable.name in globalVariables)) {
-                    globalVariables[variable.name] = currLog.value;
-                } else if (varFuncId === funcId && !(variable.name in localVariables) && !startOfFuncReached) {
-                    localVariables[variable.name] = currLog.value;
-                }   
+                if (variable.isTemp) {
+                    tempVars[variable.name] = currLog.value;
+                } else if ((varFuncId == 0 || variable.isGlobal())) {
+                    this._updateVariable(variable, currLog.value, globalVars, tempVars);
+                } else if (varFuncId === funcId) {
+                    this._updateVariable(variable, currLog.value, localVars, tempVars);
+                }
             }
-        } while (--position >= 0);
+        } while (++currPosition <= position);
 
-        return [localVariables, globalVariables];
+        return [localVars, globalVars];
     }
 
     /**
      * Returns the previous position with an execution log type.
-     * @param {Number} position 
-     * @returns 
+     * @param {Number} position
+     * @return {null|int}
      */
-    _getPreviousPosition(position) { 
-        while(--position >= 0) {
+    _getPreviousPosition (position) {
+        while (--position >= 0) {
             const line = this.execution[position];
             if (line.type === LINE_TYPE.EXECUTION) {
                 return position;
@@ -145,14 +197,14 @@ class CdlLog {
         }
         return null;
     }
-    
+
     /**
-     * Returns the next position wth an execution log type. 
-     * @param {Number} position 
-     * @returns 
+     * Returns the next position wth an execution log type.
+     * @param {Number} position
+     * @return {null|int}
      */
-    _getNextPosition(position) { 
-        while(++position < this.execution.length) {
+    _getNextPosition (position) {
+        while (++position < this.execution.length) {
             const line = this.execution[position];
             if (line.type === LINE_TYPE.EXECUTION) {
                 return position;
@@ -165,6 +217,7 @@ class CdlLog {
     /**
      * Gets the call stack at a given position.
      * @param {Number} position
+     * @return {object}
      */
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
@@ -207,12 +260,12 @@ class CdlLog {
                 });
                 break;
             }
-            
         } while (--position > 0);
     }
 
     /**
      * Returns the last position with an execution log type
+     * @return {int}
      */
     getLastPosition () {
         let position = this.execution.length - 1;
@@ -220,7 +273,7 @@ class CdlLog {
             if (this.execution[position].type === LINE_TYPE.EXECUTION) {
                 return position;
             }
-        } while(--position >= 0);
+        } while (--position >= 0);
     }
 }
 
