@@ -104,40 +104,54 @@ class CdlLog {
      * {'a': {'b': {'c': 10} } }
      *
      *
-     * @param {Array} keys
-     * @param {Object} currVar
-     * @param {Object|String|Number} value
-     * @param {Object} existingVarStack
-     * @param {Object} existingTempStack
+     * @param {Array} variable
+     * @param {Object} value
+     * @param {Object} varStack
+     * @param {Object} tempStack
      */
-    _updateVariable (keys, currVar, value, existingVarStack, existingTempStack) {
-        if (keys.length === 1) {
-            const key = keys[0];
-            if (key.type === "variable") {
-                currVar[existingVarStack[key.value]] = value;
-            } else if (key.type === "temp_variable") {
-                currVar[existingTempStack[key.value]] = value;
-            } else {
-                currVar[key.value] = value;
-            }
-            return;
-        }
-
-        const key = keys.shift();
-        let newKey;
-        if (key.type === "variable") {
-            newKey = existingVarStack[key.value];
-        } else if (key.type === "temp_variable") {
-            newKey = existingTempStack[key.value];
+    _updateVariable (variable, value, varStack, tempStack) {
+        if (variable.keys.length == 0) {
+            varStack[variable.name] = value;
         } else {
-            newKey = key.value;
+            const currVal = Object.assign({}, varStack[variable.name]);
+
+            let temp = currVal;
+            for (let i = 0; i < variable.keys.length; i++) {
+                const key = variable.keys[i];
+
+                let newKey;
+                if (key.type === "variable") {
+                    newKey = varStack[key.value];
+                } else if (key.type === "temp_variable") {
+                    newKey = tempStack[key.value];
+                } else {
+                    newKey = key.value;
+                }
+
+                if (!(newKey in temp) || typeof temp[newKey] !== "object") {
+                    temp[newKey] = {};
+                }
+
+                if (i === variable.keys.length - 1) {
+                    switch (typeof value) {
+                        case "object":
+                            temp[newKey] = Object.assign({}, value);
+                            break;
+                        case "string":
+                            temp[newKey] = value.valueOf();
+                            break;
+                        case "string":
+                            temp[newKey] = value.valueOf();
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    temp = temp[newKey];
+                }
+            }
+            varStack[variable.name] = Object.assign({}, currVal);
         }
-
-        this._updateVariable(
-            keys, currVar[newKey], value, existingVarStack, existingTempStack
-        );
-
-        return;
     }
 
     /**
@@ -161,30 +175,11 @@ class CdlLog {
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
                 if (variable.isTemp) {
-                    // Temporary variables (introduced by ADLI tool)
                     tempVars[variable.name] = currLog.value;
                 } else if ((varFuncId == 0 || variable.isGlobal())) {
-                    // Global Variables
-                    if (variable.keys.length == 0) {
-                        globalVars[variable.name] = currLog.value;
-                    } else {
-                        const currVal = Object.assign({}, globalVars[variable.name]);
-                        this._updateVariable(
-                            variable.keys.slice(), currVal, currLog.value, globalVars, tempVars
-                        );
-                        globalVars[variable.name] = currVal;
-                    }
+                    this._updateVariable(variable, currLog.value, globalVars, tempVars);
                 } else if (varFuncId === funcId) {
-                    // Local Variables
-                    if (variable.keys.length == 0) {
-                        localVars[variable.name] = currLog.value;
-                    } else {
-                        const currVar = Object.assign({}, localVars[variable.name]);
-                        this._updateVariable(
-                            variable.keys.slice(), currVar, currLog.value, localVars, tempVars
-                        );
-                        localVars[variable.name] = currVar;
-                    }
+                    this._updateVariable(variable, currLog.value, localVars, tempVars);
                 }
             }
         } while (++currPosition <= position);
