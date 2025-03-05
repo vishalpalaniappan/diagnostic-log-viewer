@@ -113,8 +113,9 @@ class CdlLog {
         if (variable.keys.length == 0) {
             varStack[variable.name] = value;
         } else {
--            const currVal = Object.assign({}, varStack[variable.name]);
-+            const currVal = variable.name in varStack ? Object.assign({}, varStack[variable.name]) : {};
+            const currVal = variable.name in varStack ?
+                Object.assign({}, varStack[variable.name]) : {};
+
             let temp = currVal;
             for (let i = 0; i < variable.keys.length; i++) {
                 const key = variable.keys[i];
