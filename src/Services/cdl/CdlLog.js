@@ -137,13 +137,8 @@ class CdlLog {
                         case "object":
                             temp[newKey] = Object.assign({}, value);
                             break;
-                        case "string":
-                            temp[newKey] = value.valueOf();
-                            break;
-                        case "string":
-                            temp[newKey] = value.valueOf();
-                            break;
                         default:
+                            temp[newKey] = value.valueOf();
                             break;
                     }
                 } else {
