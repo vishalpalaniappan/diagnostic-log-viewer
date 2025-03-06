@@ -8,21 +8,12 @@ class VarInfo {
      * @param {Object} varInfo Variable info.
      * @param {Number} logType Logtype this variable belogns to.
      */
-    constructor(varInfo, logType) {
-        if (!varInfo || typeof varInfo !== 'object') {
-            throw new Error('varInfo must be a non-null object');
-        }
-        if (logType === undefined || logType === null) {
-            throw new Error('logType is required');
-        }
-        
+    constructor (varInfo) {
         for (const key in varInfo) {
             if (Object.prototype.hasOwnProperty.call(varInfo, key)) {
                 this[key] = varInfo[key];
             }
         }
-        
-        this.logType = Number(logType);
     }
 
     /**
@@ -38,7 +29,7 @@ class VarInfo {
      * @return {Boolean}
      */
     isGlobal () {
-        return "global" in this && this.global === true
+        return "global" in this && this.global === true;
     }
 };
 
