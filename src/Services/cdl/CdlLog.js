@@ -136,10 +136,11 @@ class CdlLog {
                 if (i === variable.keys.length - 1) {
                     if (Array.isArray(value)) {
                         temp[newKey] = [...value];
-                    } else if (typeof value == "object") {
+                    } else if (value !== null && typeof value == "object") {
                         temp[newKey] = Object.assign({}, value);
                     } else {
-                        temp[newKey] = value.valueOf();
+                        temp[newKey] = value === null || value === undefined ?
+                            value : value.valueOf();
                     }
                 } else {
                     temp = temp[newKey];
