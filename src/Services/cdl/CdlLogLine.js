@@ -38,10 +38,11 @@ class CdlLogLine {
      */
     _processVariable (log) {
         this.type = LINE_TYPE.VARIABLE;
-        const pattern = /^# ([0-9]+) (.*$)/gm;
+        const pattern = /^# ([0-9]+) ([0-9]+) (.*$)/gm;
         const parsedInfo = pattern.exec(log);
-        this.value = this._parseVariableIfJSON(parsedInfo[2]);
         this.varid = parseInt(parsedInfo[1]);
+        this.uniqueid = this._parseVariableIfJSON(parsedInfo[2]);
+        this.value = this._parseVariableIfJSON(parsedInfo[3]);
     }
 
     /**
