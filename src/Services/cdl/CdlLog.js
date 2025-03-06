@@ -134,13 +134,12 @@ class CdlLog {
                 }
 
                 if (i === variable.keys.length - 1) {
-                    switch (typeof value) {
-                        case "object":
-                            temp[newKey] = Object.assign({}, value);
-                            break;
-                        default:
-                            temp[newKey] = value.valueOf();
-                            break;
+                    if (Array.isArray(value)) {
+                        temp[newKey] = [...value];
+                    } else if (typeof value == "object") {
+                        temp[newKey] = Object.assign({}, value);
+                    } else {
+                        temp[newKey] = value.valueOf();
                     }
                 } else {
                     temp = temp[newKey];
