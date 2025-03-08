@@ -1,3 +1,4 @@
+import { unique } from "webpack-merge";
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {LINE_TYPE} from "./CDL_CONSTANTS";
 import CdlHeader from "./CdlHeader";
@@ -152,16 +153,33 @@ class CdlLog {
 
     /**
      * Returns the variables in the current function given a starting position.
-     * @param {Number} position
+     * @param {Number} startPosition
      * @return {Object} Returns the variables belonging to current function.
      */
-    getVariablesAtPosition (position) {
+    getVariablesAtPosition (startPosition) {
         const localVars = {};
         const globalVars = {};
         const tempVars = {};
-        const startLog = this.execution[position];
+        const startLog = this.execution[startPosition];
         const funcId = this.header.logTypeMap[startLog.lt].getfId();
 
+        // Get the unique id of self in this function
+        let position = startPosition.valueOf();
+        let uniqueId;
+        do {
+            const currLog = this.execution[position];
+            if (currLog.type === LINE_TYPE.EXECUTION && currLog.lt == funcId) {
+                break;
+            }
+            if (currLog.type === LINE_TYPE.VARIABLE) {
+                const variable = this.header.variableMap[currLog.varid];
+                if (variable.funcId === funcId && variable.name == "self") {
+                    uniqueId = currLog.uniqueid;
+                }
+            }
+        } while (--position > 0);
+
+        // Store all variable values for global and valid unique ids
         let currPosition = 0;
         do {
             const currLog = this.execution[currPosition];
@@ -171,14 +189,20 @@ class CdlLog {
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
                 if (variable.isTemp) {
+                    // Temp variables
                     tempVars[variable.name] = currLog.value;
                 } else if ((varFuncId == 0 || variable.isGlobal())) {
+                    // Global Variable
                     this._updateVariable(variable, currLog.value, globalVars, tempVars);
+                } else if (uniqueId == currLog.uniqueid && variable.name == "self") {
+                    // "self" variable with the chosen uniqueid
+                    this._updateVariable(variable, currLog.value, localVars, tempVars);
                 } else if (varFuncId === funcId) {
+                    // Local variables
                     this._updateVariable(variable, currLog.value, localVars, tempVars);
                 }
             }
-        } while (++currPosition <= position);
+        } while (++currPosition <= startPosition);
 
         return [localVars, globalVars];
     }
