@@ -24,6 +24,8 @@ class CdlLogLine {
             case LINE_TYPE_DELIMITER.IR_HEADER:
                 this._processIRHeader(log);
                 break;
+            case LINE_TYPE_DELIMITER.VAR_UNIQUE_ID:
+                break;
             default:
                 this.type = LINE_TYPE.EXECUTION;
                 this.lt = parseInt(log);
