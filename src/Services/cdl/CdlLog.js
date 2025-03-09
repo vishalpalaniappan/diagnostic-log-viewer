@@ -23,6 +23,19 @@ class CdlLog {
 
         // Used to go to the end of the file
         this.lastPosition = this.getLastPosition();
+
+        this._findRootCause();
+    }
+
+    /**
+     * Find the root cause of the exception which terminted the program
+     */
+    _findRootCause () {
+        if (this.exception) {
+            // Perform root cause analysis here
+            // Simple example: Value Error, trace when the variable was
+            // set to that value.
+        }
     }
 
     /**
