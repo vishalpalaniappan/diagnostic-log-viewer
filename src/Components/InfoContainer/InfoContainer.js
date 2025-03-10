@@ -31,21 +31,23 @@ export function InfoContainer () {
         redrawContainers();
     }, []);
 
+    const titleStyle = {
+        height: TITLE_HEIGHT + "px",
+    };
+
     return (
         <div ref={infoContainerRef} className="debug-container w-100 d-flex flex-column">
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>
-                CDL Header Statistics
-            </div>
+            <div className="w-100 title" style={titleStyle}>CDL Header Statistics</div>
             <div className="section" ref={overviewRef}>
                 <OverviewContainer />
             </div>
             <VerticleHandle topDiv={overviewRef} bottomDiv={varMapRef}/>
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Variable Map</div>
+            <div className="w-100 title" style={titleStyle}>Variable Map</div>
             <div className="section" ref={varMapRef}>
                 <VariableMapContainer />
             </div>
             <VerticleHandle topDiv={varMapRef} bottomDiv={logTypeRef}/>
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Logtype Map</div>
+            <div className="w-100 title" style={titleStyle}>Logtype Map</div>
             <div className="section" ref={logTypeRef}>
                 <LogTypeMapContainer />
             </div>

@@ -2,8 +2,8 @@ import React, {useContext} from "react";
 
 import ReactJsonView from "@microlink/react-json-view";
 
-import VariablesContext from "../../../Providers/VariablesContext";
 import GlobalVariablesContext from "../../../Providers/GlobalVariablesContext";
+import VariablesContext from "../../../Providers/VariablesContext";
 
 import "./VariableStackContainer.scss";
 

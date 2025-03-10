@@ -1,5 +1,6 @@
 import JSON5 from "json5";
 
+import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL.js";
 import LtInfo from "./LtInfo";
 import VarInfo from "./VarInfo.js";
 
@@ -48,6 +49,14 @@ class CdlHeader {
                 this.variableMap[varId] = new VarInfo(variable);
             }
         }
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.HEADER_METADATA,
+            args: {
+                logTypeMap: this.logTypeMap,
+                varMap: this.variableMap,
+            },
+        });
     }
 
     /**

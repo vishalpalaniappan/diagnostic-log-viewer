@@ -4,13 +4,14 @@ import PropTypes from "prop-types";
 
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import ActiveFileContext from "./ActiveFileContext";
+import BreakpointsContext from "./BreakpointsContext";
 import FileTreeContext from "./FileTreeContext";
+import GlobalVariablesContext from "./GlobalVariablesContext";
+import HeaderMetadataContext from "./HeaderMetadataContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
 import VariablesContext from "./VariablesContext";
-import GlobalVariablesContext from "./GlobalVariablesContext";
 import WorkerContext from "./WorkerContext";
-import BreakpointsContext from "./BreakpointsContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
@@ -30,6 +31,7 @@ function CDLProviders ({children, fileInfo}) {
     const [stackPosition, setStackPosition] = useState();
     const [localVariables, setLocalVariables] = useState();
     const [globalVariables, setGlobalVariables] = useState();
+    const [headerMetadata, setHeaderMetadata] = useState();
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
 
@@ -47,7 +49,7 @@ function CDLProviders ({children, fileInfo}) {
     // Get new variable stack if stack position changes and update active file
     useEffect(() => {
         if (cdlWorker?.current && stackPosition !== undefined && stack?.[stackPosition]) {
-            setActiveFile(stack[stackPosition].filePath);   
+            setActiveFile(stack[stackPosition].filePath);
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
@@ -57,7 +59,6 @@ function CDLProviders ({children, fileInfo}) {
         } else {
             console.warn("Invalid stack position or stack not initialized");
         }
-        
     }, [stackPosition, stack]);
 
     // Resets the state variables before loading new file.
@@ -118,6 +119,9 @@ function CDLProviders ({children, fileInfo}) {
             case CDL_WORKER_PROTOCOL.BREAKPOINTS:
                 setBreakPoints(event.data.args.breakpoints);
                 break;
+            case CDL_WORKER_PROTOCOL.HEADER_METADATA:
+                setHeaderMetadata(event.data.args);
+                break;
             default:
                 break;
         }
@@ -132,7 +136,9 @@ function CDLProviders ({children, fileInfo}) {
                             <BreakpointsContext.Provider value={{breakPoints}}>
                                 <StackContext.Provider value={{stack}}>
                                     <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
-                                        {children}
+                                        <HeaderMetadataContext.Provider value={{headerMetadata}}>
+                                            {children}
+                                        </HeaderMetadataContext.Provider>
                                     </ActiveFileContext.Provider>
                                 </StackContext.Provider>
                             </BreakpointsContext.Provider>

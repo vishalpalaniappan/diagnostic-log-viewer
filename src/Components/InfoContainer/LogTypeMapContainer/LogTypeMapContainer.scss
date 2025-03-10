@@ -1,3 +1,7 @@
 .logtype-map-container {
-  color:white;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-color: #47474766 #252526;
+  scrollbar-width: thin;
+  font-size:12px;
 }
