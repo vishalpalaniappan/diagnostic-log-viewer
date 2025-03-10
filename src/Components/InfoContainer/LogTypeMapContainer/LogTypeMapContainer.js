@@ -42,7 +42,7 @@ export function LogTypeMapContainer ({}) {
     }, [headerMetaContext]);
 
     return (
-        <div ref={logtypeMapContainer} className="w-100 h-100 variable-map-container">
+        <div ref={logtypeMapContainer} className="w-100 h-100 logtype-map-container">
             <ReactJsonView
                 src={ltMap}
                 theme={logTypeStackTheme}
