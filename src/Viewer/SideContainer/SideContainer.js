@@ -1,8 +1,9 @@
 import React, {useRef, useState} from "react";
 
-import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
+import {Bug, Gear, CardHeading, Keyboard} from "react-bootstrap-icons";
 
 import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
+import {InfoContainer} from "../../Components/InfoContainer/InfoContainer";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
 
@@ -60,6 +61,8 @@ export function SideContainer () {
             return <SettingsContainer />;
         } else if (activeMenu === 3) {
             return <ShortcutContainer />;
+        } else if (activeMenu === 4) {
+            return <InfoContainer />;
         }
     };
 
@@ -70,6 +73,9 @@ export function SideContainer () {
                     <Bug className="menu-icon" size={25}
                         onClick={(e) => {setActiveMenu(1);}}
                         style={{color: activeMenu == 1 ? "white": "grey"}}/>
+                    <CardHeading className="menu-icon" size={25}
+                        onClick={(e) => {setActiveMenu(4);}}
+                        style={{color: activeMenu == 4 ? "white": "grey"}}/>
                 </div>
                 <div className="mt-auto d-flex flex-column align-items-center">
                     <Keyboard className="menu-icon" size={25}
