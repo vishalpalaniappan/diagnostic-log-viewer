@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef} from "react";
 
 import PropTypes from "prop-types";
 
@@ -59,6 +59,13 @@ export function VerticleHandle ({topDiv, bottomDiv}) {
         document.removeEventListener("mouseup", handleMouseUp);
         handleRef.current.classList.remove("handle-active");
     };
+
+    useEffect(() => {
+        return () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [handleMouseMove, handleMouseUp]);
 
     return (
         <div ref={handleRef} onMouseDown={handleMouseDown} className="vertical-handle"></div>

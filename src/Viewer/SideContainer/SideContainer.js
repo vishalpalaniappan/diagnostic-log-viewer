@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 
-import {Bug, Gear, CardHeading, Keyboard} from "react-bootstrap-icons";
+import {Bug, CardHeading, Gear, Keyboard} from "react-bootstrap-icons";
 
 import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
 import {InfoContainer} from "../../Components/InfoContainer/InfoContainer";

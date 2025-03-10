@@ -1,9 +1,10 @@
 import React, {useEffect, useRef} from "react";
 
-import {VerticleHandle} from "../VerticleHandle/VerticleHandle";
-import {LogTypeMapContainer} from "./LogTypeMapContainer/LogTypeMapContainer";
 import {OverviewContainer} from "./OverviewContainer/OverviewContainer";
 import {VariableMapContainer} from "./VariableMapContainer/VariableMapContainer";
+import {LogTypeMapContainer} from "./LogTypeMapContainer/LogTypeMapContainer";
+
+import {VerticleHandle} from "../DebugContainer/VerticleHandle/VerticleHandle";
 
 import "./InfoContainer.scss";
 
