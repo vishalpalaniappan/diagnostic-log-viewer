@@ -37,7 +37,7 @@ export function LogTypeMapContainer ({}) {
 
 
     useEffect(() => {
-        const ltMap = headerMetaContext.headerMetadata.logTypeMap;
+        const ltMap = headerMetaContext?.headerMetadata?.logTypeMap || {};
         setLtMap(ltMap);
     }, [headerMetaContext]);
 

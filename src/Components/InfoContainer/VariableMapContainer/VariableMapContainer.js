@@ -37,7 +37,7 @@ export function VariableMapContainer ({}) {
 
 
     useEffect(() => {
-        const varMap = headerMetaContext.headerMetadata.varMap;
+        const varMap = headerMetaContext?.headerMetadata?.varMap || {};
         setVarMap(varMap);
     }, [headerMetaContext]);
 
