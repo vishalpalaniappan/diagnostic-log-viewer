@@ -49,7 +49,7 @@ class Debugger {
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
                 localVariables: localVariables,
-                globalVariables: globalVariables
+                globalVariables: globalVariables,
             },
         });
     }
@@ -103,7 +103,7 @@ class Debugger {
 
         while (position < this.cdl.execution.length) {
             position = this.cdl._getNextPosition(position);
-            
+
             if (position == null) {
                 // The end of the file has been reached
                 return;
@@ -125,7 +125,7 @@ class Debugger {
 
         while (position >= 0) {
             position = this.cdl._getPreviousPosition(position);
-            
+
             if (position == null) {
                 // Start of file has been reached
                 return;
@@ -140,7 +140,7 @@ class Debugger {
 
     /**
      * Play the program from the start.
-     * @param {Number} position 
+     * @param {Number} position
      */
     replayProgram (position) {
         this.playForward(0);
@@ -172,8 +172,8 @@ class Debugger {
 
     /**
      * Play the program backward from the given position.
-     * @param {Number} position 
-     * @returns 
+     * @param {Number} position
+     * @returns
      */
     playBackward (position) {
         do {
@@ -205,7 +205,7 @@ class Debugger {
         if (lt === null) {
             return;
         }
-        
+
         if (this.breakpoints.includes(lt)) {
             this.breakpoints.splice(this.breakpoints.indexOf(lt), 1);
         } else {
@@ -223,19 +223,19 @@ class Debugger {
 
     /**
      * Enables/Disables the breakpoint given a fileName and lineNumber.
-     * @param {String} fileName 
-     * @param {Number} lineNumber 
+     * @param {String} fileName
+     * @param {Number} lineNumber
      */
     toggleBreakpointEnabled(fileName, lineNumber) {
         const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
         if (lt === null) {
-            console.warn('Breakpoint not found');
+            console.warn("Breakpoint not found");
             return;
         }
 
         const index = this.breakpoints.indexOf(lt);
         if (index === -1) {
-            console.warn('Breakpoint not in active breakpoints list');
+            console.warn("Breakpoint not in active breakpoints list");
             return;
         }
 

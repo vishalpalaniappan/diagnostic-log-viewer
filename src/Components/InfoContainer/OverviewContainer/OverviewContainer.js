@@ -1,4 +1,6 @@
-import React, {useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
+
+import HeaderMetadataContext from "../../../Providers/HeaderMetadataContext";
 
 import "./OverviewContainer.scss";
 
@@ -7,23 +9,29 @@ import "./OverviewContainer.scss";
  */
 export function OverviewContainer ({}) {
     const overviewContainer = useRef();
-    const uiOptions = useRef();
+    const headerMetaContext = useContext(HeaderMetadataContext);
 
-    const TITLE_HEIGHT = 20;
-
-    const redrawContainers = () => {
-        const height = overviewContainer.current.clientHeight;
-        uiOptions.current.style.height = height - TITLE_HEIGHT + "px";
-    };
+    const [overview, setOverview] = useState(<></>);
 
     useEffect(() => {
-        redrawContainers();
-    }, []);
+        const stats = headerMetaContext?.headerMetadata?.stats || {};
+        const rows = [];
+        for (const key in stats) {
+            if (key) {
+                const stat = stats[key];
+                const d = <div className="rowInfo">
+                    <span className="rowName">{stat.name}</span>
+                    <span className="rowValue">{stat.value}</span>
+                </div>;
+                rows.push(d);
+            }
+        }
+        setOverview(rows);
+    }, [headerMetaContext]);
 
     return (
         <div ref={overviewContainer} className="w-100 h-100 info-container">
-            <div ref={uiOptions} className="w-100">
-            </div>
+            {overview}
         </div>
     );
 }

@@ -49,10 +49,28 @@ class CdlHeader {
                 this.variableMap[varId] = new VarInfo(variable);
             }
         }
+    }
+
+
+    /**
+     * Sends CDL header stats to the UI.
+     */
+    generateHeaderStats () {
+        const stats = {
+            numberOfVariables: {
+                name: "Number of Variables:",
+                value: Object.keys(this.variableMap).length,
+            },
+            numberofLogTypes: {
+                name: "Number of LogTypes:",
+                value: Object.keys(this.logTypeMap).length,
+            },
+        };
 
         postMessage({
             code: CDL_WORKER_PROTOCOL.HEADER_METADATA,
             args: {
+                stats: stats,
                 logTypeMap: this.logTypeMap,
                 varMap: this.variableMap,
             },
