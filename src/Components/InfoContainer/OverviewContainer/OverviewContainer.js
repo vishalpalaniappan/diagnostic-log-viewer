@@ -19,11 +19,11 @@ export function OverviewContainer ({}) {
         for (const key in stats) {
             if (key) {
                 const stat = stats[key];
-                const d = <div className="rowInfo">
+                const row = <div key={key} className="rowInfo">
                     <span className="rowName">{stat.name}</span>
                     <span className="rowValue">{stat.value}</span>
                 </div>;
-                rows.push(d);
+                rows.push(row);
             }
         }
         setOverview(rows);
