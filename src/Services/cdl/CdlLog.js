@@ -23,6 +23,8 @@ class CdlLog {
 
         // Used to go to the end of the file
         this.lastPosition = this.getLastPosition();
+
+        this.header.generateHeaderStats();
     }
 
     /**

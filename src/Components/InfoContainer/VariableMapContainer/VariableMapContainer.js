@@ -1,19 +1,20 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import ReactJsonView from "@microlink/react-json-view";
 
-import GlobalVariablesContext from "../../../Providers/GlobalVariablesContext";
-import VariablesContext from "../../../Providers/VariablesContext";
+import HeaderMetadataContext from "../../../Providers/HeaderMetadataContext";
 
-import "./VariableStackContainer.scss";
+import "./VariableMapContainer.scss";
 
 /**
- * Contains the variable stack container.
  * @return {JSX.Element}
  */
-export function VariableStackContainer () {
-    const {localVariables} = useContext(VariablesContext);
-    const {globalVariables} = useContext(GlobalVariablesContext);
+export function VariableMapContainer ({}) {
+    const variableMapContainer = useRef();
+
+    const [varMap, setVarMap] = useState({});
+
+    const headerMetaContext = useContext(HeaderMetadataContext);
 
     const variableStackTheme = {
         base00: "#252526",
@@ -34,24 +35,19 @@ export function VariableStackContainer () {
         base0F: "#a7ce8a",
     };
 
+
+    useEffect(() => {
+        const varMap = headerMetaContext?.headerMetadata?.varMap || {};
+        setVarMap(varMap);
+    }, [headerMetaContext]);
+
     return (
-        <div className="variableStackContainer w-100 h-100 ">
+        <div ref={variableMapContainer} className="w-100 h-100 variable-map-container">
             <ReactJsonView
-                src={localVariables}
+                src={varMap}
                 theme={variableStackTheme}
                 collapsed={1}
-                name={"local"}
-                groupArraysAfterLength={100}
-                sortKeys={true}
-                displayDataTypes={false}
-                quotesOnKeys={true}
-                collapseStringsAfterLength={30}>
-            </ReactJsonView>
-            <ReactJsonView
-                src={globalVariables}
-                theme={variableStackTheme}
-                collapsed={1}
-                name={"global"}
+                name={"Variable Map"}
                 groupArraysAfterLength={100}
                 sortKeys={true}
                 displayDataTypes={false}

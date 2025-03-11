@@ -1,9 +1,9 @@
 import React, {useEffect, useRef} from "react";
 
+import {VerticleHandle} from "../VerticleHandle/VerticleHandle";
+import {BreakPointContainer} from "./BreakPointContainer/BreakPointContainer";
 import {CallStackContainer} from "./CallStackContainer/CallStackContainer";
 import {VariableStackContainer} from "./VariableStackContainer/VariableStackContainer";
-import {BreakPointContainer} from "./BreakPointContainer/BreakPointContainer";
-import {VerticleHandle} from "./VerticleHandle/VerticleHandle";
 
 import "./DebugContainer.scss";
 
