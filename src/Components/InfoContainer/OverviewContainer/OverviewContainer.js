@@ -11,7 +11,7 @@ export function OverviewContainer ({}) {
     const overviewContainer = useRef();
     const headerMetaContext = useContext(HeaderMetadataContext);
 
-    const [overview, setOverview] = useState(<></>);
+    const [overview, setOverview] = useState([]);
 
     useEffect(() => {
         const stats = headerMetaContext?.headerMetadata?.stats || {};
