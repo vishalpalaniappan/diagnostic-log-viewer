@@ -11,8 +11,8 @@ class CdlLogLine {
      * @param {Array} logLine The contents of a single log line.
      */
     constructor (logLine) {
-        const pattern  = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/sgm;
-        const log = pattern.exec(logLine[0])[1]
+        const pattern = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/sgm;
+        const log = pattern.exec(logLine[0])[1];
 
         switch (log.charAt(0)) {
             case LINE_TYPE_DELIMITER.VARIABLE:
@@ -23,6 +23,9 @@ class CdlLogLine {
                 break;
             case LINE_TYPE_DELIMITER.IR_HEADER:
                 this._processIRHeader(log);
+                break;
+            case LINE_TYPE_DELIMITER.SELF_UID:
+                this._processUid(log);
                 break;
             default:
                 this.type = LINE_TYPE.EXECUTION;
@@ -52,6 +55,15 @@ class CdlLogLine {
     _processExeception (log) {
         this.type = LINE_TYPE.EXCEPTION;
         this.value = log.slice(2);
+    }
+
+    /**
+     * Extracts the UID from the log line.
+     * @param {String} log
+     */
+    _processUid (log) {
+        this.type = LINE_TYPE.UID;
+        this.uid = log.slice(2);
     }
 
     /**

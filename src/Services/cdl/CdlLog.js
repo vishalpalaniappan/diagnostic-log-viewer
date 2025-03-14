@@ -48,6 +48,9 @@ class CdlLog {
                 case LINE_TYPE.EXCEPTION:
                     this.exception = currLog.value;
                     break;
+                case LINE_TYPE.UID:
+                    this.uid = currLog.uid;
+                    break;
                 default:
                     break;
             }
