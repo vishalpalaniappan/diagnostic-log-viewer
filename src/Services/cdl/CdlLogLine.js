@@ -65,9 +65,12 @@ class CdlLogLine {
 
     /**
      * Parses the variable value if it is a JSON string.
+     *
+     * @param {Object} variable
+     * @return {Object}
      */
     _parseVariableIfJSON (variable) {
-        try{
+        try {
             return JSON5.parse(variable);
         } catch (exception) {
             return variable;

@@ -4,7 +4,7 @@ import CdlHeader from "./CdlHeader";
 import CdlLogLine from "./CdlLogLine";
 
 /**
- * This class processes a CDL log file and exposes functions to 
+ * This class processes a CDL log file and exposes functions to
  * interact with the log file given a starting position.
  */
 class CdlLog {
