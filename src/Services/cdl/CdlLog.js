@@ -97,60 +97,6 @@ class CdlLog {
     }
 
     /**
-     * Given an array of keys, the stack is updated with the value.
-     *
-     * Ex: keys:['a','b','c'] stack:{} value:10
-     *
-     * {'a': {'b': {'c': 10} } }
-     *
-     *
-     * @param {Array} variable
-     * @param {Object} value
-     * @param {Object} varStack
-     * @param {Object} tempStack
-     */
-    _updateVariable (variable, value, varStack, tempStack) {
-        if (variable.keys.length == 0) {
-            varStack[variable.name] = value;
-        } else {
-            const currVal = variable.name in varStack ?
-                Object.assign({}, varStack[variable.name]) : {};
-
-            let temp = currVal;
-            for (let i = 0; i < variable.keys.length; i++) {
-                const key = variable.keys[i];
-
-                let newKey;
-                if (key.type === "variable") {
-                    newKey = varStack[key.value];
-                } else if (key.type === "temp_variable") {
-                    newKey = tempStack[key.value];
-                } else {
-                    newKey = key.value;
-                }
-
-                if (!(newKey in temp) || typeof temp[newKey] !== "object") {
-                    temp[newKey] = {};
-                }
-
-                if (i === variable.keys.length - 1) {
-                    if (Array.isArray(value)) {
-                        temp[newKey] = [...value];
-                    } else if (value !== null && typeof value == "object") {
-                        temp[newKey] = Object.assign({}, value);
-                    } else {
-                        temp[newKey] = value === null || value === undefined ?
-                            value : value.valueOf();
-                    }
-                } else {
-                    temp = temp[newKey];
-                }
-            }
-            varStack[variable.name] = Object.assign({}, currVal);
-        }
-    }
-
-    /**
      * Returns the variables in the current function given a starting position.
      * @param {Number} position
      * @return {Object} Returns the variables belonging to current function.
@@ -158,7 +104,6 @@ class CdlLog {
     getVariablesAtPosition (position) {
         const localVars = {};
         const globalVars = {};
-        const tempVars = {};
         const startLog = this.execution[position];
         const funcId = this.header.logTypeMap[startLog.lt].getfId();
 
@@ -170,12 +115,10 @@ class CdlLog {
                 const variable = this.header.variableMap[currLog.varid];
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
-                if (variable.isTemp) {
-                    tempVars[variable.name] = currLog.value;
-                } else if ((varFuncId == 0 || variable.isGlobal())) {
-                    this._updateVariable(variable, currLog.value, globalVars, tempVars);
+                if ((varFuncId == 0 || variable.isGlobal())) {
+                    globalVars[variable.name] = currLog.value;
                 } else if (varFuncId === funcId) {
-                    this._updateVariable(variable, currLog.value, localVars, tempVars);
+                    localVars[variable.name] = currLog.value;
                 }
             }
         } while (++currPosition <= position);
