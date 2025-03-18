@@ -11,8 +11,8 @@ class CdlLogLine {
      * @param {Array} logLine The contents of a single log line.
      */
     constructor (logLine) {
-        const pattern  = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/sgm;
-        const log = pattern.exec(logLine[0])[1]
+        const pattern = /^[.:a-zA-Z0-9_.-]+ [INFO|ERROR]+ adli (.*$)/sgm;
+        const log = pattern.exec(logLine[0])[1];
 
         switch (log.charAt(0)) {
             case LINE_TYPE_DELIMITER.VARIABLE:
@@ -23,6 +23,9 @@ class CdlLogLine {
                 break;
             case LINE_TYPE_DELIMITER.IR_HEADER:
                 this._processIRHeader(log);
+                break;
+            case LINE_TYPE_DELIMITER.UNIQUE_ID:
+                this._processUniqueId(log);
                 break;
             default:
                 this.type = LINE_TYPE.EXECUTION;
@@ -55,6 +58,18 @@ class CdlLogLine {
     }
 
     /**
+     * Extract metadata from uniqueid log line.
+     * Unique Id:
+     * "@ start <variable_name>"
+     * "@ end <variable_name>"
+     * @param {String} log
+     */
+    _processUniqueId (log) {
+        this.type = LINE_TYPE.UNIQUE_ID;
+        this.value = log;
+    }
+
+    /**
      * Extract metadata from header log line.
      * @param {String} log
      */
@@ -65,9 +80,11 @@ class CdlLogLine {
 
     /**
      * Parses the variable value if it is a JSON string.
+     * @param {Object} variable
+     * @return {Object}
      */
     _parseVariableIfJSON (variable) {
-        try{
+        try {
             return JSON5.parse(variable);
         } catch (exception) {
             return variable;
