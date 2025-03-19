@@ -66,7 +66,9 @@ class CdlLogLine {
      */
     _processUniqueId (log) {
         this.type = LINE_TYPE.UNIQUE_ID;
-        this.value = log;
+        const info = log.split(" ");
+        this.traceEvent = info[1];
+        this.uid = this._parseVariableIfJSON(info[2].trim());
     }
 
     /**
