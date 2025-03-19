@@ -53,4 +53,4 @@ You can use GitHub issues to [report a bug][bug-report] or [request a feature][f
 [demo-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/compress.cdl
 [adli-url]: https://github.com/vishalpalaniappan/asp-adli-python
 [huffman-error]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/huffman_compress_error_v0.clp.zst
-[adli-error]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/adli_error_v0.clp.zst
+[adli-error]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/adli_error_1.clp.zst
