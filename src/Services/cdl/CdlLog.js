@@ -50,6 +50,7 @@ class CdlLog {
                     this.exception = currLog.value;
                     break;
                 case LINE_TYPE.UNIQUE_ID:
+                    this.execution.push(currLog);
                     this.uniqueids.push({
                         traceEvent: currLog.traceEvent,
                         uid: currLog.uid,
