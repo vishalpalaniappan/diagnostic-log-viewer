@@ -18,6 +18,7 @@ class CdlLog {
         this.callStacks = {};
         this.callStack = [];
         this.globalVariables = {};
+        this.uniqueids = [];
 
         this._processLog(logFile);
 
@@ -47,6 +48,13 @@ class CdlLog {
                     break;
                 case LINE_TYPE.EXCEPTION:
                     this.exception = currLog.value;
+                    break;
+                case LINE_TYPE.UNIQUE_ID:
+                    this.uniqueids.push({
+                        traceEvent: currLog.traceEvent,
+                        uid: currLog.uid,
+                        position: position,
+                    });
                     break;
                 default:
                     break;
