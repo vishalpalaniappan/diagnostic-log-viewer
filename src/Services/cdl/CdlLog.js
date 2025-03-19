@@ -18,7 +18,7 @@ class CdlLog {
         this.callStacks = {};
         this.callStack = [];
         this.globalVariables = {};
-        this.uniqueids = [];
+        this.traceEvents = [];
 
         this._processLog(logFile);
 
@@ -51,16 +51,26 @@ class CdlLog {
                     break;
                 case LINE_TYPE.UNIQUE_ID:
                     this.execution.push(currLog);
-                    this.uniqueids.push({
-                        traceEvent: currLog.traceEvent,
-                        uid: currLog.uid,
-                        position: position,
-                    });
+                    this._addToUniqueIds(currLog, position);
                     break;
                 default:
                     break;
             }
         } while (++position < logFile.length);
+    }
+
+    /**
+     * This function adds the given trace event to the global
+     * collection of trace events.
+     * @param {Object} currLog
+     * @param {Number} position
+     */
+    _addToUniqueIds (currLog, position) {
+        this.traceEvents.push({
+            traceEvent: currLog.traceEvent,
+            uid: currLog.uid,
+            position: position,
+        });
     }
 
 
