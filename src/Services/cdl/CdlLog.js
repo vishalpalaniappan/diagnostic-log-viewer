@@ -20,6 +20,9 @@ class CdlLog {
         this.globalVariables = {};
         this.traceEvents = [];
 
+        this.inputs = [];
+        this.outputs = [];
+
         this._processLog(logFile);
 
         // Used to go to the end of the file
@@ -43,15 +46,11 @@ class CdlLog {
                     this.execution.push(currLog);
                     this._saveGlobalVariables(currLog);
                     break;
-                case LINE_TYPE.IR_HEADER:
-                    this.header = new CdlHeader(currLog.value);
+                case LINE_TYPE.JSON:
+                    this._processJsonLog(currLog);
                     break;
                 case LINE_TYPE.EXCEPTION:
                     this.exception = currLog.value;
-                    break;
-                case LINE_TYPE.UNIQUE_ID:
-                    this.execution.push(currLog);
-                    this._addToUniqueIds(currLog, position);
                     break;
                 default:
                     break;
@@ -59,18 +58,19 @@ class CdlLog {
         } while (++position < logFile.length);
     }
 
+
     /**
-     * This function adds the given trace event to the global
-     * collection of trace events.
+     * Process JSON Log
      * @param {Object} currLog
-     * @param {Number} position
      */
-    _addToUniqueIds (currLog, position) {
-        this.traceEvents.push({
-            traceEvent: currLog.traceEvent,
-            uid: currLog.uid,
-            position: position,
-        });
+    _processJsonLog (currLog) {
+        if (currLog.value.type == "adli_header") {
+            this.header = new CdlHeader(currLog.value.header);
+        } else if (currLog.value.type == "adli_output") {
+            this.outputs.push(currLog.value);
+        } else if (currLog.value.type == "adli_input") {
+            this.inputs.push(currLog.value);
+        }
     }
 
 

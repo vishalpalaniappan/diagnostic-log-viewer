@@ -21,11 +21,8 @@ class CdlLogLine {
             case LINE_TYPE_DELIMITER.EXCEPTION:
                 this._processExeception(log);
                 break;
-            case LINE_TYPE_DELIMITER.IR_HEADER:
-                this._processIRHeader(log);
-                break;
-            case LINE_TYPE_DELIMITER.UNIQUE_ID:
-                this._processUniqueId(log);
+            case LINE_TYPE_DELIMITER.JSON:
+                this._processJSON(log);
                 break;
             default:
                 this.type = LINE_TYPE.EXECUTION;
@@ -58,26 +55,12 @@ class CdlLogLine {
     }
 
     /**
-     * Extract metadata from uniqueid log line.
-     * Unique Id:
-     * "@ start <variable_name>"
-     * "@ end <variable_name>"
+     * Extract JSON object from logged line.
      * @param {String} log
      */
-    _processUniqueId (log) {
-        this.type = LINE_TYPE.UNIQUE_ID;
-        const info = log.split(" ");
-        this.traceEvent = info[1];
-        this.uid = this._parseVariableIfJSON(info[2].trim());
-    }
-
-    /**
-     * Extract metadata from header log line.
-     * @param {String} log
-     */
-    _processIRHeader (log) {
-        this.type = LINE_TYPE.IR_HEADER;
-        this.value = log;
+    _processJSON (log) {
+        this.type = LINE_TYPE.JSON;
+        this.value = this._parseVariableIfJSON(log);
     }
 
     /**

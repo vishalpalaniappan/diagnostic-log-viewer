@@ -16,7 +16,7 @@ class CdlHeader {
         if (!IRStreamHeader) {
             throw new Error("IRStreamHeader is required.");
         }
-        this.header = JSON5.parse(IRStreamHeader);
+        this.header = IRStreamHeader;
         if (!this.header || typeof this.header !== "object") {
             throw new Error("Invalid header format.");
         }
