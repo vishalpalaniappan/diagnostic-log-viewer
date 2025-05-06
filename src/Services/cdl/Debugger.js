@@ -12,13 +12,26 @@ class Debugger {
     /**
      * Loads the CDL file and initializes the debugger state.
      * @param {File|String} cdlFile File object or URL of CDL log file.
+     * @param {Number} executionIndex
      */
-    constructor (cdlFile) {
+    constructor (cdlFile, executionIndex) {
         readFile(cdlFile).then(async (data) => {
             const module = await clpFfiJsModuleInit();
             const streamReader = new module.ClpStreamReader(data, {});
             const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
             this.parseLogAndInitializeDebugger(log);
+
+            if (executionIndex) {
+                if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
+                    console.debug("The provided execution index is out of bounds.");
+                    console.debug("Going to end of the program.");
+                    this.replayProgram();
+                } else {
+                    this.cdl.getPositionData(executionIndex);
+                }
+            } else {
+                this.replayProgram();
+            }
         });
     }
 
@@ -36,7 +49,6 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this.replayProgram();
     }
 
     /**

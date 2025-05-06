@@ -18,13 +18,26 @@ export function App () {
         FILE_VIEW: 1,
     };
 
-    const [appMode, setAppMode] = useState(null);
-    const [fileInfo, setFileInfo] = useState(null);
+    const [appMode, setAppMode] = useState();
+    const [fileInfo, setFileInfo] = useState();
+    const [executionIndex, setExecutionIndex] = useState();
+
+    const validateIndexParam = (index) => {
+        if (index) {
+            if (isNaN(index)) {
+                console.debug("The provided execution index is not a number.");
+            } else {
+                setExecutionIndex(index);
+            }
+        }
+    };
 
     useEffect(() => {
-        const filePath = new URLSearchParams(window.location.search).get("filePath");
-        if (filePath) {
-            setFileInfo(filePath);
+        const filePathParam = new URLSearchParams(window.location.search).get("filePath");
+        const execIndexParam = new URLSearchParams(window.location.search).get("executionIndex");
+        if (filePathParam) {
+            setFileInfo(filePathParam);
+            validateIndexParam(execIndexParam);
             setAppMode(APP_STATE.FILE_VIEW);
         } else {
             setAppMode(APP_STATE.FILE_PROMPT);
@@ -43,7 +56,7 @@ export function App () {
     return (
         <DropFile handleFileDrop={handleFileChange}>
             {(APP_STATE.FILE_VIEW === appMode) &&
-                <CDLProviders fileInfo={fileInfo}>
+                <CDLProviders fileInfo={fileInfo} executionIndex={executionIndex}>
                     <Viewer/>
                 </CDLProviders>
             }

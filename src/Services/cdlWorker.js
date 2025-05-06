@@ -8,7 +8,7 @@ onmessage = function (e) {
         const args = (e?.data?.args)?e.data.args:{};
         switch (e.data.code) {
             case CDL_WORKER_PROTOCOL.LOAD_FILE:
-                debuggerInstance = new Debugger(args.fileInfo);
+                debuggerInstance = new Debugger(args.fileInfo, args.executionIndex);
                 break;
 
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
