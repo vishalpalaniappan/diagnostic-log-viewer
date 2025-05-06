@@ -18,9 +18,9 @@ export function App () {
         FILE_VIEW: 1,
     };
 
-    const [appMode, setAppMode] = useState(null);
-    const [fileInfo, setFileInfo] = useState(null);
-    const [executionIndex, setExecutionIndex] = useState(null);
+    const [appMode, setAppMode] = useState();
+    const [fileInfo, setFileInfo] = useState();
+    const [executionIndex, setExecutionIndex] = useState();
 
     const validateIndexParam = (index) => {
         if (index) {

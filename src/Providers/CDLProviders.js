@@ -15,14 +15,14 @@ import WorkerContext from "./WorkerContext";
 CDLProviders.propTypes = {
     children: PropTypes.object,
     fileInfo: PropTypes.string,
-    executionIndex: PropTypes.oneOf([PropTypes.number, PropTypes.undefined]),
+    executionIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf([undefined])]),
 };
 
 /**
  * Provides all contexts consumed by the application.
  * @param {JSX} children
  * @param {String} fileInfo
- * @param {Number|null} executionIndex
+ * @param {Number|undefined} executionIndex
  * @return {JSX}
  */
 function CDLProviders ({children, fileInfo, executionIndex}) {
