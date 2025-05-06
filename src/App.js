@@ -22,14 +22,22 @@ export function App () {
     const [fileInfo, setFileInfo] = useState(null);
     const [executionIndex, setExecutionIndex] = useState(null);
 
+    const validateIndexParam = (index) => {
+        if (index) {
+            if (isNaN(index)) {
+                console.debug("The provided execution index is not a number.");
+            } else {
+                setExecutionIndex(index);
+            }
+        }
+    };
+
     useEffect(() => {
         const filePathParam = new URLSearchParams(window.location.search).get("filePath");
         const execIndexParam = new URLSearchParams(window.location.search).get("executionIndex");
         if (filePathParam) {
             setFileInfo(filePathParam);
-            if (execIndexParam) {
-                setExecutionIndex(execIndexParam);
-            }
+            validateIndexParam(execIndexParam);
             setAppMode(APP_STATE.FILE_VIEW);
         } else {
             setAppMode(APP_STATE.FILE_PROMPT);
