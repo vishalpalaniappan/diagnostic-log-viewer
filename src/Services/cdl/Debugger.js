@@ -21,8 +21,15 @@ class Debugger {
             const streamReader = new module.ClpStreamReader(data, {});
             const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
             this.parseLogAndInitializeDebugger(log);
+
             if (executionIndex) {
-                this.cdl.getPositionData(self.executionIndex);
+                if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
+                    console.debug("The provided execution index is out of bounds.");
+                    console.debug("Going to end of the program.");
+                    this.replayProgram();
+                } else {
+                    this.cdl.getPositionData(executionIndex);
+                }
             } else {
                 this.replayProgram();
             }
