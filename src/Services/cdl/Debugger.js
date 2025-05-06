@@ -15,7 +15,6 @@ class Debugger {
      * @param {Number} executionIndex
      */
     constructor (cdlFile, executionIndex) {
-        self.executionIndex = executionIndex;
         readFile(cdlFile).then(async (data) => {
             const module = await clpFfiJsModuleInit();
             const streamReader = new module.ClpStreamReader(data, {});
