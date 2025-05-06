@@ -20,11 +20,16 @@ export function App () {
 
     const [appMode, setAppMode] = useState(null);
     const [fileInfo, setFileInfo] = useState(null);
+    const [executionIndex, setExecutionIndex] = useState(null);
 
     useEffect(() => {
-        const filePath = new URLSearchParams(window.location.search).get("filePath");
-        if (filePath) {
-            setFileInfo(filePath);
+        const filePathParam = new URLSearchParams(window.location.search).get("filePath");
+        const execIndexParam = new URLSearchParams(window.location.search).get("executionIndex");
+        if (filePathParam) {
+            setFileInfo(filePathParam);
+            if (execIndexParam) {
+                setExecutionIndex(execIndexParam);
+            }
             setAppMode(APP_STATE.FILE_VIEW);
         } else {
             setAppMode(APP_STATE.FILE_PROMPT);
@@ -43,7 +48,7 @@ export function App () {
     return (
         <DropFile handleFileDrop={handleFileChange}>
             {(APP_STATE.FILE_VIEW === appMode) &&
-                <CDLProviders fileInfo={fileInfo}>
+                <CDLProviders fileInfo={fileInfo} executionIndex={executionIndex}>
                     <Viewer/>
                 </CDLProviders>
             }

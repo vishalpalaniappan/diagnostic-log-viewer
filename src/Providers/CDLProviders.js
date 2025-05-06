@@ -4,26 +4,28 @@ import PropTypes from "prop-types";
 
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import ActiveFileContext from "./ActiveFileContext";
+import BreakpointsContext from "./BreakpointsContext";
 import FileTreeContext from "./FileTreeContext";
+import GlobalVariablesContext from "./GlobalVariablesContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
 import VariablesContext from "./VariablesContext";
-import GlobalVariablesContext from "./GlobalVariablesContext";
 import WorkerContext from "./WorkerContext";
-import BreakpointsContext from "./BreakpointsContext";
 
 CDLProviders.propTypes = {
     children: PropTypes.object,
     fileInfo: PropTypes.string,
+    executionIndex: PropTypes.string,
 };
 
 /**
  * Provides all contexts consumed by the application.
  * @param {JSX} children
- * @param {string} fileInfo
+ * @param {String} fileInfo
+ * @param {String} executionIndex
  * @return {JSX}
  */
-function CDLProviders ({children, fileInfo}) {
+function CDLProviders ({children, fileInfo, executionIndex}) {
     const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
     const [stack, setStack] = useState();
@@ -47,7 +49,7 @@ function CDLProviders ({children, fileInfo}) {
     // Get new variable stack if stack position changes and update active file
     useEffect(() => {
         if (cdlWorker?.current && stackPosition !== undefined && stack?.[stackPosition]) {
-            setActiveFile(stack[stackPosition].filePath);   
+            setActiveFile(stack[stackPosition].filePath);
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
@@ -56,8 +58,7 @@ function CDLProviders ({children, fileInfo}) {
             });
         } else {
             console.warn("Invalid stack position or stack not initialized");
-        }
-        
+        };
     }, [stackPosition, stack]);
 
     // Resets the state variables before loading new file.
@@ -89,7 +90,8 @@ function CDLProviders ({children, fileInfo}) {
                     code: CDL_WORKER_PROTOCOL.LOAD_FILE,
                     args: {
                         fileInfo: fileInfo,
-                    }
+                        executionIndex: executionIndex,
+                    },
                 });
             } catch (error) {
                 console.error("Failed to initialize worker:", error);

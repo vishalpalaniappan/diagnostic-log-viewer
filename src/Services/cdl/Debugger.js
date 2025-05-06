@@ -12,13 +12,20 @@ class Debugger {
     /**
      * Loads the CDL file and initializes the debugger state.
      * @param {File|String} cdlFile File object or URL of CDL log file.
+     * @param {Number} executionIndex
      */
-    constructor (cdlFile) {
+    constructor (cdlFile, executionIndex) {
+        self.executionIndex = executionIndex;
         readFile(cdlFile).then(async (data) => {
             const module = await clpFfiJsModuleInit();
             const streamReader = new module.ClpStreamReader(data, {});
             const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
             this.parseLogAndInitializeDebugger(log);
+            if (executionIndex) {
+                this.cdl.getPositionData(self.executionIndex);
+            } else {
+                this.replayProgram();
+            }
         });
     }
 
@@ -36,7 +43,6 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        this.replayProgram();
     }
 
     /**
