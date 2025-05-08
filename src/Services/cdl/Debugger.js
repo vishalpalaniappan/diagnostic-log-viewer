@@ -70,14 +70,14 @@ class Debugger {
      * This function moves to the start of the file.
      */
     goToStart () {
-        this.cdl.getPositionData(0);
+        this.cdl.getPositionData(this.cdl.firstStatement);
     }
 
     /**
      * This function moves to the end of the file.
      */
     goToEnd () {
-        this.cdl.getPositionData(this.cdl.lastPosition);
+        this.cdl.getPositionData(this.cdl.lastStatement);
     }
 
     /**
@@ -169,7 +169,7 @@ class Debugger {
 
             if (position == null) {
                 // End of file has been reached
-                this.cdl.getPositionData(this.cdl.lastPosition);
+                this.cdl.getPositionData(this.cdl.lastStatement);
                 return;
             }
 
@@ -193,7 +193,7 @@ class Debugger {
 
             if (position == null) {
                 // Start of file has been reached
-                this.cdl.getPositionData(0);
+                this.cdl.getPositionData(this.cdl.firstStatement);
                 return;
             }
 
