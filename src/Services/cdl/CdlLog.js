@@ -26,7 +26,8 @@ class CdlLog {
         this._processLog(logFile);
 
         // Used to go to the end of the file
-        this.lastPosition = this.getLastPosition();
+        this.lastStatement = this.getLastStatement();
+        this.firstStatement = this.getFirstStatement();
     }
 
     /**
@@ -267,6 +268,7 @@ class CdlLog {
      * @param {Number} position
      */
     getPositionData (position) {
+        position = (position < this.firstStatement)?this.firstStatement:position;
         do {
             const positionData = this.execution[position];
             if (positionData.type === LINE_TYPE.EXECUTION) {
@@ -280,20 +282,34 @@ class CdlLog {
                 });
                 break;
             }
-        } while (--position > 0);
+        } while (--pos > 0);
     }
 
     /**
-     * Returns the last position with an execution log type
+     * Returns the last logged statement
      * @return {int}
      */
-    getLastPosition () {
+    getLastStatement () {
         let position = this.execution.length - 1;
         do {
             if (this.execution[position].type === LINE_TYPE.EXECUTION) {
                 return position;
             }
         } while (--position >= 0);
+    }
+
+
+    /**
+     * Returns the first logged statement
+     * @return {int}
+     */
+    getFirstStatement () {
+        let position = 0;
+        do {
+            if (this.execution[position].type === LINE_TYPE.EXECUTION) {
+                return position;
+            }
+        } while (++position <= this.execution.length);
     }
 }
 
