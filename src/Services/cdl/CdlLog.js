@@ -282,7 +282,7 @@ class CdlLog {
                 });
                 break;
             }
-        } while (--pos > 0);
+        } while (--position > 0);
     }
 
     /**
