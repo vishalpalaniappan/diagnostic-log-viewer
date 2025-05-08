@@ -309,7 +309,7 @@ class CdlLog {
             if (this.execution[position].type === LINE_TYPE.EXECUTION) {
                 return position;
             }
-        } while (++position <= this.execution.length);
+        } while (++position < this.execution.length);
     }
 }
 
