@@ -70,7 +70,7 @@ class Debugger {
      * This function moves to the start of the file.
      */
     goToStart () {
-        this.cdl.getPositionData(0);
+        this.cdl.getPositionData(1);
     }
 
     /**
@@ -193,7 +193,7 @@ class Debugger {
 
             if (position == null) {
                 // Start of file has been reached
-                this.cdl.getPositionData(0);
+                this.cdl.getPositionData(1);
                 return;
             }
 

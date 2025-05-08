@@ -47,9 +47,11 @@ class CdlLog {
                     this._saveGlobalVariables(currLog);
                     break;
                 case LINE_TYPE.JSON:
+                    this.execution.push(currLog);
                     this._processJsonLog(currLog);
                     break;
                 case LINE_TYPE.EXCEPTION:
+                    this.execution.push(currLog);
                     this.exception = currLog.value;
                     break;
                 default:
@@ -267,7 +269,6 @@ class CdlLog {
     getPositionData (position) {
         do {
             const positionData = this.execution[position];
-
             if (positionData.type === LINE_TYPE.EXECUTION) {
                 postMessage({
                     code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
