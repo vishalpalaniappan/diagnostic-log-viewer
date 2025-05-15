@@ -1,7 +1,5 @@
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
-import {LINE_TYPE} from "./CDL_CONSTANTS";
 import CdlHeader from "./CdlHeader";
-import CdlLogLine from "./CdlLogLine";
 
 /**
  * This class processes a CDL log file and exposes functions to 
@@ -37,43 +35,34 @@ class CdlLog {
     _processLog (logFile) {
         let position = 0;
         do {
-            const currLog = new CdlLogLine(logFile[position]);
+            const pattern = /^[.:a-zA-Z0-9_.-]+ (INFO|ERROR)+ adli (.*$)/sgm;
+            const log = pattern.exec(logFile[position][0])[2];
+            const currLog = JSON.parse(log);
+
+            this.execution.push(currLog);
             switch (currLog.type) {
-                case LINE_TYPE.EXECUTION:
-                    this.execution.push(currLog);
+                case "adli_header":
+                    this.header = new CdlHeader(currLog.header);
+                    break;
+                case "adli_execution":
                     this._addToCallStacks(currLog);
                     break;
-                case LINE_TYPE.VARIABLE:
-                    this.execution.push(currLog);
+                case "adli_variable":
                     this._saveGlobalVariables(currLog);
                     break;
-                case LINE_TYPE.JSON:
+                case "adli_exception":
                     this.execution.push(currLog);
-                    this._processJsonLog(currLog);
                     break;
-                case LINE_TYPE.EXCEPTION:
-                    this.execution.push(currLog);
-                    this.exception = currLog.value;
+                case "adli_input":
+                    this.inputs.push(currLog.value);
+                    break;
+                case "adli_output":
+                    this.outputs.push(currLog.value);
                     break;
                 default:
                     break;
             }
         } while (++position < logFile.length);
-    }
-
-
-    /**
-     * Process JSON Log
-     * @param {Object} currLog
-     */
-    _processJsonLog (currLog) {
-        if (currLog.value.type == "adli_header") {
-            this.header = new CdlHeader(currLog.value.header);
-        } else if (currLog.value.type == "adli_output") {
-            this.outputs.push(currLog.value);
-        } else if (currLog.value.type == "adli_input") {
-            this.inputs.push(currLog.value);
-        }
     }
 
 
@@ -84,7 +73,7 @@ class CdlLog {
      */
     _addToCallStacks (currLog) {
         const position = this.execution.length - 1;
-        const currLt = this.header.logTypeMap[currLog.lt];
+        const currLt = this.header.logTypeMap[currLog.value];
         const cs = this.callStack;
 
         if (currLt.isFunction() && currLt.getfId() != 0) {
@@ -93,7 +82,7 @@ class CdlLog {
 
         while (cs.length > 0) {
             const currFunctionPosition = cs[cs.length - 1];
-            if (this.execution[currFunctionPosition].lt === currLt.getfId()) {
+            if (this.execution[currFunctionPosition].value === currLt.getfId()) {
                 break;
             }
             cs.pop();
@@ -182,13 +171,13 @@ class CdlLog {
         const globalVars = {};
         const tempVars = {};
         const startLog = this.execution[position];
-        const funcId = this.header.logTypeMap[startLog.lt].getfId();
+        const funcId = this.header.logTypeMap[startLog.value].getfId();
 
         let currPosition = 0;
         do {
             const currLog = this.execution[currPosition];
 
-            if (currLog.type === LINE_TYPE.VARIABLE) {
+            if (currLog?.type && currLog.type == "adli_variable") {
                 const variable = this.header.variableMap[currLog.varid];
                 const varFuncId = this.header.logTypeMap[variable.logType].getfId();
 
@@ -213,7 +202,7 @@ class CdlLog {
     _getPreviousPosition (position) {
         while (--position >= 0) {
             const line = this.execution[position];
-            if (line.type === LINE_TYPE.EXECUTION) {
+            if (line.type === "adli_execution") {
                 return position;
             }
         }
@@ -228,7 +217,7 @@ class CdlLog {
     _getNextPosition (position) {
         while (++position < this.execution.length) {
             const line = this.execution[position];
-            if (line.type === LINE_TYPE.EXECUTION) {
+            if (line.type === "adli_execution") {
                 return position;
             }
         }
@@ -246,7 +235,7 @@ class CdlLog {
         const csInfo = [];
         cs.forEach((position, index) => {
             const positionData = this.execution[position];
-            const currLt = this.header.logTypeMap[positionData.lt];
+            const currLt = this.header.logTypeMap[positionData.value];
             const functionLt = this.header.logTypeMap[currLt.getfId()];
 
             const fName = (currLt.getfId() === 0)?"<module>":functionLt.getFuncName();
@@ -271,11 +260,11 @@ class CdlLog {
         position = (position < this.firstStatement)?this.firstStatement:position;
         do {
             const positionData = this.execution[position];
-            if (positionData.type === LINE_TYPE.EXECUTION) {
+            if (positionData.type === "adli_execution") {
                 postMessage({
                     code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
                     args: {
-                        currLtInfo: this.header.logTypeMap[positionData.lt],
+                        currLtInfo: this.header.logTypeMap[positionData.value],
                         callStack: this.getCallStackAtPosition(position).reverse(),
                         exceptions: this.exception,
                     },
@@ -292,7 +281,7 @@ class CdlLog {
     getLastStatement () {
         let position = this.execution.length - 1;
         do {
-            if (this.execution[position].type === LINE_TYPE.EXECUTION) {
+            if (this.execution[position].type === "adli_execution") {
                 return position;
             }
         } while (--position >= 0);
@@ -306,7 +295,7 @@ class CdlLog {
     getFirstStatement () {
         let position = 0;
         do {
-            if (this.execution[position].type === LINE_TYPE.EXECUTION) {
+            if (this.execution[position].type === "adli_execution") {
                 return position;
             }
         } while (++position < this.execution.length);
