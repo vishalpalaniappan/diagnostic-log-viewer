@@ -174,7 +174,7 @@ class Debugger {
             }
 
             for (const breakpoint of this.breakpoints) {
-                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].lt) {
+                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].value) {
                     this.cdl.getPositionData(position);
                     return;
                 }
@@ -198,7 +198,7 @@ class Debugger {
             }
 
             for (const breakpoint of this.breakpoints) {
-                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].lt) {
+                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].value) {
                     this.cdl.getPositionData(position);
                     return;
                 }
