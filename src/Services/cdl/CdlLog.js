@@ -35,29 +35,34 @@ class CdlLog {
     _processLog (logFile) {
         let position = 0;
         do {
-            const pattern = /^[.:a-zA-Z0-9_.-]+ (INFO|ERROR)+ adli (.*$)/sgm;
-            const log = pattern.exec(logFile[position][0])[2];
-            const currLog = JSON.parse(log);
+            const log = JSON.parse(logFile[position][0]);
 
+            const currLog = log["user-generated"];
+            currLog["timestamp"] = log["auto-generated"]["timestamp"];
+            currLog["level"] = log["auto-generated"]["level"];
+
+            console.log(currLog);
             this.execution.push(currLog);
+            // console.log(currLog["user-generated"].type);
             switch (currLog.type) {
                 case "adli_header":
-                    this.header = new CdlHeader(currLog.header);
+                    console.log(currLog);
+                    this.header = new CdlHeader(JSON.parse(currLog.header));
                     break;
                 case "adli_execution":
-                    this._addToCallStacks(currLog);
+                    // this._addToCallStacks(currLog);
                     break;
                 case "adli_variable":
-                    this._saveGlobalVariables(currLog);
+                    // this._saveGlobalVariables(currLog);
                     break;
                 case "adli_exception":
-                    this.execution.push(currLog);
+                    // this.execution.push(currLog);
                     break;
                 case "adli_input":
-                    this.inputs.push(currLog.value);
+                    // this.inputs.push(currLog.value);
                     break;
                 case "adli_output":
-                    this.outputs.push(currLog.value);
+                    // this.outputs.push(currLog.value);
                     break;
                 default:
                     break;

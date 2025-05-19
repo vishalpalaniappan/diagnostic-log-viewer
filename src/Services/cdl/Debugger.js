@@ -16,22 +16,34 @@ class Debugger {
      */
     constructor (cdlFile, executionIndex) {
         readFile(cdlFile).then(async (data) => {
-            const module = await clpFfiJsModuleInit();
-            const streamReader = new module.ClpStreamReader(data, {});
-            const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
+            const Module = await clpFfiJsModuleInit();
+
+            console.log(data);
+
+            console.log(Module.MERGED_KV_PAIRS_AUTO_GENERATED_KEY);
+            console.log(Module.MERGED_KV_PAIRS_USER_GENERATED_KEY);
+                    
+            const decoder = new Module.ClpStreamReader(data,{});
+            const log = decoder.decodeRange(0, decoder.deserializeStream(), false);
+            console.log(log);
             this.parseLogAndInitializeDebugger(log);
 
-            if (executionIndex) {
-                if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
-                    console.debug("The provided execution index is out of bounds.");
-                    console.debug("Going to end of the program.");
-                    this.replayProgram();
-                } else {
-                    this.cdl.getPositionData(executionIndex);
-                }
-            } else {
-                this.replayProgram();
-            }
+            // const module = await clpFfiJsModuleInit();
+            // const streamReader = new module.ClpStreamReader(data, {});
+            // const log = streamReader.decodeRange(0, streamReader.deserializeStream(), false);
+            // this.parseLogAndInitializeDebugger(log);
+
+            // if (executionIndex) {
+            //     if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
+            //         console.debug("The provided execution index is out of bounds.");
+            //         console.debug("Going to end of the program.");
+            //         this.replayProgram();
+            //     } else {
+            //         this.cdl.getPositionData(executionIndex);
+            //     }
+            // } else {
+            //     this.replayProgram();
+            // }
         });
     }
 
@@ -61,7 +73,7 @@ class Debugger {
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
                 localVariables: localVariables,
-                globalVariables: globalVariables
+                globalVariables: globalVariables,
             },
         });
     }
