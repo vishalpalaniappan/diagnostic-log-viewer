@@ -19,7 +19,6 @@ class Debugger {
             const Module = await clpFfiJsModuleInit();
             const decoder = new Module.ClpStreamReader(data,{});
             const log = decoder.decodeRange(0, decoder.deserializeStream(), false);
-            console.log(log);
             this.parseLogAndInitializeDebugger(log);
 
             if (executionIndex) {
