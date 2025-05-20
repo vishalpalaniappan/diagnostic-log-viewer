@@ -53,7 +53,7 @@ class CdlLog {
                     this._saveGlobalVariables(currLog);
                     break;
                 case "adli_exception":
-                    this.execution.push(currLog);
+                    this.exception = currLog.value;
                     break;
                 case "adli_input":
                     this.inputs.push(currLog.value);
@@ -241,7 +241,7 @@ class CdlLog {
             const functionLt = this.header.logTypeMap[currLt.getfId()];
 
             const fName = (currLt.getfId() === 0)?"<module>":functionLt.getFuncName();
-            const exception = (position === this.execution.length - 1)?this.exception:null;
+            const exception = (position === this.lastStatement)?this.exception:null;
             csInfo.push({
                 functionName: fName,
                 filePath: currLt.getFilePath(),
