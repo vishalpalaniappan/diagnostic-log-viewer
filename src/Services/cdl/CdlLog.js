@@ -42,6 +42,7 @@ class CdlLog {
             currLog["level"] = log["auto-generated"]["level"];
 
             this.execution.push(currLog);
+
             switch (currLog.type) {
                 case "adli_header":
                     this.header = new CdlHeader(JSON.parse(currLog.header));
