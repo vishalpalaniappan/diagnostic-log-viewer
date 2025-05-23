@@ -40,10 +40,31 @@ class Debugger {
 
     /**
      * This function parses the CDL log file and intializes the debugger state.
-     * @param {Array} log Contents of decompressed CDL log file.
+     * @param {Array} logFile Contents of decompressed CDL log file.
      */
-    parseLogAndInitializeDebugger (log) {
-        this.cdl = new CdlLog(log);
+    parseLogAndInitializeDebugger (logFile) {
+        const threads = {};
+        const threadCdl = {};
+        const header = JSON.parse(logFile[0][0]);
+
+        let position = 1;
+        do {
+            const log = JSON.parse(logFile[position][0]);
+            const threadId = log["user-generated"]["thread"];
+            if (!(threadId in threads)) {
+                threads[threadId] = [header];
+            }
+
+            threads[threadId].push(log);
+        } while (++position < logFile.length);
+
+        for (const index in threads) {
+            if (index) {
+                threadCdl[index] = new CdlLog(threads[index]);
+            }
+        }
+
+        this.cdl = threadCdl[Object.keys(threads)[1]];
         this.breakpoints = [];
         console.info(this.cdl);
         postMessage({
