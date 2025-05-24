@@ -47,7 +47,7 @@ You can use GitHub issues to [report a bug][bug-report] or [request a feature][f
 [bug-report]: https://github.com/vishalpalaniappan/diagnostic-log-viewer/issues
 [feature-req]: https://github.com/vishalpalaniappan/diagnostic-log-viewer/issues
 [yscope-previews]: https://github.com/y-scope/yscope-previews/blob/main/clp-s-s3/scripts/compress.py
-[demo-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/adli_error_v_0.clp.zst
+[demo-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/adli_error_kv_ir.clp.zst
 [adli-url]: https://github.com/vishalpalaniappan/asp-adli-python
 [huffman-link]: https://github.com/vancanhuit/simple-data-compression
 [adli-system]: https://github.com/vishalpalaniappan/asp-adli-python/blob/main/adli_system.py
