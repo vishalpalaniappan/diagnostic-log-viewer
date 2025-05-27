@@ -90,9 +90,9 @@ export function StatusBarMenu ({className, disabled, children}) {
                         className="px-2"
                         key={"test"}
                         value="-1"
-                    >ALL</option>
-                    <option className="px-2" key={1}>test</option>
-                    <option className="px-2" key={2}>test</option>
+                    >Main Thread</option>
+                    <option className="px-2" key={1}>Thread 1</option>
+                    <option className="px-2" key={2}>Thread 2</option>
                 </div>
             }
             {children}
