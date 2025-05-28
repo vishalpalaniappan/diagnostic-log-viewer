@@ -54,7 +54,6 @@ class Debugger {
             if (!(threadId in threads)) {
                 threads[threadId] = [header];
             }
-
             threads[threadId].push(log);
         } while (++position < logFile.length);
 
@@ -64,13 +63,21 @@ class Debugger {
             }
         }
 
-        this.cdl = threadCdl[Object.keys(threads)[1]];
+        this.cdl = threadCdl[Object.keys(threads)[0]];
         this.breakpoints = [];
         console.info(this.cdl);
+
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
             args: {
                 fileTree: this.cdl.header.getSourceFiles(),
+            },
+        });
+        
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_THREADS,
+            args: {
+                threads: Object.keys(threads),
             },
         });
     }
