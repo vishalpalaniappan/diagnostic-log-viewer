@@ -60,9 +60,9 @@ class Debugger {
         } while (++position < logFile.length);
 
         // For each thread, create a new CDL instance
-        for (const index in threads) {
-            if (index) {
-                threadsCdl[index] = new CdlLog(threads[index]);
+        for (const threadId in threads) {
+            if (threadId !== undefined && threadId !== null) {
+                threadsCdl[threadId] = new CdlLog(threads[threadId]);
             }
         }
 
