@@ -78,9 +78,7 @@ export function StatusBarMenu ({className, disabled, children}) {
     };
 
     const sendToWorker = (code, args) => {
-        if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({code: code, args: args});
-        }
+        cdlWorker?.current?.postMessage({code: code, args: args});
     };
 
     const selectThread = (index) => {
@@ -108,13 +106,15 @@ export function StatusBarMenu ({className, disabled, children}) {
                     }}
                 >
 
-                    {threads &&
-                        threads.map((value, index) =>
+                    {
+                        threads?.map((value, index) =>
                             <option
                                 className="px-2"
                                 key={index}
                                 onClick={() => selectThread(index)}
-                            >Thread ID: {value}</option>
+                            >
+                                Thread ID: {value}
+                            </option>
                         )
                     }
                 </div>
