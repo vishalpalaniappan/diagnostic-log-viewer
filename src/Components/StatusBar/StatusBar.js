@@ -15,8 +15,7 @@ StatusBar.propTypes = {
  * @return {JSX.Element}
  */
 export function StatusBar ({}) {
-    const {threads, setThreads} = useContext(ThreadsContext);
-
+    const {threads} = useContext(ThreadsContext);
 
     return (
         <div id="status-bar">
@@ -26,7 +25,7 @@ export function StatusBar ({}) {
                 <div className="status-right ">
                     {threads &&
                         <StatusBarMenu
-                            className="status-item status-item-button status-verbosity-accent">
+                            className="status-item status-item-button status-thread-accent">
                             <Diagram2Fill/>
                             <span className="ms-2 me-3">
                                 Current Thread: {threads[0]}

@@ -100,7 +100,7 @@ export function StatusBarMenu ({className, disabled, children}) {
         >
             {showMenu &&
                 <div
-                    className="verbosity-menu-container"
+                    className="thread-menu-container"
                     style={{
                         left: `${left}px`,
                         bottom: `${bottom}px`,
