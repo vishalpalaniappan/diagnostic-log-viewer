@@ -1,16 +1,18 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import PropTypes from "prop-types";
+
+import ThreadsContext from "../../../Providers/ThreadsContext";
 
 import "./StatusBarMenu.scss";
 
 // Constants
-const MENU_WIDTH = 100;
+const MENU_WIDTH = 265;
 
 StatusBarMenu.propTypes = {
     className: PropTypes.string,
     disabled: PropTypes.bool,
-    children: PropTypes.arrayOf(PropTypes.object)
+    children: PropTypes.arrayOf(PropTypes.object),
 };
 
 /**
@@ -21,6 +23,8 @@ StatusBarMenu.propTypes = {
  * @return {JSX.Element}
  */
 export function StatusBarMenu ({className, disabled, children}) {
+    const {threads} = useContext(ThreadsContext);
+
     const [showMenu, setShowMenu] = useState(false);
     const [bottom, setBottom] = useState(null);
     const [left, setLeft] = useState(null);
@@ -86,13 +90,16 @@ export function StatusBarMenu ({className, disabled, children}) {
                         width: `${MENU_WIDTH}px`,
                     }}
                 >
-                    <option
-                        className="px-2"
-                        key={"test"}
-                        value="-1"
-                    >Main Thread</option>
-                    <option className="px-2" key={1}>Thread 1</option>
-                    <option className="px-2" key={2}>Thread 2</option>
+
+                    {threads &&
+                        threads.map((value, index) =>
+                            <option
+                                className="px-2"
+                                key={index}
+                                // onClick={() => setVerbosity(index)}
+                            >Thread ID: {value}</option>
+                        )
+                    }
                 </div>
             }
             {children}

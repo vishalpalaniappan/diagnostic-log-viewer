@@ -122,8 +122,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             case CDL_WORKER_PROTOCOL.BREAKPOINTS:
                 setBreakPoints(event.data.args.breakpoints);
                 break;
-            case CDL_WORKER_PROTOCOL.THREADS:
-                setBreakPoints(event.data.args.breakpoints);
+            case CDL_WORKER_PROTOCOL.GET_THREADS:
+                setThreads(event.data.args.threads);
                 break;
             default:
                 break;
