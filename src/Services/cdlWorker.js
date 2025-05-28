@@ -60,7 +60,7 @@ onmessage = function (e) {
                 break;
 
             case CDL_WORKER_PROTOCOL.SELECT_THREAD:
-                console.log("Selected Thread:", args.threadId);
+                debuggerInstance.selectThread(args.threadId);
                 break;
 
             default:

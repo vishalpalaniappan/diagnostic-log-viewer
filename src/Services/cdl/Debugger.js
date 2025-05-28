@@ -47,6 +47,7 @@ class Debugger {
         const threadCdl = {};
         const header = JSON.parse(logFile[0][0]);
 
+        // Group all thread execution into its own key
         let position = 1;
         do {
             const log = JSON.parse(logFile[position][0]);
@@ -57,6 +58,7 @@ class Debugger {
             threads[threadId].push(log);
         } while (++position < logFile.length);
 
+        // For each thread, create a new CDL instance
         for (const index in threads) {
             if (index) {
                 threadCdl[index] = new CdlLog(threads[index]);
@@ -73,13 +75,21 @@ class Debugger {
                 fileTree: this.cdl.header.getSourceFiles(),
             },
         });
-        
+
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_THREADS,
             args: {
                 threads: Object.keys(threads),
             },
         });
+    }
+
+    /**
+     * This function selects a thread given a thread id.
+     * @param {String} threadId
+     */
+    selectThread (threadId) {
+        console.log("Selecting Thread:", threadId);
     }
 
     /**
