@@ -23,7 +23,7 @@ export function StatusBar ({}) {
                 <div className="status-left">
                 </div>
                 <div className="status-right ">
-                    {threads &&
+                    {(threads && threads.length > 1) &&
                         <StatusBarMenu
                             className="status-item status-item-button status-thread-accent">
                             <Diagram2Fill/>
