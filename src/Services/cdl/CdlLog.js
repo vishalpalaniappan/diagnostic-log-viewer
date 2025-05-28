@@ -26,6 +26,8 @@ class CdlLog {
         // Used to go to the end of the file
         this.lastStatement = this.getLastStatement();
         this.firstStatement = this.getFirstStatement();
+
+        this.currPosition = this.lastStatement;
     }
 
     /**
@@ -274,6 +276,7 @@ class CdlLog {
                         exceptions: this.exception,
                     },
                 });
+                this.currPosition = position;
                 break;
             }
         } while (--position > 0);

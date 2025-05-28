@@ -33,7 +33,8 @@ class Debugger {
                     this.cdl.getPositionData(executionIndex);
                 }
             } else {
-                this.replayProgram();
+                console.log(this.cdl.currPosition);
+                this.cdl.getPositionData(this.cdl.currPosition);
             }
         });
     }
@@ -95,7 +96,7 @@ class Debugger {
         console.log("Selecting Thread:", threadId);
         if (threadId in this.threads) {
             this.cdl = this.threadsCdl[threadId];
-            this.cdl.getPositionData(this.cdl.lastStatement);
+            this.cdl.getPositionData(this.cdl.currPosition);
         }
     }
 
