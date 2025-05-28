@@ -44,7 +44,7 @@ class Debugger {
      */
     parseLogAndInitializeDebugger (logFile) {
         const threads = {};
-        const threadCdl = {};
+        const threadsCdl = {};
         const header = JSON.parse(logFile[0][0]);
 
         // Group all thread execution into its own key
@@ -61,12 +61,15 @@ class Debugger {
         // For each thread, create a new CDL instance
         for (const index in threads) {
             if (index) {
-                threadCdl[index] = new CdlLog(threads[index]);
+                threadsCdl[index] = new CdlLog(threads[index]);
             }
         }
 
-        this.cdl = threadCdl[Object.keys(threads)[0]];
+        this.cdl = threadsCdl[Object.keys(threads)[0]];
         this.breakpoints = [];
+        this.threads = threads;
+        this.threadsCdl = threadsCdl;
+
         console.info(this.cdl);
 
         postMessage({
@@ -90,6 +93,10 @@ class Debugger {
      */
     selectThread (threadId) {
         console.log("Selecting Thread:", threadId);
+        if (threadId in this.threads) {
+            this.cdl = this.threadsCdl[threadId];
+            this.cdl.getPositionData(this.cdl.lastStatement);
+        }
     }
 
     /**
