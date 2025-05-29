@@ -23,34 +23,19 @@ class Debugger {
             );
             const log = decoder.decodeRange(0, decoder.deserializeStream(), false);
 
-            const threads = {};
-            for (let i = 1; i < log.length; i++) {
-                const msg = JSON.parse(log[i][0]);
-                const thread = msg["user-generated"]["thread"];
+            this.parseLogAndInitializeDebugger(log);
 
-                if (!(thread in threads)) {
-                    threads[thread] = [];
+            if (executionIndex) {
+                if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
+                    console.debug("The provided execution index is out of bounds.");
+                    console.debug("Going to end of the program.");
+                    this.replayProgram();
+                } else {
+                    this.cdl.getPositionData(executionIndex);
                 }
-
-                threads[thread].push(msg);
+            } else {
+                this.cdl.getPositionData(this.cdl.currPosition);
             }
-
-            console.log(threads);
-
-            // this.parseLogAndInitializeDebugger(log);
-
-            // if (executionIndex) {
-            //     if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
-            //         console.debug("The provided execution index is out of bounds.");
-            //         console.debug("Going to end of the program.");
-            //         this.replayProgram();
-            //     } else {
-            //         this.cdl.getPositionData(executionIndex);
-            //     }
-            // } else {
-            //     console.log(this.cdl.currPosition);
-            //     this.cdl.getPositionData(this.cdl.currPosition);
-            // }
         });
     }
 
@@ -59,8 +44,8 @@ class Debugger {
      * @param {Array} logFile Contents of decompressed CDL log file.
      */
     parseLogAndInitializeDebugger (logFile) {
-        const threads = {};
-        const threadsCdl = {};
+        this.threads = {};
+        this.threadsCdl = {};
         const header = JSON.parse(logFile[0][0]);
 
         // Group all thread execution into its own key
@@ -68,24 +53,20 @@ class Debugger {
         do {
             const log = JSON.parse(logFile[position][0]);
             const threadId = log["user-generated"]["thread"];
-            if (!(threadId in threads)) {
-                threads[threadId] = [header];
+            if (!(threadId in this.threads)) {
+                this.threads[threadId] = [header];
             }
-            threads[threadId].push(log);
+            this.threads[threadId].push(log);
         } while (++position < logFile.length);
 
         // For each thread, create a new CDL instance
-        for (const threadId in threads) {
-            if (threadId !== undefined && threadId !== null) {
-                threadsCdl[threadId] = new Thread(threads[threadId]);
-            }
-        }
+        Object.keys(this.threads).forEach((threadId, index) => {
+            this.threadsCdl[threadId] = new Thread(this.threads[threadId]);
+        });
 
-        this.currentThread = Object.keys(threads)[0];
-        this.cdl = threadsCdl[Object.keys(threads)[0]];
+        this.currentThread = Object.keys(this.threads)[0];
+        this.cdl = this.threadsCdl[Object.keys(this.threads)[0]];
         this.breakpoints = [];
-        this.threads = threads;
-        this.threadsCdl = threadsCdl;
 
         console.info(this.cdl);
 
@@ -99,7 +80,7 @@ class Debugger {
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_THREADS,
             args: {
-                threads: Object.keys(threads),
+                threads: Object.keys(this.threads),
             },
         });
     }
