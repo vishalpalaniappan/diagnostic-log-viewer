@@ -2,7 +2,7 @@ import clpFfiJsModuleInit from "clp-ffi-js";
 
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
-import CdlLog from "./CdlLog";
+import Thread from "./Thread";
 
 /**
  * This class accepts a CDL file object or URL and exposes the functions
@@ -62,10 +62,11 @@ class Debugger {
         // For each thread, create a new CDL instance
         for (const threadId in threads) {
             if (threadId !== undefined && threadId !== null) {
-                threadsCdl[threadId] = new CdlLog(threads[threadId]);
+                threadsCdl[threadId] = new Thread(threads[threadId]);
             }
         }
 
+        this.currentThread = Object.keys(threads)[0];
         this.cdl = threadsCdl[Object.keys(threads)[0]];
         this.breakpoints = [];
         this.threads = threads;
@@ -97,6 +98,7 @@ class Debugger {
         if (threadId in this.threads) {
             this.cdl = this.threadsCdl[threadId];
             this.cdl.getPositionData(this.cdl.currPosition);
+            this.currentThread = threadId;
         }
     }
 
@@ -136,7 +138,7 @@ class Debugger {
     stepInto (position) {
         const nextPosition = this.cdl._getNextPosition(position);
         if (nextPosition == null) {
-            // End of file has been reached 
+            // End of file has been reached
             return;
         }
         const callStack = this.cdl.getCallStackAtPosition(nextPosition);
@@ -164,7 +166,7 @@ class Debugger {
 
         while (position < this.cdl.execution.length) {
             position = this.cdl._getNextPosition(position);
-            
+
             if (position == null) {
                 // The end of the file has been reached
                 return;
@@ -186,7 +188,7 @@ class Debugger {
 
         while (position >= 0) {
             position = this.cdl._getPreviousPosition(position);
-            
+
             if (position == null) {
                 // Start of file has been reached
                 return;
@@ -201,7 +203,7 @@ class Debugger {
 
     /**
      * Play the program from the start.
-     * @param {Number} position 
+     * @param {Number} position
      */
     replayProgram (position) {
         this.playForward(0);
@@ -209,8 +211,7 @@ class Debugger {
 
     /**
      * Play the program forward from the given position.
-     * @param {Number} position 
-     * @returns 
+     * @param {Number} position
      */
     playForward (position) {
         do {
@@ -223,7 +224,9 @@ class Debugger {
             }
 
             for (const breakpoint of this.breakpoints) {
-                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].value) {
+                if (breakpoint.enabled &&
+                    breakpoint.id === this.cdl.execution[position].value &&
+                    breakpoint.thread === this.currentThread) {
                     this.cdl.getPositionData(position);
                     return;
                 }
@@ -233,8 +236,7 @@ class Debugger {
 
     /**
      * Play the program backward from the given position.
-     * @param {Number} position 
-     * @returns 
+     * @param {Number} position
      */
     playBackward (position) {
         do {
@@ -247,7 +249,9 @@ class Debugger {
             }
 
             for (const breakpoint of this.breakpoints) {
-                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].value) {
+                if (breakpoint.enabled &&
+                    breakpoint.id === this.cdl.execution[position].value &&
+                    breakpoint.thread === this.currentThread) {
                     this.cdl.getPositionData(position);
                     return;
                 }
@@ -257,20 +261,21 @@ class Debugger {
 
     /**
      * Toggles the breakpoint at the given filename and line number.
-     * @param {String} fileName 
-     * @param {Number} lineNumber 
+     * @param {String} fileName
+     * @param {Number} lineNumber
      */
-    toggleBreakpoint(fileName, lineNumber) {
+    toggleBreakpoint (fileName, lineNumber) {
         const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
 
         if (lt === null) {
             return;
         }
-        
+
         if (this.breakpoints.includes(lt)) {
             this.breakpoints.splice(this.breakpoints.indexOf(lt), 1);
         } else {
             lt.enabled = true;
+            lt.thread = this.currentThread;
             this.breakpoints.push(lt);
         }
 
@@ -284,19 +289,19 @@ class Debugger {
 
     /**
      * Enables/Disables the breakpoint given a fileName and lineNumber.
-     * @param {String} fileName 
-     * @param {Number} lineNumber 
+     * @param {String} fileName
+     * @param {Number} lineNumber
      */
-    toggleBreakpointEnabled(fileName, lineNumber) {
+    toggleBreakpointEnabled (fileName, lineNumber) {
         const lt = this.cdl.header.getLogTypeFromLineNumber(fileName, lineNumber);
         if (lt === null) {
-            console.warn('Breakpoint not found');
+            console.warn("Breakpoint not found");
             return;
         }
 
         const index = this.breakpoints.indexOf(lt);
         if (index === -1) {
-            console.warn('Breakpoint not in active breakpoints list');
+            console.warn("Breakpoint not in active breakpoints list");
             return;
         }
 
