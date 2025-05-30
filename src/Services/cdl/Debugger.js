@@ -27,24 +27,19 @@ class Debugger {
 
             this.parseLogAndInitializeDebugger(log);
 
-            executionIndex = 1;
-
-            const currThread = this.masterList[1].threadId;
-            const pos = this.masterList[1].position - 1;
-
-            this.debuggers[currThread].thread.getPositionData(pos);
-
-            // if (executionIndex) {
-            //     if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
-            //         console.debug("The provided execution index is out of bounds.");
-            //         console.debug("Going to end of the program.");
-            //         this.replayProgram();
-            //     } else {
-            //         this.cdl.getPositionData(executionIndex);
-            //     }
-            // } else {
-            //     this.cdl.getPositionData(this.cdl.currPosition);
-            // }
+            if (executionIndex) {
+                if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
+                    console.debug("The provided execution index is out of bounds.");
+                    console.debug("Going to end of the program.");
+                    this.replayProgram();
+                } else {
+                    const currThread = this.masterList[executionIndex].threadId;
+                    const pos = this.masterList[executionIndex].position - 1;
+                    this.debuggers[currThread].thread.getPositionData(pos);
+                }
+            } else {
+                this.replayProgram();
+            }
         });
     }
 
@@ -87,7 +82,7 @@ class Debugger {
             this.lastThread = threadId;
         } while (++position < logFile.length);
 
-        // For each thread, create a new CDL instance
+        // For each thread, create a new debugger
         Object.keys(this.threads).forEach((threadId, index) => {
             this.debuggers[threadId] = new ThreadDebugger(this.threads[threadId], threadId);
         });
