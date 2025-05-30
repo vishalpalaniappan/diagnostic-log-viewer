@@ -9,7 +9,7 @@ class Thread {
     /**
      * @param {Array} logFile Array containing lines of the log file.
      */
-    constructor (logFile) {
+    constructor (logFile, threadId) {
         this.exception = null;
         this.header = {};
         this.execution = [];
@@ -17,6 +17,7 @@ class Thread {
         this.callStack = [];
         this.globalVariables = {};
         this.traceEvents = [];
+        this.threadId = threadId;
 
         this.inputs = [];
         this.outputs = [];
@@ -247,6 +248,7 @@ class Thread {
                 const fName = (currLt.getfId() === 0)?"<module>":functionLt.getFuncName();
                 const exception = (position === this.lastStatement)?this.exception:null;
                 csInfo.push({
+                    threadId: this.threadId,
                     functionName: fName,
                     filePath: currLt.getFilePath(),
                     fileName: currLt.getFileName(),

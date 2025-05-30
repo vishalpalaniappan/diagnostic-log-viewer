@@ -27,17 +27,25 @@ class Debugger {
 
             this.parseLogAndInitializeDebugger(log);
 
-            if (executionIndex) {
-                if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
-                    console.debug("The provided execution index is out of bounds.");
-                    console.debug("Going to end of the program.");
-                    this.replayProgram();
-                } else {
-                    this.cdl.getPositionData(executionIndex);
-                }
-            } else {
-                this.cdl.getPositionData(this.cdl.currPosition);
-            }
+            executionIndex = 4;
+
+            const currThread = this.masterList[93].thread;
+            const pos = this.masterList[93].position - 1;
+
+            this.debuggers[currThread].thread.getPositionData(pos);
+
+
+            // if (executionIndex) {
+            //     if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
+            //         console.debug("The provided execution index is out of bounds.");
+            //         console.debug("Going to end of the program.");
+            //         this.replayProgram();
+            //     } else {
+            //         this.cdl.getPositionData(executionIndex);
+            //     }
+            // } else {
+            //     this.cdl.getPositionData(this.cdl.currPosition);
+            // }
         });
     }
 
@@ -47,11 +55,10 @@ class Debugger {
      */
     parseLogAndInitializeDebugger (logFile) {
         this.threads = {};
-        this.threadsCdl = {};
+        this.debuggers = {};
         this.masterList = [];
 
         const headerLog = JSON.parse(logFile[0][0]);
-        console.log(headerLog);
         const headerInfo = JSON.parse(headerLog["user-generated"]["header"]);
         const header = new CdlHeader(headerInfo);
 
@@ -75,14 +82,15 @@ class Debugger {
 
         // For each thread, create a new CDL instance
         Object.keys(this.threads).forEach((threadId, index) => {
-            this.threadsCdl[threadId] = new Thread(this.threads[threadId]);
+            this.debuggers[threadId] = new ThreadDebugger(this.threads[threadId], threadId);
         });
 
         this.currentThread = Object.keys(this.threads)[0];
-        this.cdl = this.threadsCdl[Object.keys(this.threads)[0]];
+        this.cdl = this.debuggers[Object.keys(this.threads)[0]];
         this.breakpoints = [];
 
         console.info(this.cdl);
+        console.info(this.debuggers);
 
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
@@ -95,16 +103,11 @@ class Debugger {
     /**
      * This function returns the variable stack at a given position.
      * @param {Number} position
+     * @param {String} threadId
      */
-    getVariableStack (position) {
-        const [localVariables, globalVariables] = this.cdl.getVariablesAtPosition(position);
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
-            args: {
-                localVariables: localVariables,
-                globalVariables: globalVariables,
-            },
-        });
+    getVariableStack (position, threadId) {
+        const threadDebugger = this.debuggers[threadId];
+        threadDebugger.getVariableStack(position);
     }
 
     /**

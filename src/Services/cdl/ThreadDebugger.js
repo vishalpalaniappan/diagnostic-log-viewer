@@ -12,10 +12,11 @@ class ThreadDebugger {
     /**
      * Loads the CDL file and initializes the debugger state.
      * @param {Array} threadExecution A list containing the execution of
+     * @param {String} threadId A string containing the thread id.
      * each thread.
      */
-    constructor (threadExecution) {
-        this.cdlFile = new Thread(threadExecution);
+    constructor (threadExecution, threadId) {
+        this.thread = new Thread(threadExecution, threadId);
     }
 
     /**
@@ -23,7 +24,7 @@ class ThreadDebugger {
      * @param {Number} position
      */
     getVariableStack (position) {
-        const [localVariables, globalVariables] = this.cdl.getVariablesAtPosition(position);
+        const [localVariables, globalVariables] = this.thread.getVariablesAtPosition(position);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
@@ -37,14 +38,14 @@ class ThreadDebugger {
      * This function moves to the start of the file.
      */
     goToStart () {
-        this.cdl.getPositionData(this.cdl.firstStatement);
+        this.thread.getPositionData(this.thread.firstStatement);
     }
 
     /**
      * This function moves to the end of the file.
      */
     goToEnd () {
-        this.cdl.getPositionData(this.cdl.lastStatement);
+        this.thread.getPositionData(this.thread.lastStatement);
     }
 
     /**
@@ -52,13 +53,13 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepInto (position) {
-        const nextPosition = this.cdl._getNextPosition(position);
+        const nextPosition = this.thread._getNextPosition(position);
         if (nextPosition == null) {
             // End of file has been reached
             return;
         }
-        const callStack = this.cdl.getCallStackAtPosition(nextPosition);
-        this.cdl.getPositionData(callStack[callStack.length - 1].position);
+        const callStack = this.thread.getCallStackAtPosition(nextPosition);
+        this.thread.getPositionData(callStack[callStack.length - 1].position);
     }
 
     /**
@@ -66,11 +67,11 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOut (position) {
-        const callStack = this.cdl.getCallStackAtPosition(position);
+        const callStack = this.thread.getCallStackAtPosition(position);
         if (callStack.length <= 1) {
             return;
         }
-        this.cdl.getPositionData(callStack[callStack.length - 2].position);
+        this.thread.getPositionData(callStack[callStack.length - 2].position);
     }
 
     /**
@@ -78,18 +79,18 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOverForward (position) {
-        const originalStack = this.cdl.getCallStackAtPosition(position);
+        const originalStack = this.thread.getCallStackAtPosition(position);
 
-        while (position < this.cdl.execution.length) {
-            position = this.cdl._getNextPosition(position);
+        while (position < this.thread.execution.length) {
+            position = this.thread._getNextPosition(position);
 
             if (position == null) {
                 // The end of the file has been reached
                 return;
             }
 
-            if (this.cdl.getCallStackAtPosition(position).length <= originalStack.length) {
-                this.cdl.getPositionData(position);
+            if (this.thread.getCallStackAtPosition(position).length <= originalStack.length) {
+                this.thread.getPositionData(position);
                 return;
             }
         }
@@ -100,18 +101,18 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
-        const originalStack = this.cdl.getCallStackAtPosition(position);
+        const originalStack = this.thread.getCallStackAtPosition(position);
 
         while (position >= 0) {
-            position = this.cdl._getPreviousPosition(position);
+            position = this.thread._getPreviousPosition(position);
 
             if (position == null) {
                 // Start of file has been reached
                 return;
             }
 
-            if (this.cdl.getCallStackAtPosition(position).length <= originalStack.length) {
-                this.cdl.getPositionData(position);
+            if (this.thread.getCallStackAtPosition(position).length <= originalStack.length) {
+                this.thread.getPositionData(position);
                 return;
             }
         }

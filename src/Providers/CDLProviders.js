@@ -56,6 +56,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
                     position: stack[stackPosition].position,
+                    threadId: stack[stackPosition].threadId,
                 },
             });
         } else {

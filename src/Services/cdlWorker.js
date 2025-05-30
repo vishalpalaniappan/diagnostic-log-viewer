@@ -12,7 +12,7 @@ onmessage = function (e) {
                 break;
 
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                debuggerInstance.getVariableStack(args.position);
+                debuggerInstance.getVariableStack(args.position, args.threadId);
                 break;
 
             case CDL_WORKER_PROTOCOL.STEP_INTO:
