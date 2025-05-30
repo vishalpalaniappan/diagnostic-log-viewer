@@ -2,11 +2,13 @@ import clpFfiJsModuleInit from "clp-ffi-js";
 
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
+import ThreadDebugger from "./ThreadDebugger";
+import CdlHeader from "./CdlHeader";
 import Thread from "./Thread";
 
 /**
- * This class accepts a CDL file object or URL and exposes the functions
- * needed to interact with the program.
+ * This class accepts a CDL file object and allows you to
+ * interact with all the threads.
  */
 class Debugger {
     /**
@@ -46,7 +48,12 @@ class Debugger {
     parseLogAndInitializeDebugger (logFile) {
         this.threads = {};
         this.threadsCdl = {};
-        const header = JSON.parse(logFile[0][0]);
+        this.masterList = [];
+
+        const headerLog = JSON.parse(logFile[0][0]);
+        console.log(headerLog);
+        const headerInfo = JSON.parse(headerLog["user-generated"]["header"]);
+        const header = new CdlHeader(headerInfo);
 
         // Group all thread execution into its own key
         let position = 1;
@@ -54,10 +61,17 @@ class Debugger {
             const log = JSON.parse(logFile[position][0]);
             const threadId = log["user-generated"]["thread"];
             if (!(threadId in this.threads)) {
-                this.threads[threadId] = [header];
+                this.threads[threadId] = [headerLog];
             }
             this.threads[threadId].push(log);
+
+            this.masterList.push({
+                "thread": threadId,
+                "position": this.threads[threadId].length,
+            });
         } while (++position < logFile.length);
+
+        console.log(this.masterList);
 
         // For each thread, create a new CDL instance
         Object.keys(this.threads).forEach((threadId, index) => {
@@ -73,29 +87,9 @@ class Debugger {
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
             args: {
-                fileTree: this.cdl.header.getSourceFiles(),
+                fileTree: header.getSourceFiles(),
             },
         });
-
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_THREADS,
-            args: {
-                threads: Object.keys(this.threads),
-            },
-        });
-    }
-
-    /**
-     * This function selects a thread given a thread id.
-     * @param {String} threadId
-     */
-    selectThread (threadId) {
-        console.log("Selecting Thread:", threadId);
-        if (threadId in this.threads) {
-            this.cdl = this.threadsCdl[threadId];
-            this.cdl.getPositionData(this.cdl.currPosition);
-            this.currentThread = threadId;
-        }
     }
 
     /**
@@ -310,6 +304,6 @@ class Debugger {
             },
         });
     }
-};
+}
 
 export default Debugger;
