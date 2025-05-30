@@ -29,7 +29,7 @@ class Debugger {
 
             executionIndex = 1;
 
-            const currThread = this.masterList[1].thread;
+            const currThread = this.masterList[1].threadId;
             const pos = this.masterList[1].position - 1;
 
             this.debuggers[currThread].thread.getPositionData(pos);
@@ -72,8 +72,9 @@ class Debugger {
             this.threads[threadId].push(log);
 
             this.masterList.push({
-                "thread": threadId,
-                "position": this.threads[threadId].length,
+                "threadId": threadId,
+                "position": this.threads[threadId].length - 1,
+                "log": log,
             });
         } while (++position < logFile.length);
 
@@ -171,28 +172,57 @@ class Debugger {
         this.playForward(0);
     }
 
+
+    /**
+     * Given a position in a thread, this function returns the position
+     * in the master list.
+     * @param {Number} threadPos
+     * @param {String} threadId
+     * @return {Number|null}
+     */
+    getMasterPosFromThreadPos (threadPos, threadId) {
+        let position = 0;
+        do {
+            const masterLog = this.masterList[position];
+
+            const currThreadPos = masterLog.position;
+            const currThreadId = masterLog.threadId;
+
+            if (currThreadId == threadId && currThreadPos == threadPos) {
+                return position;
+            }
+        } while (position++ < this.masterList.length);
+
+        return null;
+    }
+
     /**
      * Play the program forward from the given position.
      * @param {Number} position
      * @param {String} threadId
      */
     playForward (position, threadId) {
+        let masterPosition = this.getMasterPosFromThreadPos(position, threadId);
         do {
-            // position = this.cdl._getNextPosition(position);
+            masterPosition++;
+            const masterLog = this.masterList[masterPosition];
 
-            // if (position == null) {
-            //     // End of file has been reached
-            //     this.cdl.getPositionData(this.cdl.lastStatement);
-            //     return;
-            // }
+            const currThreadPos = masterLog.position;
+            const currThreadId = masterLog.threadId;
+            const currLog = masterLog.log;
 
-            for (const breakpoint of this.breakpoints) {
-                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].value) {
-                    this.cdl.getPositionData(position);
-                    return;
-                }
+            const type = currLog["user-generated"]["type"];
+
+            if (type == "adli_execution") {
+                const lt = currLog["user-generated"]["value"];
+                for (const breakpoint of this.breakpoints) {
+                    if (breakpoint.enabled && breakpoint.id === lt) {
+                        this.debuggers[currThreadId].thread.getPositionData(currThreadPos);
+                        return;
+                    }
+                };
             };
-        } while (position < this.masterList.length);
+        } while (masterPosition < this.masterList.length);
     }
 
     /**
@@ -201,22 +231,27 @@ class Debugger {
      * @param {String} threadId
      */
     playBackward (position, threadId) {
+        let masterPosition = this.getMasterPosFromThreadPos(position, threadId);
         do {
-            position = this.cdl._getPreviousPosition(position);
+            masterPosition--;
+            const masterLog = this.masterList[masterPosition];
 
-            if (position == null) {
-                // Start of file has been reached
-                this.cdl.getPositionData(this.cdl.firstStatement);
-                return;
-            }
+            const currThreadPos = masterLog.position;
+            const currThreadId = masterLog.threadId;
+            const currLog = masterLog.log;
 
-            for (const breakpoint of this.breakpoints) {
-                if (breakpoint.enabled && breakpoint.id === this.cdl.execution[position].value) {
-                    this.cdl.getPositionData(position);
-                    return;
-                }
+            const type = currLog["user-generated"]["type"];
+
+            if (type == "adli_execution") {
+                const lt = currLog["user-generated"]["value"];
+                for (const breakpoint of this.breakpoints) {
+                    if (breakpoint.enabled && breakpoint.id === lt) {
+                        this.debuggers[currThreadId].thread.getPositionData(currThreadPos);
+                        return;
+                    }
+                };
             };
-        } while (position >= 0);
+        } while (masterPosition < this.masterList.length);
     }
 
     /**
