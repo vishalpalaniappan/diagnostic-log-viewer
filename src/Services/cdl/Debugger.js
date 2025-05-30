@@ -82,6 +82,8 @@ class Debugger {
                 "position": this.threads[threadId].length - 1,
                 "log": log,
             });
+
+            this.lastThread = threadId;
         } while (++position < logFile.length);
 
         // For each thread, create a new CDL instance
@@ -228,7 +230,11 @@ class Debugger {
                     }
                 };
             };
-        } while (masterPosition < this.masterList.length);
+        } while (masterPosition < this.masterList.length - 1);
+
+        const lastDebugger = this.debuggers[this.lastThread];
+        const lastStatement = lastDebugger.thread.lastStatement;
+        lastDebugger.thread.getPositionData(lastStatement);
     }
 
     /**
@@ -257,7 +263,11 @@ class Debugger {
                     }
                 };
             };
-        } while (masterPosition < this.masterList.length);
+        } while (masterPosition > 0);
+
+        const firstDebugger = this.debuggers[this.firstThread];
+        const firstStatement = firstDebugger.thread.firstStatement;
+        firstDebugger.thread.getPositionData(firstStatement);
     }
 
     /**
