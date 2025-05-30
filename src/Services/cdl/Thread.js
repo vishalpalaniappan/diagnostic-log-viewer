@@ -2,12 +2,13 @@ import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import CdlHeader from "./CdlHeader";
 
 /**
- * This class processes a CDL log file and exposes functions to 
+ * This class processes a CDL log file and exposes functions to
  * interact with the log file given a starting position.
  */
 class Thread {
     /**
      * @param {Array} logFile Array containing lines of the log file.
+     * @param {String} threadId A string containing the thread id.
      */
     constructor (logFile, threadId) {
         this.exception = null;

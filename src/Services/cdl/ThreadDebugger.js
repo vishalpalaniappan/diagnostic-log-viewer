@@ -1,7 +1,4 @@
-import clpFfiJsModuleInit from "clp-ffi-js";
-
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
-import {readFile} from "../helper/ReadFile";
 import Thread from "./Thread";
 
 /**

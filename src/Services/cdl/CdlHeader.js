@@ -1,5 +1,3 @@
-import JSON5 from "json5";
-
 import LtInfo from "./LtInfo";
 import VarInfo from "./VarInfo.js";
 

@@ -2,9 +2,8 @@ import clpFfiJsModuleInit from "clp-ffi-js";
 
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
-import ThreadDebugger from "./ThreadDebugger";
 import CdlHeader from "./CdlHeader";
-import Thread from "./Thread";
+import ThreadDebugger from "./ThreadDebugger";
 
 /**
  * This class accepts a CDL file object and allows you to
@@ -175,7 +174,6 @@ class Debugger {
     replayProgram () {
         this.playForward(0, this.firstThread);
     }
-
 
     /**
      * Given a position in a thread, this function returns the position
