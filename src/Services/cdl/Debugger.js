@@ -27,7 +27,7 @@ class Debugger {
             this.parseLogAndInitializeDebugger(log);
 
             if (executionIndex) {
-                if (executionIndex < 0 || executionIndex >= this.cdl.execution.length) {
+                if (executionIndex < 0 || executionIndex >= log.length) {
                     console.debug("The provided execution index is out of bounds.");
                     console.debug("Going to end of the program.");
                     this.replayProgram();
@@ -115,16 +115,18 @@ class Debugger {
      * This function moves to the start of the file.
      */
     goToStart () {
-        const startThread = this.masterList[0].threadId;
-        const threadDebugger = this.debuggers[startThread];
-        threadDebugger.getPositionData(threadDebugger.thread.firstStatement);
+        const threadDebugger = this.debuggers[this.firstThread];
+        const firstStatement = firstDebugger.thread.firstStatement;
+        threadDebugger.getPositionData(firstStatement);
     }
 
     /**
      * This function moves to the end of the file.
      */
     goToEnd () {
-        this.cdl.getPositionData(this.cdl.lastStatement);
+        const threadDebugger = this.debuggers[this.lastThread];
+        const lastStatement = firstDebugger.thread.firstStatement;
+        threadDebugger.getPositionData(lastStatement);
     }
 
     /**
@@ -188,7 +190,7 @@ class Debugger {
             const masterLog = this.masterList[position];
 
             const currThreadPos = masterLog.position;
-            const currThreadId = masterLog.threadId;
+            const currThreadId = String(masterLog.threadId);
 
             if (currThreadId == threadId && currThreadPos == threadPos) {
                 return position;
@@ -238,6 +240,7 @@ class Debugger {
      */
     playBackward (position, threadId) {
         let masterPosition = this.getMasterPosFromThreadPos(position, threadId);
+        console.log(masterPosition);
         do {
             masterPosition--;
             const masterLog = this.masterList[masterPosition];
