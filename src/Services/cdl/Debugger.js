@@ -67,11 +67,6 @@ class Debugger {
         do {
             const log = JSON.parse(logFile[position][0]);
             const threadId = log["user-generated"]["thread"];
-
-            if (this.firstThread == null) {
-                this.firstThread = threadId;
-            }
-
             if (!(threadId in this.threads)) {
                 this.threads[threadId] = [headerLog];
             }
@@ -83,6 +78,12 @@ class Debugger {
                 "log": log,
             });
 
+            // Save first thread
+            if (this.firstThread == null) {
+                this.firstThread = threadId;
+            }
+
+            // Save last thread
             this.lastThread = threadId;
         } while (++position < logFile.length);
 
