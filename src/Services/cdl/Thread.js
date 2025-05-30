@@ -275,6 +275,7 @@ class Thread {
                     code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
                     args: {
                         currLtInfo: this.header.logTypeMap[positionData.value],
+                        threadId: this.threadId,
                         callStack: this.getCallStackAtPosition(position).reverse(),
                         exceptions: this.exception,
                     },

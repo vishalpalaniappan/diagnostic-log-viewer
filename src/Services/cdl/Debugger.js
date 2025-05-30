@@ -160,6 +160,32 @@ class Debugger {
     }
 
     /**
+     * Evaluate the stack from the other threads.
+     * @param {Number} masterPosition Position in the starting list.
+     * @param {String} threadId Thread ID that has already been evaluated. 
+     */
+    evaluateOtherThreads (masterPosition, threadId) {
+        const threadIds = Object.keys(this.threads);
+        const index = threadIds.indexOf(threadId);
+        if (index > -1) {
+            threadIds.splice(index, 1);
+        };
+
+        do {
+            masterPosition--;
+            const _threadId = String(this.masterList[masterPosition].threadId);
+            const _position = this.masterList[masterPosition].position;
+
+            const index = threadIds.indexOf(_threadId);
+            if (index > -1) {
+                this.debuggers[_threadId].thread.getPositionData(_position);
+                threadIds.splice(index, 1);
+                console.log(`Removing thread id: ${_threadId} at position ${masterPosition}`);
+            };
+        } while (masterPosition > 0 && threadIds.length > 0);
+    }
+
+    /**
      * This function steps over any function calls backwards.
      * @param {Number} position
      * @param {String} threadId
@@ -167,6 +193,9 @@ class Debugger {
     stepOverBackward (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOverBackward(position);
+
+        const masterPosition = this.getMasterPosFromThreadPos(position, threadId);
+        this.evaluateOtherThreads(masterPosition, threadId);
     }
 
     /**
