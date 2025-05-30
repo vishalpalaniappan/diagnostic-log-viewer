@@ -1,5 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
+import {CaretDown} from "react-bootstrap-icons";
+
 import StackContext from "../../../Providers/StackContext";
 import {CallStackRow} from "./CallStackRow/CallStackRow";
 
@@ -37,7 +39,18 @@ export function CallStackContainer () {
 
     return (
         <div className="callStackContainer">
-            {callStack}
+            <div className="mb-2">
+                <span className="threadTitle"> <CaretDown/> Thread-1</span>
+                {callStack}
+            </div>
+            <div className="mb-2">
+                <span className="threadTitle"> <CaretDown/> Thread-2</span>
+                {callStack}
+            </div>
+            <div className="">
+                <span className="threadTitle"> <CaretDown/> Thread-3</span>
+                {callStack}
+            </div>
         </div>
     );
 }

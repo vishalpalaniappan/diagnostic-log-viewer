@@ -9,6 +9,7 @@ import FileTreeContext from "./FileTreeContext";
 import GlobalVariablesContext from "./GlobalVariablesContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
+import ThreadsContext from "./ThreadsContext";
 import VariablesContext from "./VariablesContext";
 import WorkerContext from "./WorkerContext";
 
@@ -28,12 +29,13 @@ CDLProviders.propTypes = {
 function CDLProviders ({children, fileInfo, executionIndex}) {
     const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
-    const [stack, setStack] = useState();
+    const [stack, setStack] = useState({});
     const [stackPosition, setStackPosition] = useState();
     const [localVariables, setLocalVariables] = useState();
     const [globalVariables, setGlobalVariables] = useState();
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
+    const [threads, setThreads] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -54,6 +56,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
                     position: stack[stackPosition].position,
+                    threadId: stack[stackPosition].threadId,
                 },
             });
         } else {
@@ -110,7 +113,11 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
-                setStack(event.data.args.callStack);
+                const threadId = event.data.args.threadId;
+                console.log("Recevied stack for id:", threadId);
+                const stack = {...callStack};
+                stack[event.data.args.threadId] = event.data.args.callStack;
+                setStack(stack);
                 setStackPosition(0);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
@@ -119,6 +126,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 break;
             case CDL_WORKER_PROTOCOL.BREAKPOINTS:
                 setBreakPoints(event.data.args.breakpoints);
+                break;
+            case CDL_WORKER_PROTOCOL.GET_THREADS:
+                setThreads(event.data.args.threads);
                 break;
             default:
                 break;
@@ -129,17 +139,20 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         <StackPositionContext.Provider value={{stackPosition, setStackPosition}}>
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
-                    <GlobalVariablesContext.Provider value={{globalVariables}}>
-                        <VariablesContext.Provider value={{localVariables}}>
-                            <BreakpointsContext.Provider value={{breakPoints}}>
-                                <StackContext.Provider value={{stack}}>
-                                    <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
-                                        {children}
-                                    </ActiveFileContext.Provider>
-                                </StackContext.Provider>
-                            </BreakpointsContext.Provider>
-                        </VariablesContext.Provider>
-                    </GlobalVariablesContext.Provider>
+                    <ThreadsContext.Provider value={{threads, setThreads}}>
+                        <GlobalVariablesContext.Provider value={{globalVariables}}>
+                            <VariablesContext.Provider value={{localVariables}}>
+                                <BreakpointsContext.Provider value={{breakPoints}}>
+                                    <StackContext.Provider value={{stack}}>
+                                        <ActiveFileContext.Provider
+                                            value={{activeFile, setActiveFile}}>
+                                            {children}
+                                        </ActiveFileContext.Provider>
+                                    </StackContext.Provider>
+                                </BreakpointsContext.Provider>
+                            </VariablesContext.Provider>
+                        </GlobalVariablesContext.Provider>
+                    </ThreadsContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
         </StackPositionContext.Provider>

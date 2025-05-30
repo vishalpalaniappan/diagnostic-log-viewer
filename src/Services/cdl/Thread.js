@@ -2,14 +2,15 @@ import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import CdlHeader from "./CdlHeader";
 
 /**
- * This class processes a CDL log file and exposes functions to 
+ * This class processes a CDL log file and exposes functions to
  * interact with the log file given a starting position.
  */
-class CdlLog {
+class Thread {
     /**
      * @param {Array} logFile Array containing lines of the log file.
+     * @param {String} threadId A string containing the thread id.
      */
-    constructor (logFile) {
+    constructor (logFile, threadId) {
         this.exception = null;
         this.header = {};
         this.execution = [];
@@ -17,6 +18,7 @@ class CdlLog {
         this.callStack = [];
         this.globalVariables = {};
         this.traceEvents = [];
+        this.threadId = threadId;
 
         this.inputs = [];
         this.outputs = [];
@@ -26,6 +28,8 @@ class CdlLog {
         // Used to go to the end of the file
         this.lastStatement = this.getLastStatement();
         this.firstStatement = this.getFirstStatement();
+
+        this.currPosition = this.lastStatement;
     }
 
     /**
@@ -35,7 +39,7 @@ class CdlLog {
     _processLog (logFile) {
         let position = 0;
         do {
-            const log = JSON.parse(logFile[position][0]);
+            const log = logFile[position];
 
             const currLog = log["user-generated"];
             currLog["timestamp"] = log["auto-generated"]["timestamp"];
@@ -237,20 +241,23 @@ class CdlLog {
         const cs = this.callStacks[position];
         const csInfo = [];
         cs.forEach((position, index) => {
-            const positionData = this.execution[position];
-            const currLt = this.header.logTypeMap[positionData.value];
-            const functionLt = this.header.logTypeMap[currLt.getfId()];
+            if (position) {
+                const positionData = this.execution[position];
+                const currLt = this.header.logTypeMap[positionData.value];
+                const functionLt = this.header.logTypeMap[currLt.getfId()];
 
-            const fName = (currLt.getfId() === 0)?"<module>":functionLt.getFuncName();
-            const exception = (position === this.lastStatement)?this.exception:null;
-            csInfo.push({
-                functionName: fName,
-                filePath: currLt.getFilePath(),
-                fileName: currLt.getFileName(),
-                lineno: currLt.getLineNo(),
-                position: position,
-                exceptions: exception,
-            });
+                const fName = (currLt.getfId() === 0)?"<module>":functionLt.getFuncName();
+                const exception = (position === this.lastStatement)?this.exception:null;
+                csInfo.push({
+                    threadId: this.threadId,
+                    functionName: fName,
+                    filePath: currLt.getFilePath(),
+                    fileName: currLt.getFileName(),
+                    lineno: currLt.getLineNo(),
+                    position: position,
+                    exceptions: exception,
+                });
+            }
         });
         return csInfo;
     }
@@ -268,10 +275,12 @@ class CdlLog {
                     code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
                     args: {
                         currLtInfo: this.header.logTypeMap[positionData.value],
+                        threadId: this.threadId,
                         callStack: this.getCallStackAtPosition(position).reverse(),
                         exceptions: this.exception,
                     },
                 });
+                this.currPosition = position;
                 break;
             }
         } while (--position > 0);
@@ -305,4 +314,4 @@ class CdlLog {
     }
 }
 
-export default CdlLog;
+export default Thread;

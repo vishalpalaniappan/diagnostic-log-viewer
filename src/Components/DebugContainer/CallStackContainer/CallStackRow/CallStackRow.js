@@ -50,7 +50,7 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
             if (index === 0 && hasException) {
                 setRowStyle({backgroundColor: "#420b0e"});
             } else if (index === 0) {
-                setRowStyle({backgroundColor: "#4b4b18"});
+                setRowStyle({backgroundColor: "#373700"});
             } else {
                 setRowStyle({backgroundColor: "#184b2d"});
             }
