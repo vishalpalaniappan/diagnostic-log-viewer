@@ -60,12 +60,18 @@ class Debugger {
         const headerLog = JSON.parse(logFile[0][0]);
         const headerInfo = JSON.parse(headerLog["user-generated"]["header"]);
         this.header = new CdlHeader(headerInfo);
+        this.firstThread = null;
 
         // Group all thread execution into its own key
         let position = 1;
         do {
             const log = JSON.parse(logFile[position][0]);
             const threadId = log["user-generated"]["thread"];
+
+            if (this.firstThread == null) {
+                this.firstThread = threadId;
+            }
+
             if (!(threadId in this.threads)) {
                 this.threads[threadId] = [headerLog];
             }
@@ -168,8 +174,8 @@ class Debugger {
      * Play the program from the start.
      * @param {Number} position
      */
-    replayProgram (position) {
-        this.playForward(0);
+    replayProgram () {
+        this.playForward(0, this.firstThread);
     }
 
 
@@ -191,7 +197,7 @@ class Debugger {
             if (currThreadId == threadId && currThreadPos == threadPos) {
                 return position;
             }
-        } while (position++ < this.masterList.length);
+        } while (++position < this.masterList.length);
 
         return null;
     }
