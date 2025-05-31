@@ -108,12 +108,12 @@ class Debugger {
      */
     getVariableStack (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        const [localVariables, globalVariables] = threadDebugger.thread.getVariableStack(position);
+        const [localVars, globalVars] = threadDebugger.thread.getVariablesAtPosition(position);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
-                localVariables: localVariables,
-                globalVariables: globalVariables,
+                localVariables: localVars,
+                globalVariables: globalVars,
             },
         });
     }

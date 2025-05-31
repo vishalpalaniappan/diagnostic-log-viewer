@@ -29,7 +29,7 @@ CDLProviders.propTypes = {
 function CDLProviders ({children, fileInfo, executionIndex}) {
     const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
-    const [stack, setStack] = useState({});
+    const [stack, setStack] = useState();
     const [stackPosition, setStackPosition] = useState();
     const [localVariables, setLocalVariables] = useState();
     const [globalVariables, setGlobalVariables] = useState();
@@ -115,9 +115,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
                 const threadId = event.data.args.threadId;
                 console.log("Recevied stack for id:", threadId);
-                const stack = {...callStack};
-                stack[event.data.args.threadId] = event.data.args.callStack;
-                setStack(stack);
+                setStack(event.data.args.callStack);
                 setStackPosition(0);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
