@@ -14,20 +14,27 @@ class ThreadDebugger {
      */
     constructor (threadExecution, threadId) {
         this.thread = new Thread(threadExecution, threadId);
+        this.position = this.thread.lastStatement;
     }
 
     /**
-     * This function moves to the start of the file.
+     * This function returns the position data for the current
+     * position.
+     *
+     * @return {Object}
      */
-    goToStart () {
-        this.thread.getPositionData(this.thread.firstStatement);
+    getStack () {
+        return this.thread.getPositionData(this.position);
     }
 
     /**
-     * This function moves to the end of the file.
+     * This function returns the variable stack at the current
+     * position.
+     *
+     * @return {Object}
      */
-    goToEnd () {
-        this.thread.getPositionData(this.thread.lastStatement);
+    getVariables () {
+        return this.thread.getVariablesAtPosition(this.position);
     }
 
     /**
@@ -41,7 +48,7 @@ class ThreadDebugger {
             return;
         }
         const callStack = this.thread.getCallStackAtPosition(nextPosition);
-        this.thread.getPositionData(callStack[callStack.length - 1].position);
+        this.position = callStack[callStack.length - 1].position;
     }
 
     /**
@@ -53,7 +60,7 @@ class ThreadDebugger {
         if (callStack.length <= 1) {
             return;
         }
-        this.thread.getPositionData(callStack[callStack.length - 2].position);
+        this.position = callStack[callStack.length - 2].position;
     }
 
     /**
@@ -72,8 +79,7 @@ class ThreadDebugger {
             }
 
             if (this.thread.getCallStackAtPosition(position).length <= originalStack.length) {
-                this.thread.getPositionData(position);
-                return;
+                this.position = position;
             }
         }
     }
@@ -94,8 +100,7 @@ class ThreadDebugger {
             }
 
             if (this.thread.getCallStackAtPosition(position).length <= originalStack.length) {
-                this.thread.getPositionData(position);
-                return;
+                this.position = position;
             }
         }
     }

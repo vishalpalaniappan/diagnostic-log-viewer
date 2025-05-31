@@ -265,25 +265,23 @@ class Thread {
     /**
      * Returns the last executed instruction in the program.
      * @param {Number} position
+     * @return {Object|null}
      */
     getPositionData (position) {
         position = (position < this.firstStatement)?this.firstStatement:position;
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
-                postMessage({
-                    code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-                    args: {
-                        currLtInfo: this.header.logTypeMap[positionData.value],
-                        threadId: this.threadId,
-                        callStack: this.getCallStackAtPosition(position).reverse(),
-                        exceptions: this.exception,
-                    },
-                });
-                this.currPosition = position;
-                break;
+                return {
+                    currLtInfo: this.header.logTypeMap[positionData.value],
+                    threadId: this.threadId,
+                    callStack: this.getCallStackAtPosition(position).reverse(),
+                    exceptions: this.exception,
+                };
             }
         } while (--position > 0);
+
+        return null;
     }
 
     /**
