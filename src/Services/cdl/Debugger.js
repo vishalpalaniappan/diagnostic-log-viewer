@@ -132,7 +132,7 @@ class Debugger {
      */
     goToEnd () {
         const threadDebugger = this.debuggers[this.lastThread];
-        const lastStatement = firstDebugger.thread.firstStatement;
+        const lastStatement = firstDebugger.thread.lastStatement;
         threadDebugger.getPositionData(lastStatement);
     }
 
