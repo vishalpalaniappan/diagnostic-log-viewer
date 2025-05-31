@@ -17,21 +17,6 @@ class ThreadDebugger {
     }
 
     /**
-     * This function returns the variable stack at a given position.
-     * @param {Number} position
-     */
-    getVariableStack (position) {
-        const [localVariables, globalVariables] = this.thread.getVariablesAtPosition(position);
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
-            args: {
-                localVariables: localVariables,
-                globalVariables: globalVariables,
-            },
-        });
-    }
-
-    /**
      * This function moves to the start of the file.
      */
     goToStart () {

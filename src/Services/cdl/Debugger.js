@@ -108,7 +108,14 @@ class Debugger {
      */
     getVariableStack (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.getVariableStack(position);
+        const [localVariables, globalVariables] = threadDebugger.thread.getVariableStack(position);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
+            args: {
+                localVariables: localVariables,
+                globalVariables: globalVariables,
+            },
+        });
     }
 
     /**
@@ -165,22 +172,27 @@ class Debugger {
      * @param {String} threadId Thread ID that has already been evaluated. 
      */
     evaluateOtherThreads (masterPosition, threadId) {
+        // Get a list of threads in program and remove the thread that has
+        // already been processed.
         const threadIds = Object.keys(this.threads);
         const index = threadIds.indexOf(threadId);
         if (index > -1) {
             threadIds.splice(index, 1);
         };
 
+        const stacks = {};
+
         do {
             masterPosition--;
+
             const _threadId = String(this.masterList[masterPosition].threadId);
             const _position = this.masterList[masterPosition].position;
 
             const index = threadIds.indexOf(_threadId);
             if (index > -1) {
-                this.debuggers[_threadId].thread.getPositionData(_position);
+                const stack = this.debuggers[_threadId].thread.getPositionData(_position);
+                stacks[_threadId] = stack;
                 threadIds.splice(index, 1);
-                console.log(`Removing thread id: ${_threadId} at position ${masterPosition}`);
             };
         } while (masterPosition > 0 && threadIds.length > 0);
     }
@@ -191,11 +203,11 @@ class Debugger {
      * @param {String} threadId
      */
     stepOverBackward (position, threadId) {
-        const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepOverBackward(position);
-
         const masterPosition = this.getMasterPosFromThreadPos(position, threadId);
         this.evaluateOtherThreads(masterPosition, threadId);
+
+        const threadDebugger = this.debuggers[threadId];
+        threadDebugger.stepOverBackward(position);
     }
 
     /**
