@@ -21,8 +21,8 @@ export function DebugContainer () {
 
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
-        const containerHeight = height - 300;
-        callStackRef.current.style.height = 150 - TITLE_HEIGHT + "px";
+        const containerHeight = height - 500;
+        callStackRef.current.style.height = 350 - TITLE_HEIGHT + "px";
         breakPointRef.current.style.height = 150 - TITLE_HEIGHT + "px";
         variableStackRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
     };
