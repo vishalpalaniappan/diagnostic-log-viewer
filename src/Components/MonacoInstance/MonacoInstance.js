@@ -122,7 +122,7 @@ export function MonacoInstance () {
      */
     const loadContent = () => {
         if (editorRef?.current) {
-            if (activeThread && activeFile) {
+            if (activeThread && activeFile && stacks[activeThread]) {
                 const stack = stacks[activeThread].stack;
                 clearExceptions();
                 editorRef.current.setValue(fileTree[activeFile]);
