@@ -12,45 +12,50 @@ import "./CallStackContainer.scss";
  * @return {JSX.Element}
  */
 export function CallStackContainer () {
-    const [callStack, setCallStack] = useState();
+    const [callStacks, setCallStacks] = useState([]);
 
-    const {stack} = useContext(StackContext);
+    const {stack, stacks} = useContext(StackContext);
 
     useEffect(() => {
-        if (stack) {
-            const calls = [];
-            stack.forEach((call, index) => {
-                const row = <CallStackRow
-                    key={index}
-                    index={index}
-                    functionName={call.functionName}
-                    fileName={call.fileName}
-                    filePath={call.filePath}
-                    lineno={call.lineno}
-                    position={call.position}
-                />;
-                calls.push(row);
+        if (stacks) {
+            const threadIds = Object.keys(stacks);
+            const _stacks = [];
+
+            threadIds.forEach((threadId, index) => {
+                // Create call stack rows
+                const calls = [];
+                stacks[threadId].stack.callStack.forEach((call, index) => {
+                    const row = <CallStackRow
+                        key={index}
+                        index={index}
+                        functionName={call.functionName}
+                        fileName={call.fileName}
+                        filePath={call.filePath}
+                        lineno={call.lineno}
+                        position={call.position}
+                        main={stacks[threadId].main}
+                        threadId={threadId}
+                    />;
+                    calls.push(row);
+                });
+
+                // Create stack div
+                const stackDiv = <div key={threadId} className="mb-2">
+                    <span className="threadTitle"> <CaretDown/> Thread-{threadId}</span>
+                    {calls}
+                </div>;
+                _stacks.push(stackDiv);
             });
-            setCallStack(calls);
+
+            setCallStacks(_stacks);
         } else {
-            setCallStack([]);
+            setCallStacks([]);
         }
-    }, [stack]);
+    }, [stacks]);
 
     return (
         <div className="callStackContainer">
-            <div className="mb-2">
-                <span className="threadTitle"> <CaretDown/> Thread-1</span>
-                {callStack}
-            </div>
-            <div className="mb-2">
-                <span className="threadTitle"> <CaretDown/> Thread-2</span>
-                {callStack}
-            </div>
-            <div className="">
-                <span className="threadTitle"> <CaretDown/> Thread-3</span>
-                {callStack}
-            </div>
+            {callStacks}
         </div>
     );
 }

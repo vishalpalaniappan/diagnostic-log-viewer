@@ -15,6 +15,8 @@ CallStackRow.propTypes = {
     fileName: PropTypes.string,
     lineno: PropTypes.number,
     position: PropTypes.number,
+    main: PropTypes.bool,
+    threadId: PropTypes.string,
 };
 
 /**
@@ -24,11 +26,13 @@ CallStackRow.propTypes = {
  * @param {String} fileName
  * @param {Number} lineno
  * @param {Number} position
+ * @param {Boolean} main
+ * @param {String} threadId
  * @return {JSX}
  */
-export function CallStackRow ({index, functionName, filePath, fileName, lineno, position}) {
+export function CallStackRow ({index, functionName, filePath, fileName, lineno, position, main, threadId}) {
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {stack} = useContext(StackContext);
+    const {stacks, activeThread, setActiveThread, setStack} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
 
     const [rowStyle, setRowStyle] = useState();
@@ -39,12 +43,15 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
      * @param {Event} e
      */
     const selectStackPosition = (e) => {
-        setActiveFile(stack[index].filePath);
+        setActiveThread(threadId);
+        setStack(stacks[threadId].stack);
+        setActiveFile(stacks[threadId].stack.callStack[index].filePath);
         setStackPosition(index);
     };
 
-    const setStyle = () => {
-        const hasException = (stack[index].exceptions && stack[index].exceptions.length > 0);
+    const setStyle = (currStack) => {
+        const exceptions = currStack[index].exceptions;
+        const hasException = (exceptions && exceptions.length > 0);
         if (index === stackPosition) {
             setNameStyle();
             if (index === 0 && hasException) {
@@ -65,10 +72,16 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
     };
 
     useEffect(() => {
-        if (stack && index < stack.length) {
-            setStyle();
+        const currStack = stacks[threadId].stack.callStack;
+        if (stacks && index < currStack.length) {
+            if (activeThread == threadId) {
+                setStyle(currStack);
+            } else {
+                setRowStyle({});
+                setNameStyle({});
+            }
         }
-    }, [stack, stackPosition]);
+    }, [stacks, stackPosition, activeThread]);
 
     return (
         <div style={rowStyle} onClick={(e) => selectStackPosition(e)}

@@ -31,6 +31,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [activeFile, setActiveFile] = useState();
     const [stacks, setStacks] = useState();
     const [stack, setStack] = useState();
+    const [activeThread, setActiveThread] = useState();
     const [stackPosition, setStackPosition] = useState();
     const [localVariables, setLocalVariables] = useState();
     const [globalVariables, setGlobalVariables] = useState();
@@ -51,13 +52,13 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
 
     // Get new variable stack if stack position changes and update active file
     useEffect(() => {
-        if (cdlWorker?.current && stackPosition !== undefined && stack?.[stackPosition]) {
-            setActiveFile(stack[stackPosition].filePath);
+        if (cdlWorker?.current && stackPosition !== undefined && stack?.callStack?.[stackPosition]) {
+            setActiveFile(stack.callStack[stackPosition].filePath);
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
-                    position: stack[stackPosition].position,
-                    threadId: stack[stackPosition].threadId,
+                    position: stack.callStack[stackPosition].position,
+                    threadId: stack.callStack[stackPosition].threadId,
                 },
             });
         } else {
@@ -107,7 +108,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const setActiveStack = (_stacks) => {
         Object.keys(_stacks).forEach((threadId, value) => {
             if (_stacks[threadId].main) {
-                setStack(_stacks[threadId].stack);
+                setStack(threadId);
+                setActiveThread(threadId);
                 return;
             }
         });
@@ -124,9 +126,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
+                setStackPosition(0);
                 setStacks(event.data.args);
                 setActiveStack(event.data.args);
-                setStackPosition(0);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
                 setLocalVariables(event.data.args.localVariables);
@@ -151,7 +153,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                         <GlobalVariablesContext.Provider value={{globalVariables}}>
                             <VariablesContext.Provider value={{localVariables}}>
                                 <BreakpointsContext.Provider value={{breakPoints}}>
-                                    <StackContext.Provider value={{stack, stacks}}>
+                                    <StackContext.Provider value={{stack, setStack, stacks, activeThread, setActiveThread}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             {children}

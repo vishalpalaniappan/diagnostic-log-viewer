@@ -233,9 +233,6 @@ class Debugger {
      * @param {String} threadId
      */
     stepOverBackward (position, threadId) {
-        const masterPosition = this.getMasterPosFromThreadPos(position, threadId);
-        this.evaluateOtherThreads(masterPosition, threadId);
-
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOverBackward(position);
         this.sendStackInformation(threadId);
