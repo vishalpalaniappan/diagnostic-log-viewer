@@ -153,6 +153,10 @@ class Debugger {
         } while (masterPos > 0 && threadIds.length > 0);
 
         console.log("New Stack Info:", stackInfo);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: stackInfo,
+        });
     }
 
     /**
@@ -178,11 +182,7 @@ class Debugger {
     goToStart () {
         const threadDebugger = this.debuggers[this.firstThread];
         threadDebugger.position = threadDebugger.thread.firstStatement;
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: threadDebugger.getStack(),
-        });
-        sendStackInformation();
+        this.sendStackInformation(this.firstThread);
     }
 
     /**
@@ -191,10 +191,7 @@ class Debugger {
     goToEnd () {
         const threadDebugger = this.debuggers[this.lastThread];
         threadDebugger.position = threadDebugger.thread.lastStatement;
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: threadDebugger.getStack(),
-        });
+        this.sendStackInformation(this.lastThread);
     }
 
     /**
@@ -205,10 +202,7 @@ class Debugger {
     stepInto (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepInto(position);
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: threadDebugger.getStack(),
-        });
+        this.sendStackInformation(threadId);
     }
 
     /**
@@ -219,10 +213,7 @@ class Debugger {
     stepOut (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOut(position);
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: threadDebugger.getStack(),
-        });
+        this.sendStackInformation(threadId);
     }
 
     /**
@@ -233,41 +224,7 @@ class Debugger {
     stepOverForward (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOverForward(position);
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: threadDebugger.getStack(),
-        });
-    }
-
-    /**
-     * Evaluate the stack from the other threads.
-     * @param {Number} masterPosition Position in the starting list.
-     * @param {String} threadId Thread ID that has already been evaluated. 
-     */
-    evaluateOtherThreads (masterPosition, threadId) {
-        // Get a list of threads in program and remove the thread that has
-        // already been processed.
-        const threadIds = Object.keys(this.threads);
-        const index = threadIds.indexOf(threadId);
-        if (index > -1) {
-            threadIds.splice(index, 1);
-        };
-
-        const stacks = {};
-
-        do {
-            masterPosition--;
-
-            const _threadId = String(this.masterList[masterPosition].threadId);
-            const _position = this.masterList[masterPosition].position;
-
-            const index = threadIds.indexOf(_threadId);
-            if (index > -1) {
-                const stack = this.debuggers[_threadId].thread.getPositionData(_position);
-                stacks[_threadId] = stack;
-                threadIds.splice(index, 1);
-            };
-        } while (masterPosition > 0 && threadIds.length > 0);
+        this.sendStackInformation(threadId);
     }
 
     /**
@@ -281,10 +238,6 @@ class Debugger {
 
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOverBackward(position);
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: threadDebugger.getStack(),
-        });
         this.sendStackInformation(threadId);
     }
 
@@ -294,7 +247,6 @@ class Debugger {
      */
     replayProgram () {
         this.playForward(0, this.firstThread);
-        this.sendStackInformation(this.firstThread);
     }
 
     /**
@@ -320,10 +272,7 @@ class Debugger {
                 for (const breakpoint of this.breakpoints) {
                     if (breakpoint.enabled && breakpoint.id === lt) {
                         currentDebugger.position = currThreadPos;
-                        postMessage({
-                            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-                            args: currentDebugger.getStack(),
-                        });
+                        this.sendStackInformation(currThreadId);
                         return;
                     }
                 };
@@ -332,11 +281,7 @@ class Debugger {
 
         const lastDebugger = this.debuggers[this.lastThread];
         lastDebugger.position = lastDebugger.thread.lastStatement;
-
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: lastDebugger.getStack(),
-        });
+        this.sendStackInformation(this.lastThread);
     }
 
     /**
@@ -363,10 +308,7 @@ class Debugger {
                 for (const breakpoint of this.breakpoints) {
                     if (breakpoint.enabled && breakpoint.id === lt) {
                         currentDebugger.position = currThreadPos;
-                        postMessage({
-                            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-                            args: currentDebugger.getStack(),
-                        });
+                        this.sendStackInformation(currThreadId);
                         return;
                     }
                 };
@@ -375,10 +317,7 @@ class Debugger {
 
         const firstDebugger = this.debuggers[this.firstThread];
         firstDebugger.goToStart();
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
-            args: firstDebugger.getStack(),
-        });
+        this.sendStackInformation(this.firstThread);
     }
 
     /**
