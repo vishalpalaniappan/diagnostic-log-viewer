@@ -157,7 +157,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                         <GlobalVariablesContext.Provider value={{globalVariables}}>
                             <VariablesContext.Provider value={{localVariables}}>
                                 <BreakpointsContext.Provider value={{breakPoints}}>
-                                    <StackContext.Provider value={{stacks, activeThread, setActiveThread}}>
+                                    <StackContext.Provider
+                                        value={{stacks, activeThread, setActiveThread}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             {children}
