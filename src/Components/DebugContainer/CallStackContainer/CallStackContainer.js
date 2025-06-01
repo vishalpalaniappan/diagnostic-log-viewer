@@ -18,7 +18,7 @@ export function CallStackContainer () {
 
     useEffect(() => {
         if (stacks) {
-            const threadIds = Object.keys(stacks);
+            const threadIds = Object.keys(stacks).sort();
             const _stacks = [];
 
             threadIds.forEach((threadId, index) => {
