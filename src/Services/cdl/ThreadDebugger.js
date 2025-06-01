@@ -31,10 +31,11 @@ class ThreadDebugger {
      * This function returns the variable stack at the current
      * position.
      *
+     * @param {Number} position
      * @return {Object}
      */
-    getVariables () {
-        return this.thread.getVariablesAtPosition(this.position);
+    getVariables (position) {
+        return this.thread.getVariablesAtPosition(position);
     }
 
     /**

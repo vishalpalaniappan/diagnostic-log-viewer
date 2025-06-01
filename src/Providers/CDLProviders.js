@@ -112,7 +112,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const setActiveStack = (_stacks) => {
         Object.keys(_stacks).forEach((threadId, value) => {
             if (_stacks[threadId].main) {
-                setActiveThread(String(threadId));
+                setActiveThread(threadId);
                 return;
             }
         });
@@ -134,6 +134,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setActiveStack(event.data.args);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
+                console.log(event.data.args);
                 setLocalVariables(event.data.args.localVariables);
                 setGlobalVariables(event.data.args.globalVariables);
                 break;
