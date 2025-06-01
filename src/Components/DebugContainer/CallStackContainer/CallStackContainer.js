@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import {CaretDown} from "react-bootstrap-icons";
+import {CaretDown, CaretRight} from "react-bootstrap-icons";
 
 import StackContext from "../../../Providers/StackContext";
 import {CallStackRow} from "./CallStackRow/CallStackRow";
@@ -13,8 +13,21 @@ import "./CallStackContainer.scss";
  */
 export function CallStackContainer () {
     const [callStacks, setCallStacks] = useState([]);
+    const [stacksCollapsed, setStacksCollapsed] = useState({});
 
     const {stacks} = useContext(StackContext);
+
+    // Toggle collapse of stack frames
+    const toggleCollapse = (threadId) => {
+        const stackState = {...stacksCollapsed};
+
+        if (stackState[threadId] == undefined) {
+            stackState[threadId] = false;
+        } else {
+            stackState[threadId] = !stackState[threadId];
+        }
+        setStacksCollapsed(stackState);
+    };
 
     useEffect(() => {
         if (stacks) {
@@ -41,17 +54,33 @@ export function CallStackContainer () {
 
                 // Create stack div
                 const stackDiv = <div key={threadId} className="mb-2">
-                    <span className="threadTitle"> <CaretDown/> Thread-{threadId}</span>
-                    {calls}
+                    {(stacksCollapsed[threadId] == true || stacksCollapsed[threadId] === undefined)
+                        ?
+                        <div>
+                            <span className="threadTitle">
+                                <CaretDown className="me-1"
+                                    onClick={() => toggleCollapse(threadId)}/>
+                                    Thread-{threadId}
+                            </span>
+                            {calls}
+                        </div>
+                        :
+                        <div>
+                            <span className="threadTitle">
+                                <CaretRight className="me-1"
+                                    onClick={() => toggleCollapse(threadId)}/>
+                                    Thread-{threadId}
+                            </span>
+                        </div>
+                    }
                 </div>;
                 _stacks.push(stackDiv);
             });
-
             setCallStacks(_stacks);
         } else {
             setCallStacks([]);
         }
-    }, [stacks]);
+    }, [stacks, stacksCollapsed]);
 
     return (
         <div className="callStackContainer">
