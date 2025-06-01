@@ -169,7 +169,6 @@ export function DebugToolKit ({}) {
 
     const stepOverForward = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD;
-        console.log(stackPosition);
         const args = {
             position: stack.callStack[stackPosition].position,
             threadId: stack.callStack[stackPosition].threadId,
