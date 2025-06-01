@@ -129,7 +129,6 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
-                console.log("RECEIVED POSITION DATA");
                 setStackPosition(0);
                 setStacks(event.data.args);
                 setActiveStack(event.data.args);
