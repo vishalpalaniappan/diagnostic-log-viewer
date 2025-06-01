@@ -53,12 +53,12 @@ export function CallStackContainer () {
                 });
 
                 // Create stack div
-                const stackDiv = <div key={threadId} className="mb-2">
+                const stackDiv = <div key={threadId} className="mb-2 ps-1">
                     {(stacksExpanded[threadId] === true || stacksExpanded[threadId] === undefined)
                         ?
                         <div>
                             <span className="threadTitle">
-                                <CaretDown className="me-1"
+                                <CaretDown role="button" className="me-1"
                                     onClick={() => toggleCollapse(threadId)}/>
                                     Thread-{threadId}
                             </span>
@@ -67,7 +67,7 @@ export function CallStackContainer () {
                         :
                         <div>
                             <span className="threadTitle">
-                                <CaretRight className="me-1"
+                                <CaretRight role="button" className="me-1"
                                     onClick={() => toggleCollapse(threadId)}/>
                                     Thread-{threadId}
                             </span>
