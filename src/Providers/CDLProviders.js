@@ -30,7 +30,6 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
     const [stacks, setStacks] = useState();
-    const [stack, setStack] = useState();
     const [activeThread, setActiveThread] = useState();
     const [stackPosition, setStackPosition] = useState();
     const [localVariables, setLocalVariables] = useState();
@@ -52,7 +51,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
 
     // Get new variable stack if stack position changes and update active file
     useEffect(() => {
-        if (cdlWorker?.current && stackPosition !== undefined && stack?.callStack?.[stackPosition]) {
+        if (cdlWorker?.current && stackPosition !== undefined && activeThread) {
+            const stack = stacks[activeThread].stack;
             setActiveFile(stack.callStack[stackPosition].filePath);
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
@@ -64,7 +64,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         } else {
             console.warn("Invalid stack position or stack not initialized");
         };
-    }, [stackPosition, stack]);
+    }, [stackPosition, activeThread]);
 
     // Resets the state variables before loading new file.
     const initializeStates = () => {
@@ -72,7 +72,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setLocalVariables(undefined);
         setGlobalVariables(undefined);
         setStackPosition(undefined);
-        setStack(undefined);
+        setActiveThread(undefined);
         setActiveFile(undefined);
         setBreakPoints(undefined);
     };
@@ -105,10 +105,13 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     }, [fileInfo]);
 
 
+    /**
+     * Set the threadID of the active stack.
+     * @param {Array} _stacks
+     */
     const setActiveStack = (_stacks) => {
         Object.keys(_stacks).forEach((threadId, value) => {
             if (_stacks[threadId].main) {
-                setStack(threadId);
                 setActiveThread(threadId);
                 return;
             }
@@ -153,7 +156,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                         <GlobalVariablesContext.Provider value={{globalVariables}}>
                             <VariablesContext.Provider value={{localVariables}}>
                                 <BreakpointsContext.Provider value={{breakPoints}}>
-                                    <StackContext.Provider value={{stack, setStack, stacks, activeThread, setActiveThread}}>
+                                    <StackContext.Provider value={{stacks, activeThread, setActiveThread}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             {children}

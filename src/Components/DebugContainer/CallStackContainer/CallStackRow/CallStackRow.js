@@ -32,7 +32,7 @@ CallStackRow.propTypes = {
  */
 export function CallStackRow ({index, functionName, filePath, fileName, lineno, position, main, threadId}) {
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {stacks, activeThread, setActiveThread, setStack} = useContext(StackContext);
+    const {stacks, activeThread, setActiveThread} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
 
     const [rowStyle, setRowStyle] = useState();
@@ -44,7 +44,6 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
      */
     const selectStackPosition = (e) => {
         setActiveThread(threadId);
-        setStack(stacks[threadId].stack);
         setActiveFile(stacks[threadId].stack.callStack[index].filePath);
         setStackPosition(index);
     };

@@ -125,8 +125,8 @@ export function DebugToolKit ({}) {
     const toggleBreakpoint = () => {
         const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
         const args = {
-            fileName: stack[stackPosition].filePath,
-            lineNumber: stack[stackPosition].lineno,
+            fileName: stack.callStack[stackPosition].filePath,
+            lineNumber: stack.callStack[stackPosition].lineno,
         };
         sendToWorker(code, args);
     };
@@ -134,8 +134,8 @@ export function DebugToolKit ({}) {
     const disableBreakpoint = () => {
         const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
         const args = {
-            fileName: stack[stackPosition].filePath,
-            lineNumber: stack[stackPosition].lineno,
+            fileName: stack.callStack[stackPosition].filePath,
+            lineNumber: stack.callStack[stackPosition].lineno,
         };
         sendToWorker(code, args);
     };
@@ -143,8 +143,8 @@ export function DebugToolKit ({}) {
     const stepInto = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_INTO;
         const args = {
-            position: stack[stackPosition].position,
-            threadId: stack[stackPosition].threadId,
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
         };
         sendToWorker(code, args);
     };
@@ -152,8 +152,8 @@ export function DebugToolKit ({}) {
     const stepOut = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OUT;
         const args = {
-            position: stack[stackPosition].position,
-            threadId: stack[stackPosition].threadId,
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
         };
         sendToWorker(code, args);
     };
@@ -161,8 +161,8 @@ export function DebugToolKit ({}) {
     const stepOverForward = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD;
         const args = {
-            position: stack[stackPosition].position,
-            threadId: stack[stackPosition].threadId,
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
         };
         sendToWorker(code, args);
     };
@@ -170,8 +170,8 @@ export function DebugToolKit ({}) {
     const stepOverBackward = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD;
         const args = {
-            position: stack[stackPosition].position,
-            threadId: stack[stackPosition].threadId,
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
         };
         sendToWorker(code, args);
     };
@@ -179,8 +179,8 @@ export function DebugToolKit ({}) {
     const playForward = () => {
         const code = CDL_WORKER_PROTOCOL.PLAY_FORWARD;
         const args = {
-            position: stack[stackPosition].position,
-            threadId: stack[stackPosition].threadId,
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
         };
         sendToWorker(code, args);
     };
@@ -188,8 +188,8 @@ export function DebugToolKit ({}) {
     const playBackward = () => {
         const code = CDL_WORKER_PROTOCOL.PLAY_BACKWARD;
         const args = {
-            position: stack[stackPosition].position,
-            threadId: stack[stackPosition].threadId,
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
         };
         sendToWorker(code, args);
     };

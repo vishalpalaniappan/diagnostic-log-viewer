@@ -22,7 +22,7 @@ import "monaco-editor/min/vs/editor/editor.main.css";
 export function MonacoInstance () {
     // Consume contexts
     const {stackPosition} = useContext(PositionStateContext);
-    const {stack} = useContext(StackContext);
+    const {stacks, activeThread} = useContext(StackContext);
     const {fileTree} = useContext(FileTreeContext);
     const {breakPoints} = useContext(BreakpointsContext);
     const {activeFile} = useContext(ActiveFileContext);
@@ -58,7 +58,7 @@ export function MonacoInstance () {
     useEffect(() => {
         activeFileRef.current = activeFile;
         loadContent();
-    }, [activeFile, stackPosition, stack]);
+    }, [activeFile, activeThread, stackPosition]);
 
     useEffect(() => {
         drawBreakPoints();
@@ -122,7 +122,8 @@ export function MonacoInstance () {
      */
     const loadContent = () => {
         if (editorRef?.current) {
-            if (stack && activeFile) {
+            if (activeThread && activeFile) {
+                const stack = stacks[activeThread].stack;
                 clearExceptions();
                 editorRef.current.setValue(fileTree[activeFile]);
 
@@ -152,11 +153,16 @@ export function MonacoInstance () {
             const decos = [];
             for (const breakPoint of breakPoints) {
                 if (breakPoint.filePath === activeFile) {
-                    const className = (breakPoint.enabled)?"glyph-debugger-icon":"glyph-debugger-icon-disabled";
+                    const className = (breakPoint.enabled)?
+                        "glyph-debugger-icon":
+                        "glyph-debugger-icon-disabled";
+
                     decos.push(getLineDecoration(breakPoint.lineno, className) );
                 }
             }
-            setBreakPointDecorations(editorRef.current.deltaDecorations(breakPointDecorations, decos));
+            setBreakPointDecorations(
+                editorRef.current.deltaDecorations(breakPointDecorations, decos)
+            );
         }
     };
 

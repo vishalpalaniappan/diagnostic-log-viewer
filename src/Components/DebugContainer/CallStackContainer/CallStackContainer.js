@@ -14,7 +14,7 @@ import "./CallStackContainer.scss";
 export function CallStackContainer () {
     const [callStacks, setCallStacks] = useState([]);
 
-    const {stack, stacks} = useContext(StackContext);
+    const {stacks} = useContext(StackContext);
 
     useEffect(() => {
         if (stacks) {
