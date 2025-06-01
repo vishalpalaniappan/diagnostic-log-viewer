@@ -280,7 +280,7 @@ class Debugger {
         } while (masterPosition < this.masterList.length - 1);
 
         const lastDebugger = this.debuggers[this.lastThread];
-        lastDebugger.position = lastDebugger.thread.lastStatement;
+        lastDebugger.goToEnd();
         this.sendStackInformation(this.lastThread);
     }
 
