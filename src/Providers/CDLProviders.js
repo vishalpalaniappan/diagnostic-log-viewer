@@ -29,6 +29,7 @@ CDLProviders.propTypes = {
 function CDLProviders ({children, fileInfo, executionIndex}) {
     const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
+    const [stacks, setStacks] = useState();
     const [stack, setStack] = useState();
     const [stackPosition, setStackPosition] = useState();
     const [localVariables, setLocalVariables] = useState();
@@ -102,6 +103,16 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         }
     }, [fileInfo]);
 
+
+    const setActiveStack = (_stacks) => {
+        Object.keys(_stacks).forEach((threadId, value) => {
+            if (_stacks[threadId].main) {
+                setStack(_stacks[threadId].stack);
+                return;
+            }
+        });
+    };
+
     /**
      * Handles message from the worker.
      * @param {object} event
@@ -113,9 +124,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
-                const threadId = event.data.args.threadId;
-                console.log("Recevied stack for id:", threadId);
-                setStack(event.data.args.callStack);
+                setStacks(event.data.args);
+                setActiveStack(event.data.args);
                 setStackPosition(0);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
@@ -141,7 +151,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                         <GlobalVariablesContext.Provider value={{globalVariables}}>
                             <VariablesContext.Provider value={{localVariables}}>
                                 <BreakpointsContext.Provider value={{breakPoints}}>
-                                    <StackContext.Provider value={{stack}}>
+                                    <StackContext.Provider value={{stack, stacks}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             {children}
