@@ -252,6 +252,11 @@ class Debugger {
      */
     playForward (position, threadId) {
         let masterPosition = this.getMasterPosFromThreadPos(position, threadId);
+
+        if (masterPosition == this.masterList.length - 1) {
+            return;
+        }
+
         do {
             masterPosition++;
             const masterLog = this.masterList[masterPosition];
@@ -287,7 +292,11 @@ class Debugger {
      */
     playBackward (position, threadId) {
         let masterPosition = this.getMasterPosFromThreadPos(position, threadId);
-        console.log(masterPosition);
+
+        if (masterPosition === 0) {
+            return;
+        }
+
         do {
             masterPosition--;
             const masterLog = this.masterList[masterPosition];
