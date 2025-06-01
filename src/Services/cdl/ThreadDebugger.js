@@ -1,4 +1,3 @@
-import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import Thread from "./Thread";
 
 /**
