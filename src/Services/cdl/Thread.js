@@ -16,7 +16,6 @@ class Thread {
         this.callStacks = {};
         this.callStack = [];
         this.globalVariables = {};
-        this.traceEvents = [];
         this.threadId = threadId;
 
         this.inputs = [];
