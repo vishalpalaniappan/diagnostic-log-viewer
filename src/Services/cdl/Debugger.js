@@ -87,7 +87,7 @@ class Debugger {
         });
 
         this.currentThread = Object.keys(this.threads)[0];
-        this.cdl = this.debuggers[Object.keys(this.threads)[0]];
+        this.cdl = this.debuggers[this.currentThread];
         this.breakpoints = [];
 
         console.info(this.cdl);
