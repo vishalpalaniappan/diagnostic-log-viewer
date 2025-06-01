@@ -21,7 +21,7 @@ export function CallStackContainer () {
     const toggleCollapse = (threadId) => {
         const stackState = {...stacksCollapsed};
 
-        if (stackState[threadId] == undefined) {
+        if (stackState[threadId] === undefined) {
             stackState[threadId] = false;
         } else {
             stackState[threadId] = !stackState[threadId];
