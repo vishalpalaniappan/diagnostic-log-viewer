@@ -1,8 +1,8 @@
 
 /**
- * This class contains all the metadata for each node extracted by the 
- * ADLI tool (lineno, variables, logtypeid etc..).It also saves the 
- * filename and file path. 
+ * This class contains all the metadata for each node extracted by the
+ * ADLI tool (lineno, variables, logtypeid etc..).It also saves the
+ * filename and file path.
  */
 class LtInfo {
     /**

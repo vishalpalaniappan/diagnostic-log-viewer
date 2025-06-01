@@ -1,0 +1,47 @@
+@use "sass:color";
+
+$status-bar-background-color: #68217a;
+$darkened-status-bar-color: #481655;  
+
+.status-bar {
+  margin: 0;
+  height: 23px;
+  line-height: 23px;
+  font-size: 14px;
+  color: white;
+  background-color: $status-bar-background-color;
+}
+
+.status-left {
+  float: left;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.status-right {
+  float: right;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.status-item {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0 7px;
+}
+
+.status-item-button {
+  background-color: $status-bar-background-color;
+  border: none;
+  color: inherit;
+  cursor: default;
+
+  &:hover {
+    background-color: $darkened-status-bar-color;
+  }
+}

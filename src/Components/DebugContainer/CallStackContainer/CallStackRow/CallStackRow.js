@@ -15,6 +15,8 @@ CallStackRow.propTypes = {
     fileName: PropTypes.string,
     lineno: PropTypes.number,
     position: PropTypes.number,
+    main: PropTypes.bool,
+    threadId: PropTypes.string,
 };
 
 /**
@@ -24,11 +26,13 @@ CallStackRow.propTypes = {
  * @param {String} fileName
  * @param {Number} lineno
  * @param {Number} position
+ * @param {Boolean} main
+ * @param {String} threadId
  * @return {JSX}
  */
-export function CallStackRow ({index, functionName, filePath, fileName, lineno, position}) {
+export function CallStackRow ({index, functionName, filePath, fileName, lineno, position, main, threadId}) {
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {stack} = useContext(StackContext);
+    const {stacks, activeThread, setActiveThread} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
 
     const [rowStyle, setRowStyle] = useState();
@@ -39,18 +43,20 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
      * @param {Event} e
      */
     const selectStackPosition = (e) => {
-        setActiveFile(stack[index].filePath);
         setStackPosition(index);
+        setActiveThread(threadId);
+        setActiveFile(stacks[threadId].stack.callStack[index].filePath);
     };
 
-    const setStyle = () => {
-        const hasException = (stack[index].exceptions && stack[index].exceptions.length > 0);
+    const setStyle = (currStack) => {
+        const exceptions = currStack[index].exceptions;
+        const hasException = (exceptions && exceptions.length > 0);
         if (index === stackPosition) {
             setNameStyle();
             if (index === 0 && hasException) {
                 setRowStyle({backgroundColor: "#420b0e"});
             } else if (index === 0) {
-                setRowStyle({backgroundColor: "#4b4b18"});
+                setRowStyle({backgroundColor: "#373700"});
             } else {
                 setRowStyle({backgroundColor: "#184b2d"});
             }
@@ -65,10 +71,16 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
     };
 
     useEffect(() => {
-        if (stack && index < stack.length) {
-            setStyle();
+        if (stacks && activeThread && threadId in stacks) {
+            const currStack = stacks[threadId].stack.callStack;
+            if (activeThread == threadId && index < currStack.length) {
+                setStyle(currStack);
+            } else {
+                setRowStyle({});
+                setNameStyle({});
+            }
         }
-    }, [stack, stackPosition]);
+    }, [stacks, stackPosition, activeThread]);
 
     return (
         <div style={rowStyle} onClick={(e) => selectStackPosition(e)}

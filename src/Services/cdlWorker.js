@@ -12,23 +12,23 @@ onmessage = function (e) {
                 break;
 
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                debuggerInstance.getVariableStack(args.position);
+                debuggerInstance.getVariableStack(args.position, args.threadId);
                 break;
 
             case CDL_WORKER_PROTOCOL.STEP_INTO:
-                debuggerInstance.stepInto(args.position);
+                debuggerInstance.stepInto(args.position, args.threadId);
                 break;
 
             case CDL_WORKER_PROTOCOL.STEP_OUT:
-                debuggerInstance.stepOut(args.position);
+                debuggerInstance.stepOut(args.position, args.threadId);
                 break;
-                
+
             case CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD:
-                debuggerInstance.stepOverForward(args.position);
+                debuggerInstance.stepOverForward(args.position, args.threadId);
                 break;
 
             case CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD:
-                debuggerInstance.stepOverBackward(args.position);
+                debuggerInstance.stepOverBackward(args.position, args.threadId);
                 break;
 
             case CDL_WORKER_PROTOCOL.GO_TO_START:
@@ -40,11 +40,11 @@ onmessage = function (e) {
                 break;
 
             case CDL_WORKER_PROTOCOL.PLAY_BACKWARD:
-                debuggerInstance.playBackward(args.position);
+                debuggerInstance.playBackward(args.position, args.threadId);
                 break;
 
             case CDL_WORKER_PROTOCOL.PLAY_FORWARD:
-                debuggerInstance.playForward(args.position);
+                debuggerInstance.playForward(args.position, args.threadId);
                 break;
 
             case CDL_WORKER_PROTOCOL.REPLAY:

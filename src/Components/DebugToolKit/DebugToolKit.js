@@ -1,7 +1,7 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
-import {ArrowDownShort, ArrowLeftShort, ArrowRightShort, ArrowUpShort,
-    ThreeDotsVertical, Play, ArrowRepeat} from "react-bootstrap-icons";
+import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
+    Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -21,8 +21,10 @@ export function DebugToolKit ({}) {
     const container = useRef();
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {stack} = useContext(StackContext);
+    const {stacks, activeThread} = useContext(StackContext);
     const {cdlWorker} = useContext(WorkerContext);
+
+    const [stack, setStack] = useState();
 
     const blueColor = "#75beff";
     const greyColor = "#7c7c7c";
@@ -80,13 +82,19 @@ export function DebugToolKit ({}) {
         container.current.style.left = document.body.clientWidth - 300 + "px";
     }, []);
 
-    // Add keydown event listener
     useEffect(() => {
+        if (stacks && activeThread) {
+            setStack(stacks[activeThread].stack);
+        }
+    }, [stacks, activeThread]);
+
+    useEffect(() => {
+        document.removeEventListener("keydown", keydown, false);
         document.addEventListener("keydown", keydown, false);
         return () => {
             document.removeEventListener("keydown", keydown, false);
         };
-    }, [stack, stackPosition]);
+    }, [stack, activeThread, stackPosition, stacks]);
 
     const keydown = (e) => {
         switch (e.code) {
@@ -125,75 +133,84 @@ export function DebugToolKit ({}) {
     const toggleBreakpoint = () => {
         const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
         const args = {
-            fileName: stack[stackPosition].filePath, 
-            lineNumber: stack[stackPosition].lineno
+            fileName: stack.callStack[stackPosition].filePath,
+            lineNumber: stack.callStack[stackPosition].lineno,
         };
         sendToWorker(code, args);
-    }
+    };
 
     const disableBreakpoint = () => {
         const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
         const args = {
-            fileName: stack[stackPosition].filePath, 
-            lineNumber: stack[stackPosition].lineno
+            fileName: stack.callStack[stackPosition].filePath,
+            lineNumber: stack.callStack[stackPosition].lineno,
         };
         sendToWorker(code, args);
-    }
+    };
 
     const stepInto = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_INTO;
-        const args = {position: stack[stackPosition].position};
+        const args = {
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
+        };
         sendToWorker(code, args);
     };
 
     const stepOut = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OUT;
-        const args = {position: stack[stackPosition].position};
+        console.log(stackPosition);
+        const args = {
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
+        };
         sendToWorker(code, args);
     };
 
     const stepOverForward = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD;
-        const args = {position: stack[stackPosition].position};
+        const args = {
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
+        };
         sendToWorker(code, args);
     };
 
     const stepOverBackward = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD;
-        const args = {position: stack[stackPosition].position};
+        const args = {
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
+        };
         sendToWorker(code, args);
     };
 
-    const goToStart = () => {
-        const code = CDL_WORKER_PROTOCOL.GO_TO_START;
-        sendToWorker(code, null);
-    };
-
-    const goToEnd = () => {
-        const code = CDL_WORKER_PROTOCOL.GO_TO_END;
-        sendToWorker(code, null);
-    };
-
-    const playForward = () => { 
+    const playForward = () => {
         const code = CDL_WORKER_PROTOCOL.PLAY_FORWARD;
-        const args = {position: stack[stackPosition].position};
+        const args = {
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
+        };
         sendToWorker(code, args);
-    }
+    };
 
-    const playBackward = () => { 
+    const playBackward = () => {
         const code = CDL_WORKER_PROTOCOL.PLAY_BACKWARD;
-        const args = {position: stack[stackPosition].position};
+        const args = {
+            position: stack.callStack[stackPosition].position,
+            threadId: stack.callStack[stackPosition].threadId,
+        };
         sendToWorker(code, args);
-    }
+    };
 
-    const replayProgram = () => { 
+    const replayProgram = () => {
         const code = CDL_WORKER_PROTOCOL.REPLAY;
         const args = {};
         sendToWorker(code, args);
-    }
+    };
 
     const moveUpStack = () => {
-        if (stackPosition + 1 < stack.length) {
+        if (stackPosition + 1 < stack.callStack.length) {
             setStackPosition(stackPosition + 1);
         }
     };

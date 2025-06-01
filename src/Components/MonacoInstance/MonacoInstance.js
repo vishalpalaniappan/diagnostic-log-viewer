@@ -3,14 +3,13 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 import Editor, {loader} from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
-import CDL_WORKER_PROTOCOL from "../../Services/CDL_WORKER_PROTOCOL";
-
 import ActiveFileContext from "../../Providers/ActiveFileContext";
+import BreakpointsContext from "../../Providers/BreakpointsContext";
 import FileTreeContext from "../../Providers/FileTreeContext";
 import StackContext from "../../Providers/StackContext";
 import PositionStateContext from "../../Providers/StackPositionContext";
 import WorkerContext from "../../Providers/WorkerContext";
-import BreakpointsContext from "../../Providers/BreakpointsContext";
+import CDL_WORKER_PROTOCOL from "../../Services/CDL_WORKER_PROTOCOL";
 import {getExceptionMessage, getLineDecoration} from "./helper";
 
 import "./MonacoInstance.scss";
@@ -21,9 +20,9 @@ import "monaco-editor/min/vs/editor/editor.main.css";
  * @return {JSX.Element}
  */
 export function MonacoInstance () {
-    // Consume contexsts
+    // Consume contexts
     const {stackPosition} = useContext(PositionStateContext);
-    const {stack} = useContext(StackContext);
+    const {stacks, activeThread} = useContext(StackContext);
     const {fileTree} = useContext(FileTreeContext);
     const {breakPoints} = useContext(BreakpointsContext);
     const {activeFile} = useContext(ActiveFileContext);
@@ -55,11 +54,11 @@ export function MonacoInstance () {
         editorRef.current.onMouseMove(onMonacoMouseMove);
         editorRef.current.onMouseLeave(onMonacoMouseLeave);
     };
-    
+
     useEffect(() => {
         activeFileRef.current = activeFile;
         loadContent();
-    }, [activeFile, stackPosition, stack]);
+    }, [activeFile, activeThread, stacks, stackPosition]);
 
     useEffect(() => {
         drawBreakPoints();
@@ -123,20 +122,21 @@ export function MonacoInstance () {
      */
     const loadContent = () => {
         if (editorRef?.current) {
-            if (stack && activeFile) {
+            if (activeThread && activeFile && stacks[activeThread]) {
+                const stack = stacks[activeThread].stack;
                 clearExceptions();
                 editorRef.current.setValue(fileTree[activeFile]);
-    
-                if (stack[0].filePath === activeFile) {
-                    selectLine(stack[0].lineno, "selectedLine");
-                    addException(stack[0]);
+
+                if (stack.callStack[0].filePath === activeFile) {
+                    selectLine(stack.callStack[0].lineno, "selectedLine");
+                    addException(stack.callStack[0]);
                 }
-    
-                if (stackPosition > 0 && activeFile === stack[stackPosition].filePath) {
-                    selectLine(stack[stackPosition].lineno, "stackLine");
-                    addException(stack[stackPosition]);
+
+                if (stackPosition > 0 && activeFile === stack.callStack[stackPosition].filePath) {
+                    selectLine(stack.callStack[stackPosition].lineno, "stackLine");
+                    addException(stack.callStack[stackPosition]);
                 }
-    
+
                 drawBreakPoints();
             } else {
                 editorRef.current.setValue("Loading content...");
@@ -153,45 +153,54 @@ export function MonacoInstance () {
             const decos = [];
             for (const breakPoint of breakPoints) {
                 if (breakPoint.filePath === activeFile) {
-                    const className = (breakPoint.enabled)?"glyph-debugger-icon":"glyph-debugger-icon-disabled";
+                    const className = (breakPoint.enabled)?
+                        "glyph-debugger-icon":
+                        "glyph-debugger-icon-disabled";
+
                     decos.push(getLineDecoration(breakPoint.lineno, className) );
                 }
             }
-            setBreakPointDecorations(editorRef.current.deltaDecorations(breakPointDecorations, decos));
+            setBreakPointDecorations(
+                editorRef.current.deltaDecorations(breakPointDecorations, decos)
+            );
         }
-    }
+    };
 
     /**
      * Callback when mouse is moved on monaco instance.
      * TODO: Move hover decoration variables into react state
-     * @param {Event} e 
+     * @param {Event} e
      */
     let hoverDecorations = [];
     let currHoverLineNumber;
     const onMonacoMouseMove = (e) => {
         if (e.target.type === 2) {
             if (currHoverLineNumber != e.target.position.lineNumber) {
-                const decoration = getLineDecoration(e.target.position.lineNumber, "glyph-debugger-icon-hover");
-                hoverDecorations = editorRef.current.deltaDecorations(hoverDecorations, [decoration]);
+                const decoration = getLineDecoration(
+                    e.target.position.lineNumber, "glyph-debugger-icon-hover"
+                );
+                hoverDecorations = editorRef.current.deltaDecorations(
+                    hoverDecorations, [decoration]
+                );
                 currHoverLineNumber = e.target.position.lineNumber;
             }
         } else {
-            hoverDecorations = editorRef.current.deltaDecorations(hoverDecorations, [])
+            hoverDecorations = editorRef.current.deltaDecorations(hoverDecorations, []);
         }
     };
 
     /**
      * Callback when mouse exits the monaco editor.
-     * @param {Event} e 
+     * @param {Event} e
      */
     const onMonacoMouseLeave = (e) => {
-        hoverDecorations = editorRef.current.deltaDecorations(hoverDecorations, [])
+        hoverDecorations = editorRef.current.deltaDecorations(hoverDecorations, []);
         currHoverLineNumber = null;
     };
-    
+
     /**
      * Callback when mouse down event occurs on monaco editor.
-     * @param {Event} e 
+     * @param {Event} e
      */
     const onMonacoMouseDown = (e) => {
         if (activeFileRef.current && e.target.type === 2) {
@@ -199,7 +208,7 @@ export function MonacoInstance () {
                 code: CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT,
                 args: {
                     fileName: activeFileRef.current,
-                    lineNumber: e.target.position.lineNumber,  
+                    lineNumber: e.target.position.lineNumber,
                 },
             });
         }

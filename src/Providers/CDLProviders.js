@@ -9,6 +9,7 @@ import FileTreeContext from "./FileTreeContext";
 import GlobalVariablesContext from "./GlobalVariablesContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
+import ThreadsContext from "./ThreadsContext";
 import VariablesContext from "./VariablesContext";
 import WorkerContext from "./WorkerContext";
 
@@ -28,12 +29,14 @@ CDLProviders.propTypes = {
 function CDLProviders ({children, fileInfo, executionIndex}) {
     const [isLoading, setIsLoading] = useState(false);
     const [activeFile, setActiveFile] = useState();
-    const [stack, setStack] = useState();
+    const [stacks, setStacks] = useState();
+    const [activeThread, setActiveThread] = useState();
     const [stackPosition, setStackPosition] = useState();
     const [localVariables, setLocalVariables] = useState();
     const [globalVariables, setGlobalVariables] = useState();
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
+    const [threads, setThreads] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -48,18 +51,27 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
 
     // Get new variable stack if stack position changes and update active file
     useEffect(() => {
-        if (cdlWorker?.current && stackPosition !== undefined && stack?.[stackPosition]) {
-            setActiveFile(stack[stackPosition].filePath);
+        if (cdlWorker?.current && stackPosition !== undefined &&
+             activeThread && stacks?.[activeThread]?.stack) {
+            const stack = stacks[activeThread].stack;
+
+            if (stackPosition >= stack.callStack.length) {
+                console.warn("Stack position out of bounds");
+                return;
+            }
+
+            setActiveFile(stack.callStack[stackPosition].filePath);
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
                 args: {
-                    position: stack[stackPosition].position,
+                    position: stack.callStack[stackPosition].position,
+                    threadId: stack.callStack[stackPosition].threadId,
                 },
             });
         } else {
             console.warn("Invalid stack position or stack not initialized");
         };
-    }, [stackPosition, stack]);
+    }, [stackPosition, stacks, activeThread]);
 
     // Resets the state variables before loading new file.
     const initializeStates = () => {
@@ -67,7 +79,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setLocalVariables(undefined);
         setGlobalVariables(undefined);
         setStackPosition(undefined);
-        setStack(undefined);
+        setActiveThread(undefined);
         setActiveFile(undefined);
         setBreakPoints(undefined);
     };
@@ -99,6 +111,20 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         }
     }, [fileInfo]);
 
+
+    /**
+     * Set the threadID of the active stack.
+     * @param {Array} _stacks
+     */
+    const setActiveStack = (_stacks) => {
+        Object.keys(_stacks).forEach((threadId, value) => {
+            if (_stacks[threadId].main) {
+                setActiveThread(threadId);
+                return;
+            }
+        });
+    };
+
     /**
      * Handles message from the worker.
      * @param {object} event
@@ -110,8 +136,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
-                setStack(event.data.args.callStack);
                 setStackPosition(0);
+                setStacks(event.data.args);
+                setActiveStack(event.data.args);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
                 setLocalVariables(event.data.args.localVariables);
@@ -129,17 +156,21 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         <StackPositionContext.Provider value={{stackPosition, setStackPosition}}>
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
-                    <GlobalVariablesContext.Provider value={{globalVariables}}>
-                        <VariablesContext.Provider value={{localVariables}}>
-                            <BreakpointsContext.Provider value={{breakPoints}}>
-                                <StackContext.Provider value={{stack}}>
-                                    <ActiveFileContext.Provider value={{activeFile, setActiveFile}}>
-                                        {children}
-                                    </ActiveFileContext.Provider>
-                                </StackContext.Provider>
-                            </BreakpointsContext.Provider>
-                        </VariablesContext.Provider>
-                    </GlobalVariablesContext.Provider>
+                    <ThreadsContext.Provider value={{threads, setThreads}}>
+                        <GlobalVariablesContext.Provider value={{globalVariables}}>
+                            <VariablesContext.Provider value={{localVariables}}>
+                                <BreakpointsContext.Provider value={{breakPoints}}>
+                                    <StackContext.Provider
+                                        value={{stacks, activeThread, setActiveThread}}>
+                                        <ActiveFileContext.Provider
+                                            value={{activeFile, setActiveFile}}>
+                                            {children}
+                                        </ActiveFileContext.Provider>
+                                    </StackContext.Provider>
+                                </BreakpointsContext.Provider>
+                            </VariablesContext.Provider>
+                        </GlobalVariablesContext.Provider>
+                    </ThreadsContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
         </StackPositionContext.Provider>
