@@ -1,15 +1,14 @@
 import Thread from "./Thread";
 
 /**
- * This class accepts a CDL file object or URL and exposes the functions
- * needed to interact with the program.
+ * This class allows use the user to perform debugging operations
+ * on a given thread.
  */
 class ThreadDebugger {
     /**
-     * Loads the CDL file and initializes the debugger state.
+     * Creates a thread object using the threadExecution list.
      * @param {Array} threadExecution A list containing the execution of
-     * @param {String} threadId A string containing the thread id.
-     * each thread.
+     * @param {String} threadId A string containing the thread id each thread.
      */
     constructor (threadExecution, threadId) {
         this.thread = new Thread(threadExecution, threadId);
@@ -18,8 +17,7 @@ class ThreadDebugger {
 
     /**
      * This function returns the position data for the current
-     * position.
-     *
+     * position.     *
      * @return {Object}
      */
     getStack () {
@@ -27,9 +25,7 @@ class ThreadDebugger {
     }
 
     /**
-     * This function returns the variable stack at the current
-     * position.
-     *
+     * This function returns the variable stack for the given position.     *
      * @param {Number} position
      * @return {Object}
      */
@@ -78,7 +74,7 @@ class ThreadDebugger {
     }
 
     /**
-     * This function steps over any function calls.
+     * This function steps over any function calls forwards.
      * @param {Number} position
      */
     stepOverForward (position) {

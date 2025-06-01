@@ -1,8 +1,8 @@
 import CdlHeader from "./CdlHeader";
 
 /**
- * This class processes a CDL log file and exposes functions to
- * interact with the log file given a starting position.
+ * This class processes threads execution and exposes functions to
+ * interact with the log file given a position.
  */
 class Thread {
     /**
