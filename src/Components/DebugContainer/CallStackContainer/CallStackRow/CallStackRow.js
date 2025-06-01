@@ -49,7 +49,6 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
     };
 
     const setStyle = (currStack) => {
-        console.log(currStack, index);
         const exceptions = currStack[index].exceptions;
         const hasException = (exceptions && exceptions.length > 0);
         if (index === stackPosition) {
