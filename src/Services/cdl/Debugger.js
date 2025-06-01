@@ -253,6 +253,7 @@ class Debugger {
     playForward (position, threadId) {
         let masterPosition = this.getMasterPosFromThreadPos(position, threadId);
 
+        // We are already at end of the file.
         if (masterPosition == this.masterList.length - 1) {
             return;
         }
@@ -280,6 +281,8 @@ class Debugger {
             };
         } while (masterPosition < this.masterList.length - 1);
 
+        // Get the debugger of the thread which executed the last statement
+        // in the master list and use that to go to end of the program.
         const lastDebugger = this.debuggers[this.lastThread];
         lastDebugger.goToEnd();
         this.sendStackInformation(this.lastThread);
@@ -293,7 +296,8 @@ class Debugger {
     playBackward (position, threadId) {
         let masterPosition = this.getMasterPosFromThreadPos(position, threadId);
 
-        if (masterPosition === 0) {
+        // We are already at the start of the file
+        if (masterPosition == 0) {
             return;
         }
 
@@ -320,6 +324,8 @@ class Debugger {
             };
         } while (masterPosition > 0);
 
+        // Get the debugger of the thread which executed the first statement
+        // in the master list and use that to go to the start of the program.
         const firstDebugger = this.debuggers[this.firstThread];
         firstDebugger.goToStart();
         this.sendStackInformation(this.firstThread);
