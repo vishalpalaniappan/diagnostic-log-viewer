@@ -1,4 +1,3 @@
-import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import CdlHeader from "./CdlHeader";
 
 /**
@@ -26,8 +25,8 @@ class Thread {
         this._processLog(logFile);
 
         // Used to go to the end of the file
-        this.lastStatement = this.getLastStatement();
-        this.firstStatement = this.getFirstStatement();
+        this.lastStatement = this._getLastStatement();
+        this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
     }
@@ -288,7 +287,7 @@ class Thread {
      * Returns the last logged statement
      * @return {int}
      */
-    getLastStatement () {
+    _getLastStatement () {
         let position = this.execution.length - 1;
         do {
             if (this.execution[position].type === "adli_execution") {
@@ -302,7 +301,7 @@ class Thread {
      * Returns the first logged statement
      * @return {int}
      */
-    getFirstStatement () {
+    _getFirstStatement () {
         let position = 0;
         do {
             if (this.execution[position].type === "adli_execution") {
