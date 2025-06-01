@@ -108,7 +108,7 @@ class Debugger {
      */
     getVariableStack (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        const [localVars, globalVars] = threadDebugger.thread.getVariablesAtPosition(position);
+        const [localVars, globalVars] = threadDebugger.getVariables(position);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
             args: {
@@ -123,8 +123,11 @@ class Debugger {
      */
     goToStart () {
         const threadDebugger = this.debuggers[this.firstThread];
-        const firstStatement = firstDebugger.thread.firstStatement;
-        threadDebugger.getPositionData(firstStatement);
+        threadDebugger.position = threadDebugger.thread.firstStatement;
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: threadDebugger.getStack(),
+        });
     }
 
     /**
@@ -132,8 +135,11 @@ class Debugger {
      */
     goToEnd () {
         const threadDebugger = this.debuggers[this.lastThread];
-        const lastStatement = firstDebugger.thread.lastStatement;
-        threadDebugger.getPositionData(lastStatement);
+        threadDebugger.position = threadDebugger.thread.lastStatement;
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: threadDebugger.getStack(),
+        });
     }
 
     /**
@@ -144,6 +150,10 @@ class Debugger {
     stepInto (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepInto(position);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: threadDebugger.getStack(),
+        });
     }
 
     /**
@@ -154,6 +164,10 @@ class Debugger {
     stepOut (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOut(position);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: threadDebugger.getStack(),
+        });
     }
 
     /**
@@ -164,6 +178,10 @@ class Debugger {
     stepOverForward (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOverForward(position);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: threadDebugger.getStack(),
+        });
     }
 
     /**
@@ -208,6 +226,10 @@ class Debugger {
 
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.stepOverBackward(position);
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: threadDebugger.getStack(),
+        });
     }
 
     /**
@@ -255,6 +277,7 @@ class Debugger {
             const currThreadPos = masterLog.position;
             const currThreadId = masterLog.threadId;
             const currLog = masterLog.log;
+            const currentDebugger = this.debuggers[currThreadId];
 
             const type = currLog["user-generated"]["type"];
 
@@ -262,7 +285,11 @@ class Debugger {
                 const lt = currLog["user-generated"]["value"];
                 for (const breakpoint of this.breakpoints) {
                     if (breakpoint.enabled && breakpoint.id === lt) {
-                        this.debuggers[currThreadId].thread.getPositionData(currThreadPos);
+                        currentDebugger.position = currThreadPos;
+                        postMessage({
+                            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+                            args: currentDebugger.getStack(),
+                        });
                         return;
                     }
                 };
@@ -270,8 +297,12 @@ class Debugger {
         } while (masterPosition < this.masterList.length - 1);
 
         const lastDebugger = this.debuggers[this.lastThread];
-        const lastStatement = lastDebugger.thread.lastStatement;
-        lastDebugger.thread.getPositionData(lastStatement);
+        lastDebugger.position = lastDebugger.thread.lastStatement;
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: lastDebugger.getStack(),
+        });
     }
 
     /**
@@ -289,6 +320,7 @@ class Debugger {
             const currThreadPos = masterLog.position;
             const currThreadId = masterLog.threadId;
             const currLog = masterLog.log;
+            const currentDebugger = this.debuggers[currThreadId];
 
             const type = currLog["user-generated"]["type"];
 
@@ -296,7 +328,11 @@ class Debugger {
                 const lt = currLog["user-generated"]["value"];
                 for (const breakpoint of this.breakpoints) {
                     if (breakpoint.enabled && breakpoint.id === lt) {
-                        this.debuggers[currThreadId].thread.getPositionData(currThreadPos);
+                        currentDebugger.position = currThreadPos;
+                        postMessage({
+                            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+                            args: currentDebugger.getStack(),
+                        });
                         return;
                     }
                 };
@@ -304,8 +340,11 @@ class Debugger {
         } while (masterPosition > 0);
 
         const firstDebugger = this.debuggers[this.firstThread];
-        const firstStatement = firstDebugger.thread.firstStatement;
-        firstDebugger.thread.getPositionData(firstStatement);
+        firstDebugger.position = firstDebugger.thread.firstStatement;
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
+            args: firstDebugger.getStack(),
+        });
     }
 
     /**

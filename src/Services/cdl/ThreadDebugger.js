@@ -38,6 +38,20 @@ class ThreadDebugger {
     }
 
     /**
+     * This function goes to the start of the program.
+     */
+    goToStart () {
+        this.position = this.thread.firstStatement;
+    }
+
+    /**
+     * This function goes to the end of the program.
+     */
+    goToEnd () {
+        this.position = this.thread.lastStatement;
+    }
+
+    /**
      * This function steps into the next position.
      * @param {Number} position
      */
@@ -78,8 +92,10 @@ class ThreadDebugger {
                 return;
             }
 
-            if (this.thread.getCallStackAtPosition(position).length <= originalStack.length) {
+            const currStackSize = this.thread.getCallStackAtPosition(position).length;
+            if (currStackSize <= originalStack.length) {
                 this.position = position;
+                return;
             }
         }
     }
@@ -99,8 +115,10 @@ class ThreadDebugger {
                 return;
             }
 
-            if (this.thread.getCallStackAtPosition(position).length <= originalStack.length) {
+            const currStackSize = this.thread.getCallStackAtPosition(position).length;
+            if (currStackSize <= originalStack.length) {
                 this.position = position;
+                return;
             }
         }
     }
