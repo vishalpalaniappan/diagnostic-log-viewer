@@ -102,6 +102,60 @@ class Debugger {
     }
 
     /**
+     * Given a position in a thread, this function returns the position
+     * in the master list.
+     * @param {Number} threadPos
+     * @param {String} threadId
+     * @return {Number|null}
+     */
+    getMasterPosFromThreadPos (threadPos, threadId) {
+        let position = 0;
+        do {
+            const masterLog = this.masterList[position];
+
+            const currThreadPos = masterLog.position;
+            const currThreadId = String(masterLog.threadId);
+
+            if (currThreadId == threadId && currThreadPos == threadPos) {
+                return position;
+            }
+        } while (++position < this.masterList.length);
+
+        return null;
+    }
+
+    /**
+     * This function sends the stack information for
+     * each thread to the front end.
+     * @param {String} currentThread
+     */
+    sendStackInformation (currentThread) {
+        const threadIds = Object.keys(this.debuggers);
+        const threadPos = this.debuggers[currentThread].position;
+        const stackInfo = {};
+        let masterPos = this.getMasterPosFromThreadPos(threadPos, currentThread);
+
+        // Set the last executed position in each of the debuggers
+        do {
+            const current = this.masterList[masterPos];
+            const type = current.log["user-generated"]["type"];
+            const thread = String(current.log["user-generated"]["thread"]);
+
+            if (type === "adli_execution" && threadIds.includes(thread)) {
+                this.debuggers[thread].position = current.position;
+                threadIds.splice(threadIds.indexOf(thread), 1);
+                stackInfo[thread] = {
+                    main: thread == currentThread,
+                    stack: this.debuggers[thread].getStack(),
+                };
+            }
+            masterPos--;
+        } while (masterPos > 0 && threadIds.length > 0);
+
+        console.log("New Stack Info:", stackInfo);
+    }
+
+    /**
      * This function returns the variable stack at a given position.
      * @param {Number} position
      * @param {String} threadId
@@ -128,6 +182,7 @@ class Debugger {
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
             args: threadDebugger.getStack(),
         });
+        sendStackInformation();
     }
 
     /**
@@ -230,6 +285,7 @@ class Debugger {
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
             args: threadDebugger.getStack(),
         });
+        this.sendStackInformation(threadId);
     }
 
     /**
@@ -238,29 +294,7 @@ class Debugger {
      */
     replayProgram () {
         this.playForward(0, this.firstThread);
-    }
-
-    /**
-     * Given a position in a thread, this function returns the position
-     * in the master list.
-     * @param {Number} threadPos
-     * @param {String} threadId
-     * @return {Number|null}
-     */
-    getMasterPosFromThreadPos (threadPos, threadId) {
-        let position = 0;
-        do {
-            const masterLog = this.masterList[position];
-
-            const currThreadPos = masterLog.position;
-            const currThreadId = String(masterLog.threadId);
-
-            if (currThreadId == threadId && currThreadPos == threadPos) {
-                return position;
-            }
-        } while (++position < this.masterList.length);
-
-        return null;
+        this.sendStackInformation(this.firstThread);
     }
 
     /**
