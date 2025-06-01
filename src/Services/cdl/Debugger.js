@@ -340,7 +340,7 @@ class Debugger {
         } while (masterPosition > 0);
 
         const firstDebugger = this.debuggers[this.firstThread];
-        firstDebugger.position = firstDebugger.thread.firstStatement;
+        firstDebugger.goToStart();
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
             args: firstDebugger.getStack(),
