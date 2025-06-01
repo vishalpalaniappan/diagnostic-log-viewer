@@ -80,18 +80,21 @@ export function DebugToolKit ({}) {
     useEffect(() => {
         container.current.style.top = "100px";
         container.current.style.left = document.body.clientWidth - 300 + "px";
-        document.addEventListener("keydown", keydown, false);
-        return () => {
-            document.removeEventListener("keydown", keydown, false);
-        };
     }, []);
 
     useEffect(() => {
         if (stacks && activeThread) {
             setStack(stacks[activeThread].stack);
-            console.log("changed active stack");
         }
     }, [stacks, activeThread]);
+
+    useEffect(() => {
+        document.removeEventListener("keydown", keydown, false);
+        document.addEventListener("keydown", keydown, false);
+        return () => {
+            document.removeEventListener("keydown", keydown, false);
+        };
+    }, [stack, activeThread, stackPosition, stacks]);
 
     const keydown = (e) => {
         switch (e.code) {
@@ -156,6 +159,7 @@ export function DebugToolKit ({}) {
 
     const stepOut = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OUT;
+        console.log(stackPosition);
         const args = {
             position: stack.callStack[stackPosition].position,
             threadId: stack.callStack[stackPosition].threadId,
@@ -165,6 +169,7 @@ export function DebugToolKit ({}) {
 
     const stepOverForward = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD;
+        console.log(stackPosition);
         const args = {
             position: stack.callStack[stackPosition].position,
             threadId: stack.callStack[stackPosition].threadId,
@@ -206,7 +211,7 @@ export function DebugToolKit ({}) {
     };
 
     const moveUpStack = () => {
-        if (stackPosition + 1 < stack.length) {
+        if (stackPosition + 1 < stack.callStack.length) {
             setStackPosition(stackPosition + 1);
         }
     };
@@ -216,6 +221,14 @@ export function DebugToolKit ({}) {
             setStackPosition(stackPosition - 1);
         }
     };
+
+    useEffect(() => {
+        console.log("Stack Position:", stackPosition);
+    }, [stackPosition]);
+
+    useEffect(() => {
+        console.log("New Stack:", stack);
+    }, [stack]);
 
 
     return (
