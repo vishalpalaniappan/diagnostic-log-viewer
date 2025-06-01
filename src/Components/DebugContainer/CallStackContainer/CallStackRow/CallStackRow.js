@@ -43,12 +43,13 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
      * @param {Event} e
      */
     const selectStackPosition = (e) => {
+        setStackPosition(index);
         setActiveThread(threadId);
         setActiveFile(stacks[threadId].stack.callStack[index].filePath);
-        setStackPosition(index);
     };
 
     const setStyle = (currStack) => {
+        console.log(currStack, index);
         const exceptions = currStack[index].exceptions;
         const hasException = (exceptions && exceptions.length > 0);
         if (index === stackPosition) {
@@ -71,9 +72,9 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
     };
 
     useEffect(() => {
-        const currStack = stacks[threadId].stack.callStack;
-        if (stacks && index < currStack.length) {
-            if (activeThread == threadId) {
+        if (stacks && activeThread && threadId in stacks) {
+            const currStack = stacks[threadId].stack.callStack;
+            if (activeThread == threadId && index < currStack.length) {
                 setStyle(currStack);
             } else {
                 setRowStyle({});

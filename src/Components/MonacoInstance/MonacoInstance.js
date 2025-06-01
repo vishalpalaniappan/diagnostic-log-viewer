@@ -58,7 +58,7 @@ export function MonacoInstance () {
     useEffect(() => {
         activeFileRef.current = activeFile;
         loadContent();
-    }, [activeFile, activeThread, stackPosition]);
+    }, [activeFile, activeThread, stacks, stackPosition]);
 
     useEffect(() => {
         drawBreakPoints();

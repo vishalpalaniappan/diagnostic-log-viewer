@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
@@ -21,8 +21,10 @@ export function DebugToolKit ({}) {
     const container = useRef();
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {stack} = useContext(StackContext);
+    const {stacks, activeThread} = useContext(StackContext);
     const {cdlWorker} = useContext(WorkerContext);
+
+    const [stack, setStack] = useState();
 
     const blueColor = "#75beff";
     const greyColor = "#7c7c7c";
@@ -78,15 +80,18 @@ export function DebugToolKit ({}) {
     useEffect(() => {
         container.current.style.top = "100px";
         container.current.style.left = document.body.clientWidth - 300 + "px";
-    }, []);
-
-    // Add keydown event listener
-    useEffect(() => {
         document.addEventListener("keydown", keydown, false);
         return () => {
             document.removeEventListener("keydown", keydown, false);
         };
-    }, [stack, stackPosition]);
+    }, []);
+
+    useEffect(() => {
+        if (stacks && activeThread) {
+            setStack(stacks[activeThread].stack);
+            console.log("changed active stack");
+        }
+    }, [stacks, activeThread]);
 
     const keydown = (e) => {
         switch (e.code) {

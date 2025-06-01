@@ -64,7 +64,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         } else {
             console.warn("Invalid stack position or stack not initialized");
         };
-    }, [stackPosition, activeThread]);
+    }, [stackPosition, stacks, activeThread]);
 
     // Resets the state variables before loading new file.
     const initializeStates = () => {
@@ -112,7 +112,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const setActiveStack = (_stacks) => {
         Object.keys(_stacks).forEach((threadId, value) => {
             if (_stacks[threadId].main) {
-                setActiveThread(threadId);
+                setActiveThread(String(threadId));
                 return;
             }
         });
@@ -129,6 +129,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setFileTree(event.data.args.fileTree);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
+                console.log("RECEIVED POSITION DATA");
                 setStackPosition(0);
                 setStacks(event.data.args);
                 setActiveStack(event.data.args);

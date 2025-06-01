@@ -116,7 +116,7 @@ class Debugger {
             const currThreadPos = masterLog.position;
             const currThreadId = String(masterLog.threadId);
 
-            if (currThreadId == threadId && currThreadPos == threadPos) {
+            if (currThreadId == String(threadId) && currThreadPos == threadPos) {
                 return position;
             }
         } while (++position < this.masterList.length);
