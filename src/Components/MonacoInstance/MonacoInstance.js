@@ -176,8 +176,12 @@ export function MonacoInstance () {
     const onMonacoMouseMove = (e) => {
         if (e.target.type === 2) {
             if (currHoverLineNumber != e.target.position.lineNumber) {
-                const decoration = getLineDecoration(e.target.position.lineNumber, "glyph-debugger-icon-hover");
-                hoverDecorations = editorRef.current.deltaDecorations(hoverDecorations, [decoration]);
+                const decoration = getLineDecoration(
+                    e.target.position.lineNumber, "glyph-debugger-icon-hover"
+                );
+                hoverDecorations = editorRef.current.deltaDecorations(
+                    hoverDecorations, [decoration]
+                );
                 currHoverLineNumber = e.target.position.lineNumber;
             }
         } else {
