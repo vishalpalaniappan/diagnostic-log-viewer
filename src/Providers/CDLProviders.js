@@ -51,8 +51,15 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
 
     // Get new variable stack if stack position changes and update active file
     useEffect(() => {
-        if (cdlWorker?.current && stackPosition !== undefined && activeThread) {
+        if (cdlWorker?.current && stackPosition !== undefined &&
+             activeThread && stacks?.[activeThread]?.stack) {
             const stack = stacks[activeThread].stack;
+
+            if (stackPosition >= stack.callStack.length) {
+                console.warn("Stack position out of bounds");
+                return;
+            }
+
             setActiveFile(stack.callStack[stackPosition].filePath);
             cdlWorker.current.postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK,
