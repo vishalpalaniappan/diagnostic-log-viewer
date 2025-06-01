@@ -13,20 +13,20 @@ import "./CallStackContainer.scss";
  */
 export function CallStackContainer () {
     const [callStacks, setCallStacks] = useState([]);
-    const [stacksCollapsed, setStacksCollapsed] = useState({});
+    const [stacksExpanded, setStacksExpanded] = useState({});
 
     const {stacks} = useContext(StackContext);
 
     // Toggle collapse of stack frames
     const toggleCollapse = (threadId) => {
-        const stackState = {...stacksCollapsed};
+        const stackState = {...stacksExpanded};
 
         if (stackState[threadId] === undefined) {
             stackState[threadId] = false;
         } else {
             stackState[threadId] = !stackState[threadId];
         }
-        setStacksCollapsed(stackState);
+        setStacksExpanded(stackState);
     };
 
     useEffect(() => {
@@ -54,7 +54,7 @@ export function CallStackContainer () {
 
                 // Create stack div
                 const stackDiv = <div key={threadId} className="mb-2">
-                    {(stacksCollapsed[threadId] == true || stacksCollapsed[threadId] === undefined)
+                    {(stacksExpanded[threadId] === true || stacksExpanded[threadId] === undefined)
                         ?
                         <div>
                             <span className="threadTitle">
@@ -80,7 +80,7 @@ export function CallStackContainer () {
         } else {
             setCallStacks([]);
         }
-    }, [stacks, stacksCollapsed]);
+    }, [stacks, stacksExpanded]);
 
     return (
         <div className="callStackContainer">
