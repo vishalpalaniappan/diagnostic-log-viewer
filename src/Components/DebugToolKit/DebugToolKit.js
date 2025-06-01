@@ -222,14 +222,6 @@ export function DebugToolKit ({}) {
         }
     };
 
-    useEffect(() => {
-        console.log("Stack Position:", stackPosition);
-    }, [stackPosition]);
-
-    useEffect(() => {
-        console.log("New Stack:", stack);
-    }, [stack]);
-
 
     return (
         <div ref={container} className="toolkit-container">

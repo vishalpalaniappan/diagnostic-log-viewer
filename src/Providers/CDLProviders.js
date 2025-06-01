@@ -134,7 +134,6 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setActiveStack(event.data.args);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                console.log(event.data.args);
                 setLocalVariables(event.data.args.localVariables);
                 setGlobalVariables(event.data.args.globalVariables);
                 break;

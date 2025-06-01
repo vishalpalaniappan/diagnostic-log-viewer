@@ -152,7 +152,6 @@ class Debugger {
             masterPos--;
         } while (masterPos > 0 && threadIds.length > 0);
 
-        console.log("New Stack Info:", stackInfo);
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
             args: stackInfo,
