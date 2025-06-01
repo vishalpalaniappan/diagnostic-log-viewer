@@ -1,6 +1,7 @@
 @use "sass:color";
 
 $status-bar-background-color: #68217a;
+$darkened-status-bar-color: #481655;  
 
 .status-bar {
   margin: 0;
@@ -38,78 +39,9 @@ $status-bar-background-color: #68217a;
   background-color: $status-bar-background-color;
   border: none;
   color: inherit;
+  cursor: default;
 
   &:hover {
-    background-color: color.adjust($status-bar-background-color, $lightness: 8%);
+    background-color: $darkened-status-bar-color;
   }
-}
-
-.status-prettify-accent {
-  $default-background-color: #125c3a;
-
-  background: $default-background-color;
-
-  &:hover {
-    background: #1b8152;
-
-    &:disabled {
-      background: $default-background-color;
-    }
-  }
-}
-
-.status-thread-accent {
-  $default-background-color: #34103d;
-
-  background: $default-background-color;
-
-  &:hover {
-    background: #842a9b;
-
-    &:disabled {
-      background: $default-background-color;
-    }
-  }
-}
-
-.status-bar-select {
-  color: white;
-  border: none;
-  padding: 0 !important;
-  margin: 0 0 0 3px;
-  background: #34103d;
-
-  & :focus {
-    border: none;
-    outline: 0;
-    box-shadow: none !important;
-  }
-
-  & :active {
-    border: none;
-    outline: none;
-    box-shadow: none !important;
-  }
-}
-
-.popover {
-  transform: translateX(23px);
-}
-
-.popover-body {
-  background: #68217a !important;
-  color: white !important;
-
-  option:hover {
-    background: #34103d;
-    cursor: pointer;
-  }
-}
-
-.popover-arrow::after {
-  border-width: 0 !important;
-}
-
-.tooltip-arrow {
-  display: none !important;
 }
