@@ -82,6 +82,20 @@ class Thread {
         const cs = this.callStack;
 
         if (currLt.isFunction() && currLt.getfId() != 0) {
+            const prevLog = this.execution[position -1];
+            const prevLt = this.header.logTypeMap[prevLog.value];
+
+            console.log("");
+            console.log(`Function: ${currLt.name} Type: ${currLt.isAsync}`);
+
+            const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
+
+            if (calls.includes(currLt.name)) {
+                console.log("Continuing stack");
+            } else {
+                console.log("Switching Stack");
+            }
+
             cs.push(position);
         }
 
