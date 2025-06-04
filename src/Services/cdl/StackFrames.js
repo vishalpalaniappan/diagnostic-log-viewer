@@ -1,3 +1,5 @@
+import StackFrame from "./StackFrame";
+
 /**
  * This class is used to interact with the stack frames for the program.
  */
@@ -14,16 +16,42 @@ class StackFrames {
      * @return {Array}
      */
     getNewStackFrame () {
-        const newStack = [];
+        const newStack = new StackFrame();
         this.stacks.push(newStack);
         return newStack;
     }
 
+
+    /**
+     *
+     * @return {StackFrame}
+     */
+    getRootStackFrame () {
+        if (this.stacks.length > 0) {
+            return this.stacks[this.stacks.length -1];
+        } else {
+            return this.getNewStackFrame();
+        }
+    }
+
     /**
      * This function returns a stack frame given a UID.
+     * @param {String} uid
+     * @return {Object}
      */
-    getFrameWithUid () {
+    getFrameWithUid (uid) {
+        let _stack;
+        this.stacks.forEach((stack, index) => {
+            if (stack.hasUid(uid)) {
+                _stack = stack;
+            }
+        });
 
+        if (_stack) {
+            return _stack;
+        } else {
+            return this.getNewStackFrame();
+        }
     }
 }
 
