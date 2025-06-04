@@ -28,6 +28,30 @@ class StackFrame {
     hasUid (uid) {
         return this.uids.includes(uid);
     }
+
+
+    /**
+     *
+     * @param {String} uid
+     * @param {Number} position
+     * @param {String} statement
+     */
+    addLevel (uid, position, statement) {
+        this.addUid(uid);
+        this.stack.push({
+            uid: uid,
+            position: position,
+            statement: statement,
+        });
+    }
+
+
+    /**
+     *
+     */
+    removeLevel () {
+        this.stack.pop();
+    }
 }
 
 export default StackFrame;
