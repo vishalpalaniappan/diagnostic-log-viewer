@@ -1,4 +1,5 @@
 import CdlHeader from "./CdlHeader";
+import StackFrames from "./StackFrames";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -18,6 +19,8 @@ class Thread {
         this.globalVariables = {};
         this.threadId = threadId;
 
+        this.stackFrames = new StackFrames();
+
         this.inputs = [];
         this.outputs = [];
 
@@ -28,6 +31,8 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
+
+        console.log(this.stackFrames);
     }
 
     /**
@@ -50,6 +55,7 @@ class Thread {
                     this.header = new CdlHeader(JSON.parse(currLog.header));
                     break;
                 case "adli_execution":
+                    this._getStack(currLog);
                     this._addToCallStacks(currLog);
                     break;
                 case "adli_variable":
@@ -70,6 +76,35 @@ class Thread {
         } while (++position < logFile.length);
     }
 
+    /**
+     * Get the stack given the log.
+     * @param {Object} currLog
+     */
+    _getStack (currLog) {
+        const position = this.execution.length - 1;
+        const currLt = this.header.logTypeMap[currLog.value];
+
+        if (currLt.isFunction() && currLt.getfId() != 0) {
+            const prevLog = this.execution[position -1];
+            const prevLt = this.header.logTypeMap[prevLog.value];
+            const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
+
+            if (calls.includes(currLt.name)) {
+                console.log("Continuing stack");
+            } else {
+                console.log("Switching Stack with UID");
+                this.newCallStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
+            }
+        } else if (currLt.getfId() == 0) {
+            console.log("MODULE");
+            this.newCallStack = this.stackFrames.getRootStackFrame();
+        } else {
+            console.log("Getting stack with UID");
+            this.newCallStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
+        }
+
+        console.log(this.newCallStack);
+    }
 
     /**
      * Add to call stack while processing execution log.
@@ -82,21 +117,8 @@ class Thread {
         const cs = this.callStack;
 
         if (currLt.isFunction() && currLt.getfId() != 0) {
-            const prevLog = this.execution[position -1];
-            const prevLt = this.header.logTypeMap[prevLog.value];
-
-            console.log("");
-            console.log(`Function: ${currLt.name} Type: ${currLt.isAsync}`);
-
-            const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
-
-            if (calls.includes(currLt.name)) {
-                console.log("Continuing stack");
-            } else {
-                console.log("Switching Stack");
-            }
-
             cs.push(position);
+            this.newCallStack.addLevel(currLog.scope_uid, position, currLt.statement);
         }
 
         while (cs.length > 0) {
@@ -105,6 +127,7 @@ class Thread {
                 break;
             }
             cs.pop();
+            // this.newCallStack.removeLevel();
         }
 
         this.callStacks[position] = cs.map((position, index) => {
