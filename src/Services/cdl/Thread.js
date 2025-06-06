@@ -1,4 +1,5 @@
 import CdlHeader from "./CdlHeader";
+import StackFrames from "./StackFrames";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -14,9 +15,11 @@ class Thread {
         this.header = {};
         this.execution = [];
         this.callStacks = {};
-        this.callStack = [];
         this.globalVariables = {};
         this.threadId = threadId;
+
+        this.stackFrames = new StackFrames();
+        this.callStack = this.stackFrames.rootFrame;
 
         this.inputs = [];
         this.outputs = [];
@@ -28,6 +31,8 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
+
+        console.log(this.stackFrames);
     }
 
     /**
@@ -50,6 +55,7 @@ class Thread {
                     this.header = new CdlHeader(JSON.parse(currLog.header));
                     break;
                 case "adli_execution":
+                    this._getStack(currLog);
                     this._addToCallStacks(currLog);
                     break;
                 case "adli_variable":
@@ -70,33 +76,84 @@ class Thread {
         } while (++position < logFile.length);
     }
 
+    /**
+     * Get the stack given the log.
+     * @param {Object} currLog
+     */
+    _getStack (currLog) {
+        const position = this.execution.length - 1;
+        const currLt = this.header.logTypeMap[currLog.value];
+
+        if (currLt.isFunction() && currLt.getfId() != 0 && position > 1) {
+            const prevPosition = this._getPreviousPosition(position);
+            const prevLog = this.execution[prevPosition];
+            const prevLt = this.header.logTypeMap[prevLog.value];
+            const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
+
+            // Check if this is a continuation of the current stack
+            if (calls.includes(currLt.name)) {
+                this.callStack.addLevel(
+                    currLog.scope_uid, position, currLt.statement, currLt.isAsync
+                );
+            } else {
+                // Switch to existing frame for this UID
+                this.callStack = this.stackFrames.getFrameWithUid(
+                    currLog.scope_uid, currLt.isAsync
+                );
+            }
+        } else if (this.callStack.type === "async") {
+            // For async stacks, get the appropriate frame
+            this.callStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
+        } else {
+            // Default to root frame
+            this.callStack = this.stackFrames.getRootStackFrame();
+        }
+    }
 
     /**
      * Add to call stack while processing execution log.
-     * @param {CdlLogLine} currLog
-     * @param {Number} position
+     * @param {Object} log
      */
-    _addToCallStacks (currLog) {
+    _addToCallStacks (log) {
         const position = this.execution.length - 1;
-        const currLt = this.header.logTypeMap[currLog.value];
+        const currLt = this.header.logTypeMap[log.value];
         const cs = this.callStack;
 
-        if (currLt.isFunction() && currLt.getfId() != 0) {
-            cs.push(position);
+        // Remove the last executed position because it will be
+        // replaced with the current position.
+        if (cs.stack.length > 0) {
+            cs.stack.pop();
         }
 
-        while (cs.length > 0) {
-            const currFunctionPosition = cs[cs.length - 1];
+        // Moved down the stack until you find the parent function.
+        while (cs.stack.length > 0) {
+            const currFunctionPosition = cs.stack[cs.stack.length - 1].position;
             if (this.execution[currFunctionPosition].value === currLt.getfId()) {
                 break;
             }
-            cs.pop();
+            cs.stack.pop();
         }
 
-        this.callStacks[position] = cs.map((position, index) => {
-            return this._getPreviousPosition(position);
+        // For async stacks, we need to append the root stack which started the
+        // event loop to it.
+        const rootStack = this.stackFrames.rootFrame.stack;
+        const stack = (cs.type === "async")?rootStack.concat(cs.stack):cs.stack;
+
+        // Convert the stacks to a list of positions
+        this.callStacks[position] = stack.map((stackLevel, index) => {
+            return this._getPreviousPosition(stackLevel.position);
         });
         this.callStacks[position].push(position);
+
+        // Add the last executed position to the stack frame instance. This is
+        // done because when dealing with async stacks, we need to append the
+        // latest root stack which started the event loop.
+
+        // TODO: When converting the stack instance to a list of positions,
+        // we get the previous position, so I increment the position by one,
+        // this results in the correct position when we get the previous
+        // position. This is temporary, here is a much better way to do this.
+        cs.addLevel(log.scope_uid, position + 1, currLt.statement, currLt.isAsync);
     }
 
     /**
@@ -176,7 +233,7 @@ class Thread {
         const globalVars = {};
         const tempVars = {};
         const startLog = this.execution[position];
-        const funcId = this.header.logTypeMap[startLog.value].getfId();
+        const funcId = startLog.scope_uid;
 
         let currPosition = 0;
         do {
@@ -184,11 +241,11 @@ class Thread {
 
             if (currLog?.type && currLog.type == "adli_variable") {
                 const variable = this.header.variableMap[currLog.varid];
-                const varFuncId = this.header.logTypeMap[variable.logType].getfId();
+                const varFuncId = currLog.scope_uid;
 
                 if (variable.isTemp) {
                     tempVars[variable.name] = currLog.value;
-                } else if ((varFuncId == 0 || variable.isGlobal())) {
+                } else if ((varFuncId == "global" || variable.isGlobal())) {
                     this._updateVariable(variable, currLog.value, globalVars, tempVars);
                 } else if (varFuncId === funcId) {
                     this._updateVariable(variable, currLog.value, localVars, tempVars);
