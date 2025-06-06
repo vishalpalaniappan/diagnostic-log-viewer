@@ -37,14 +37,17 @@ class StackFrame {
     }
 
     /**
-     *
+     * Adds a new level to the stack with the specified parameters.
      * @param {String} uid
      * @param {Number} position
      * @param {String} statement
      * @param {Boolean} isAsync
      */
     addLevel (uid, position, statement, isAsync) {
-        this.addUid(uid);
+        if (!this.hasUid(uid)) {
+            this.addUid(uid);
+        }
+
         this.stack.push({
             uid: uid,
             position: position,
