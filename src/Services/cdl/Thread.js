@@ -15,11 +15,11 @@ class Thread {
         this.header = {};
         this.execution = [];
         this.callStacks = {};
-        this.callStack = [];
         this.globalVariables = {};
         this.threadId = threadId;
 
         this.stackFrames = new StackFrames();
+        this.callStack = this.stackFrames.rootFrame;
 
         this.inputs = [];
         this.outputs = [];
@@ -84,8 +84,9 @@ class Thread {
         const position = this.execution.length - 1;
         const currLt = this.header.logTypeMap[currLog.value];
 
-        if (currLt.isFunction() && currLt.getfId() != 0) {
-            const prevLog = this.execution[position -1];
+        if (currLt.isFunction() && currLt.getfId() != 0 && position > 1) {
+            const prevPosition = this._getPreviousPosition(position);
+            const prevLog = this.execution[prevPosition];
             const prevLt = this.header.logTypeMap[prevLog.value];
             const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
 
@@ -98,7 +99,7 @@ class Thread {
                     currLog.scope_uid, currLt.isAsync
                 );
             }
-        } else if (this.callStack && this.callStack.type === "async") {
+        } else if (this.callStack.type === "async") {
             this.callStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
         } else {
             this.callStack = this.stackFrames.getRootStackFrame();
