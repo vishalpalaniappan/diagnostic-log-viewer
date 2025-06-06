@@ -224,7 +224,7 @@ class Thread {
         const globalVars = {};
         const tempVars = {};
         const startLog = this.execution[position];
-        const funcId = this.header.logTypeMap[startLog.value].getfId();
+        const funcId = startLog.scope_uid;
 
         let currPosition = 0;
         do {
@@ -232,11 +232,11 @@ class Thread {
 
             if (currLog?.type && currLog.type == "adli_variable") {
                 const variable = this.header.variableMap[currLog.varid];
-                const varFuncId = this.header.logTypeMap[variable.logType].getfId();
+                const varFuncId = currLog.scope_uid;
 
                 if (variable.isTemp) {
                     tempVars[variable.name] = currLog.value;
-                } else if ((varFuncId == 0 || variable.isGlobal())) {
+                } else if ((varFuncId == "GLOBAL" || variable.isGlobal())) {
                     this._updateVariable(variable, currLog.value, globalVars, tempVars);
                 } else if (varFuncId === funcId) {
                     this._updateVariable(variable, currLog.value, localVars, tempVars);
