@@ -107,14 +107,20 @@ class Thread {
 
     /**
      * Add to call stack while processing execution log.
-     * @param {CdlLogLine} currLog
-     * @param {Number} position
+     * @param {Object} log
      */
-    _addToCallStacks (currLog) {
+    _addToCallStacks (log) {
         const position = this.execution.length - 1;
-        const currLt = this.header.logTypeMap[currLog.value];
+        const currLt = this.header.logTypeMap[log.value];
         const cs = this.newCallStack;
 
+        // Remove the last executed position because it will be
+        // replaced the current position.
+        if (cs.stack.length > 0) {
+            cs.stack.pop();
+        }
+
+        // Moved down the stack until you find the parent function.
         while (cs.stack.length > 0) {
             const currFunctionPosition = cs.stack[cs.stack.length - 1].position;
             if (this.execution[currFunctionPosition].value === currLt.getfId()) {
@@ -123,10 +129,22 @@ class Thread {
             cs.stack.pop();
         }
 
-        this.callStacks[position] = cs.stack.map((stackLevel, index) => {
+        // For async stacks, we need to append the root stack to it
+        const rootStack = this.stackFrames.rootFrame.stack;
+        const stack = (cs.type === "async")?rootStack.concat(cs.stack):cs.stack;
+
+        // Convert the stacks to a list of positions
+        this.callStacks[position] = stack.map((stackLevel, index) => {
             return this._getPreviousPosition(stackLevel.position);
         });
         this.callStacks[position].push(position);
+
+        // Add the last executed position to the stack.
+        // This is done because when dealing with async stacks, we need to
+        // append the latest root stack to it.
+        // FIX ME: Position is incremented by one because we get the previous
+        // position when assembling the stack.
+        cs.addLevel(log.scope_uid, position + 1, currLt.statement, currLt.isAsync);
     }
 
     /**
