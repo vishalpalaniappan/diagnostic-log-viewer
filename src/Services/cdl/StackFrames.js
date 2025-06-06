@@ -14,24 +14,31 @@ class StackFrames {
 
     /**
      * This function gets a new stack frame.
+     * @param {String} uid
      * @return {Array}
      */
-    getNewStackFrame () {
+    getNewStackFrame (uid) {
         const newStack = new StackFrame("sync");
         this.stacks.push(newStack);
+        if (uid) {
+            newStack.uids.push(uid);
+        }
         return newStack;
     }
 
     /**
      * This function gets a new stack frame.
+     * @param {String} uid
      * @return {Array}
      */
-    getNewStacAsyncFrame () {
+    getNewAsyncStackFrame (uid) {
         const newStack = new StackFrame("async");
         this.stacks.push(newStack);
+        if (uid) {
+            newStack.uids.push(uid);
+        }
         return newStack;
     }
-
 
     /**
      *
@@ -44,9 +51,10 @@ class StackFrames {
     /**
      * This function returns a stack frame given a UID.
      * @param {String} uid
+     * @param {Boolean} isAsync
      * @return {Object}
      */
-    getFrameWithUid (uid) {
+    getFrameWithUid (uid, isAsync) {
         let _stack;
         this.stacks.forEach((stack, index) => {
             if (stack.hasUid(uid)) {
@@ -57,7 +65,11 @@ class StackFrames {
         if (_stack) {
             return _stack;
         } else {
-            return this.getNewStackFrame();
+            if (isAsync) {
+                return this.getNewAsyncStackFrame(uid);
+            } else {
+                return this.getNewStackFrame(uid);
+            }
         }
     }
 }

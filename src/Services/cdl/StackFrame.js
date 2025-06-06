@@ -6,11 +6,16 @@ class StackFrame {
     /**
      * Initializes the stack array.
      * @param {String} type
+     * @param {String} uid
      */
-    constructor (type) {
+    constructor (type, uid) {
         this.stack = [];
         this.uids = [];
         this.type = type;
+
+        if (uid) {
+            this.uids.push(uid);
+        }
     }
 
     /**

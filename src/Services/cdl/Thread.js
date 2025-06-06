@@ -94,7 +94,9 @@ class Thread {
                     currLog.scope_uid, position, currLt.statement, currLt.isAsync
                 );
             } else {
-                this.newCallStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
+                this.newCallStack = this.stackFrames.getFrameWithUid(
+                    currLog.scope_uid, currLt.isAsync
+                );
             }
         } else if (currLt.getfId() == 0) {
             this.newCallStack = this.stackFrames.getRootStackFrame();
