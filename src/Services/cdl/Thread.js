@@ -245,7 +245,7 @@ class Thread {
 
                 if (variable.isTemp) {
                     tempVars[variable.name] = currLog.value;
-                } else if ((varFuncId == "GLOBAL" || variable.isGlobal())) {
+                } else if ((varFuncId == "global" || variable.isGlobal())) {
                     this._updateVariable(variable, currLog.value, globalVars, tempVars);
                 } else if (varFuncId === funcId) {
                     this._updateVariable(variable, currLog.value, localVars, tempVars);
