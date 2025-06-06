@@ -57,7 +57,7 @@ class StackFrame {
     }
 
     /**
-     *
+     * Removes the most recent level from the stack.
      */
     removeLevel () {
         this.stack.pop();
