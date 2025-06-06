@@ -53,15 +53,10 @@ class StackFrames {
      * This function returns a stack frame given a UID.
      * @param {String} uid
      * @param {Boolean} isAsync
-     * @return {Object}
+     * @return {StackFrame}
      */
     getFrameWithUid (uid, isAsync) {
-        let _stack;
-        this.stacks.forEach((stack, index) => {
-            if (stack.hasUid(uid)) {
-                _stack = stack;
-            }
-        });
+        const _stack = this.stacks.find((stack) => stack.hasUid(uid));
 
         if (_stack) {
             return _stack;
