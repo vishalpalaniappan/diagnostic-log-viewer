@@ -90,18 +90,18 @@ class Thread {
             const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
 
             if (calls.includes(currLt.name)) {
-                this.newCallStack.addLevel(
+                this.callStack.addLevel(
                     currLog.scope_uid, position, currLt.statement, currLt.isAsync
                 );
             } else {
-                this.newCallStack = this.stackFrames.getFrameWithUid(
+                this.callStack = this.stackFrames.getFrameWithUid(
                     currLog.scope_uid, currLt.isAsync
                 );
             }
-        } else if (currLt.getfId() == 0) {
-            this.newCallStack = this.stackFrames.getRootStackFrame();
+        } else if (this.callStack && this.callStack.type === "async") {
+            this.callStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
         } else {
-            this.newCallStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
+            this.callStack = this.stackFrames.getRootStackFrame();
         }
     }
 
@@ -112,10 +112,10 @@ class Thread {
     _addToCallStacks (log) {
         const position = this.execution.length - 1;
         const currLt = this.header.logTypeMap[log.value];
-        const cs = this.newCallStack;
+        const cs = this.callStack;
 
         // Remove the last executed position because it will be
-        // replaced the current position.
+        // replaced with the current position.
         if (cs.stack.length > 0) {
             cs.stack.pop();
         }
@@ -139,11 +139,9 @@ class Thread {
         });
         this.callStacks[position].push(position);
 
-        // Add the last executed position to the stack.
-        // This is done because when dealing with async stacks, we need to
-        // append the latest root stack to it.
-        // FIX ME: Position is incremented by one because we get the previous
-        // position when assembling the stack.
+        // Add the last executed position to the stack frame instance. This is
+        // done because when dealing with async stacks, we need to append the
+        // latest root stack to it.
         cs.addLevel(log.scope_uid, position + 1, currLt.statement, currLt.isAsync);
     }
 
