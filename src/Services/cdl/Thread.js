@@ -90,18 +90,22 @@ class Thread {
             const prevLt = this.header.logTypeMap[prevLog.value];
             const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
 
+            // Check if this is a continuation of the current stack
             if (calls.includes(currLt.name)) {
                 this.callStack.addLevel(
                     currLog.scope_uid, position, currLt.statement, currLt.isAsync
                 );
             } else {
+                // Switch to existing frame for this UID
                 this.callStack = this.stackFrames.getFrameWithUid(
                     currLog.scope_uid, currLt.isAsync
                 );
             }
         } else if (this.callStack.type === "async") {
+            // For async stacks, get the appropriate frame
             this.callStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
         } else {
+            // Default to root frame
             this.callStack = this.stackFrames.getRootStackFrame();
         }
     }
@@ -130,7 +134,8 @@ class Thread {
             cs.stack.pop();
         }
 
-        // For async stacks, we need to append the root stack to it
+        // For async stacks, we need to append the root stack which started the
+        // event loop to it.
         const rootStack = this.stackFrames.rootFrame.stack;
         const stack = (cs.type === "async")?rootStack.concat(cs.stack):cs.stack;
 
@@ -142,7 +147,7 @@ class Thread {
 
         // Add the last executed position to the stack frame instance. This is
         // done because when dealing with async stacks, we need to append the
-        // latest root stack to it.
+        // latest root stack which started the event loop.
         cs.addLevel(log.scope_uid, position + 1, currLt.statement, currLt.isAsync);
     }
 
