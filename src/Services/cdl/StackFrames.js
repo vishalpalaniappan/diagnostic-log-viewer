@@ -19,6 +19,7 @@ class StackFrames {
      */
     getNewStackFrame (uid) {
         const newStack = new StackFrame("sync");
+        this.rootFrame = newStack;
         this.stacks.push(newStack);
         if (uid) {
             newStack.uids.push(uid);
@@ -64,12 +65,10 @@ class StackFrames {
 
         if (_stack) {
             return _stack;
+        } else if (isAsync) {
+            return this.getNewAsyncStackFrame(uid);
         } else {
-            if (isAsync) {
-                return this.getNewAsyncStackFrame(uid);
-            } else {
-                return this.getNewStackFrame(uid);
-            }
+            return this.getNewStackFrame(uid);
         }
     }
 }
