@@ -65,7 +65,9 @@ class StackFrames {
 
         if (_stack) {
             return _stack;
-        } else if (isAsync) {
+        }
+
+        if (isAsync) {
             return this.getNewAsyncStackFrame(uid);
         } else {
             return this.getNewStackFrame(uid);
