@@ -9,6 +9,7 @@ class StackFrames {
      */
     constructor () {
         this.stacks = [];
+        this.rootFrame = new StackFrame("root");
     }
 
     /**
@@ -16,7 +17,17 @@ class StackFrames {
      * @return {Array}
      */
     getNewStackFrame () {
-        const newStack = new StackFrame();
+        const newStack = new StackFrame("sync");
+        this.stacks.push(newStack);
+        return newStack;
+    }
+
+    /**
+     * This function gets a new stack frame.
+     * @return {Array}
+     */
+    getNewStacAsyncFrame () {
+        const newStack = new StackFrame("async");
         this.stacks.push(newStack);
         return newStack;
     }
@@ -27,11 +38,7 @@ class StackFrames {
      * @return {StackFrame}
      */
     getRootStackFrame () {
-        if (this.stacks.length > 0) {
-            return this.stacks[this.stacks.length -1];
-        } else {
-            return this.getNewStackFrame();
-        }
+        return this.rootFrame;
     }
 
     /**

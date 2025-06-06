@@ -90,20 +90,17 @@ class Thread {
             const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
 
             if (calls.includes(currLt.name)) {
-                console.log("Continuing stack");
+                this.newCallStack.addLevel(
+                    currLog.scope_uid, position, currLt.statement, currLt.isAsync
+                );
             } else {
-                console.log("Switching Stack with UID");
                 this.newCallStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
             }
         } else if (currLt.getfId() == 0) {
-            console.log("MODULE");
             this.newCallStack = this.stackFrames.getRootStackFrame();
         } else {
-            console.log("Getting stack with UID");
             this.newCallStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
         }
-
-        console.log(this.newCallStack);
     }
 
     /**
@@ -114,24 +111,18 @@ class Thread {
     _addToCallStacks (currLog) {
         const position = this.execution.length - 1;
         const currLt = this.header.logTypeMap[currLog.value];
-        const cs = this.callStack;
+        const cs = this.newCallStack;
 
-        if (currLt.isFunction() && currLt.getfId() != 0) {
-            cs.push(position);
-            this.newCallStack.addLevel(currLog.scope_uid, position, currLt.statement);
-        }
-
-        while (cs.length > 0) {
-            const currFunctionPosition = cs[cs.length - 1];
+        while (cs.stack.length > 0) {
+            const currFunctionPosition = cs.stack[cs.stack.length - 1].position;
             if (this.execution[currFunctionPosition].value === currLt.getfId()) {
                 break;
             }
-            cs.pop();
-            // this.newCallStack.removeLevel();
+            cs.stack.pop();
         }
 
-        this.callStacks[position] = cs.map((position, index) => {
-            return this._getPreviousPosition(position);
+        this.callStacks[position] = cs.stack.map((stackLevel, index) => {
+            return this._getPreviousPosition(stackLevel.position);
         });
         this.callStacks[position].push(position);
     }

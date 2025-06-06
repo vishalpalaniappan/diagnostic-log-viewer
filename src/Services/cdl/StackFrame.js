@@ -5,10 +5,12 @@
 class StackFrame {
     /**
      * Initializes the stack array.
+     * @param {String} type
      */
-    constructor () {
+    constructor (type) {
         this.stack = [];
         this.uids = [];
+        this.type = type;
     }
 
     /**
@@ -29,22 +31,22 @@ class StackFrame {
         return this.uids.includes(uid);
     }
 
-
     /**
      *
      * @param {String} uid
      * @param {Number} position
      * @param {String} statement
+     * @param {Boolean} isAsync
      */
-    addLevel (uid, position, statement) {
+    addLevel (uid, position, statement, isAsync) {
         this.addUid(uid);
         this.stack.push({
             uid: uid,
             position: position,
             statement: statement,
+            isAsync: isAsync,
         });
     }
-
 
     /**
      *
