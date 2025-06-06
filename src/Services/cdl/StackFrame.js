@@ -1,6 +1,6 @@
 
 /**
- * This class is store a stack frame.
+ * This class is used to store a stack frame.
  */
 class StackFrame {
     /**

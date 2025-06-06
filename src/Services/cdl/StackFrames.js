@@ -1,7 +1,8 @@
 import StackFrame from "./StackFrame";
 
 /**
- * This class is used to interact with the stack frames for the program.
+ * This class is used to manage the stack frames extracted
+ * during the programs execution.
  */
 class StackFrames {
     /**
@@ -28,7 +29,7 @@ class StackFrames {
     }
 
     /**
-     * This function gets a new stack frame.
+     * This function gets a new async stack frame.
      * @param {String} uid
      * @return {StackFrame}
      */
@@ -42,7 +43,7 @@ class StackFrames {
     }
 
     /**
-     *
+     * This function returns the root stack frame.
      * @return {StackFrame}
      */
     getRootStackFrame () {
@@ -62,6 +63,8 @@ class StackFrames {
             return _stack;
         }
 
+        // No stack was found, so create a new stack and initialize
+        // the UID list with the UID.
         if (isAsync) {
             return this.getNewAsyncStackFrame(uid);
         } else {
