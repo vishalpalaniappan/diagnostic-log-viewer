@@ -148,6 +148,11 @@ class Thread {
         // Add the last executed position to the stack frame instance. This is
         // done because when dealing with async stacks, we need to append the
         // latest root stack which started the event loop.
+
+        // TODO: When converting the stack instance to a list of positions,
+        // we get the previous position, so I increment the position by one,
+        // this results in the correct position when we get the previous
+        // position. This is temporary, here is a much better way to do this.
         cs.addLevel(log.scope_uid, position + 1, currLt.statement, currLt.isAsync);
     }
 
