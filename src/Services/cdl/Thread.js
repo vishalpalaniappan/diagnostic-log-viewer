@@ -3,7 +3,7 @@ import StackFrames from "./StackFrames";
 
 /**
  * This class processes threads execution and exposes functions to
- * interact with the log file given a position.
+ * interact with the thread given a position.
  */
 class Thread {
     /**
