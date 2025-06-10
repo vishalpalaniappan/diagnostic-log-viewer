@@ -103,8 +103,8 @@ class Thread {
 
             while (position > 0) {
                 // Move back through execution until stack position is found
-                const currLog = this.execution[position];
-                if (currLog?.type === "adli_execution" && currLog.value === ltInfo.id) {
+                const execLog = this.execution[position];
+                if (execLog?.type === "adli_execution" && execLog.value === ltInfo.id) {
                     this.callStacks[this.execution.length - 1].push(position);
                     break;
                 }
