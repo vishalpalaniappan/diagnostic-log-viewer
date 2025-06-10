@@ -97,7 +97,7 @@ class Thread {
 
             const ltInfo = this.header.getLtFromInjectedLineno(level.filename, level.lineno);
             if (ltInfo === null) {
-                console.error(`Error in position ${index} of stack ${currLog.stack}`);
+                console.error(`Failed to find log type info for ${level.filename}:${level.lineno} at stack position ${index}`);
                 continue;
             }
 
