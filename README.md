@@ -51,8 +51,8 @@ You can use GitHub issues to [report a bug][bug-report] or [request a feature][f
 [bug-report]: https://github.com/vishalpalaniappan/diagnostic-log-viewer/issues
 [feature-req]: https://github.com/vishalpalaniappan/diagnostic-log-viewer/issues
 [yscope-previews]: https://github.com/y-scope/yscope-previews/blob/main/clp-s-s3/scripts/compress.py
-[demo-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/adli_error_kv_ir.clp.zst
-[demo-url-multi-thread]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/stack_frame_management.clp.zst
+[demo-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/adli_w_error_20250610.clp.zst
+[demo-url-multi-thread]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/threads_w_async.clp.zst
 [adli-url]: https://github.com/vishalpalaniappan/asp-adli-python
 [huffman-link]: https://github.com/vancanhuit/simple-data-compression
 [adli-system]: https://github.com/vishalpalaniappan/asp-adli-python/blob/main/adli_system.py
