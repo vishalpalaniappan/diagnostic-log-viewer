@@ -52,7 +52,7 @@ class Debugger {
         this.masterList = [];
 
         const headerLog = JSON.parse(logFile[0][0]);
-        const headerInfo = JSON.parse(headerLog["user-generated"]["header"]);
+        const headerInfo = headerLog["user-generated"]["header"];
         this.header = new CdlHeader(headerInfo);
         this.firstThread = null;
 

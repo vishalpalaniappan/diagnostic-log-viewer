@@ -31,8 +31,6 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
-
-        console.log(this.stackFrames);
     }
 
     /**
@@ -52,11 +50,10 @@ class Thread {
 
             switch (currLog.type) {
                 case "adli_header":
-                    this.header = new CdlHeader(JSON.parse(currLog.header));
+                    this.header = new CdlHeader(currLog.header);
                     break;
                 case "adli_execution":
-                    this._getStack(currLog);
-                    this._addToCallStacks(currLog);
+                    this._getStackPositions(currLog);
                     break;
                 case "adli_variable":
                     this._saveGlobalVariables(currLog);
@@ -76,84 +73,47 @@ class Thread {
         } while (++position < logFile.length);
     }
 
+
     /**
-     * Get the stack given the log.
+     * Convert the logged stack to a list of positions
      * @param {Object} currLog
      */
-    _getStack (currLog) {
-        const position = this.execution.length - 1;
-        const currLt = this.header.logTypeMap[currLog.value];
+    _getStackPositions (currLog) {
+        let position = this.execution.length - 1;
+        this.callStacks[position] = [];
 
-        if (currLt.isFunction() && currLt.getfId() != 0 && position > 1) {
-            const prevPosition = this._getPreviousPosition(position);
-            const prevLog = this.execution[prevPosition];
-            const prevLt = this.header.logTypeMap[prevLog.value];
-            const calls = (currLt.isAsync)?prevLt.awaitedCalls:prevLt.calls;
+        // Reverse the keys so that we can work backwards to find the positions
+        const keys = Object.keys(currLog.stack).reverse();
 
-            // Check if this is a continuation of the current stack
-            if (calls.includes(currLt.name)) {
-                this.callStack.addLevel(
-                    currLog.scope_uid, position, currLt.statement, currLt.isAsync
-                );
-            } else {
-                // Switch to existing frame for this UID
-                this.callStack = this.stackFrames.getFrameWithUid(
-                    currLog.scope_uid, currLt.isAsync
-                );
+        for (let index = 0; index < keys.length; index++) {
+            const key = keys[index];
+            const level = currLog.stack[key];
+
+            if (index == 0) {
+                // The top of the stack is the position being inspected
+                this.callStacks[this.execution.length - 1].push(position);
+                continue;
+            };
+
+            const ltInfo = this.header.getLtFromInjectedLineno(level.filename, level.lineno);
+            if (ltInfo === null) {
+                console.error(`Error in position ${index} of stack ${currLog.stack}`);
+                continue;
             }
-        } else if (this.callStack.type === "async") {
-            // For async stacks, get the appropriate frame
-            this.callStack = this.stackFrames.getFrameWithUid(currLog.scope_uid);
-        } else {
-            // Default to root frame
-            this.callStack = this.stackFrames.getRootStackFrame();
-        }
-    }
 
-    /**
-     * Add to call stack while processing execution log.
-     * @param {Object} log
-     */
-    _addToCallStacks (log) {
-        const position = this.execution.length - 1;
-        const currLt = this.header.logTypeMap[log.value];
-        const cs = this.callStack;
+            while (position > 0) {
+                // Move back through execution until stack position is found
+                const currLog = this.execution[position];
+                if (currLog?.type === "adli_execution" && currLog.value === ltInfo.id) {
+                    this.callStacks[this.execution.length - 1].push(position);
+                    break;
+                }
+                position--;
+            };
+        };
 
-        // Remove the last executed position because it will be
-        // replaced with the current position.
-        if (cs.stack.length > 0) {
-            cs.stack.pop();
-        }
-
-        // Moved down the stack until you find the parent function.
-        while (cs.stack.length > 0) {
-            const currFunctionPosition = cs.stack[cs.stack.length - 1].position;
-            if (this.execution[currFunctionPosition].value === currLt.getfId()) {
-                break;
-            }
-            cs.stack.pop();
-        }
-
-        // For async stacks, we need to append the root stack which started the
-        // event loop to it.
-        const rootStack = this.stackFrames.rootFrame.stack;
-        const stack = (cs.type === "async")?rootStack.concat(cs.stack):cs.stack;
-
-        // Convert the stacks to a list of positions
-        this.callStacks[position] = stack.map((stackLevel, index) => {
-            return this._getPreviousPosition(stackLevel.position);
-        });
-        this.callStacks[position].push(position);
-
-        // Add the last executed position to the stack frame instance. This is
-        // done because when dealing with async stacks, we need to append the
-        // latest root stack which started the event loop.
-
-        // TODO: When converting the stack instance to a list of positions,
-        // we get the previous position, so I increment the position by one,
-        // this results in the correct position when we get the previous
-        // position. This is temporary, here is a much better way to do this.
-        cs.addLevel(log.scope_uid, position + 1, currLt.statement, currLt.isAsync);
+        // Reverse the call stack back to the correct position
+        this.callStacks[this.execution.length - 1].reverse();
     }
 
     /**
