@@ -49,6 +49,24 @@ class CdlHeader {
     }
 
     /**
+     * Get the logtype from the runtime injected file.
+     * @param {String} filename
+     * @param {Number} lineNumber
+     * @return {Object|null}
+     */
+    getLtFromInjectedLineno (filename, lineNumber) {
+        for (const key in this.logTypeMap) {
+            if (key) {
+                const ltInfo = this.logTypeMap[key];
+                if (filename == ltInfo.file && lineNumber == ltInfo.injectedLineno) {
+                    return ltInfo;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the logtype given the filename and line number if it exists.
      * @param {String} fileName
      * @param {Number} lineNumber
