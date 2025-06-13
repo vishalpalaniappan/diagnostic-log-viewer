@@ -120,6 +120,21 @@ class CdlHeader {
         });
         return sourceTree;
     }
+
+    /**
+     * Given a variable name, it checks the var map to see if
+     * the variable name is included.
+     * @param {String} name
+     * @return {Boolean}
+     */
+    isVariableMapped (name) {
+        for (const map in this.variableMap) {
+            if (map && this.variableMap[map].name === name) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 export default CdlHeader;

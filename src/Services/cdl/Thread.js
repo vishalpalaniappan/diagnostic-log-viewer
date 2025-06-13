@@ -1,3 +1,4 @@
+import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import CdlHeader from "./CdlHeader";
 import StackFrames from "./StackFrames";
 
@@ -24,6 +25,8 @@ class Thread {
         this.inputs = [];
         this.outputs = [];
 
+        this.varTrees = [];
+
         this._processLog(logFile);
 
         // Used to go to the end of the file
@@ -31,6 +34,8 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
+
+        console.log(this.traces);
     }
 
     /**
@@ -255,6 +260,7 @@ class Thread {
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
         const csInfo = [];
+        this.varTrees = [];
         cs.forEach((position, index) => {
             if (position) {
                 const positionData = this.execution[position];
@@ -274,6 +280,16 @@ class Thread {
                 });
             }
         });
+
+        this.getVariableTrace(cs[cs.length - 1]);
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.VAR_TREE,
+            args: {
+                tree: this.varTrees,
+            },
+        });
+
         return csInfo;
     }
 
@@ -324,6 +340,94 @@ class Thread {
                 return position;
             }
         } while (++position < this.execution.length);
+    }
+
+
+    /**
+     * @param {Number} position
+     */
+    getVariableTrace (position) {
+        const positionData = this.execution[position];
+        const currLt = this.header.logTypeMap[positionData.value];
+
+        if (currLt.vars.length > 0 && currLt.deps.length > 0) {
+            const obj = {
+                ltInfo: currLt,
+                varInfo: null,
+                varName: currLt.vars[0],
+                position: position,
+            };
+            for (const dep of currLt.deps) {
+                this.getTrace(position, dep[0], [obj], positionData.scope_uid);
+            }
+        }
+    }
+
+    /**
+     * Get the trace
+     * @param {Number} position
+     * @param {String} targetName
+     * @param {Array} trace
+     * @param {String} uid
+     */
+    getTrace (position, targetName, trace, uid) {
+        do {
+            position--;
+            const positionData = this.execution[position];
+            if (positionData.type == "adli_variable" && positionData.scope_uid === uid) {
+                const varInfo = this.header.variableMap[positionData.varid];
+                const ltInfo = this.header.logTypeMap[varInfo.logType];
+
+                if (ltInfo.vars.length == 0) {
+                    continue;
+                }
+
+                const varName = ltInfo.vars[0][0];
+                if (varName == targetName) {
+                    trace.push({
+                        ltInfo: ltInfo,
+                        varInfo: varInfo,
+                        varName: varName,
+                        position: position,
+                    });
+
+                    if (ltInfo.deps.length === 0) {
+                        this.addTrace(trace);
+                    }
+
+                    for (const dep of ltInfo.deps) {
+                        this.getTrace(position, dep[0], [...trace], uid);
+                    }
+                    return;
+                }
+            }
+        } while (position > 0);
+
+        this.addTrace(trace);
+    }
+
+    /**
+     * Check if array is equal
+     * @param {Array} arr1
+     * @param {Array} arr2
+     * @return {Boolean}
+     */
+    checkArrayEquality (arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        return arr1.every((value, index) => value === arr2[index]);
+    }
+
+    /**
+     *
+     * @param {Array} trace
+     */
+    addTrace (trace) {
+        for (const t of this.varTrees) {
+            if (this.checkArrayEquality(t, trace)) {
+                return;
+            }
+        }
+        this.varTrees.push(trace);
     }
 }
 
