@@ -22,45 +22,45 @@ export const getNodesFromTrace = (trace) => {
     const edges = [];
     const nodes = [];
 
+    const edgeIds = [];
+
     // Validate input
     if (!Array.isArray(trace) || trace.length === 0) {
         return {nodes, edges};
     }
 
-    trace.forEach((node, index) => {
-        node.flowId = String(index) + node.adliExecutionId;
+    trace.forEach((branch, index) => {
+        branch.forEach((node, index) => {
+            node.flowId = String(index) + "-" + node.position;
 
-        // The initial position doesn't matter because we will
-        // be using other algorithms to layout the nodes.
-        const flowNode = {
-            id: node.flowId,
-            position: {x: 250, y: index * 200},
-            data: {label: node.programName},
-        };
-        flowNode.sourceNode = node;
-
-        if (index == 0) {
-            flowNode.type = "input";
-        }
-
-        if (index == trace.length - 1) {
-            flowNode.type = "output";
-        }
-
-        if (index > 0) {
-            const prevNode = trace[index - 1];
-            const edge = {
-                id: prevNode.flowId + "-" + node.flowId,
-                source: prevNode.flowId,
-                target: node.flowId,
-                animated: true,
-                markerEnd: marker,
-                style: arrowStyle,
+            // The initial position doesn't matter because we will
+            // be using other algorithms to layout the nodes.
+            const flowNode = {
+                id: node.flowId,
+                position: {x: 250, y: index * 200},
+                data: {label: node.varName},
             };
-            edges.push(edge);
-        }
+            flowNode.sourceNode = node;
+            nodes.push(flowNode);
 
-        nodes.push(flowNode);
+            if (index > 0) {
+                const prevNode = branch[index - 1];
+                const id = node.flowId + "-" + prevNode.flowId;
+
+                if (!edgeIds.includes(id)) {
+                    edgeIds.push(id);
+                    const edge = {
+                        id: node.flowId + "-" + prevNode.flowId,
+                        source: node.flowId,
+                        target: prevNode.flowId,
+                        animated: true,
+                        markerEnd: marker,
+                        style: arrowStyle,
+                    };
+                    edges.push(edge);
+                }
+            }
+        });
     });
 
     return {
