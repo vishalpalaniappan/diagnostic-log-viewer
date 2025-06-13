@@ -354,7 +354,7 @@ class Thread {
             const obj = {
                 ltInfo: currLt,
                 varInfo: null,
-                varName: currLt.vars[0][0],
+                varName: currLt.vars[0],
                 position: position,
             };
             for (const dep of currLt.deps) {
