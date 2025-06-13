@@ -12,7 +12,7 @@ export function RightSideContainer () {
     const accordian = useRef();
     const handle = useRef();
 
-    const ACCORDIAN_WIDTH = 700;
+    const ACCORDIAN_WIDTH = 400;
     const MIN_EDITOR_WIDTH = 400;
     const MIN_ACCORDIAN_WIDTH = 200;
     const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - MIN_EDITOR_WIDTH;

@@ -11,6 +11,7 @@ import {
 } from "@xyflow/react";
 import PropTypes from "prop-types";
 
+import VarTreeContext from "../../Providers/VarTreeContext.js";
 import {getLayoutedElements} from "./DagreLayout.js";
 import {getNodesFromTrace} from "./helper.js";
 
@@ -70,11 +71,18 @@ Flow.propTypes = {
 };
 
 export const TraceDiagram = ({traces}) => {
-    const [traceList, setTraceList] = useState();
+
+    const {varTree} = useContext(VarTreeContext);
+
+    useEffect(() => {
+        if (varTree) {
+            console.log(varTree);
+        }
+    }, [varTree]);
 
     return (
         <ReactFlowProvider>
-            <Flow trace={{}} />
+            <Flow trace={varTree} />
         </ReactFlowProvider>
     );
 };

@@ -1,3 +1,4 @@
+import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import CdlHeader from "./CdlHeader";
 import StackFrames from "./StackFrames";
 
@@ -24,7 +25,7 @@ class Thread {
         this.inputs = [];
         this.outputs = [];
 
-        this.traces = [];
+        this.varTrees = [];
 
         this._processLog(logFile);
 
@@ -259,7 +260,7 @@ class Thread {
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
         const csInfo = [];
-        this.traces = [];
+        this.varTrees = [];
         cs.forEach((position, index) => {
             if (position) {
                 const positionData = this.execution[position];
@@ -280,9 +281,14 @@ class Thread {
             }
         });
 
-
         this.getVariableTrace(cs[cs.length - 1]);
-        console.log(this.traces);
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.VAR_TREE,
+            args: {
+                tree: this.varTrees,
+            },
+        });
 
         return csInfo;
     }
@@ -345,8 +351,14 @@ class Thread {
         const currLt = this.header.logTypeMap[positionData.value];
 
         if (currLt.vars.length > 0 && currLt.deps.length > 0) {
+            const obj = {
+                ltInfo: currLt,
+                varInfo: null,
+                varName: currLt.vars[0],
+                position: position,
+            };
             for (const dep of currLt.deps) {
-                this.getTrace(position, dep[0], [currLt.statement], positionData.scope_uid);
+                this.getTrace(position, dep[0], [obj], positionData.scope_uid);
             }
         }
     }
@@ -372,7 +384,12 @@ class Thread {
 
                 const varName = ltInfo.vars[0][0];
                 if (varName == targetName) {
-                    trace.push(ltInfo.statement);
+                    trace.push({
+                        ltInfo: ltInfo,
+                        varInfo: varInfo,
+                        varName: varName,
+                        position: position,
+                    });
 
                     if (ltInfo.deps.length === 0) {
                         this.addTrace(trace);
@@ -395,7 +412,7 @@ class Thread {
      * @param {Array} arr2
      * @return {Boolean}
      */
-    checkArrayEquality(arr1, arr2) {
+    checkArrayEquality (arr1, arr2) {
         if (arr1.length !== arr2.length) return false;
         return arr1.every((value, index) => value === arr2[index]);
     }
@@ -405,12 +422,12 @@ class Thread {
      * @param {Array} trace
      */
     addTrace (trace) {
-        for (const t of this.traces) {
+        for (const t of this.varTrees) {
             if (this.checkArrayEquality(t, trace)) {
                 return;
             }
         }
-        this.traces.push(trace);
+        this.varTrees.push(trace);
     }
 }
 
