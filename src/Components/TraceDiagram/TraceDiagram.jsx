@@ -49,8 +49,6 @@ const Flow = ({trace}) => {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             colorMode={colorMode}
-            onNodeClick={onNodeClick}
-            onPaneClick={onPanelClick}
             fitView
         >
             <Controls />
