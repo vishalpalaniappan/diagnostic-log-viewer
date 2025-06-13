@@ -42,14 +42,6 @@ const Flow = ({trace}) => {
         }
     }, [trace]);
 
-    const onNodeClick = (e, node) => {
-        setActiveNode(node);
-    };
-
-    const onPanelClick = (e, node) => {
-        setActiveNode(node);
-    };
-
     return (
         <ReactFlow
             nodes={nodes}
