@@ -278,7 +278,6 @@ class Thread {
      */
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
-        console.log(cs);
         const csInfo = [];
         cs.forEach((stackInfo, index) => {
             if (stackInfo) {
