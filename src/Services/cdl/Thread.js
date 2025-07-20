@@ -1,5 +1,4 @@
 import CdlHeader from "./CdlHeader";
-import StackFrames from "./StackFrames";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -17,9 +16,6 @@ class Thread {
         this.callStacks = {};
         this.globalVariables = {};
         this.threadId = threadId;
-
-        this.stackFrames = new StackFrames();
-        this.callStack = this.stackFrames.rootFrame;
 
         this.inputs = [];
         this.outputs = [];
@@ -56,7 +52,6 @@ class Thread {
                     this._getStackPositions(currLog);
                     break;
                 case "adli_variable":
-                    this._saveGlobalVariables(currLog);
                     break;
                 case "adli_exception":
                     this.exception = currLog.value;
@@ -91,22 +86,42 @@ class Thread {
 
             if (index == 0) {
                 // The top of the stack is the position being inspected
-                this.callStacks[this.execution.length - 1].push(position);
+                this.callStacks[this.execution.length - 1].push({
+                    position: position,
+                    name: level.name,
+                });
                 continue;
             };
 
             const ltInfo = this.header.getLtFromInjectedLineno(level.filename, level.lineno);
             if (ltInfo === null) {
-                console.error(`Failed to find log type info for ${level.filename}:${level.lineno} at stack position ${index}`);
+                console.error(`Failed to find log type info for ${level.filename}:${level.lineno}\
+                     at stack position ${index}`);
                 continue;
             }
 
             while (position > 0) {
                 // Move back through execution until stack position is found
                 const execLog = this.execution[position];
+
                 if (execLog?.type === "adli_execution" && execLog.value === ltInfo.id) {
-                    this.callStacks[this.execution.length - 1].push(position);
-                    break;
+                    const currStack = this.callStacks[this.execution.length - 1];
+
+                    /* Since we are checking for the logtype id, we need to skip
+                    positions that we have already added to the stack. For
+                    example this can happen in statements like this:
+                    return list(filter(lambda x: x % digit == 0, primes)) where
+                    multiple stack positions can refer to the same logtype id.
+                    */
+
+                    const exists = currStack.some((level) => level.position === position);
+                    if (!exists) {
+                        currStack.push({
+                            position: position,
+                            name: level.name,
+                        });
+                        break;
+                    }
                 }
                 position--;
             };
@@ -114,19 +129,6 @@ class Thread {
 
         // Reverse the call stack back to the correct position
         this.callStacks[this.execution.length - 1].reverse();
-    }
-
-    /**
-     * Save global variables while processing the log file.
-     * @param {Object} currLog
-     */
-    _saveGlobalVariables (currLog) {
-        const _var = this.header.variableMap[currLog.varid];
-        const _varLt = this.header.logTypeMap[_var.logType];
-
-        if (_varLt.getfId() === 0) {
-            this.globalVariables[_var.name] = currLog.value;
-        }
     }
 
     /**
@@ -198,10 +200,16 @@ class Thread {
         let currPosition = 0;
         do {
             const currLog = this.execution[currPosition];
+            const varFuncId = currLog.scope_uid;
 
-            if (currLog?.type && currLog.type == "adli_variable") {
+            if (currLog?.type && currLog.type == "adli_local_vars" && varFuncId === funcId) {
+                for (const varName in currLog.locals) {
+                    if (varName && !varName.includes("adli")) {
+                        localVars[varName] = currLog.locals[varName];
+                    }
+                }
+            } else if (currLog?.type && currLog.type == "adli_variable") {
                 const variable = this.header.variableMap[currLog.varid];
-                const varFuncId = currLog.scope_uid;
 
                 if (variable.isTemp) {
                     tempVars[variable.name] = currLog.value;
@@ -213,7 +221,21 @@ class Thread {
             }
         } while (++currPosition <= position);
 
-        return [localVars, globalVars];
+        const _localVars = {};
+        startLog.locals.forEach((varName, index) => {
+            if (varName in localVars) {
+                _localVars[varName] = localVars[varName];
+            }
+        });
+
+        const _globalVars = {};
+        startLog.globals.forEach((varName, index) => {
+            if (varName in globalVars) {
+                _globalVars[varName] = globalVars[varName];
+            }
+        });
+
+        return [_localVars, _globalVars];
     }
 
     /**
@@ -255,17 +277,16 @@ class Thread {
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
         const csInfo = [];
-        cs.forEach((position, index) => {
-            if (position) {
+        cs.forEach((stackInfo, index) => {
+            if (stackInfo) {
+                const position = stackInfo.position;
                 const positionData = this.execution[position];
                 const currLt = this.header.logTypeMap[positionData.value];
-                const functionLt = this.header.logTypeMap[currLt.getfId()];
 
-                const fName = (currLt.getfId() === 0)?"<module>":functionLt.getFuncName();
                 const exception = (position === this.lastStatement)?this.exception:null;
                 csInfo.push({
                     threadId: this.threadId,
-                    functionName: fName,
+                    functionName: stackInfo.name,
                     filePath: currLt.getFilePath(),
                     fileName: currLt.getFileName(),
                     lineno: currLt.getLineNo(),
