@@ -210,7 +210,6 @@ class Thread {
                 }
             } else if (currLog?.type && currLog.type == "adli_variable") {
                 const variable = this.header.variableMap[currLog.varid];
-                const varFuncId = currLog.scope_uid;
 
                 if (variable.isTemp) {
                     tempVars[variable.name] = currLog.value;
@@ -235,7 +234,6 @@ class Thread {
                 _globalVars[varName] = globalVars[varName];
             }
         });
-
 
         return [_localVars, _globalVars];
     }
