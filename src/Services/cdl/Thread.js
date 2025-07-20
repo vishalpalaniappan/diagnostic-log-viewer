@@ -95,19 +95,33 @@ class Thread {
 
             const ltInfo = this.header.getLtFromInjectedLineno(level.filename, level.lineno);
             if (ltInfo === null) {
-                console.error(`Failed to find log type info for ${level.filename}:${level.lineno} at stack position ${index}`);
+                console.error(`Failed to find log type info for ${level.filename}:${level.lineno}\
+                     at stack position ${index}`);
                 continue;
             }
 
             while (position > 0) {
                 // Move back through execution until stack position is found
                 const execLog = this.execution[position];
+
                 if (execLog?.type === "adli_execution" && execLog.value === ltInfo.id) {
-                    this.callStacks[this.execution.length - 1].push({
-                        position: position,
-                        name: level.name,
-                    });
-                    break;
+                    const currStack = this.callStacks[this.execution.length - 1];
+
+                    /* Since we are checking for the logtype id, we need to skip
+                    positions that we have already added to the stack. For
+                    example this can happen in statements like this:
+                    return list(filter(lambda x: x % digit == 0, primes)) where
+                    multiple stack positions can refer to the same logtype id.
+                    */
+
+                    const exists = currStack.some((level) => level.position === position);
+                    if (!exists) {
+                        currStack.push({
+                            position: position,
+                            name: level.name,
+                        });
+                        break;
+                    }
                 }
                 position--;
             };
@@ -264,6 +278,7 @@ class Thread {
      */
     getCallStackAtPosition (position) {
         const cs = this.callStacks[position];
+        console.log(cs);
         const csInfo = [];
         cs.forEach((stackInfo, index) => {
             if (stackInfo) {
