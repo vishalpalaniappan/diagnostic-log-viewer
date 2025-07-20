@@ -270,9 +270,7 @@ class Thread {
                 const position = stackInfo.position;
                 const positionData = this.execution[position];
                 const currLt = this.header.logTypeMap[positionData.value];
-                const functionLt = this.header.logTypeMap[currLt.getfId()];
 
-                const fName = (currLt.getfId() === 0)?"<module>":functionLt.getFuncName();
                 const exception = (position === this.lastStatement)?this.exception:null;
                 csInfo.push({
                     threadId: this.threadId,
