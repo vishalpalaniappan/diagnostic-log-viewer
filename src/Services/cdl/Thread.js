@@ -22,8 +22,9 @@ class Thread {
         this.outputs = [];
 
         this.executionTree = {
-            tree: {},
-            lookup: {},
+            rawTree: {},
+            ltLookup: {},
+            ltTree: {},
         };
 
         this._processLog(logFile);
@@ -129,20 +130,30 @@ class Thread {
     _addToExecutionTree (position) {
         const positions = this.callStacks[position];
 
-        let currTreeNode = this.executionTree.tree;
+        let rawTreeNode = this.executionTree.rawTree;
+        let ltTreeNode = this.executionTree.ltTree;
 
         for (const pos of positions) {
             const positionData = this.execution[pos];
             const currLt = this.header.logTypeMap[positionData.value];
 
-            this.executionTree.lookup[pos] = currLt;
-
-            if (pos in currTreeNode) {
-                currTreeNode = currTreeNode[pos];
+            // Build the raw execution tree
+            if (pos in rawTreeNode) {
+                rawTreeNode = rawTreeNode[pos];
             } else {
-                currTreeNode[pos] = {};
-                currTreeNode = currTreeNode[pos];
+                rawTreeNode[pos] = {};
+                rawTreeNode = rawTreeNode[pos];
             }
+
+            // Build the lt execution tree
+            if (currLt.statement in ltTreeNode) {
+                ltTreeNode = ltTreeNode[currLt.statement];
+            } else {
+                ltTreeNode[currLt.statement] = {};
+                ltTreeNode = ltTreeNode[currLt.statement];
+            }
+
+            this.executionTree.ltLookup[currLt.id] = currLt;
         }
     }
 
