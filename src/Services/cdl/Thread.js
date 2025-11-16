@@ -149,7 +149,7 @@ class Thread {
             if (currLt.id in ltTreeNode) {
                 ltTreeNode = ltTreeNode[currLt.id];
             } else {
-                ltTreeNode[currLt.statement] = {};
+                ltTreeNode[currLt.id] = {};
                 ltTreeNode = ltTreeNode[currLt.id];
             }
 
