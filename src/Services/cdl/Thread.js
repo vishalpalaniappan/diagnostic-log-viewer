@@ -146,11 +146,11 @@ class Thread {
             }
 
             // Build the lt execution tree
-            if (currLt.statement in ltTreeNode) {
-                ltTreeNode = ltTreeNode[currLt.statement];
+            if (currLt.id in ltTreeNode) {
+                ltTreeNode = ltTreeNode[currLt.id];
             } else {
                 ltTreeNode[currLt.statement] = {};
-                ltTreeNode = ltTreeNode[currLt.statement];
+                ltTreeNode = ltTreeNode[currLt.id];
             }
 
             this.executionTree.ltLookup[currLt.id] = currLt;
