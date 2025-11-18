@@ -6,7 +6,7 @@ import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 import "./AbstractionContainer.scss";
 
 /**
- * Contains the abstraction accordian sections.
+ * Contains the abstraction information display.
  * @return {JSX.Element}
  */
 export function AbstractionContainer () {

@@ -7,7 +7,7 @@ import StackContext from "../../../Providers/StackContext";
 import "./AbstractionInfoContainer.scss";
 
 /**
- * Contains the variable stack container.
+ * Contains the abstraction info container.
  * @return {JSX.Element}
  */
 export function AbstractionInfoContainer () {
