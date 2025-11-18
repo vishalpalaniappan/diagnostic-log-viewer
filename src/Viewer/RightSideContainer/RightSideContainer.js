@@ -1,11 +1,6 @@
 import React, {useRef, useState} from "react";
 
-import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
-
 import {AbstractionContainer} from "../../Components/AbstractionContainer/AbstractionContainer";
-import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
-import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
-import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
 
 import "./RightSideContainer.scss";
 
