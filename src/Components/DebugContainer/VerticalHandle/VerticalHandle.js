@@ -2,9 +2,9 @@ import React, {useRef} from "react";
 
 import PropTypes from "prop-types";
 
-import "./VerticleHandle.scss";
+import "./VerticalHandle.scss";
 
-VerticleHandle.propTypes = {
+VerticalHandle.propTypes = {
     topDiv: PropTypes.object,
     bottomDiv: PropTypes.object,
 };
@@ -14,7 +14,7 @@ VerticleHandle.propTypes = {
  * It accepts two components which are resized when the handle is moved.
  * @return {JSX.Element}
  */
-export function VerticleHandle ({topDiv, bottomDiv}) {
+export function VerticalHandle ({topDiv, bottomDiv}) {
     const handleRef = useRef();
 
     const MIN_CONTAINER_HEIGHT = 25;

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 
 import { AbstractionInfoContainer } from "./AbstractionInfoContainer/AbstractionInfoContainer";
-import {VerticleHandle} from "./VerticleHandle/VerticleHandle";
+import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
 import "./AbstractionContainer.scss";
 

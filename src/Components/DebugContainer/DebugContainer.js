@@ -3,7 +3,7 @@ import React, {useEffect, useRef} from "react";
 import {BreakPointContainer} from "./BreakPointContainer/BreakPointContainer";
 import {CallStackContainer} from "./CallStackContainer/CallStackContainer";
 import {VariableStackContainer} from "./VariableStackContainer/VariableStackContainer";
-import {VerticleHandle} from "./VerticleHandle/VerticleHandle";
+import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
 import "./DebugContainer.scss";
 
@@ -37,12 +37,12 @@ export function DebugContainer () {
             <div className="section" ref={variableStackRef}>
                 <VariableStackContainer />
             </div>
-            <VerticleHandle topDiv={variableStackRef} bottomDiv={callStackRef}/>
+            <VerticalHandle topDiv={variableStackRef} bottomDiv={callStackRef}/>
             <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Call Stack</div>
             <div className="section" ref={callStackRef}>
                 <CallStackContainer />
             </div>
-            <VerticleHandle topDiv={callStackRef} bottomDiv={breakPointRef}/>
+            <VerticalHandle topDiv={callStackRef} bottomDiv={breakPointRef}/>
             <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Breakpoints</div>
             <div className="section" ref={breakPointRef}>
                 <BreakPointContainer />
