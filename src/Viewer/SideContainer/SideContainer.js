@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
 
@@ -17,31 +17,31 @@ export function SideContainer () {
 
     const accordian = useRef();
     const handle = useRef();
+    const downValueX = useRef();
 
     const SIDE_MENU_WIDTH = 50;
     const ACCORDIAN_WIDTH = 300;
     const MIN_EDITOR_WIDTH = 400;
     const MIN_ACCORDIAN_WIDTH = 200;
-    const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - SIDE_MENU_WIDTH - MIN_EDITOR_WIDTH;
 
-    let downValueX;
     const handleMouseDown = (e) => {
         e.preventDefault();
         e.stopPropagation();
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
         handle.current.classList.add("handle-active");
-        downValueX = e.clientX;
+        downValueX.current = e.clientX;
     };
 
     const handleMouseMove = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const delta = e.clientX - downValueX;
+        const delta = e.clientX - downValueX.current;
         const newWidth = accordian.current.getBoundingClientRect().width + delta;
+        const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - SIDE_MENU_WIDTH - MIN_EDITOR_WIDTH;
         if (newWidth > MIN_ACCORDIAN_WIDTH && newWidth < MAX_ACCORDIAN_WIDTH) {
             accordian.current.style.width = newWidth + "px";
-            downValueX = e.clientX;
+            downValueX.current = e.clientX;
         }
     };
 
@@ -52,6 +52,13 @@ export function SideContainer () {
         document.removeEventListener("mouseup", handleMouseUp);
         handle.current.classList.remove("handle-active");
     };
+
+    useEffect(() => {
+        return () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, []);
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
