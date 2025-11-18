@@ -1,9 +1,8 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 
 import ReactJsonView from "@microlink/react-json-view";
 
-import VariablesContext from "../../../Providers/VariablesContext";
-import GlobalVariablesContext from "../../../Providers/GlobalVariablesContext";
+import StackContext from "../../../Providers/StackContext";
 
 import "./AbstractionInfoContainer.scss";
 
@@ -12,8 +11,20 @@ import "./AbstractionInfoContainer.scss";
  * @return {JSX.Element}
  */
 export function AbstractionInfoContainer () {
-    const {localVariables} = useContext(VariablesContext);
-    const {globalVariables} = useContext(GlobalVariablesContext);
+    const {stacks} = useContext(StackContext);
+    const [abstractionInfo, setAbstractionInfo] = React.useState();
+
+    useEffect(() => {
+        if (stacks) {
+            Object.keys(stacks).forEach((threadId, value) => {
+                if (stacks[threadId].main) {
+                    const stack = stacks[threadId].stack;
+                    setAbstractionInfo(stack.currLtInfo);
+                    return;
+                }
+            });
+        }
+    }, [stacks]);
 
     const variableStackTheme = {
         base00: "#252526",
@@ -37,25 +48,14 @@ export function AbstractionInfoContainer () {
     return (
         <div className="abstractionInfoContainer w-100 h-100 ">
             <ReactJsonView
-                src={localVariables}
+                src={abstractionInfo}
                 theme={variableStackTheme}
                 collapsed={1}
-                name={"local"}
+                name={"Current Abstraction"}
                 groupArraysAfterLength={100}
                 sortKeys={true}
                 displayDataTypes={false}
-                quotesOnKeys={true}
-                collapseStringsAfterLength={30}>
-            </ReactJsonView>
-            <ReactJsonView
-                src={globalVariables}
-                theme={variableStackTheme}
-                collapsed={1}
-                name={"global"}
-                groupArraysAfterLength={100}
-                sortKeys={true}
-                displayDataTypes={false}
-                quotesOnKeys={true}
+                quotesOnKeys={false}
                 collapseStringsAfterLength={30}>
             </ReactJsonView>
         </div>
