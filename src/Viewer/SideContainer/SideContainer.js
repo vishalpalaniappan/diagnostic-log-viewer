@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
 
@@ -33,7 +33,7 @@ export function SideContainer () {
         downValueX.current = e.clientX;
     };
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
         const delta = e.clientX - downValueX.current;
@@ -43,22 +43,22 @@ export function SideContainer () {
             accordian.current.style.width = newWidth + "px";
             downValueX.current = e.clientX;
         }
-    };
+    }, []);
 
-    const handleMouseUp = (e) => {
+    const handleMouseUp = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
         handle.current.classList.remove("handle-active");
-    };
+    }, [handleMouseMove]);
 
     useEffect(() => {
         return () => {
             document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
         };
-    }, []);
+    }, [handleMouseMove, handleMouseUp]);
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
