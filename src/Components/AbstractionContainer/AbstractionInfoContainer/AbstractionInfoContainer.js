@@ -16,13 +16,13 @@ export function AbstractionInfoContainer () {
 
     useEffect(() => {
         if (stacks) {
-            Object.keys(stacks).forEach((threadId, value) => {
+            for (const threadId of Object.keys(stacks)) {
                 if (stacks[threadId].main) {
                     const stack = stacks[threadId].stack;
                     setAbstractionInfo(stack.currLtInfo);
-                    return;
+                    break;
                 }
-            });
+            };
         }
     }, [stacks]);
 
