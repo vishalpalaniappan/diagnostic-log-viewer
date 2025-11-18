@@ -2,6 +2,7 @@ import React from "react";
 
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
 import {FileViewer} from "./FileViewer/FileViewer";
+import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import {SideContainer} from "./SideContainer/SideContainer";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
 
@@ -22,6 +23,9 @@ export function Viewer () {
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
                     <FileViewer/>
+                </div>
+                <div className="d-flex h-100">
+                    <RightSideContainer/>
                 </div>
             </div>
             <div className="status-bar-container">
