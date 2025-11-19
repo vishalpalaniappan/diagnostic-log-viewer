@@ -1,7 +1,7 @@
 import React from "react";
 
+import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
-import {FileViewer} from "./FileViewer/FileViewer";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import {SideContainer} from "./SideContainer/SideContainer";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
@@ -22,7 +22,7 @@ export function Viewer () {
                     <SideContainer/>
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                    <FileViewer/>
+                    <CentralContainer />
                 </div>
                 <div className="d-flex h-100">
                     <RightSideContainer/>
