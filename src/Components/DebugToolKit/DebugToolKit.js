@@ -79,7 +79,7 @@ export function DebugToolKit ({}) {
     // Set initial position of container
     useEffect(() => {
         container.current.style.top = "100px";
-        container.current.style.left = document.body.clientWidth - 300 + "px";
+        container.current.style.left = document.body.clientWidth - 600 + "px";
     }, []);
 
     useEffect(() => {

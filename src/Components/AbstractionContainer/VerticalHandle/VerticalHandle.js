@@ -1,10 +1,10 @@
-import React, {useRef} from "react";
+import React, {useCallback, useEffect, useRef} from "react";
 
 import PropTypes from "prop-types";
 
-import "./VerticleHandle.scss";
+import "./VerticalHandle.scss";
 
-VerticleHandle.propTypes = {
+VerticalHandle.propTypes = {
     topDiv: PropTypes.object,
     bottomDiv: PropTypes.object,
 };
@@ -14,51 +14,56 @@ VerticleHandle.propTypes = {
  * It accepts two components which are resized when the handle is moved.
  * @return {JSX.Element}
  */
-export function VerticleHandle ({topDiv, bottomDiv}) {
+export function VerticalHandle ({topDiv, bottomDiv}) {
     const handleRef = useRef();
+    const downValueY = useRef();
+    const topHeight = useRef();
+    const bottomHeight = useRef();
 
     const MIN_CONTAINER_HEIGHT = 25;
 
-    // Initial values used to calculate delta on mouse move.
-    let downValueY;
-    let topHeight;
-    let bottomHeight;
-
-    const handleMouseDown = (e) => {
+    const handleMouseDown = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
 
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
 
-        downValueY = e.clientY;
-        topHeight = topDiv.current.getBoundingClientRect().height;
-        bottomHeight = bottomDiv.current.getBoundingClientRect().height;
+        downValueY.current = e.clientY;
+        topHeight.current = topDiv.current.getBoundingClientRect().height;
+        bottomHeight.current = bottomDiv.current.getBoundingClientRect().height;
 
         handleRef.current.classList.add("handle-active");
-    };
+    }, [handleMouseMove, handleMouseUp]);
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const delta = e.clientY - downValueY;
-        const newPreHeight = topHeight + delta;
-        const newPostHeight = bottomHeight - delta;
+        const delta = e.clientY - downValueY.current;
+        const newPreHeight = topHeight.current + delta;
+        const newPostHeight = bottomHeight.current - delta;
 
         if (newPreHeight > MIN_CONTAINER_HEIGHT && newPostHeight > MIN_CONTAINER_HEIGHT) {
             topDiv.current.style.height = newPreHeight + "px";
             bottomDiv.current.style.height = newPostHeight + "px";
         }
-    };
+    }, [topDiv, bottomDiv]);
 
-    const handleMouseUp = (e) => {
+    const handleMouseUp = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
         handleRef.current.classList.remove("handle-active");
-    };
+    }, [handleMouseMove]);
+
+    useEffect(() => {
+        return () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [handleMouseMove, handleMouseUp]);
 
     return (
         <div ref={handleRef} onMouseDown={handleMouseDown} className="vertical-handle"></div>

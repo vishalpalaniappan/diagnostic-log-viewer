@@ -1,18 +1,14 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
+import {AbstractionContainer} from "../../Components/AbstractionContainer/AbstractionContainer";
 
-import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
-import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
-import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
-
-import "./SideContainer.scss";
+import "./RightSideContainer.scss";
 
 /**
  * Renders the side menu and accordian containers.
  * @return {JSX.Element}
  */
-export function SideContainer () {
+export function RightSideContainer () {
     const [activeMenu, setActiveMenu] = useState(1);
 
     const accordian = useRef();
@@ -37,7 +33,7 @@ export function SideContainer () {
         e.preventDefault();
         e.stopPropagation();
         const delta = e.clientX - downValueX.current;
-        const newWidth = accordian.current.getBoundingClientRect().width + delta;
+        const newWidth = accordian.current.getBoundingClientRect().width - delta;
         const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - SIDE_MENU_WIDTH - MIN_EDITOR_WIDTH;
         if (newWidth > MIN_ACCORDIAN_WIDTH && newWidth < MAX_ACCORDIAN_WIDTH) {
             accordian.current.style.width = newWidth + "px";
@@ -62,35 +58,16 @@ export function SideContainer () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <DebugContainer />;
-        } else if (activeMenu === 2) {
-            return <SettingsContainer />;
-        } else if (activeMenu === 3) {
-            return <ShortcutContainer />;
+            return <AbstractionContainer />;
         }
     };
 
     return (
         <div className="side-container d-flex flex-row">
-            <div className="menu d-flex flex-column" style={{width: SIDE_MENU_WIDTH+"px"}}>
-                <div className="d-flex flex-column align-items-center">
-                    <Bug className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(1);}}
-                        style={{color: activeMenu == 1 ? "white": "grey"}}/>
-                </div>
-                <div className="mt-auto d-flex flex-column align-items-center">
-                    <Keyboard className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(3);}}
-                        style={{color: activeMenu == 3 ? "white": "grey"}}/>
-                    <Gear className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(2);}}
-                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
-                </div>
-            </div>
+            <div className="handle" ref={handle} onMouseDown={handleMouseDown}></div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
                 {getActiveMenuComponent()}
             </div>
-            <div className="handle" ref={handle} onMouseDown={handleMouseDown}></div>
         </div>
     );
 }
