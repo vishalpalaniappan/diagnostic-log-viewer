@@ -1,14 +1,14 @@
 import React, {useEffect, useRef} from "react";
 
-import {FileViewer} from "../../Viewer/FileViewer/FileViewer";
+import {FlowDiagram} from "../FlowDiagram/FlowDiagram";
+import {MonacoInstance} from "../MonacoInstance/MonacoInstance";
+import {Tabs} from "../Tabs/Tabs";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
-import { MonacoInstance } from "../MonacoInstance/MonacoInstance";
-import { Tabs } from "../Tabs/Tabs";
 
 import "./CentralContainer.scss";
 
 /**
- * Contains the viewer an flow. 
+ * Contains the viewer an flow.
  * @return {JSX.Element}
  */
 export function CentralContainer () {
@@ -18,7 +18,7 @@ export function CentralContainer () {
 
     const redrawContainers = () => {
         const height = centralContainerRef.current.clientHeight;
-        const containerHeight = height/2 - 40;
+        const containerHeight = height/2 - 21;
         viewerRef.current.style.height = containerHeight + "px";
         flowRef.current.style.height = containerHeight + "px";
     };
@@ -26,6 +26,15 @@ export function CentralContainer () {
     useEffect(() => {
         redrawContainers();
     }, []);
+
+    const a = {
+        "orientation": "TB",
+        "data": {
+            "branch1" : ["a", "b", "c", "p"],
+            "branch2" : ["a", "b", "d", "x"],
+            "branch3" : ["a", "f", "g", "x"]
+        }
+    };
 
     return (
         <div ref={centralContainerRef} className="central-container w-100 d-flex flex-column">
@@ -35,7 +44,7 @@ export function CentralContainer () {
             </div>
             <VerticalHandle topDiv={viewerRef} bottomDiv={flowRef}/>
             <div className="section" ref={flowRef}>
-                
+                <FlowDiagram treeInfo={a}/>
             </div>
         </div>
     );
