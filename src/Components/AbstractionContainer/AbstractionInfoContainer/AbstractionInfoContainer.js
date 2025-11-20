@@ -25,7 +25,6 @@ export function AbstractionInfoContainer () {
                     } else {
                         setAbstractionInfo(stack.currLtInfo);
                     }
-                    
                     break;
                 }
             };
