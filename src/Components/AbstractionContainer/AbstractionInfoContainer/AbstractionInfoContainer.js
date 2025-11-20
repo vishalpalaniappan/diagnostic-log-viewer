@@ -19,7 +19,13 @@ export function AbstractionInfoContainer () {
             for (const threadId of Object.keys(stacks)) {
                 if (stacks[threadId].main) {
                     const stack = stacks[threadId].stack;
-                    setAbstractionInfo(stack.currLtInfo);
+
+                    if ("abstraction_meta" in stack.currLtInfo) {
+                        setAbstractionInfo(stack.currLtInfo.abstraction_meta.value);
+                    } else {
+                        setAbstractionInfo(stack.currLtInfo);
+                    }
+                    
                     break;
                 }
             };
@@ -50,7 +56,7 @@ export function AbstractionInfoContainer () {
             <ReactJsonView
                 src={abstractionInfo}
                 theme={variableStackTheme}
-                collapsed={1}
+                collapsed={4}
                 name={"Current Abstraction"}
                 groupArraysAfterLength={100}
                 sortKeys={true}
