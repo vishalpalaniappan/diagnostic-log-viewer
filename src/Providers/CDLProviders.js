@@ -7,6 +7,7 @@ import ActiveFileContext from "./ActiveFileContext";
 import BreakpointsContext from "./BreakpointsContext";
 import FileTreeContext from "./FileTreeContext";
 import GlobalVariablesContext from "./GlobalVariablesContext";
+import PathsContext from "./PathsContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
 import ThreadsContext from "./ThreadsContext";
@@ -37,6 +38,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
     const [threads, setThreads] = useState();
+    const [paths, setPaths] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -134,6 +136,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             case CDL_WORKER_PROTOCOL.GET_METADATA:
                 setIsLoading(false);
                 setFileTree(event.data.args.fileTree);
+                setPaths(event.data.args.paths);
                 break;
             case CDL_WORKER_PROTOCOL.GET_POSITION_DATA:
                 setStackPosition(0);
@@ -154,25 +157,27 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
 
     return (
         <StackPositionContext.Provider value={{stackPosition, setStackPosition}}>
-            <FileTreeContext.Provider value={{fileTree}}>
-                <WorkerContext.Provider value={{cdlWorker}}>
-                    <ThreadsContext.Provider value={{threads, setThreads}}>
-                        <GlobalVariablesContext.Provider value={{globalVariables}}>
-                            <VariablesContext.Provider value={{localVariables}}>
-                                <BreakpointsContext.Provider value={{breakPoints}}>
-                                    <StackContext.Provider
-                                        value={{stacks, activeThread, setActiveThread}}>
-                                        <ActiveFileContext.Provider
-                                            value={{activeFile, setActiveFile}}>
-                                            {children}
-                                        </ActiveFileContext.Provider>
-                                    </StackContext.Provider>
-                                </BreakpointsContext.Provider>
-                            </VariablesContext.Provider>
-                        </GlobalVariablesContext.Provider>
-                    </ThreadsContext.Provider>
-                </WorkerContext.Provider>
-            </FileTreeContext.Provider>
+            <PathsContext.Provider value={{paths}}>
+                <FileTreeContext.Provider value={{fileTree}}>
+                    <WorkerContext.Provider value={{cdlWorker}}>
+                        <ThreadsContext.Provider value={{threads, setThreads}}>
+                            <GlobalVariablesContext.Provider value={{globalVariables}}>
+                                <VariablesContext.Provider value={{localVariables}}>
+                                    <BreakpointsContext.Provider value={{breakPoints}}>
+                                        <StackContext.Provider
+                                            value={{stacks, activeThread, setActiveThread}}>
+                                            <ActiveFileContext.Provider
+                                                value={{activeFile, setActiveFile}}>
+                                                {children}
+                                            </ActiveFileContext.Provider>
+                                        </StackContext.Provider>
+                                    </BreakpointsContext.Provider>
+                                </VariablesContext.Provider>
+                            </GlobalVariablesContext.Provider>
+                        </ThreadsContext.Provider>
+                    </WorkerContext.Provider>
+                </FileTreeContext.Provider>
+            </PathsContext.Provider>
         </StackPositionContext.Provider>
     );
 };

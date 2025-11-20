@@ -20,6 +20,7 @@ class CdlHeader {
         }
         this.logTypeMap = {};
         this.variableMap = {};
+        this.paths = {};
         this.parseHeader();
     }
 
@@ -44,6 +45,25 @@ class CdlHeader {
             if (varId) {
                 const variable = this.header.varMap[varId];
                 this.variableMap[varId] = new VarInfo(variable);
+            }
+        }
+
+        for (const lt in this.logTypeMap) {
+            if (lt) {
+                const ltInfo = this.logTypeMap[lt];
+                const paths = ltInfo.abstraction_meta.value.path;
+
+                if (paths && paths.length > 1) {
+                    for (const index in paths) {
+                        if (index) {
+                            const length = Object.keys(this.paths).length;
+                            this.paths[length] = paths[index];
+                        }
+                    }
+                } else {
+                    const length = Object.keys(this.paths).length;
+                    this.paths[length] = [...paths[0]];
+                }
             }
         }
     }
