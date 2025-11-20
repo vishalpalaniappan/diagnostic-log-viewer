@@ -36,8 +36,8 @@ export function Flow (tree) {
                 flowInfo.edges,
                 {
                     direction: tree.orientation,
-                    ranksep: 80,
-                    nodesep: 40,
+                    ranksep: 70,
+                    nodesep: 250,
                 }
             );
 
