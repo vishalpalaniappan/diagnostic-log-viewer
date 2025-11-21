@@ -287,16 +287,53 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
+                const callStack = this.getCallStackAtPosition(position).reverse();
+                this.getExecutionForEachStackLevel(callStack);
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
-                    callStack: this.getCallStackAtPosition(position).reverse(),
+                    callStack: callStack,
                     exceptions: this.exception,
                 };
             }
         } while (--position > 0);
 
         return null;
+    }
+
+
+    /**
+     * Given a stack, it gets the execution sequence.
+     * @param {Object} stack
+     * @return {Array}
+     */
+    getExecutionForEachStackLevel (stack) {
+        const executionForEachLevel = [];
+        for (const level of stack) {
+            const positionData = this.execution[level.position];
+            const ltInfo = this.header.logTypeMap[positionData.value];
+            const funcId = ltInfo.funcid;
+            const executionLevel = [];
+
+            let position = level.position;
+
+            do {
+                const positionData = this.execution[position];
+                if (positionData.type === "adli_execution") {
+                    const ltInfo = this.header.logTypeMap[positionData.value];
+                    if (ltInfo.funcid == funcId) {
+                        // executionLevel.push(ltInfo.statement);
+                        executionLevel.push(position);
+                    }
+                }
+            } while (--position > 0 && ltInfo.id != funcId);
+
+            executionForEachLevel.push(executionLevel);
+        }
+
+        console.log(executionForEachLevel);
+
+        return executionForEachLevel;
     }
 
     /**
