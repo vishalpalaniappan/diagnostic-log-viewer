@@ -99,6 +99,13 @@ class Debugger {
                 fileTree: this.header.getSourceFiles(),
             },
         });
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
+            args: {
+                executionTree: this.cdl.thread.executionTree,
+            },
+        });
     }
 
     /**

@@ -1,8 +1,9 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
+import {Bug, Gear, Keyboard, SignpostSplit} from "react-bootstrap-icons";
 
 import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
+import {ExecutionTreeContainer} from "../../Components/ExecutionTreeContainer/ExecutionTreeContainer";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
 
@@ -64,8 +65,10 @@ export function SideContainer () {
         if (activeMenu === 1) {
             return <DebugContainer />;
         } else if (activeMenu === 2) {
-            return <SettingsContainer />;
+            return <ExecutionTreeContainer />;
         } else if (activeMenu === 3) {
+            return <SettingsContainer />;
+        } else if (activeMenu === 4) {
             return <ShortcutContainer />;
         }
     };
@@ -77,6 +80,9 @@ export function SideContainer () {
                     <Bug className="menu-icon" size={25}
                         onClick={(e) => {setActiveMenu(1);}}
                         style={{color: activeMenu == 1 ? "white": "grey"}}/>
+                    <SignpostSplit className="menu-icon" size={25}
+                        onClick={(e) => {setActiveMenu(2);}}
+                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
                 </div>
                 <div className="mt-auto d-flex flex-column align-items-center">
                     <Keyboard className="menu-icon" size={25}
@@ -84,7 +90,7 @@ export function SideContainer () {
                         style={{color: activeMenu == 3 ? "white": "grey"}}/>
                     <Gear className="menu-icon" size={25}
                         onClick={(e) => {setActiveMenu(2);}}
-                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
+                        style={{color: activeMenu == 4 ? "white": "grey"}}/>
                 </div>
             </div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>

@@ -18,11 +18,14 @@ class Thread {
         this.globalVariables = {};
         this.threadId = threadId;
 
-        this.stackFrames = new StackFrames();
-        this.callStack = this.stackFrames.rootFrame;
-
         this.inputs = [];
         this.outputs = [];
+
+        this.executionTree = {
+            rawTree: {},
+            ltLookup: {},
+            ltTree: {},
+        };
 
         this._processLog(logFile);
 
@@ -114,6 +117,44 @@ class Thread {
 
         // Reverse the call stack back to the correct position
         this.callStacks[this.execution.length - 1].reverse();
+
+        this._addToExecutionTree(this.execution.length - 1);
+    }
+
+
+    /**
+     * Given a position, add it to the execution tree using the call
+     * stack positions.
+     * @param {Number} position
+     */
+    _addToExecutionTree (position) {
+        const positions = this.callStacks[position];
+
+        let rawTreeNode = this.executionTree.rawTree;
+        let ltTreeNode = this.executionTree.ltTree;
+
+        for (const pos of positions) {
+            const positionData = this.execution[pos];
+            const currLt = this.header.logTypeMap[positionData.value];
+
+            // Build the raw execution tree
+            if (pos in rawTreeNode) {
+                rawTreeNode = rawTreeNode[pos];
+            } else {
+                rawTreeNode[pos] = {};
+                rawTreeNode = rawTreeNode[pos];
+            }
+
+            // Build the lt execution tree
+            if (currLt.id in ltTreeNode) {
+                ltTreeNode = ltTreeNode[currLt.id];
+            } else {
+                ltTreeNode[currLt.id] = {};
+                ltTreeNode = ltTreeNode[currLt.id];
+            }
+
+            this.executionTree.ltLookup[currLt.id] = currLt;
+        }
     }
 
     /**
