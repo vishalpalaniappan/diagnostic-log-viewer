@@ -288,7 +288,8 @@ class Thread {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const callStack = this.getCallStackAtPosition(position).reverse();
-                this.getExecutionForEachStackLevel(callStack);
+                const executedStack = this.getExecutionForEachStackLevel(callStack);
+                this.getDesignFlow(executedStack);
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
@@ -308,32 +309,86 @@ class Thread {
      * @return {Array}
      */
     getExecutionForEachStackLevel (stack) {
-        const executionForEachLevel = [];
+        const executedStack = [];
         for (const level of stack) {
-            const positionData = this.execution[level.position];
-            const ltInfo = this.header.logTypeMap[positionData.value];
-            const funcId = ltInfo.funcid;
+            const currentPositionData = this.execution[level.position];
+            const currentLtInfo = this.header.logTypeMap[currentPositionData.value];
             const executionLevel = [];
 
             let position = level.position;
+            let ltInfo;
 
             do {
                 const positionData = this.execution[position];
                 if (positionData.type === "adli_execution") {
-                    const ltInfo = this.header.logTypeMap[positionData.value];
-                    if (ltInfo.funcid == funcId) {
-                        // executionLevel.push(ltInfo.statement);
-                        executionLevel.push(position);
+                    ltInfo = this.header.logTypeMap[positionData.value];
+                    if (ltInfo.funcid == currentLtInfo.funcid) {
+                        executionLevel.push({
+                            "position": position,
+                            "abstraction_id": ltInfo.id,
+                        });
                     }
                 }
-            } while (--position > 0 && ltInfo.id != funcId);
+            } while (--position > 0 && ltInfo && ltInfo.id != currentLtInfo.funcid);
 
-            executionForEachLevel.push(executionLevel);
+            executedStack.push(executionLevel.reverse());
         }
 
-        console.log(executionForEachLevel);
+        return executedStack;
+    }
 
-        return executionForEachLevel;
+
+    /**
+     * This function gets the design path from the execution sequence.
+     * @param {Array} executedStack
+     */
+    getDesignFlow(executedStack) {
+        for (const stackLevel of executedStack.reverse()) {
+            let pos = 0;
+
+            do {
+                // Get the abstraction info of current execution position
+                const entry = stackLevel[pos];
+                const currLtInfo = this.header.logTypeMap[entry["abstraction_id"]];
+                const currAbsInfo = currLtInfo.abstraction_meta.value;
+
+                if ("branches" in currAbsInfo) {
+                    // Sort into largest path to smallest path
+                    currAbsInfo["branches"].sort((a, b) => b.path.length - a.path.length);
+
+                    for (const branchIndex in currAbsInfo["branches"]) {
+                        if (branchIndex) {
+                            // Get the current path as a string
+                            const path = currAbsInfo["branches"][branchIndex].path;
+                            const length = path.length;
+                            const pathString = path.join("");
+
+                            let count = 0;
+                            let scanningPathString = "";
+
+                            // Get the execution path as a string
+                            // for the same length
+                            do {
+                                const entry = stackLevel[pos + count];
+                                const currLtInfo = this.header.logTypeMap[entry["abstraction_id"]];
+                                scanningPathString = scanningPathString + String(currLtInfo.id);
+                            } while (++count < length);
+
+                            // If the paths match, we have found
+                            // the design abstraction
+                            if (pathString === scanningPathString) {
+                                console.log(
+                                    "Found path:", currAbsInfo["branches"][branchIndex].name
+                                );
+                                const vars = this.getVariablesAtPosition(entry.position);
+                                pos = pos + length - 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } while (++pos < stackLevel.length);
+        }
     }
 
     /**
