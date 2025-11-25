@@ -289,7 +289,7 @@ class Thread {
             if (positionData.type === "adli_execution") {
                 const callStack = this.getCallStackAtPosition(position).reverse();
                 const executedStack = this.getExecutionForEachStackLevel(callStack);
-                this.getDesignFlow(executedStack);
+                const designFlow = this.getDesignFlow(executedStack);
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
@@ -310,10 +310,16 @@ class Thread {
      */
     getExecutionForEachStackLevel (stack) {
         const executedStack = [];
-        for (const level of stack) {
+        stack.forEach((level, index) => {
             const currentPositionData = this.execution[level.position];
             const currentLtInfo = this.header.logTypeMap[currentPositionData.value];
             const executionLevel = [];
+
+            // Only search up to the next stack level position
+            let minPosition = 0;
+            if (index < stack.length - 1) {
+                minPosition = stack[index + 1].position;
+            }
 
             let position = level.position;
             let ltInfo;
@@ -329,10 +335,11 @@ class Thread {
                         });
                     }
                 }
-            } while (--position > 0 && ltInfo && ltInfo.id != currentLtInfo.funcid);
+            } while (--position > 0 && position > minPosition &&
+                 ltInfo && ltInfo.id != currentLtInfo.funcid);
 
             executedStack.push(executionLevel.reverse());
-        }
+        });
 
         return executedStack;
     }
@@ -341,10 +348,13 @@ class Thread {
     /**
      * This function gets the design path from the execution sequence.
      * @param {Array} executedStack
+     * @return {Array}
      */
     getDesignFlow(executedStack) {
+        const designFlow = [];
         for (const stackLevel of executedStack.reverse()) {
             let pos = 0;
+            const currentDesignFlow = [];
 
             do {
                 // Get the abstraction info of current execution position
@@ -366,13 +376,13 @@ class Thread {
                             let count = 0;
                             let scanningPathString = "";
 
-                            // Get the execution path as a string
-                            // for the same length
+                            // Get the exec path as a string for the same length
+                            // Only check as much as the stack level has entries
                             do {
                                 const entry = stackLevel[pos + count];
                                 const currLtInfo = this.header.logTypeMap[entry["abstraction_id"]];
                                 scanningPathString = scanningPathString + String(currLtInfo.id);
-                            } while (++count < length);
+                            } while (++count < length && (pos + count) < stackLevel.length);
 
                             // If the paths match, we have found
                             // the design abstraction
@@ -380,6 +390,7 @@ class Thread {
                                 console.log(
                                     "Found path:", currAbsInfo["branches"][branchIndex].name
                                 );
+                                currentDesignFlow.push(currAbsInfo["branches"][branchIndex].name);
                                 const vars = this.getVariablesAtPosition(entry.position);
                                 pos = pos + length - 1;
                                 break;
@@ -388,7 +399,13 @@ class Thread {
                     }
                 }
             } while (++pos < stackLevel.length);
+
+            designFlow.push(currentDesignFlow);
         }
+
+        // console.log(designFlow);
+
+        return designFlow;
     }
 
     /**
