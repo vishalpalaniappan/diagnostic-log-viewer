@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
-import PathsContext from "../../Providers/PathsContext";
+import StackContext from "../../Providers/StackContext";
 import {FlowDiagram} from "../FlowDiagram/FlowDiagram";
 import {MonacoInstance} from "../MonacoInstance/MonacoInstance";
 import {Tabs} from "../Tabs/Tabs";
@@ -13,7 +13,7 @@ import "./CentralContainer.scss";
  * @return {JSX.Element}
  */
 export function CentralContainer () {
-    const {paths} = useContext(PathsContext);
+    const {stacks, activeThread, setActiveThread} = useContext(StackContext);
     const [graph, setGraph] = useState();
 
     const centralContainerRef = useRef();
@@ -22,20 +22,33 @@ export function CentralContainer () {
 
     const redrawContainers = () => {
         const height = centralContainerRef.current.clientHeight;
-        const containerHeight = height/2 - 21;
+        const containerHeight = height - 200 - 21;
         viewerRef.current.style.height = containerHeight + "px";
-        flowRef.current.style.height = containerHeight + "px";
+        flowRef.current.style.height = 200 + "px";
     };
 
     useEffect(() => {
-        if (paths) {
+        if (stacks) {
+            const stack = stacks[activeThread].stack;
+            const designFlow = stack.designFlow;
+
+            // Flatten design flow
+            let path = [];
+            designFlow.forEach((level, index) => {
+                path = path.concat(level);
+            });
+
+            // Create flow graph object
             const obj = {
                 "orientation": "TB",
-                "data": paths,
+                "data": {
+                    "path": path,
+                },
             };
+            // Set graph state
             setGraph(obj);
         }
-    }, [paths]);
+    }, [stacks]);
 
     useEffect(() => {
         redrawContainers();
@@ -49,7 +62,7 @@ export function CentralContainer () {
             </div>
             <VerticalHandle topDiv={viewerRef} bottomDiv={flowRef}/>
             <div className="section" ref={flowRef}>
-                <FlowDiagram treeInfo={graph}/>
+                {/* <FlowDiagram treeInfo={graph}/> */}
             </div>
         </div>
     );

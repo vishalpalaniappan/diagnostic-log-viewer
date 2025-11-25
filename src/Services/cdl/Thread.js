@@ -295,6 +295,7 @@ class Thread {
                     threadId: this.threadId,
                     callStack: callStack,
                     exceptions: this.exception,
+                    designFlow: designFlow,
                 };
             }
         } while (--position > 0);

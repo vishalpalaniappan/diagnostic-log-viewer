@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import {
     Controls,
@@ -9,6 +9,7 @@ import {
     useReactFlow
 } from "@xyflow/react";
 
+import StackContext from "../../Providers/StackContext.js";
 import {getLayoutedElements} from "./DagreLayout.js";
 import {getLayoutInfoFromTree} from "./helper.js";
 
@@ -63,16 +64,39 @@ export function Flow (tree) {
 };
 
 /**
- * 
+ *
  * @param {Object} treeInfo
  * @return {JSX.Element}
  */
 export function FlowDiagram (treeInfo) {
     const [tree, setTree] = useState();
+    const {stacks, activeThread, setActiveThread} = useContext(StackContext);
+
+    // useEffect(() => {
+    //     setTree(treeInfo.treeInfo);
+    // }, [treeInfo]);
+
 
     useEffect(() => {
-        setTree(treeInfo.treeInfo);
-    }, [treeInfo]);
+        if (stacks) {
+            const stack = stacks[activeThread].stack;
+            const designFlow = stack.designFlow;
+
+            // Flatten design flow
+            let path = [];
+            designFlow.forEach((level, index) => {
+                path = path.concat(level);
+            });
+
+            // Create flow graph object
+            const obj = {};
+            obj["orientation"] = "TB";
+            obj["data"] = {};
+            obj["data"]["path"] = path;
+
+            setTree(obj);
+        }
+    }, [stacks]);
 
     return (
         <ReactFlowProvider>
