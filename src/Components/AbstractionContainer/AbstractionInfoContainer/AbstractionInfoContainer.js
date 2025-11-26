@@ -56,7 +56,6 @@ export function AbstractionInfoContainer () {
                 src={abstractionInfo}
                 theme={variableStackTheme}
                 collapsed={4}
-                name={"Design Execution Tree"}
                 groupArraysAfterLength={100}
                 sortKeys={true}
                 displayDataTypes={false}

@@ -289,31 +289,21 @@ class Thread {
             if (positionData.type === "adli_execution") {
                 const callStack = this.getCallStackAtPosition(position).reverse();
 
-                const level1ExecutionAbstractions = this.getExecutionArray(position);
-                console.log(level1ExecutionAbstractions);
+                let abstractions = this.getExecutionArray(position);
+                const levels = this.header.header.abstraction_info_map.num_levels;
 
-                const level2ExecutionAbstractions = this.getExecutionLevel(
-                    level1ExecutionAbstractions, 2
-                );
-                console.log(level2ExecutionAbstractions);
-
-                const level3ExecutionAbstractions = this.getExecutionLevel(
-                    level2ExecutionAbstractions, 3
-                );
-                console.log(level3ExecutionAbstractions);
-
-                console.log(callStack);
-
-                // Temporary:
-                callStack.exec = level3ExecutionAbstractions;
-                console.log(callStack);
+                for (let level = 2; level <= levels; level++) {
+                    console.log("Getting level", level, "abstractions");
+                    abstractions = this.getExecutionLevel(abstractions, level);
+                    console.log(abstractions);
+                }
 
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
                     callStack: callStack,
                     exceptions: this.exception,
-                    designExecutionTree: level3ExecutionAbstractions,
+                    designExecutionTree: abstractions,
                     designFlow: [],
                 };
             }
@@ -357,39 +347,44 @@ class Thread {
         const levelExecution = this.header.header.abstraction_info_map["level_" + level];
 
         const newAbstractions = [];
-        let position = 0;
+        let pos = 0;
         do {
-            const abstraction = executionArray[position].key;
+            const abstraction = executionArray[pos].key;
 
             for (const key of Object.keys(levelExecution)) {
                 const entry = levelExecution[key];
-                if (entry.path[0] == abstraction) {
+                if ("path" in entry && entry.path[0] == abstraction) {
                     const pathString = entry.path.join("");
 
-                    if (position + entry.path.length <= executionArray.length) {
-                        const execPath = executionArray.slice(
-                            position, position + entry.path.length
-                        );
-                        const names = execPath.map((obj) => obj.key);
-                        const execPathString = names.join("");
+                    if (pos + entry.path.length <= executionArray.length) {
+                        const execPath = executionArray.slice(pos, pos + entry.path.length);
+                        const execPathString = execPath.map((obj) => obj.key).join("");
 
                         if (pathString === execPathString) {
                             console.log("Found level", level, "abstraction:", entry.intent);
                             newAbstractions.push(
                                 {
-                                    position: position,
+                                    position: pos,
                                     key: key,
-                                    intent: entry.intent,
-                                    _children: execPath,
+                                    level: level,
+                                    _intent: entry.intent,
+                                    children: execPath,
                                 }
                             );
-                            position = position + entry.path.length - 1;
+                            pos = pos + entry.path.length - 1;
                             break;
                         }
                     }
+                } else if ("world" in entry) {
+                    console.log("World:", entry);
+                    return {
+                        _intent: entry.intent,
+                        level: level,
+                        children: executionArray,
+                    };
                 }
             }
-        } while (++position < executionArray.length);
+        } while (++pos < executionArray.length);
 
         return newAbstractions;
     }
