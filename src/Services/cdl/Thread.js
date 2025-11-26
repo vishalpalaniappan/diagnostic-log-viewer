@@ -288,14 +288,33 @@ class Thread {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const callStack = this.getCallStackAtPosition(position).reverse();
-                const executedStack = this.getExecutionForEachStackLevel(callStack);
-                const designFlow = this.getDesignFlow(executedStack);
+
+                const level1ExecutionAbstractions = this.getExecutionArray(position);
+                console.log(level1ExecutionAbstractions);
+
+                const level2ExecutionAbstractions = this.getExecutionLevel(
+                    level1ExecutionAbstractions, 2
+                );
+                console.log(level2ExecutionAbstractions);
+
+                const level3ExecutionAbstractions = this.getExecutionLevel(
+                    level2ExecutionAbstractions, 3
+                );
+                console.log(level3ExecutionAbstractions);
+
+                console.log(callStack);
+
+                // Temporary:
+                callStack.exec = level3ExecutionAbstractions;
+                console.log(callStack);
+
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
                     callStack: callStack,
                     exceptions: this.exception,
-                    designFlow: designFlow,
+                    designExecutionTree: level3ExecutionAbstractions,
+                    designFlow: [],
                 };
             }
         } while (--position > 0);
@@ -303,110 +322,115 @@ class Thread {
         return null;
     }
 
-
     /**
-     * Given a stack, it gets the execution sequence.
-     * @param {Object} stack
+     * Returns the execution array up to a given position.
+     * @param {Number} position Position in the execution array.
      * @return {Array}
      */
-    getExecutionForEachStackLevel (stack) {
-        const executedStack = [];
-        stack.forEach((level, index) => {
-            const currentPositionData = this.execution[level.position];
-            const currentLtInfo = this.header.logTypeMap[currentPositionData.value];
-            const executionLevel = [];
-
-            // Only search up to the next stack level position
-            let minPosition = 0;
-            if (index < stack.length - 1) {
-                minPosition = stack[index + 1].position;
-            }
-
-            let position = level.position;
-            let ltInfo;
-
-            do {
-                const positionData = this.execution[position];
-                if (positionData.type === "adli_execution") {
-                    ltInfo = this.header.logTypeMap[positionData.value];
-                    if (ltInfo.funcid == currentLtInfo.funcid) {
-                        executionLevel.push({
-                            "position": position,
-                            "abstraction_id": ltInfo.id,
-                        });
+    getExecutionArray (position) {
+        const levelExecution = this.header.header.abstraction_info_map["level_1"];
+        const executionArray = [];
+        do {
+            const positionData = this.execution[position];
+            if (positionData.type === "adli_execution") {
+                const ltInfo = this.header.logTypeMap[positionData.value];
+                executionArray.push(
+                    {
+                        position: position,
+                        key: ltInfo.id,
+                        intent: levelExecution[ltInfo.id].intent,
                     }
-                }
-            } while (--position > 0 && position > minPosition &&
-                 ltInfo && ltInfo.id != currentLtInfo.funcid);
-
-            executedStack.push(executionLevel.reverse());
-        });
-
-        return executedStack;
+                );
+            }
+        } while (--position >= 0);
+        return executionArray.reverse();
     }
 
 
     /**
-     * This function gets the design path from the execution sequence.
-     * @param {Array} executedStack
+     * Gets the execution level 1 given a position.
+     * @param {Array} executionArray Position
+     * @param {Number} level Level
      * @return {Array}
      */
-    getDesignFlow(executedStack) {
-        const designFlow = [];
-        for (const stackLevel of executedStack.reverse()) {
-            let pos = 0;
-            const currentDesignFlow = [];
+    getExecutionLevel (executionArray, level) {
+        const levelExecution = this.header.header.abstraction_info_map["level_" + level];
 
-            do {
-                // Get the abstraction info of current execution position
-                const entry = stackLevel[pos];
-                const currLtInfo = this.header.logTypeMap[entry["abstraction_id"]];
-                const currAbsInfo = currLtInfo.abstraction_meta.value;
+        const newAbstractions = [];
+        let position = 0;
+        do {
+            const abstraction = executionArray[position].key;
 
-                if ("branches" in currAbsInfo) {
-                    // Sort into largest path to smallest path
-                    currAbsInfo["branches"].sort((a, b) => b.path.length - a.path.length);
+            for (const key of Object.keys(levelExecution)) {
+                const entry = levelExecution[key];
+                if (entry.path[0] == abstraction) {
+                    const pathString = entry.path.join("");
 
-                    for (const branchIndex in currAbsInfo["branches"]) {
-                        if (branchIndex) {
-                            // Get the current path as a string
-                            const path = currAbsInfo["branches"][branchIndex].path;
-                            const length = path.length;
-                            const pathString = path.join("");
+                    if (position + entry.path.length <= executionArray.length) {
+                        const execPath = executionArray.slice(
+                            position, position + entry.path.length
+                        );
+                        const names = execPath.map((obj) => obj.key);
+                        const execPathString = names.join("");
 
-                            let count = 0;
-                            let scanningPathString = "";
-
-                            // Get the exec path as a string for the same length
-                            // Only check as much as the stack level has entries
-                            do {
-                                const entry = stackLevel[pos + count];
-                                const currLtInfo = this.header.logTypeMap[entry["abstraction_id"]];
-                                scanningPathString = scanningPathString + String(currLtInfo.id);
-                            } while (++count < length && (pos + count) < stackLevel.length);
-
-                            // If the paths match, we have found
-                            // the design abstraction
-                            if (pathString === scanningPathString) {
-                                console.log(
-                                    "Found path:", currAbsInfo["branches"][branchIndex].name
-                                );
-                                currentDesignFlow.push(currAbsInfo["branches"][branchIndex].name);
-                                const vars = this.getVariablesAtPosition(entry.position);
-                                pos = pos + length - 1;
-                                break;
-                            }
+                        if (pathString === execPathString) {
+                            console.log("Found level", level, "abstraction:", entry.intent);
+                            newAbstractions.push(
+                                {
+                                    position: position,
+                                    key: key,
+                                    intent: entry.intent,
+                                    _children: execPath,
+                                }
+                            );
+                            position = position + entry.path.length - 1;
+                            break;
                         }
                     }
                 }
-            } while (++pos < stackLevel.length);
+            }
+        } while (++position < executionArray.length);
 
-            designFlow.push(currentDesignFlow);
+        return newAbstractions;
+    }
+
+
+    /**
+     * Given a abstraction metadata and position, replaces the placeholders
+     * in the intention string to create a specific intention.
+     *
+     * @param {Object} abstractionMetadata Metadata of the abstraction.
+     * @param {String} intent Intent to be updated.
+     * @param {Number} position Position of the intention in the file.
+     * @return {String}
+     */
+    replacePlaceholdersInIntent(abstractionMetadata, intent, position) {
+        const variables = abstractionMetadata.variables;
+        if (!variables || variables.length == 0) {
+            return abstractionMetadata.intent;
         }
 
-        // console.log(designFlow);
+        const positionVars = this.getVariablesAtPosition(position);
 
-        return designFlow;
+        console.log(positionVars);
+
+        let updatedIntent = intent;
+
+        console.log("Updating intent:", abstractionMetadata.intent);
+        variables.forEach((variable) => {
+            const scope = variable.scope;
+
+            if (scope === "local") {
+                variable.value = positionVars[0][variable.name];
+            } else if (scope === "global") {
+                variable.value = positionVars[1][variable.name];
+            };
+
+            updatedIntent = updatedIntent.replace(variable.placeholder, variable.value);
+        });
+
+
+        return updatedIntent;
     }
 
     /**

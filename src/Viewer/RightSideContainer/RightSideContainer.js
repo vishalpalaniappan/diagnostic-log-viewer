@@ -59,7 +59,7 @@ export function RightSideContainer () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <FlowDiagram />;
+            return <AbstractionContainer />;
         }
     };
 

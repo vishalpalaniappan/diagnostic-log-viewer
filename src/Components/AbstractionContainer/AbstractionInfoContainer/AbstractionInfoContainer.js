@@ -20,10 +20,10 @@ export function AbstractionInfoContainer () {
                 if (stacks[threadId].main) {
                     const stack = stacks[threadId].stack;
 
-                    if ("abstraction_meta" in stack.currLtInfo) {
-                        setAbstractionInfo(stack.currLtInfo.abstraction_meta.value);
+                    if ("designExecutionTree" in stack) {
+                        setAbstractionInfo(stack.designExecutionTree);
                     } else {
-                        setAbstractionInfo(stack.currLtInfo);
+                        setAbstractionInfo(stack.designExecutionTree);
                     }
                     break;
                 }
@@ -56,7 +56,7 @@ export function AbstractionInfoContainer () {
                 src={abstractionInfo}
                 theme={variableStackTheme}
                 collapsed={4}
-                name={"Current Abstraction"}
+                name={"Design Execution Tree"}
                 groupArraysAfterLength={100}
                 sortKeys={true}
                 displayDataTypes={false}
