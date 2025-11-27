@@ -341,7 +341,10 @@ class Thread {
 
                     if (funcId == ltInfo.getfId()) {
                         const abstractionMeta = abs[ltInfo.id];
-                        csEntry.abstractions.push(abstractionMeta.intent);
+                        const intent = this.replacePlaceholdersInIntent(
+                            abstractionMeta, abstractionMeta.intent_short, position
+                        );
+                        csEntry.abstractions.push(intent);
                     }
                 };
             } while (--position > 0 && ltInfo.id != funcId);
@@ -439,16 +442,13 @@ class Thread {
     replacePlaceholdersInIntent(abstractionMetadata, intent, position) {
         const variables = abstractionMetadata.variables;
         if (!variables || variables.length == 0) {
-            return abstractionMetadata.intent;
+            return intent;
         }
 
         const positionVars = this.getVariablesAtPosition(position);
 
-        console.log(positionVars);
-
         let updatedIntent = intent;
 
-        console.log("Updating intent:", abstractionMetadata.intent);
         variables.forEach((variable) => {
             const scope = variable.scope;
 
@@ -457,6 +457,10 @@ class Thread {
             } else if (scope === "global") {
                 variable.value = positionVars[1][variable.name];
             };
+
+            if ("key" in variable) {
+                variable.value = variable.value[variable.key];
+            }
 
             updatedIntent = updatedIntent.replace(variable.placeholder, variable.value);
         });
