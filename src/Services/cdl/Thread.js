@@ -440,7 +440,7 @@ class Thread {
                         abstractedLevels.push({
                             "position": csEntry.abstractions[position].position,
                             "intent": worlds[key].intent,
-                            "abstraction": section,
+                            "abstraction": section
                         });
                     } else {
                         // Include the abstraction as is since it

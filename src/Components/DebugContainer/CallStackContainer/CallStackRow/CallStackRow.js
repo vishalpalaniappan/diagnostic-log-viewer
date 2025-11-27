@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
+import {CaretDown, CaretRight} from "react-bootstrap-icons";
 
 import ActiveFileContext from "../../../../Providers/ActiveFileContext";
 import StackContext from "../../../../Providers/StackContext";
@@ -88,30 +89,67 @@ export function CallStackRow (
 
 
     useEffect(() => {
+        getAbstractions();
+    }, [abstractions]);
+
+    const toggleAbstraction = (abstraction) => {
+        console.log(abstraction);
+        if (abstraction.toggle === undefined) {
+            abstraction.toggle = false;
+        }
+        abstraction.toggle = !abstraction.toggle;
+        getAbstractions();
+    };
+
+
+    const getAbstractions = () => {
         if (abstractions) {
             const absList = [];
             abstractions.forEach((abstraction, key) => {
-                absList.push(
-                    <div className="abstraction" style={{height: "30px"}} key={key}>
-                        {abstraction.intent}
-                    </div>
-                );
-
                 if (typeof abstraction["abstraction"] === "object") {
-                    abstraction["abstraction"].forEach((child, index) => {
-                        absList.push(
-                            <div className="abstraction"
-                                style={{height: "30px", paddingLeft: "50px"}}
-                                key={index + String(absList.length)}>
-                                {child.intent}
-                            </div>
-                        );
-                    });
+                    // Add the intention of a collapsible abstraction.
+                    absList.push(
+                        <div className="abstraction" style={{height: "30px"}} key={key}>
+                            <span >
+                                {!abstraction.toggle || abstraction.toggle === undefined ?
+                                    <CaretRight role="button" className="me-1"
+                                        style={{color: "grey"}}
+                                        onClick={() => {toggleAbstraction(abstraction);}}/>:
+                                    <CaretDown role="button" className="me-1"
+                                        style={{color: "grey"}}
+                                        onClick={() => {toggleAbstraction(abstraction);}}/>
+                                }
+                                {abstraction.intent}
+                            </span>
+                        </div>
+                    );
+
+                    // If the abstraction is toggled, then show the intentions.
+                    if (abstraction.toggle) {
+                        abstraction["abstraction"].forEach((child, index) => {
+                            absList.push(
+                                <div className="abstraction"
+                                    style={{height: "30px", paddingLeft: "50px"}}
+                                    key={index + String(absList.length)}>
+                                    {child.intent}
+                                </div>
+                            );
+                        });
+                    }
+                } else {
+                    // Add the intentions that don't have any
+                    // collapsible information.
+                    absList.push(
+                        <div className="abstraction" style={{height: "30px"}} key={key}>
+                            {abstraction.intent}
+                        </div>
+                    );
                 }
             });
+
             setAbs(absList);
         }
-    }, [abstractions]);
+    };
 
     return (
         <>
