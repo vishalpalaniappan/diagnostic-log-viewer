@@ -289,17 +289,6 @@ class Thread {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const callStack = this.getCallStackAtPosition(position).reverse();
-
-                // let abstractions = this.getExecutionArray(position);
-                // const levels =
-                // this.header.header.abstraction_info_map.num_levels;
-
-                // for (let level = 2; level <= levels; level++) {
-                //     abstractions = this.getExecutionLevel(
-                // abstractions, level
-                // );
-                //     console.log(abstractions);
-                // }
                 this.getExecutionSequence(callStack);
 
                 return {
@@ -360,6 +349,7 @@ class Thread {
             } while (--position > 0 && ltInfo.id != funcId);
 
 
+            // Check if there are any worlds defined in the function abstraction
             if (!("worlds" in funcAbstraction)) {
                 continue;
             }
@@ -448,7 +438,7 @@ class Thread {
                             "abstraction": section,
                         });
                     } else {
-                        // Include the abstraction as is since it 
+                        // Include the abstraction as is since it
                         // doesn't belong to a world
                         abstractedLevels.push(absInfo);
                     }
@@ -457,84 +447,6 @@ class Thread {
 
             csEntry.abstractions = abstractedLevels;
         }
-    }
-
-    /**
-     * Returns the execution array up to a given position.
-     * @param {Number} position Position in the execution array.
-     * @return {Array}
-     */
-    getExecutionArray (position) {
-        const levelExecution = this.header.header.abstraction_info_map["level_1"];
-        const executionArray = [];
-        do {
-            const positionData = this.execution[position];
-            if (positionData.type === "adli_execution") {
-                const ltInfo = this.header.logTypeMap[positionData.value];
-                executionArray.push(
-                    {
-                        position: position,
-                        key: ltInfo.id,
-                        intent: levelExecution[ltInfo.id].intent,
-                    }
-                );
-            }
-        } while (--position >= 0);
-        return executionArray.reverse();
-    }
-
-
-    /**
-     * Gets the execution level 1 given a position.
-     * @param {Array} executionArray Position
-     * @param {Number} level Level
-     * @return {Array}
-     */
-    getExecutionLevel (executionArray, level) {
-        const levelExecution = this.header.header.abstraction_info_map["level_" + level];
-
-        const newAbstractions = [];
-        let pos = 0;
-        do {
-            console.log(executionArray[pos]);
-            const abstraction = executionArray[pos].key;
-
-            for (const key of Object.keys(levelExecution)) {
-                const entry = levelExecution[key];
-                if ("path" in entry && entry.path[0] == abstraction) {
-                    const pathString = entry.path.join("");
-
-                    if (pos + entry.path.length <= executionArray.length) {
-                        const execPath = executionArray.slice(pos, pos + entry.path.length);
-                        const execPathString = execPath.map((obj) => obj.key).join("");
-
-                        if (pathString === execPathString) {
-                            console.log("Found level", level, "abstraction:", entry.intent);
-                            newAbstractions.push(
-                                {
-                                    position: pos,
-                                    key: key,
-                                    level: level,
-                                    _intent: entry.intent,
-                                    children: execPath,
-                                }
-                            );
-                            pos = pos + entry.path.length - 1;
-                            break;
-                        }
-                    }
-                } else if ("world" in entry) {
-                    console.log("World:", entry);
-                    return {
-                        _intent: entry.intent,
-                        level: level,
-                        children: executionArray,
-                    };
-                }
-            }
-        } while (++pos < executionArray.length);
-
-        return newAbstractions;
     }
 
 
