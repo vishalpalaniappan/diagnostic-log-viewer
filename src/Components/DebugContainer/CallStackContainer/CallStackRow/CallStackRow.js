@@ -109,8 +109,8 @@ export function CallStackRow (
                 if (typeof abstraction["abstraction"] === "object") {
                     // Add the intention of a collapsible abstraction.
                     absList.push(
-                        <div className="abstraction" style={{height: "30px"}} key={key}>
-                            <span >
+                        <div className="abstraction" key={key}>
+                            <span>
                                 {!abstraction.toggle || abstraction.toggle === undefined ?
                                     <CaretRight role="button" className="me-1"
                                         style={{color: "grey"}}
@@ -129,7 +129,7 @@ export function CallStackRow (
                         abstraction["abstraction"].forEach((child, index) => {
                             absList.push(
                                 <div className="abstraction"
-                                    style={{height: "30px", paddingLeft: "50px"}}
+                                    style={{paddingLeft: "50px"}}
                                     key={index + String(absList.length)}>
                                     {child.intent}
                                 </div>
@@ -140,7 +140,7 @@ export function CallStackRow (
                     // Add the intentions that don't have any
                     // collapsible information.
                     absList.push(
-                        <div className="abstraction" style={{height: "30px"}} key={key}>
+                        <div className="abstraction" key={key}>
                             {abstraction.intent}
                         </div>
                     );

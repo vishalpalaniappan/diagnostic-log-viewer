@@ -403,9 +403,6 @@ class Thread {
                         }
                     }
                 }
-
-                NOTE: 2 has not been tested yet. I need to do this in levels, I'll
-                come back to it soon.
             */
 
             position = 0;
@@ -413,12 +410,13 @@ class Thread {
             const worlds = funcAbstraction.worlds;
             const abstractedLevels = [];
 
-            // Check each of the worlds defined in the function
-            for (const key in worlds) {
-                if (!key) continue;
-                position = 0;
-                do {
-                    absInfo = csEntry.abstractions[position];
+            position = 0;
+            do {
+                // Check each of the worlds defined in the function
+                absInfo = csEntry.abstractions[position];
+                let found = false;
+                for (const key in worlds) {
+                    if (!key) continue;
                     if (worlds[key].abstractions.includes(absInfo.abstraction)) {
                         // Check if abstraction belongs to a world
                         // and group them
@@ -436,19 +434,19 @@ class Thread {
                                     break;
                                 }
                             }
-                        } while (++position < csEntry.abstractions.length);
+                        } while (position++ < csEntry.abstractions.length);
                         abstractedLevels.push({
                             "position": csEntry.abstractions[position].position,
                             "intent": worlds[key].intent,
-                            "abstraction": section
+                            "abstraction": section,
                         });
-                    } else {
-                        // Include the abstraction as is since it
-                        // doesn't belong to a world
-                        abstractedLevels.push(absInfo);
+                        found = true;
                     }
-                } while (++position < csEntry.abstractions.length);
-            }
+                }
+                if (!found) {
+                    abstractedLevels.push(absInfo);
+                }
+            } while (++position < csEntry.abstractions.length);
 
             csEntry.abstractions = abstractedLevels;
         }
