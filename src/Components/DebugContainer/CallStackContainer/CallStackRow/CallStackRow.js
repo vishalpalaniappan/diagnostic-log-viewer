@@ -96,6 +96,18 @@ export function CallStackRow (
                         {abstraction.intent}
                     </div>
                 );
+
+                if (typeof abstraction["abstraction"] === "object") {
+                    abstraction["abstraction"].forEach((child, index) => {
+                        absList.push(
+                            <div className="abstraction"
+                                style={{height: "30px", paddingLeft: "50px"}}
+                                key={index + String(absList.length)}>
+                                {child.intent}
+                            </div>
+                        );
+                    });
+                }
             });
             setAbs(absList);
         }

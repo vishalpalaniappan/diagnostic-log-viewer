@@ -403,6 +403,9 @@ class Thread {
                         }
                     }
                 }
+
+                NOTE: 2 has not been tested yet. I need to do this in levels, I'll
+                come back to it soon.
             */
 
             position = 0;
@@ -413,6 +416,7 @@ class Thread {
             // Check each of the worlds defined in the function
             for (const key in worlds) {
                 if (!key) continue;
+                position = 0;
                 do {
                     absInfo = csEntry.abstractions[position];
                     if (worlds[key].abstractions.includes(absInfo.abstraction)) {
@@ -428,6 +432,7 @@ class Thread {
                                 }
                             } else {
                                 if (!worlds[key].abstractions.includes(absInfo.abstraction)) {
+                                    // TODO: Haven't implemented this yet.
                                     break;
                                 }
                             }
