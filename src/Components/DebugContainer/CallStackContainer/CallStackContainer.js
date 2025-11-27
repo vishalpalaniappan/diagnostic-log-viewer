@@ -46,6 +46,7 @@ export function CallStackContainer () {
                         filePath={call.filePath}
                         lineno={call.lineno}
                         position={call.position}
+                        abstractions={call.abstractions}
                         main={stacks[threadId].main}
                         threadId={threadId}
                     />;

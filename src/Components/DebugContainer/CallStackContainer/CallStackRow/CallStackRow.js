@@ -14,6 +14,7 @@ CallStackRow.propTypes = {
     filePath: PropTypes.string,
     fileName: PropTypes.string,
     lineno: PropTypes.number,
+    abstractions: PropTypes.Array,
     position: PropTypes.number,
     main: PropTypes.bool,
     threadId: PropTypes.string,
@@ -25,16 +26,19 @@ CallStackRow.propTypes = {
  * @param {String} filePath
  * @param {String} fileName
  * @param {Number} lineno
+ * @param {Array} abstractions
  * @param {Number} position
  * @param {Boolean} main
  * @param {String} threadId
  * @return {JSX}
  */
-export function CallStackRow ({index, functionName, filePath, fileName, lineno, position, main, threadId}) {
+export function CallStackRow (
+    {index, functionName, filePath, fileName, lineno, position, abstractions, main, threadId}) {
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveThread} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
 
+    const [abs, setAbs] = useState();
     const [rowStyle, setRowStyle] = useState();
     const [nameStyle, setNameStyle] = useState();
 
@@ -82,14 +86,34 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
         }
     }, [stacks, stackPosition, activeThread]);
 
+
+    useEffect(() => {
+        if (abstractions) {
+            const absList = [];
+            abstractions.forEach((abstraction, key) => {
+                absList.push(
+                    <div className="abstraction" style={{height: "30px"}} key={key}>
+                        {abstraction}
+                    </div>
+                );
+            });
+            setAbs(absList);
+        }
+    }, [abstractions]);
+
     return (
-        <div style={rowStyle} onClick={(e) => selectStackPosition(e)}
-            className="stack-row w-100 d-flex flex-row">
-            <div style={nameStyle}>{functionName}</div>
-            <div className="flex-grow-1 d-flex justify-content-end">
-                <div className="file-name">{fileName}</div>
-                <div className="pill">{lineno}:1</div>
+        <>
+            <div style={rowStyle} onClick={(e) => selectStackPosition(e)}
+                className="stack-row w-100 d-flex flex-row">
+                <div style={nameStyle}>{functionName}</div>
+                <div className="flex-grow-1 d-flex justify-content-end">
+                    <div className="file-name">{fileName}</div>
+                    <div className="pill">{lineno}:1</div>
+                </div>
             </div>
-        </div>
+            <div className="d-flex flex-column">
+                {abs}
+            </div>
+        </>
     );
 }

@@ -289,27 +289,63 @@ class Thread {
             if (positionData.type === "adli_execution") {
                 const callStack = this.getCallStackAtPosition(position).reverse();
 
-                let abstractions = this.getExecutionArray(position);
-                const levels = this.header.header.abstraction_info_map.num_levels;
+                // let abstractions = this.getExecutionArray(position);
+                // const levels =
+                // this.header.header.abstraction_info_map.num_levels;
 
-                for (let level = 2; level <= levels; level++) {
-                    console.log("Getting level", level, "abstractions");
-                    abstractions = this.getExecutionLevel(abstractions, level);
-                    console.log(abstractions);
-                }
+                // for (let level = 2; level <= levels; level++) {
+                //     abstractions = this.getExecutionLevel(
+                // abstractions, level
+                // );
+                //     console.log(abstractions);
+                // }
+                this.getExecutionSequence(callStack);
 
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
                     callStack: callStack,
                     exceptions: this.exception,
-                    designExecutionTree: abstractions,
+                    designExecutionTree: {},
                     designFlow: [],
                 };
             }
         } while (--position > 0);
 
         return null;
+    }
+
+
+    /**
+     * 
+     * @param {Object} callstack
+     */
+    getExecutionSequence (callstack) {
+        for (let i = 0; i < callstack.length; i++) {
+            const csEntry = callstack[i];
+            csEntry.abstractions = [];
+            const positionData = this.execution[csEntry.position];
+            let ltInfo = this.header.logTypeMap[positionData.value];
+            const funcId = ltInfo.getfId();
+            let position = csEntry.position;
+
+            const abs = this.header.header.abstraction_info_map["abstractions"];
+            const functions = this.header.header.abstraction_info_map["functions"];
+            const funcAbstraction = functions[csEntry.functionName];
+            csEntry.intent = funcAbstraction.intent;
+
+            do {
+                const posData = this.execution[position];
+                if (posData.type === "adli_execution") {
+                    ltInfo = this.header.logTypeMap[posData.value];
+
+                    if (funcId == ltInfo.getfId()) {
+                        const abstractionMeta = abs[ltInfo.id];
+                        csEntry.abstractions.push(abstractionMeta.intent);
+                    }
+                };
+            } while (--position > 0 && ltInfo.id != funcId);
+        }
     }
 
     /**
@@ -349,6 +385,7 @@ class Thread {
         const newAbstractions = [];
         let pos = 0;
         do {
+            console.log(executionArray[pos]);
             const abstraction = executionArray[pos].key;
 
             for (const key of Object.keys(levelExecution)) {
