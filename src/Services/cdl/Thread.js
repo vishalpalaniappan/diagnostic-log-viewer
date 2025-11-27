@@ -1,3 +1,4 @@
+import { func } from "prop-types";
 import CdlHeader from "./CdlHeader";
 import StackFrames from "./StackFrames";
 
@@ -322,18 +323,23 @@ class Thread {
      */
     getExecutionSequence (callstack) {
         for (let i = 0; i < callstack.length; i++) {
+            // Process call stack entry and create key to store abstractions
             const csEntry = callstack[i];
             csEntry.abstractions = [];
+
+            // Get the position data
             const positionData = this.execution[csEntry.position];
             let ltInfo = this.header.logTypeMap[positionData.value];
             const funcId = ltInfo.getfId();
             let position = csEntry.position;
 
+            // Find the function abstraction
             const abs = this.header.header.abstraction_info_map["abstractions"];
             const functions = this.header.header.abstraction_info_map["functions"];
             const funcAbstraction = functions[csEntry.functionName];
             csEntry.intent = funcAbstraction.intent;
 
+            // Save abstractions called within this function
             do {
                 const posData = this.execution[position];
                 if (posData.type === "adli_execution") {
@@ -344,10 +350,94 @@ class Thread {
                         const intent = this.replacePlaceholdersInIntent(
                             abstractionMeta, abstractionMeta.intent_short, position
                         );
-                        csEntry.abstractions.push(intent);
+                        csEntry.abstractions.push({
+                            "position": position,
+                            "intent": intent,
+                            "abstraction": ltInfo.id,
+                        });
                     }
                 };
             } while (--position > 0 && ltInfo.id != funcId);
+
+
+            if (!("worlds" in funcAbstraction)) {
+                continue;
+            }
+
+
+            /* In cases where a while loop or similar constructs are used,
+             group abstractions into their respective worlds to improve
+             the readability of the design flow. */
+
+            /* In this case, we can group as follows:
+
+             1. Since we are working backwards. Start when you find an
+             abstraction that belongs to a world and keep adding
+             abstractions until you find the start. This is great for
+             loops what you want to separate into iterations.
+
+                "library_manager": {
+                    "source": [22],
+                    "abstractions": [13, 14, 15, 16, 17, 18, 19, 20],
+                    "intent": "Main function to manage library operations.",
+                    "worlds": {
+                        "1": {
+                            "start": 15,
+                            "end": [19,20],
+                            "intent": "Transaction to receive a book and
+                            place it on shelf.",
+                            "abstractions": [15,16,17,18,19,20]
+                        }
+                    }
+                }
+            */
+
+            /* 2. Start when you find an abstraction that belongs to a world
+             and keep adding abstractions until you find an abstraction
+             that does not belong to the world. This is great for loops
+             where you want to group all iterations into one world.*/
+
+            position = 0;
+            let absInfo;
+            const worlds = funcAbstraction.worlds;
+            const abstractedLevels = [];
+
+            // Check each of the worlds defined in the function
+            for (const key in worlds) {
+                if (!key) continue;
+                do {
+                    absInfo = csEntry.abstractions[position];
+                    if (worlds[key].abstractions.includes(absInfo.abstraction)) {
+                        // Check if abstraction belongs to a world
+                        // and group them
+                        const section = [];
+                        do {
+                            absInfo = csEntry.abstractions[position];
+                            section.push(absInfo);
+                            if ("start" in worlds[key]) {
+                                if (absInfo.abstraction == worlds[key].start) {
+                                    break;
+                                }
+                            } else {
+                                if (!worlds[key].abstractions.includes(absInfo.abstraction)) {
+                                    break;
+                                }
+                            }
+                        } while (++position < csEntry.abstractions.length);
+                        abstractedLevels.push({
+                            "position": csEntry.abstractions[position].position,
+                            "intent": worlds[key].intent,
+                            "abstraction": section,
+                        });
+                    } else {
+                        // Include the abstraction as is since it 
+                        // doesn't belong to a world
+                        abstractedLevels.push(absInfo);
+                    }
+                } while (++position < csEntry.abstractions.length);
+            }
+
+            csEntry.abstractions = abstractedLevels;
         }
     }
 

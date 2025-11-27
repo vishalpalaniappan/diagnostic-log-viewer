@@ -14,7 +14,7 @@ CallStackRow.propTypes = {
     filePath: PropTypes.string,
     fileName: PropTypes.string,
     lineno: PropTypes.number,
-    abstractions: PropTypes.Array,
+    abstractions: PropTypes.array,
     position: PropTypes.number,
     main: PropTypes.bool,
     threadId: PropTypes.string,
@@ -93,7 +93,7 @@ export function CallStackRow (
             abstractions.forEach((abstraction, key) => {
                 absList.push(
                     <div className="abstraction" style={{height: "30px"}} key={key}>
-                        {abstraction}
+                        {abstraction.intent}
                     </div>
                 );
             });
