@@ -53,6 +53,47 @@ export function CallStackRow (
         setActiveFile(stacks[threadId].stack.callStack[index].filePath);
     };
 
+
+    const checkAbstractions = (entry, index) => {
+        for (const abstraction of entry) {
+            // console.log(abstraction, index, entry.index);
+            if ("abstractions" in abstraction) {
+                checkAbstractions(abstraction["abstractions"]);
+            } else {
+                if (abstraction.index === index) {
+                    console.log("FOUND:", abstraction);
+                }
+            }
+        }
+    };
+
+    const getPostitionFromIndex = (index) => {
+        console.log("Getting index:", index);
+        const stack = stacks[activeThread].stack.callStack;
+
+        for (const entry of stack) {
+            if ("abstractions" in entry) {
+                checkAbstractions(entry["abstractions"], index);
+            }
+        }
+    };
+
+    const selectAbstraction = (e, abstraction) => {
+
+        // console.log(abstraction, abstraction["abstraction"]);
+        if (typeof abstraction["abstractions"] === "object") {
+            abstraction = abstraction["abstractions"][0];
+        }
+
+        console.log(abstraction, stacks[threadId].stack.callStack);
+        
+        setStackPosition(abstraction.index);
+        setActiveThread(threadId);
+        setActiveFile(stacks[threadId].stack.callStack[abstraction.index].filePath);
+        // getPostitionFromIndex(abstraction.index);
+        // setAbstractionPosition(abstraction);
+    };
+
     const setStyle = (currStack) => {
         const exceptions = currStack[index].exceptions;
         const hasException = (exceptions && exceptions.length > 0);
@@ -90,7 +131,7 @@ export function CallStackRow (
 
     useEffect(() => {
         getAbstractions();
-    }, [abstractions]);
+    }, [abstractions, stackPosition]);
 
     const toggleAbstraction = (abstraction) => {
         console.log(abstraction);
@@ -103,64 +144,86 @@ export function CallStackRow (
 
 
     const getAbstractions = () => {
-        if (abstractions) {
-            const absList = [];
-            abstractions.forEach((abstraction, key) => {
-                if (typeof abstraction["abstraction"] === "object") {
-                    // Add the intention of a collapsible abstraction.
-                    absList.push(
-                        <div className="abstraction" key={key}>
-                            <span>
-                                {!abstraction.toggle || abstraction.toggle === undefined ?
-                                    <CaretRight role="button" className="me-1"
-                                        style={{color: "grey"}}
-                                        onClick={() => {toggleAbstraction(abstraction);}}/>:
-                                    <CaretDown role="button" className="me-1"
-                                        style={{color: "grey"}}
-                                        onClick={() => {toggleAbstraction(abstraction);}}/>
-                                }
-                                {abstraction.intent}
-                            </span>
-                        </div>
-                    );
-
-                    // If the abstraction is toggled, then show the intentions.
-                    if (abstraction.toggle) {
-                        abstraction["abstraction"].forEach((child, index) => {
-                            absList.push(
-                                <div className="abstraction"
-                                    style={{paddingLeft: "50px"}}
-                                    key={index + String(absList.length)}>
-                                    {child.intent}
-                                </div>
-                            );
-                        });
-                    }
-                } else {
-                    // Add the intentions that don't have any
-                    // collapsible information.
-                    absList.push(
-                        <div className="abstraction" key={key}>
-                            {abstraction.intent}
-                        </div>
-                    );
-                }
-            });
-
-            setAbs(absList);
+        if (!abstractions || abstractions === undefined) {
+            return;
         }
+        const absList = [];
+        for (const key in abstractions) {
+            if (!key) continue;
+            const abstraction = abstractions[key];
+
+            if (typeof abstraction["abstractions"] !== "object") {
+                console.log(stackPosition, abstraction.index);
+                const isSelected = (stackPosition === abstraction.index);
+                const color = (isSelected)?"green":"grey";
+                absList.push(
+                    <div className="abstraction" key={key}
+                        onClick={(e) => selectAbstraction(e, abstraction)}>
+                        <span style={{color: color}}>
+                            {abstraction.intent}
+                        </span>
+                    </div>
+                );
+                continue;
+            }
+
+            const isSelected = (stackPosition === abstraction["abstractions"][0].index);
+            const color = (isSelected)?"green":"grey";
+            // Add the intention of a collapsible abstraction.
+            absList.push(
+                <div className="abstraction" key={key}
+                    onClick={(e) => selectAbstraction(e, abstraction)}>
+                    <span>
+                        {!abstraction.toggle || abstraction.toggle === undefined ?
+                            <CaretRight role="button" className="me-1"
+                                style={{color: "grey"}}
+                                onClick={() => {toggleAbstraction(abstraction);}}/>:
+                            <CaretDown role="button" className="me-1"
+                                style={{color: "grey"}}
+                                onClick={() => {toggleAbstraction(abstraction);}}/>
+                        }
+                        <span style={{color: color}}>
+                            {abstraction.intent}
+                        </span>
+                    </span>
+                </div>
+            );
+
+            // If the abstraction is not toggled, then hide the intentions;
+            if (!abstraction.toggle) {
+                continue;
+            }
+
+            abstraction["abstractions"].forEach((child, index) => {
+                console.log(stackPosition, child);
+                const isSelected = (stackPosition === child.index);
+                const color = (isSelected)?"green":"grey";
+                absList.push(
+                    <div className="abstraction"
+                        style={{paddingLeft: "50px"}}
+                        key={index + String(absList.length)}
+                        onClick={(e) => selectAbstraction(e, child)}>
+                        <span style={{color: color}}>
+                            {child.intent}
+                        </span>
+                    </div>
+                );
+            });
+        }
+
+        setAbs(absList);
     };
 
     return (
         <>
-            <div style={rowStyle} onClick={(e) => selectStackPosition(e)}
+            {/* <div style={rowStyle} onClick={(e) => selectStackPosition(e)}
                 className="stack-row w-100 d-flex flex-row">
                 <div style={nameStyle}>{functionName}</div>
                 <div className="flex-grow-1 d-flex justify-content-end">
                     <div className="file-name">{fileName}</div>
                     <div className="pill">{lineno}:1</div>
                 </div>
-            </div>
+            </div> */}
             <div className="d-flex flex-column">
                 {abs}
             </div>

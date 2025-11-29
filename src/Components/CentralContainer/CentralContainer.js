@@ -28,26 +28,26 @@ export function CentralContainer () {
     };
 
     useEffect(() => {
-        if (stacks) {
-            const stack = stacks[activeThread].stack;
-            const designFlow = stack.designFlow;
+        // if (stacks) {
+        //     const stack = stacks[activeThread].stack;
+        //     const designFlow = stack.designFlow;
 
-            // Flatten design flow
-            let path = [];
-            designFlow.forEach((level, index) => {
-                path = path.concat(level);
-            });
+        //     // Flatten design flow
+        //     let path = [];
+        //     designFlow.forEach((level, index) => {
+        //         path = path.concat(level);
+        //     });
 
-            // Create flow graph object
-            const obj = {
-                "orientation": "TB",
-                "data": {
-                    "path": path,
-                },
-            };
-            // Set graph state
-            setGraph(obj);
-        }
+        //     // Create flow graph object
+        //     const obj = {
+        //         "orientation": "TB",
+        //         "data": {
+        //             "path": path,
+        //         },
+        //     };
+        //     // Set graph state
+        //     setGraph(obj);
+        // }
     }, [stacks]);
 
     useEffect(() => {

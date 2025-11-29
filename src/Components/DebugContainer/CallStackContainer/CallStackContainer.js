@@ -38,19 +38,21 @@ export function CallStackContainer () {
                 // Create call stack rows
                 const calls = [];
                 stacks[threadId].stack.callStack.forEach((call, index) => {
-                    const row = <CallStackRow
-                        key={index}
-                        index={index}
-                        functionName={call.functionName}
-                        fileName={call.fileName}
-                        filePath={call.filePath}
-                        lineno={call.lineno}
-                        position={call.position}
-                        abstractions={call.abstractions}
-                        main={stacks[threadId].main}
-                        threadId={threadId}
-                    />;
-                    calls.push(row);
+                    if ("abstractions" in call) {
+                        const row = <CallStackRow
+                            key={index}
+                            index={index}
+                            functionName={call.functionName}
+                            fileName={call.fileName}
+                            filePath={call.filePath}
+                            lineno={call.lineno}
+                            position={call.position}
+                            abstractions={call.abstractions}
+                            main={stacks[threadId].main}
+                            threadId={threadId}
+                        />;
+                        calls.push(row);
+                    }
                 });
 
                 // Create stack div

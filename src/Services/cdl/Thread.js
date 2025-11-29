@@ -288,16 +288,14 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
-                const callStack = this.getCallStackAtPosition(position).reverse();
-                this.getExecutionSequence(callStack);
+                let callStack = this.getCallStackAtPosition(position).reverse();
+                callStack = this.getExecutionSequence(callStack);
 
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
                     callStack: callStack,
                     exceptions: this.exception,
-                    designExecutionTree: {},
-                    designFlow: [],
                 };
             }
         } while (--position > 0);
@@ -307,13 +305,17 @@ class Thread {
 
 
     /**
-     * 
+     *
      * @param {Object} callstack
+     * @return {Object}
      */
     getExecutionSequence (callstack) {
+        const expandedStack = [];
         for (let i = 0; i < callstack.length; i++) {
             // Process call stack entry and create key to store abstractions
             const csEntry = callstack[i];
+            expandedStack.push(csEntry);
+            csEntry.index = expandedStack.length - 1;
             csEntry.abstractions = [];
 
             // Get the position data
@@ -336,13 +338,25 @@ class Thread {
 
                     if (funcId == ltInfo.getfId()) {
                         const abstractionMeta = abs[ltInfo.id];
+                        // Replace the placeholders in intent with var value.
                         const intent = this.replacePlaceholdersInIntent(
                             abstractionMeta, abstractionMeta.intent_short, position
                         );
+                        const info = {
+                            threadId: this.threadId,
+                            functionName: csEntry.functionName,
+                            filePath: ltInfo.getFilePath(),
+                            fileName: ltInfo.getFileName(),
+                            lineno: ltInfo.getLineNo(),
+                            position: position,
+                        };
+                        expandedStack.push(info);
                         csEntry.abstractions.push({
+                            "index": expandedStack.length - 1,
                             "position": position,
                             "intent": intent,
                             "abstraction": ltInfo.id,
+                            "csInfo": info,
                         });
                     }
                 };
@@ -354,19 +368,18 @@ class Thread {
                 continue;
             }
 
-
             /* In cases where a while loop or similar constructs are used,
-             group abstractions into their respective worlds to improve
-             the readability of the design flow. */
+                group abstractions into their respective worlds to improve
+                the readability of the design flow. */
 
             /* In this case, we can group as follows:
 
-             1. Since we are working backwards. Start when you find an
-             abstraction that belongs to a world and keep adding
-             abstractions until you find the start. This is great for
-             loops what you want to separate into iterations. In the
-             example below, every iteration of the while loop will
-             be its own transaction.
+                1. Since we are working backwards. Start when you find an
+                abstraction that belongs to a world and keep adding
+                abstractions until you find the start. This is great for
+                loops what you want to separate into iterations. In the
+                example below, every iteration of the while loop will
+                be its own transaction.
 
                 "library_manager": {
                     "source": [22],
@@ -375,7 +388,6 @@ class Thread {
                     "worlds": {
                         "1": {
                             "start": 15,
-                            "end": [19,20],
                             "intent": "Transaction to receive a book and
                             place it on shelf.",
                             "abstractions": [15,16,17,18,19,20]
@@ -385,11 +397,12 @@ class Thread {
             */
 
             /* 2. Start when you find an abstraction that belongs to a world
-             and keep adding abstractions until you find an abstraction
-             that does not belong to the world. This is great for loops
-             where you want to group all iterations into one world. In the
-             example below, all iterations of the while loop will be under
-             a single transaction (because there is no start and end defined).
+                and keep adding abstractions until you find an abstraction
+                that does not belong to the world. This is great for loops
+                where you want to group all iterations into one world. In the
+                example below, all iterations of the while loop will be under
+                a single transaction (because there is no start and
+                end defined).
 
                 "library_manager": {
                     "source": [22],
@@ -417,28 +430,26 @@ class Thread {
                 let found = false;
                 for (const key in worlds) {
                     if (!key) continue;
-                    if (worlds[key].abstractions.includes(absInfo.abstraction)) {
-                        // Check if abstraction belongs to a world
-                        // and group them
+
+                    const world = worlds[key];
+                    if (world.abstractions.includes(absInfo.abstraction)) {
                         const section = [];
                         do {
                             absInfo = csEntry.abstractions[position];
                             section.push(absInfo);
-                            if ("start" in worlds[key]) {
-                                if (absInfo.abstraction == worlds[key].start) {
-                                    break;
-                                }
-                            } else {
-                                if (!worlds[key].abstractions.includes(absInfo.abstraction)) {
-                                    // TODO: Haven't implemented this yet.
-                                    break;
-                                }
+                            if ("start" in world && absInfo.abstraction == world.start) {
+                                break;
+                            } else if (!world.abstractions.includes(absInfo.abstraction)) {
+                                section.pop();
+                                position--;
+                                break;
                             }
                         } while (position++ < csEntry.abstractions.length);
+
                         abstractedLevels.push({
                             "position": csEntry.abstractions[position].position,
-                            "intent": worlds[key].intent,
-                            "abstraction": section,
+                            "intent": world.intent,
+                            "abstractions": section,
                         });
                         found = true;
                     }
@@ -450,6 +461,8 @@ class Thread {
 
             csEntry.abstractions = abstractedLevels;
         }
+
+        return expandedStack;
     }
 
 
