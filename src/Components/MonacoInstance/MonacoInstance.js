@@ -127,9 +127,9 @@ export function MonacoInstance () {
                 clearExceptions();
                 editorRef.current.setValue(fileTree[activeFile]);
 
-                if (stack.callStack[1].filePath === activeFile) {
-                    selectLine(stack.callStack[1].lineno, "selectedLine");
-                    addException(stack.callStack[1]);
+                if (stack.callStack[0].filePath === activeFile) {
+                    selectLine(stack.callStack[0].lineno, "selectedLine");
+                    addException(stack.callStack[0]);
                 }
 
                 if (stackPosition > 1 && activeFile === stack.callStack[stackPosition].filePath) {

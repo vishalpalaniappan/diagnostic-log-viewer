@@ -305,6 +305,64 @@ class Thread {
 
 
     /**
+     * Validate the constraint
+     * @param {Object} abstractionMeta
+     * @param {Number} position
+     */
+    validateConstraint (abstractionMeta, position) {
+
+        if ("constraint" in abstractionMeta) {
+            const constraint = abstractionMeta["constraint"][0];
+
+            // Get the function this constraint belongs to
+            const execInfo = this.execution[position];
+            const ltInfo = this.header.logTypeMap[execInfo.value];
+            const fId = ltInfo.getfId();
+
+            // Get the next position so we have the value of the variable
+            do {
+                position++;
+                const execInfo = this.execution[position];
+                const ltInfo = this.header.logTypeMap[execInfo.value];
+
+                if (execInfo.type === "adli_execution" && fId === ltInfo.getfId()) {
+                    break;
+                }
+            } while (position < this.execution.length);
+
+            const positionVars = this.getVariablesAtPosition(position);
+            let value = positionVars[0][constraint.name];
+
+            // Access the key if you can
+            if ("key" in constraint && value) {
+                value = value[constraint["key"]];
+            }
+
+            console.log("Book name:", value);
+
+            // Check if the value is undefined
+            // (in future set this constraint manually)
+            if ((constraint.name in positionVars[0] && value === undefined)) {
+                console.log("Constraint Violated");
+                abstractionMeta.violation = true;
+                return true;
+            }
+
+            // Evaluate min length constraint
+            if (constraint.type === "minLength") {
+                if (value.length >= constraint.value) {
+                    console.log("Constraint Respected");
+                    return false;
+                } else {
+                    console.log("Constraint Violated");
+                    return true;
+                }
+            }
+        }
+    }
+
+
+    /**
      *
      * @param {Object} callstack
      * @return {Object}
@@ -333,6 +391,7 @@ class Thread {
             // Save abstractions called within this function
             do {
                 const posData = this.execution[position];
+
                 if (posData.type === "adli_execution") {
                     ltInfo = this.header.logTypeMap[posData.value];
 
@@ -342,6 +401,7 @@ class Thread {
                         const intent = this.replacePlaceholdersInIntent(
                             abstractionMeta, abstractionMeta.intent_short, position
                         );
+                        const violation = this.validateConstraint(abstractionMeta, position);
                         const info = {
                             threadId: this.threadId,
                             functionName: csEntry.functionName,
@@ -356,12 +416,16 @@ class Thread {
                             "position": position,
                             "intent": intent,
                             "abstraction": ltInfo.id,
+                            "violation": violation,
                             "csInfo": info,
                         });
                     }
                 };
             } while (--position > 0 && ltInfo.id != funcId);
 
+            if (this.exception) {
+                expandedStack[0].exceptions = this.exception;
+            }
 
             // Check if there are any worlds defined in the function abstraction
             if (!("worlds" in funcAbstraction)) {
@@ -434,8 +498,12 @@ class Thread {
                     const world = worlds[key];
                     if (world.abstractions.includes(absInfo.abstraction)) {
                         const section = [];
+                        let hasViolation = false;
                         do {
                             absInfo = csEntry.abstractions[position];
+                            if (absInfo.violation) {
+                                hasViolation = true;
+                            }
                             section.push(absInfo);
                             if ("start" in world && absInfo.abstraction == world.start) {
                                 break;
@@ -453,6 +521,7 @@ class Thread {
                             "position": csEntry.abstractions[position].position,
                             "intent": world.intent,
                             "abstractions": section,
+                            "violation": hasViolation
                         });
                         found = true;
                     }

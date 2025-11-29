@@ -148,15 +148,24 @@ export function CallStackRow (
             return;
         }
         const absList = [];
+
+        // Get has exception
+        const currStack = stacks[threadId].stack.callStack;
+        const exceptions = currStack[index].exceptions;
+        const hasException = (exceptions && exceptions.length > 0);
+
         for (const key in abstractions) {
             if (!key) continue;
             const abstraction = abstractions[key];
+            const violation = abstraction.violation;
 
             if (typeof abstraction["abstractions"] !== "object") {
-                console.log(stackPosition, abstraction.index);
                 const isSelected = (stackPosition === abstraction.index);
                 let color = (isSelected)?"#184b2d":null;
                 color = (abstraction.index === 1)?"#373700":color;
+                color = (abstraction.index === 1 && hasException)?"#420b0e":color;
+                color = (violation)?"#9500f8ff":color;
+
                 absList.push(
                     <div className="abstraction" key={key}
                         style={{backgroundColor: color}}
@@ -172,6 +181,7 @@ export function CallStackRow (
             const isSelected = (stackPosition === abstraction["abstractions"][0].index);
             let color = (isSelected && !abstraction.toggle)?"#184b2d":null;
             color = (abstraction["abstractions"][0].index === 1 && !abstraction.toggle)?"#373700":color;
+            color = (violation && !abstraction.toggle)?"#9500f8ff":color;
             // Add the intention of a collapsible abstraction.
             absList.push(
                 <div className="abstraction" key={key}
@@ -199,6 +209,7 @@ export function CallStackRow (
                 const isSelected = (stackPosition === child.index);
                 let color = (isSelected)?"#184b2d":null;
                 color = (child.index === 1)?"#373700":color;
+                color = (child.violation && violation)?"#9500f8ff":color;
                 absList.push(
                     <div className="abstraction"
                         style={{paddingLeft: "50px", backgroundColor: color}}
