@@ -443,8 +443,11 @@ class Thread {
                                 section.pop();
                                 position--;
                                 break;
+                            } else if (position === csEntry.abstractions.length - 1) {
+                                break;
                             }
-                        } while (position++ < csEntry.abstractions.length);
+                        } while (++position < csEntry.abstractions.length);
+
 
                         abstractedLevels.push({
                             "position": csEntry.abstractions[position].position,

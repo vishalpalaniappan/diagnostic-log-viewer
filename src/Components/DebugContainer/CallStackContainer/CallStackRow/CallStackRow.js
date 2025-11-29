@@ -155,11 +155,13 @@ export function CallStackRow (
             if (typeof abstraction["abstractions"] !== "object") {
                 console.log(stackPosition, abstraction.index);
                 const isSelected = (stackPosition === abstraction.index);
-                const color = (isSelected)?"green":"grey";
+                let color = (isSelected)?"#184b2d":null;
+                color = (abstraction.index === 1)?"#373700":color;
                 absList.push(
                     <div className="abstraction" key={key}
+                        style={{backgroundColor: color}}
                         onClick={(e) => selectAbstraction(e, abstraction)}>
-                        <span style={{color: color}}>
+                        <span style={{backgroundColor: color}}>
                             {abstraction.intent}
                         </span>
                     </div>
@@ -168,23 +170,21 @@ export function CallStackRow (
             }
 
             const isSelected = (stackPosition === abstraction["abstractions"][0].index);
-            const color = (isSelected)?"green":"grey";
+            let color = (isSelected && !abstraction.toggle)?"#184b2d":null;
+            color = (abstraction["abstractions"][0].index === 1 && !abstraction.toggle)?"#373700":color;
             // Add the intention of a collapsible abstraction.
             absList.push(
                 <div className="abstraction" key={key}
+                    style={{backgroundColor: color}}
                     onClick={(e) => selectAbstraction(e, abstraction)}>
                     <span>
                         {!abstraction.toggle || abstraction.toggle === undefined ?
                             <CaretRight role="button" className="me-1"
-                                style={{color: "grey"}}
                                 onClick={() => {toggleAbstraction(abstraction);}}/>:
                             <CaretDown role="button" className="me-1"
-                                style={{color: "grey"}}
                                 onClick={() => {toggleAbstraction(abstraction);}}/>
                         }
-                        <span style={{color: color}}>
-                            {abstraction.intent}
-                        </span>
+                        {abstraction.intent}
                     </span>
                 </div>
             );
@@ -197,13 +197,14 @@ export function CallStackRow (
             abstraction["abstractions"].forEach((child, index) => {
                 console.log(stackPosition, child);
                 const isSelected = (stackPosition === child.index);
-                const color = (isSelected)?"green":"grey";
+                let color = (isSelected)?"#184b2d":null;
+                color = (child.index === 1)?"#373700":color;
                 absList.push(
                     <div className="abstraction"
-                        style={{paddingLeft: "50px"}}
+                        style={{paddingLeft: "50px", backgroundColor: color}}
                         key={index + String(absList.length)}
                         onClick={(e) => selectAbstraction(e, child)}>
-                        <span style={{color: color}}>
+                        <span style={{backgroundColor: color}}>
                             {child.intent}
                         </span>
                     </div>
