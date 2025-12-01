@@ -6,6 +6,7 @@ import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 import ExecutionTreeContext from "../ExecutionTreeContext";
 
 import "./ExecutionNode.scss";
+import { redirect } from "react-router-dom";
 
 AbstractionRow.propTypes = {
     node: PropTypes.object,
@@ -17,13 +18,30 @@ AbstractionRow.propTypes = {
  * @return {JSX.Element}
  */
 export function AbstractionRow ({node}) {
-    const {executionArray, toggleCollapse} = useContext(ExecutionTreeContext);
+    const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeContext);
+
+    const [selectedStyle, setSelectedStyle] = useState();
+
+    useEffect(() => {
+        if (node && selectedNode) {
+            if (selectedNode == node) {
+                setSelectedStyle({background: "#3b3b3b", color: "white"});
+            } else {
+                setSelectedStyle({});
+            }
+        }
+    }, [selectedNode]);
 
     const clickToggle = (e, node) => {
         e.preventDefault();
         if (node.collapsible) {
             toggleCollapse(node);
         }
+    };
+
+    const clickSelectNode = (e, node) => {
+        e.preventDefault();
+        selectNode(node);
     };
 
     const getCollapsed = (node) => {
@@ -51,7 +69,9 @@ export function AbstractionRow ({node}) {
 
     return (
         <>
-            <div className="abstractionRow d-flex flex-row w-100">
+            <div className="abstractionRow d-flex flex-row w-100"
+                style={selectedStyle}
+                onClick={(e) => clickSelectNode(e, node)}>
                 <div className="d-flex flex-row">
                     {getSpacers(node)}
                 </div>

@@ -14,6 +14,7 @@ import "./ExecutionTree.scss";
  */
 export function ExecutionTree () {
     const {stacks, activeThread} = useContext(StackContext);
+    const [selectedNode, setSelectedNode] = useState();
     const [executionArray, setExecutionArray] = useState();
     const [executionTree, setExecutionTree] = useState();
 
@@ -56,6 +57,18 @@ export function ExecutionTree () {
         renderTree();
     };
 
+    const selectNode = (selectedNode) => {
+        for (let index = 0; index < executionArray.length; index++) {
+            const node = executionArray[index];
+            if (node === selectedNode) {
+                node.selected = true;
+                setSelectedNode(node);
+            } else {
+                node.selected = false;
+            }
+        }
+    };
+
     useEffect(() => {
         renderTree();
     }, [executionArray]);
@@ -68,7 +81,8 @@ export function ExecutionTree () {
     }, [stacks]);
 
     return (
-        <ExecutionTreeContext.Provider value={{executionArray, toggleCollapse}}>
+        <ExecutionTreeContext.Provider
+            value={{executionArray, selectedNode, selectNode, toggleCollapse}}>
             <div className="w-100 h-100 d-flex flex-column">
                 <div style={{height: "20px"}}>
                     <ExecutionTreeToolKitTop />
