@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
-import {CaretDown, CaretRight} from "react-bootstrap-icons";
+import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
 import ExecutionTreeContext from "../ExecutionTreeContext";
 
@@ -31,9 +31,9 @@ export function AbstractionRow ({node}) {
             return <></>;
         }
         if (node.collapsed) {
-            return <CaretRight className="icon"/>;
+            return <CaretRightFill className="icon"/>;
         } else {
-            return <CaretDown className="icon"/>;
+            return <CaretDownFill className="icon"/>;
         }
     };
 

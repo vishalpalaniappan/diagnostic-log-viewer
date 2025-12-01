@@ -5,7 +5,6 @@ import {AbstractionRow} from "./AbstractionRow/AbstractionRow";
 import ExecutionTreeContext from "./ExecutionTreeContext";
 
 import "./AbstractionInfoContainer.scss";
-import { cpuUsage } from "process";
 
 /**
  * Contains the abstraction info container.
