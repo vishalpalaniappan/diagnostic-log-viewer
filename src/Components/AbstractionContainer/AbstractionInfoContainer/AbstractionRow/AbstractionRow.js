@@ -17,18 +17,13 @@ AbstractionRow.propTypes = {
  * @return {JSX.Element}
  */
 export function AbstractionRow ({node}) {
-    const [paddingLeft, setPaddingLeft] = useState();
     const {executionArray, toggleCollapse} = useContext(ExecutionTreeContext);
 
-    useEffect(() => {
-        if (node) {
-            const padLeft = ((node.level - 1) * 20) + "px";
-            setPaddingLeft(padLeft);
+    const clickToggle = (e, node) => {
+        e.preventDefault();
+        if (node.collapsible) {
+            toggleCollapse(node);
         }
-    }, [node]);
-
-    const clicked = (e) => {
-        toggleCollapse(node);
     };
 
     const getCollapsed = (node) => {
@@ -36,9 +31,9 @@ export function AbstractionRow ({node}) {
             return <></>;
         }
         if (node.collapsed) {
-            return <CaretDown className="icon"/>;
-        } else {
             return <CaretRight className="icon"/>;
+        } else {
+            return <CaretDown className="icon"/>;
         }
     };
 
@@ -56,12 +51,11 @@ export function AbstractionRow ({node}) {
 
     return (
         <>
-            <div className="abstractionRow d-flex flex-row w-100 "
-            onClick={(e) => clicked(e, node)}>
+            <div className="abstractionRow d-flex flex-row w-100">
                 <div className="spacer-container d-flex">
                     {getSpacers(node)}
                 </div>
-                <div className="collapse-icon-container">
+                <div onClick={(e) => clickToggle(e, node)} className="collapse-icon-container">
                     {getCollapsed(node)}
                 </div>
                 <div className="text-container flex-grow-1">

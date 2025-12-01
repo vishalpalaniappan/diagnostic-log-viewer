@@ -89,6 +89,7 @@ class AbstractionMap {
             "intent": entry.intent,
             "collapsible": collapsible,
             "collapsed": false,
+            "index": this.executionTree.length,
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);

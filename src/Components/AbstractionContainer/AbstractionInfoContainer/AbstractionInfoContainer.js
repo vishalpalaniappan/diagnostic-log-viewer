@@ -5,6 +5,7 @@ import {AbstractionRow} from "./AbstractionRow/AbstractionRow";
 import ExecutionTreeContext from "./ExecutionTreeContext";
 
 import "./AbstractionInfoContainer.scss";
+import { cpuUsage } from "process";
 
 /**
  * Contains the abstraction info container.
@@ -18,15 +19,32 @@ export function AbstractionInfoContainer () {
     const renderTree = () => {
         if (executionArray) {
             const execution = [];
+            let collapsedLevel;
+            let collapsing = false;
 
-            executionArray.forEach((exec, index) => {
-                execution.push(
-                    <AbstractionRow
-                        key={index}
-                        node={exec}
-                    />
-                );
-            });
+            for (let index = 0; index < executionArray.length; index++) {
+                const node = executionArray[index];
+
+                // If we are collapsing and we reached the same
+                // level or below, then stop collapsing.
+                if (collapsing && node.level <= collapsedLevel) {
+                    collapsing = false;
+                }
+
+                // If the node is collapsed and we aren't collapsing
+                // then start collapsing
+                if (node.collapsed && !collapsing) {
+                    collapsedLevel = node.level;
+                    collapsing = true;
+                    execution.push(<AbstractionRow key={node.index} node={node} />);
+                    continue;
+                }
+
+                // If we aren't collapsing this node, then add the node.
+                if (!collapsing) {
+                    execution.push(<AbstractionRow key={node.index} node={node} />);
+                }
+            }
 
             setExecutionTree(execution);
         }
