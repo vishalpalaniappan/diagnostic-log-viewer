@@ -12,6 +12,14 @@ class AbstractionMap {
 
         this.abstractionStack = [];
         this.currentAbstraction = null;
+
+        // Load the starting position into the abstraction map.
+        for (const entry in this.map) {
+            if (this.map[entry].start === true) {
+                this.abstractionStack.push(this.map[entry]);
+                this.currentAbstraction = this.map[entry];
+            }
+        }
     }
 
     /**
@@ -19,18 +27,6 @@ class AbstractionMap {
      * @param {Number} id
      */
     checkCurrentLevel (id) {
-        // If its a function call, then add it to the abstraction stack.
-        if (this.abstractionStack.length === 0 ) {
-            for (const entry in this.map) {
-                if (entry === id) {
-                    this.abstractionStack.push(this.map[entry]);
-                    this.currentAbstraction = this.map[entry];
-                    this.printLevel(this.abstractionStack.length, this.map[entry].intent);
-                    return;
-                }
-            }
-        }
-
         if (this.abstractionStack.length > 0) {
             // Move down the abstraction stack until you find the parent
             do {
