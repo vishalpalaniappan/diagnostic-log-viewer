@@ -22,22 +22,20 @@ class AbstractionMap {
         if (this.abstractionStack.length === 0 || id in this.map) {
             for (const entry in this.map) {
                 if (entry === id) {
-                    console.log("FUNCTION CALL");
                     this.abstractionStack.push(this.map[entry]);
                     this.currentAbstraction = this.map[entry];
-                    console.log(this.abstractionStack.length + "," + id + ":" + this.map[entry].intent);
+                    this.printLevel(this.abstractionStack.length, this.map[entry].intent);
                     return;
                 }
             }
         }
 
         if (this.abstractionStack.length > 0) {
+            // Move down the abstraction stack until you find the parent
             do {
                 let found = false;
                 this.currentAbstraction.abstractions.forEach((abs, index) => {
-                    if (abs.id === id) {
-                        found = true;
-                    }
+                    found = (abs.id === id)?true:found;
                 });
 
                 if (found) {
@@ -49,21 +47,34 @@ class AbstractionMap {
                 }
             } while (this.abstractionStack.length > 0);
 
-            if (this.currentAbstraction && "abstractions" in this.currentAbstraction) {
-                this.currentAbstraction.abstractions.forEach((entry, index) => {
-                    if (entry.id === id) {
-                        if ("abstractions" in entry) {
-                            console.log(this.abstractionStack.length + "," + id + ":" + entry.intent);
-                            this.abstractionStack.push(entry);
-                            this.currentAbstraction = entry;
-                        } else {
-                            console.log(this.abstractionStack.length + "," + id + ":" + entry.intent);
-                        }
-                        return;
+            // Check if the entry is in the abstraction.
+            this.currentAbstraction.abstractions.forEach((entry, index) => {
+                if (entry.id === id) {
+                    if ("abstractions" in entry) {
+                        this.printLevel(this.abstractionStack.length, entry.intent);
+                        this.abstractionStack.push(entry);
+                        this.currentAbstraction = entry;
+                    } else {
+                        this.printLevel(this.abstractionStack.length, entry.intent);
                     }
-                });
-            }
+                    return;
+                }
+            });
         };
+    }
+
+    /**
+     *
+     * @param {*} length
+     * @param {*} intent
+     */
+    printLevel(length, intent) {
+        let str = "";
+        for (let i = 0; i < length; i++) {
+            str += "   ";
+        }
+        str = str + intent;
+        console.log(str);
     }
 };
 
