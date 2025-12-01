@@ -19,15 +19,29 @@ class AbstractionMap {
      * @param {Number} id
      */
     checkCurrentLevel (id) {
-        if (this.abstractionStack.length === 0) {
+        if (this.abstractionStack.length === 0 || id in this.map) {
             for (const entry in this.map) {
                 if (entry === id) {
+                    console.log(this.map[entry].intent);
                     this.abstractionStack.push(this.map[entry]);
                     this.currentAbstraction = this.map[entry];
                     return;
                 }
             }
         }
+
+        if (this.abstractionStack.length > 0) {
+            if ("abstractions" in this.currentAbstraction) {
+                this.currentAbstraction.abstractions.forEach((entry, index) => {
+                    if (entry.id === id) {
+                        console.log(entry.intent);
+                        this.abstractionStack.push(entry);
+                        this.currentAbstraction = entry;
+                        return;
+                    }
+                });
+            }
+        };
     }
 };
 

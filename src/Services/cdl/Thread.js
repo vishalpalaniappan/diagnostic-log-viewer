@@ -307,17 +307,18 @@ class Thread {
 
     /**
      * Fold the execution tree.
-     * @param {Number} position
+     * @param {Number} finalPosition
      */
-    foldExecutionTree (position) {
+    foldExecutionTree (finalPosition) {
         const absMap = new AbstractionMap(this.header.header.abstraction_info_map);
+        let position = 0;
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const logType = this.header.logTypeMap[positionData.value];
                 absMap.checkCurrentLevel(logType.abstraction_meta);
             }
-        } while (--position > 0);
+        } while (++position < finalPosition);
     }
 
 
