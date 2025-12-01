@@ -29,9 +29,11 @@ class AbstractionMap {
 
     /**
      * Add the provided id to the execution tree.
-     * @param {Number} id
+     * @param {Object} abstraction
+     * @param {Number} position
      */
-    mapCurrentLevel (id) {
+    mapCurrentLevel (abstraction, position) {
+        const id = abstraction.abstraction_meta;
         if (this.abstractionStack.length > 0) {
             // move down abstraction level until you find parent of current id
             do {
@@ -58,17 +60,17 @@ class AbstractionMap {
                 if (entry.id === id) {
                     if ("abstractions" in entry) {
                         // root abstraction with children
-                        this.addToExecutionTree(entry, true);
+                        this.addToExecutionTree(entry, true, abstraction);
                         this.abstractionStack.push(entry);
                         this.currentAbstraction = entry;
                     } else {
                         // leaf abstraction with no children
                         if (entry.type === "function_call") {
-                            this.addToExecutionTree(entry, true);
+                            this.addToExecutionTree(entry, true, abstraction);
                             this.abstractionStack.push(this.map[entry.target]);
                             this.currentAbstraction = this.map[entry.target];
                         } else {
-                            this.addToExecutionTree(entry, false);
+                            this.addToExecutionTree(entry, false, abstraction);
                         }
                     }
                     return;
@@ -81,15 +83,18 @@ class AbstractionMap {
      * This function adds the current position to the execution tree.
      * @param {Object} entry Entry which corresponds to the intent.
      * @param {Boolean} collapsible Indicates if this row is collapsible.
-     * @param {Boolean} printFlag Boolean to print to console.
+     * @param {Boolean} abstraction Object containing the abstraction info.
      */
-    addToExecutionTree (entry, collapsible, printFlag) {
+    addToExecutionTree (entry, collapsible, abstraction) {
         this.executionTree.push({
             "level": this.abstractionStack.length,
             "intent": entry.intent,
             "collapsible": collapsible,
             "collapsed": false,
             "index": this.executionTree.length,
+            "filePath": abstraction.getFilePath(),
+            "fileName": abstraction.getFileName(),
+            "lineno": abstraction.getLineNo(),
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);

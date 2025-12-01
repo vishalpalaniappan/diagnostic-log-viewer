@@ -13,7 +13,7 @@ import "./ExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
-    const {stacks, activeThread} = useContext(StackContext);
+    const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionArray, setExecutionArray] = useState();
     const [executionTree, setExecutionTree] = useState();
@@ -62,6 +62,8 @@ export function ExecutionTree () {
             const node = executionArray[index];
             if (node === selectedNode) {
                 node.selected = true;
+                console.log("Selected Node:", selectedNode);
+                setActiveAbstraction(node);
                 setSelectedNode(node);
             } else {
                 node.selected = false;

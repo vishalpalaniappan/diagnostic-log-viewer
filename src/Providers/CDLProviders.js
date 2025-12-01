@@ -37,6 +37,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
     const [threads, setThreads] = useState();
+    const [activeAbstraction, setActiveAbstraction] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -72,6 +73,13 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             console.warn("Invalid stack position or stack not initialized");
         };
     }, [stackPosition, stacks, activeThread]);
+
+
+    useEffect(() => {
+        if (activeAbstraction) {
+            console.log(activeAbstraction);
+        }
+    }, [activeAbstraction]);
 
     // Resets the state variables before loading new file.
     const initializeStates = () => {
@@ -161,7 +169,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                             <VariablesContext.Provider value={{localVariables}}>
                                 <BreakpointsContext.Provider value={{breakPoints}}>
                                     <StackContext.Provider
-                                        value={{stacks, activeThread, setActiveThread}}>
+                                        value={{stacks, activeThread, activeAbstraction,
+                                            setActiveThread, setActiveAbstraction}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             {children}

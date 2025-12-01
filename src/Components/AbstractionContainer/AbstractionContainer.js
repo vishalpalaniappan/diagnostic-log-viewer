@@ -13,8 +13,6 @@ export function AbstractionContainer () {
     const abstractionContainerRef = useRef();
     const abstractionInfoContainerRef = useRef();
 
-    const TITLE_HEIGHT = 20;
-
     const redrawContainers = () => {
         const height = abstractionContainerRef.current.clientHeight;
         const containerHeight = height;

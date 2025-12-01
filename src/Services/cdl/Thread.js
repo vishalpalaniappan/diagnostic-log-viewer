@@ -321,7 +321,7 @@ class Thread {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const logType = this.header.logTypeMap[positionData.value];
-                map.mapCurrentLevel(logType.abstraction_meta);
+                map.mapCurrentLevel(logType, position);
             }
         } while (++position < finalPosition);
 
