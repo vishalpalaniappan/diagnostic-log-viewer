@@ -291,13 +291,14 @@ class Thread {
                 const callStack = this.getCallStackAtPosition(position).reverse();
                 // callStack = this.getExecutionSequence(callStack);
 
-                const folded = this.foldExecutionTree(position);
+                const execTree = this.foldExecutionTree(position);
 
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
                     callStack: callStack,
                     exceptions: this.exception,
+                    execTree: execTree,
                 };
             }
         } while (--position > 0);
@@ -308,6 +309,7 @@ class Thread {
     /**
      * Fold the execution tree.
      * @param {Number} finalPosition
+     * @return {Object}
      */
     foldExecutionTree (finalPosition) {
         const absMap = new AbstractionMap(this.header.header.abstraction_info_map);
@@ -319,6 +321,8 @@ class Thread {
                 absMap.checkCurrentLevel(logType.abstraction_meta);
             }
         } while (++position < finalPosition);
+
+        return absMap.executionTree;
     }
 
 

@@ -8,16 +8,20 @@ class AbstractionMap {
      */
     constructor (map) {
         this.map = map.abstractions;
+        console.clear();
         console.log("Created Abstraction Map:", this.map);
 
         this.abstractionStack = [];
         this.currentAbstraction = null;
+
+        this.executionTree = [];
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
             if (this.map[entry].start === true) {
                 this.abstractionStack.push(this.map[entry]);
                 this.currentAbstraction = this.map[entry];
+                this.executionTree.push([this.abstractionStack.length, entry.intent]);
             }
         }
     }
@@ -53,10 +57,13 @@ class AbstractionMap {
                 if (entry.id === id) {
                     if ("abstractions" in entry) {
                         this.printLevel(this.abstractionStack.length, entry.intent);
+                        this.executionTree.push([this.abstractionStack.length, entry.intent]);
+
                         this.abstractionStack.push(entry);
                         this.currentAbstraction = entry;
                     } else {
                         this.printLevel(this.abstractionStack.length, entry.intent);
+                        this.executionTree.push([this.abstractionStack.length, entry.intent]);
 
                         if (entry.type === "function_call") {
                             this.abstractionStack.push(this.map[entry.target]);
