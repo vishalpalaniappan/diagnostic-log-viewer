@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
-import { AbstractionInfoContainer } from "./AbstractionInfoContainer/AbstractionInfoContainer";
+import { ExecutionTree } from "../ExecutionTree/ExecutionTree";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
 import "./AbstractionContainer.scss";
@@ -32,7 +32,7 @@ export function AbstractionContainer () {
                 Abstraction Information
             </div>
             <div className="section" ref={abstractionInfoContainerRef}>
-                <AbstractionInfoContainer />
+                <ExecutionTree />
             </div>
         </div>
     );

@@ -5,7 +5,7 @@ import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
 import ExecutionTreeContext from "../ExecutionTreeContext";
 
-import "./AbstractionRow.scss";
+import "./ExecutionNode.scss";
 
 AbstractionRow.propTypes = {
     node: PropTypes.object,

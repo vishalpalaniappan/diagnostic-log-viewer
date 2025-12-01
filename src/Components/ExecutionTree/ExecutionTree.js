@@ -1,16 +1,16 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import StackContext from "../../../Providers/StackContext";
-import {AbstractionRow} from "./AbstractionRow/AbstractionRow";
+import StackContext from "../../Providers/StackContext";
+import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
 import ExecutionTreeContext from "./ExecutionTreeContext";
 
-import "./AbstractionInfoContainer.scss";
+import "./ExecutionTree.scss";
 
 /**
  * Contains the abstraction info container.
  * @return {JSX.Element}
  */
-export function AbstractionInfoContainer () {
+export function ExecutionTree () {
     const {stacks, activeThread} = useContext(StackContext);
     const [executionArray, setExecutionArray] = useState();
     const [executionTree, setExecutionTree] = useState();
