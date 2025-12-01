@@ -14,32 +14,54 @@ export function AbstractionInfoContainer () {
     const {stacks, activeThread, setActiveThread} = useContext(StackContext);
     const [abstractionInfo, setAbstractionInfo] = React.useState();
 
-    useEffect(() => {
+    const collapseLevels = (e, exec, index) => {
+        exec.collapsed = !exec.collapsed;
+        console.log("Collapsed:", exec);
+        getAbstractions();
+    };
+
+    const getAbstractions = () => {
         if (stacks) {
+            const list = [];
             for (const threadId of Object.keys(stacks)) {
                 if (stacks[threadId].main) {
                     const stack = stacks[threadId].stack;
-                    console.log(stack);
                     const executionTree = stack.execTree;
-
-                    const list = [];
+                    let collapsedLevel = 0;
+                    let collapsing = false;
 
                     executionTree.forEach((exec, index) => {
-                        const paddingLeft = (exec[0] * 10) + "px";
-                        list.push(
-                            <div className="abstractionRow" 
-                                style={{paddingLeft: paddingLeft}}
-                                key={index}> {exec[1]}
-                            </div>
-                        );
+                        const paddingLeft = (exec.level * 10) + "px";
+                        if (exec.collapsed && !collapsing) {
+                            collapsedLevel = Number(exec.level);
+                            collapsing = true;
+                        }
+
+                        if (collapsing && Number(exec.level) > collapsedLevel) {
+                            collapsing = true;
+                        } else {
+                            list.push(
+                                <div className="abstractionRow"
+                                    onClick={(e) => collapseLevels(e, exec, index)}
+                                    style={{paddingLeft: paddingLeft}}
+                                    key={index}> {exec.intent}
+                                </div>
+                            );
+                        }
+
+                        console.log(exec.level, collapsedLevel, exec.level > collapsedLevel);                      
                     });
 
-                    console.log(list);
-
-                    setAbstractionInfo(list);
                     break;
                 }
-            };
+            }
+            setAbstractionInfo(list);
+        }
+    };
+
+    useEffect(() => {
+        if (stacks) {
+            getAbstractions();
         }
     }, [stacks]);
 

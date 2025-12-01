@@ -63,7 +63,11 @@ class AbstractionMap {
                         this.currentAbstraction = entry;
                     } else {
                         this.printLevel(this.abstractionStack.length, entry.intent);
-                        this.executionTree.push([this.abstractionStack.length, entry.intent]);
+                        this.executionTree.push({
+                            "level": this.abstractionStack.length,
+                            "intent": entry.intent,
+                            "collapsed": false,
+                        });
 
                         if (entry.type === "function_call") {
                             this.abstractionStack.push(this.map[entry.target]);
