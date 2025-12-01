@@ -3,3 +3,12 @@
     padding:5px 0px;
     color:white;
 }
+
+.abstractionRow:hover{
+    background-color:rgb(78, 78, 78);
+    cursor: pointer;
+}
+
+.abstractionRow > .icon {
+    color:rgb(175, 175, 175);
+}

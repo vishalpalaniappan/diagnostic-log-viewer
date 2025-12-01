@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import StackContext from "../../../Providers/StackContext";
-import { AbstractionRow } from "./AbstractionRow/AbstractionRow";
+import {AbstractionRow} from "./AbstractionRow/AbstractionRow";
+import ExecutionTreeContext from "./ExecutionTreeContext";
 
 import "./AbstractionInfoContainer.scss";
 
@@ -11,13 +12,11 @@ import "./AbstractionInfoContainer.scss";
  */
 export function AbstractionInfoContainer () {
     const {stacks, activeThread} = useContext(StackContext);
+    const [executionArray, setExecutionArray] = useState();
     const [executionTree, setExecutionTree] = useState();
 
-
     const renderTree = () => {
-        if (stacks) {
-            const stack = stacks[activeThread].stack;
-            const executionArray = stack.executionTree;
+        if (executionArray) {
             const execution = [];
 
             executionArray.forEach((exec, index) => {
@@ -34,14 +33,21 @@ export function AbstractionInfoContainer () {
     };
 
     useEffect(() => {
+        renderTree();
+    }, [executionArray]);
+
+    useEffect(() => {
         if (stacks) {
-            renderTree();
-        }
+            const stack = stacks[activeThread].stack;
+            setExecutionArray(stack.executionTree);
+        };
     }, [stacks]);
 
     return (
-        <div className="abstractionInfoContainer w-100 h-100 ">
-            {executionTree}
-        </div>
+        <ExecutionTreeContext.Provider value={{executionArray}}>
+            <div className="abstractionInfoContainer w-100 h-100 ">
+                {executionTree}
+            </div>
+        </ExecutionTreeContext.Provider>
     );
 }

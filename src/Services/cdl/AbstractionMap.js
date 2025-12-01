@@ -58,15 +58,17 @@ class AbstractionMap {
                 if (entry.id === id) {
                     if ("abstractions" in entry) {
                         // root abstraction with children
-                        this.addToExecutionTree(entry);
+                        this.addToExecutionTree(entry, true);
                         this.abstractionStack.push(entry);
                         this.currentAbstraction = entry;
                     } else {
                         // leaf abstraction with no children
-                        this.addToExecutionTree(entry);
                         if (entry.type === "function_call") {
+                            this.addToExecutionTree(entry, true);
                             this.abstractionStack.push(this.map[entry.target]);
                             this.currentAbstraction = this.map[entry.target];
+                        } else {
+                            this.addToExecutionTree(entry, false);
                         }
                     }
                     return;
@@ -78,12 +80,14 @@ class AbstractionMap {
     /**
      * This function adds the current position to the execution tree.
      * @param {Object} entry Entry which corresponds to the intent.
+     * @param {Boolean} collapsible Indicates if this row is collapsible.
      * @param {Boolean} printFlag Boolean to print to console.
      */
-    addToExecutionTree (entry, printFlag) {
+    addToExecutionTree (entry, collapsible, printFlag) {
         this.executionTree.push({
             "level": this.abstractionStack.length,
             "intent": entry.intent,
+            "collapsible": collapsible,
             "collapsed": false,
         });
         if (this.printTreeToConsole) {
