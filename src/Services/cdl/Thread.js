@@ -1,3 +1,4 @@
+import AbstractionMap from "./AbstractionMap";
 import CdlHeader from "./CdlHeader";
 import StackFrames from "./StackFrames";
 
@@ -287,16 +288,44 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
+                const executionTree = this.getExecutionTree(position);
+                console.log(executionTree);
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
                     callStack: this.getCallStackAtPosition(position).reverse(),
                     exceptions: this.exception,
+                    executionTree: executionTree,
                 };
             }
         } while (--position > 0);
 
         return null;
+    }
+
+    /**
+     * This function gets the execution tree given the position.
+     * @param {*} finalPosition
+     * @return {Object|null}
+     */
+    getExecutionTree (finalPosition) {
+        if (!this.header.hasAbstractionMap()) {
+            console.log("Trace file does not have an abstraction map");
+            return null;
+        }
+
+        const map = new AbstractionMap(this.header.header.abstraction_info_map);
+
+        let position = 0;
+        do {
+            const positionData = this.execution[position];
+            if (positionData.type === "adli_execution") {
+                const logType = this.header.logTypeMap[positionData.value];
+                map.mapCurrentLevel(logType.abstraction_meta);
+            }
+        } while (++position < finalPosition);
+
+        return map.executionTree;
     }
 
     /**
