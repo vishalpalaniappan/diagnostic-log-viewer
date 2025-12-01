@@ -1,7 +1,6 @@
 .abstractionRow {
     width:100%;
     color:#d7d7d7;
-    height:30px;
     overflow:hidden;
 }
 
@@ -10,29 +9,29 @@
     cursor: pointer;
 }
 
-.text-container {
-
-}
-
 .collapse-icon-container {
     width: 10px;
     color:rgb(95, 95, 95);
-    margin:0 5px;
+    margin:5px 5px;
 }
 
-.spacer-container {
-    height: 100%;
+.text-container{
+    padding:5px 0;
 }
+
 .spacer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
     width: 20px;
-    height: 100%;
 }
 
-.vertical-line {
+.spacer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    left: 50%;
     width: 1px;
-    height: 100%; 
-    background-color: #3f3d3d;
+    background: rgb(63, 63, 63);
+    transform: translateX(-50%);
+    pointer-events: none;
 }
+

@@ -70,13 +70,13 @@ export function ExecutionTree () {
     return (
         <ExecutionTreeContext.Provider value={{executionArray, toggleCollapse}}>
             <div className="w-100 h-100 d-flex flex-column">
-                <div style={{height: "25px"}}>
+                <div style={{height: "20px"}}>
                     <ExecutionTreeToolKitTop />
                 </div>
                 <div className="executionTreeContainer flex-grow-1">
                     {executionTree}
                 </div>
-                <div style={{height: "25px"}}>
+                <div style={{height: "20px"}}>
                     <ExecutionTreeToolKitBottom/>
                 </div>
             </div>

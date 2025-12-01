@@ -52,7 +52,7 @@ export function AbstractionRow ({node}) {
     return (
         <>
             <div className="abstractionRow d-flex flex-row w-100">
-                <div className="spacer-container d-flex">
+                <div className="d-flex flex-row">
                     {getSpacers(node)}
                 </div>
                 <div onClick={(e) => clickToggle(e, node)} className="collapse-icon-container">
