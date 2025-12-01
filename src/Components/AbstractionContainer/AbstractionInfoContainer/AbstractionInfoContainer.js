@@ -48,8 +48,6 @@ export function AbstractionInfoContainer () {
                                 </div>
                             );
                         }
-
-                        console.log(exec.level, collapsedLevel, exec.level > collapsedLevel);                      
                     });
 
                     break;

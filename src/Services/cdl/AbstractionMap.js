@@ -57,7 +57,11 @@ class AbstractionMap {
                 if (entry.id === id) {
                     if ("abstractions" in entry) {
                         this.printLevel(this.abstractionStack.length, entry.intent);
-                        this.executionTree.push([this.abstractionStack.length, entry.intent]);
+                        this.executionTree.push({
+                            "level": this.abstractionStack.length,
+                            "intent": entry.intent,
+                            "collapsed": false,
+                        });
 
                         this.abstractionStack.push(entry);
                         this.currentAbstraction = entry;
