@@ -11,53 +11,61 @@ import "./AbstractionInfoContainer.scss";
  * @return {JSX.Element}
  */
 export function AbstractionInfoContainer () {
-    const {stacks} = useContext(StackContext);
+    const {stacks, activeThread, setActiveThread} = useContext(StackContext);
     const [abstractionInfo, setAbstractionInfo] = React.useState();
 
-    useEffect(() => {
+    const collapseLevels = (e, exec, index) => {
+        exec.collapsed = !exec.collapsed;
+        console.log("Collapsed:", exec);
+        getAbstractions();
+    };
+
+    const getAbstractions = () => {
         if (stacks) {
+            const list = [];
             for (const threadId of Object.keys(stacks)) {
                 if (stacks[threadId].main) {
                     const stack = stacks[threadId].stack;
-                    setAbstractionInfo(stack.currLtInfo);
+                    const executionTree = stack.execTree;
+                    let collapsedLevel = 0;
+                    let collapsing = false;
+
+                    executionTree.forEach((exec, index) => {
+                        const paddingLeft = (exec.level * 10) + "px";
+                        if (exec.collapsed && !collapsing) {
+                            collapsedLevel = Number(exec.level);
+                            collapsing = true;
+                        }
+
+                        if (collapsing && Number(exec.level) > collapsedLevel) {
+                            collapsing = true;
+                        } else {
+                            list.push(
+                                <div className="abstractionRow"
+                                    onClick={(e) => collapseLevels(e, exec, index)}
+                                    style={{paddingLeft: paddingLeft}}
+                                    key={index}> {exec.intent}
+                                </div>
+                            );
+                        }
+                    });
+
                     break;
                 }
-            };
+            }
+            setAbstractionInfo(list);
+        }
+    };
+
+    useEffect(() => {
+        if (stacks) {
+            getAbstractions();
         }
     }, [stacks]);
 
-    const variableStackTheme = {
-        base00: "#252526",
-        base01: "#ddd",
-        base02: "#474747",
-        base03: "#444",
-        base04: "#717171",
-        base05: "#444",
-        base06: "#444",
-        base07: "#c586c0", // keys
-        base08: "#444",
-        base09: "#ce9178", // String
-        base0A: "rgba(70, 70, 230, 1)",
-        base0B: "#ce9178",
-        base0C: "rgba(70, 70, 230, 1)",
-        base0D: "#bbb18c", // indent arrow
-        base0E: "#bbb18c", // indent arrow
-        base0F: "#a7ce8a",
-    };
-
     return (
         <div className="abstractionInfoContainer w-100 h-100 ">
-            <ReactJsonView
-                src={abstractionInfo}
-                theme={variableStackTheme}
-                collapsed={1}
-                name={"Current Abstraction"}
-                groupArraysAfterLength={100}
-                sortKeys={true}
-                displayDataTypes={false}
-                quotesOnKeys={false}
-                collapseStringsAfterLength={30}>
-            </ReactJsonView>
+            {abstractionInfo}
         </div>
     );
 }

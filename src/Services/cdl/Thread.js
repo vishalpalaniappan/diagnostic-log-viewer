@@ -1,5 +1,6 @@
 import CdlHeader from "./CdlHeader";
 import StackFrames from "./StackFrames";
+import AbstractionMap from "./AbstractionMap";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -287,16 +288,316 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
+                const callStack = this.getCallStackAtPosition(position).reverse();
+                // callStack = this.getExecutionSequence(callStack);
+
+                const execTree = this.foldExecutionTree(position);
+
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
-                    callStack: this.getCallStackAtPosition(position).reverse(),
+                    callStack: callStack,
                     exceptions: this.exception,
+                    execTree: execTree,
                 };
             }
         } while (--position > 0);
 
         return null;
+    }
+
+    /**
+     * Fold the execution tree.
+     * @param {Number} finalPosition
+     * @return {Object}
+     */
+    foldExecutionTree (finalPosition) {
+        const absMap = new AbstractionMap(this.header.header.abstraction_info_map);
+        let position = 0;
+        do {
+            const positionData = this.execution[position];
+            if (positionData.type === "adli_execution") {
+                const logType = this.header.logTypeMap[positionData.value];
+                absMap.checkCurrentLevel(logType.abstraction_meta);
+            }
+        } while (++position < finalPosition);
+
+        return absMap.executionTree;
+    }
+
+
+    /**
+     * Validate the constraint
+     * @param {Object} abstractionMeta
+     * @param {Number} position
+     * @return {Boolean}
+     */
+    validateConstraint (abstractionMeta, position) {
+        if ("constraint" in abstractionMeta) {
+            const constraint = abstractionMeta["constraint"][0];
+
+            // Get the function this constraint belongs to
+            const execInfo = this.execution[position];
+            const ltInfo = this.header.logTypeMap[execInfo.value];
+            const fId = ltInfo.getfId();
+
+            // Get the next position so we have the value of the variable
+            do {
+                position++;
+                const execInfo = this.execution[position];
+                const ltInfo = this.header.logTypeMap[execInfo.value];
+
+                if (execInfo.type === "adli_execution" && fId === ltInfo.getfId()) {
+                    break;
+                }
+            } while (position < this.execution.length);
+
+            const positionVars = this.getVariablesAtPosition(position);
+            let value = positionVars[0][constraint.name];
+
+            // Access the key if you can
+            if ("key" in constraint && value) {
+                value = value[constraint["key"]];
+            }
+
+            console.log("Book name:", value);
+
+            // Check if the value is undefined
+            // (in future set this constraint manually)
+            if ((constraint.name in positionVars[0] && value === undefined)) {
+                console.log("Constraint Violated");
+                abstractionMeta.violation = true;
+                return true;
+            }
+
+            // Evaluate min length constraint
+            if (constraint.type === "minLength") {
+                if (value.length >= constraint.value) {
+                    console.log("Constraint Respected");
+                    return false;
+                } else {
+                    console.log("Constraint Violated");
+                    return true;
+                }
+            }
+        }
+    }
+
+
+    /**
+     *
+     * @param {Object} callstack
+     * @return {Object}
+     */
+    getExecutionSequence (callstack) {
+        const expandedStack = [];
+        for (let i = 0; i < callstack.length; i++) {
+            // Process call stack entry and create key to store abstractions
+            const csEntry = callstack[i];
+            expandedStack.push(csEntry);
+            csEntry.index = expandedStack.length - 1;
+            csEntry.abstractions = [];
+
+            // Get the position data
+            const positionData = this.execution[csEntry.position];
+            let ltInfo = this.header.logTypeMap[positionData.value];
+            const funcId = ltInfo.getfId();
+            let position = csEntry.position;
+
+            // Find the function abstraction
+            const abs = this.header.header.abstraction_info_map["abstractions"];
+            const functions = this.header.header.abstraction_info_map["functions"];
+            const funcAbstraction = functions[csEntry.functionName];
+            csEntry.intent = funcAbstraction.intent;
+
+            // Save abstractions called within this function
+            do {
+                const posData = this.execution[position];
+
+                if (posData.type === "adli_execution") {
+                    ltInfo = this.header.logTypeMap[posData.value];
+
+                    if (funcId == ltInfo.getfId()) {
+                        const abstractionMeta = abs[ltInfo.id];
+                        // Replace the placeholders in intent with var value.
+                        const intent = this.replacePlaceholdersInIntent(
+                            abstractionMeta, abstractionMeta.intent_short, position
+                        );
+                        const violation = this.validateConstraint(abstractionMeta, position);
+                        const info = {
+                            threadId: this.threadId,
+                            functionName: csEntry.functionName,
+                            filePath: ltInfo.getFilePath(),
+                            fileName: ltInfo.getFileName(),
+                            lineno: ltInfo.getLineNo(),
+                            position: position,
+                            exceptions: null,
+                        };
+                        expandedStack.push(info);
+                        csEntry.abstractions.push({
+                            "index": expandedStack.length - 1,
+                            "position": position,
+                            "intent": intent,
+                            "abstraction": ltInfo.id,
+                            "violation": violation,
+                            "csInfo": info,
+                        });
+                    }
+                };
+            } while (--position > 0 && ltInfo.id != funcId);
+
+            if (this.exception) {
+                expandedStack[0].exceptions = this.exception;
+            }
+
+            // Check if there are any worlds defined in the function abstraction
+            if (!("worlds" in funcAbstraction)) {
+                continue;
+            }
+
+            /* In cases where a while loop or similar constructs are used,
+                group abstractions into their respective worlds to improve
+                the readability of the design flow. */
+
+            /* In this case, we can group as follows:
+
+                1. Since we are working backwards. Start when you find an
+                abstraction that belongs to a world and keep adding
+                abstractions until you find the start. This is great for
+                loops what you want to separate into iterations. In the
+                example below, every iteration of the while loop will
+                be its own transaction.
+
+                "library_manager": {
+                    "source": [22],
+                    "abstractions": [13, 14, 15, 16, 17, 18, 19, 20],
+                    "intent": "Main function to manage library operations.",
+                    "worlds": {
+                        "1": {
+                            "start": 15,
+                            "intent": "Transaction to receive a book and
+                            place it on shelf.",
+                            "abstractions": [15,16,17,18,19,20]
+                        }
+                    }
+                }
+            */
+
+            /* 2. Start when you find an abstraction that belongs to a world
+                and keep adding abstractions until you find an abstraction
+                that does not belong to the world. This is great for loops
+                where you want to group all iterations into one world. In the
+                example below, all iterations of the while loop will be under
+                a single transaction (because there is no start and
+                end defined).
+
+                "library_manager": {
+                    "source": [22],
+                    "abstractions": [13, 14, 15, 16, 17, 18, 19, 20],
+                    "intent": "Main function to manage library operations.",
+                    "worlds": {
+                        "1": {
+                            "intent": "Transaction to receive a book and
+                            place it on shelf.",
+                            "abstractions": [15,16,17,18,19,20]
+                        }
+                    }
+                }
+            */
+
+            position = 0;
+            let absInfo;
+            const worlds = funcAbstraction.worlds;
+            const abstractedLevels = [];
+
+            position = 0;
+            do {
+                // Check each of the worlds defined in the function
+                absInfo = csEntry.abstractions[position];
+                let found = false;
+                for (const key in worlds) {
+                    if (!key) continue;
+
+                    const world = worlds[key];
+                    if (world.abstractions.includes(absInfo.abstraction)) {
+                        const section = [];
+                        let hasViolation = false;
+                        do {
+                            absInfo = csEntry.abstractions[position];
+                            if (absInfo.violation) {
+                                hasViolation = true;
+                            }
+                            section.push(absInfo);
+                            if ("start" in world && absInfo.abstraction == world.start) {
+                                break;
+                            } else if (!world.abstractions.includes(absInfo.abstraction)) {
+                                section.pop();
+                                position--;
+                                break;
+                            } else if (position === csEntry.abstractions.length - 1) {
+                                break;
+                            }
+                        } while (++position < csEntry.abstractions.length);
+
+
+                        abstractedLevels.push({
+                            "position": csEntry.abstractions[position].position,
+                            "intent": world.intent,
+                            "abstractions": section,
+                            "violation": hasViolation,
+                        });
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    abstractedLevels.push(absInfo);
+                }
+            } while (++position < csEntry.abstractions.length);
+
+            csEntry.abstractions = abstractedLevels;
+        }
+
+        return expandedStack;
+    }
+
+
+    /**
+     * Given a abstraction metadata and position, replaces the placeholders
+     * in the intention string to create a specific intention.
+     *
+     * @param {Object} abstractionMetadata Metadata of the abstraction.
+     * @param {String} intent Intent to be updated.
+     * @param {Number} position Position of the intention in the file.
+     * @return {String}
+     */
+    replacePlaceholdersInIntent(abstractionMetadata, intent, position) {
+        const variables = abstractionMetadata.variables;
+        if (!variables || variables.length == 0) {
+            return intent;
+        }
+
+        const positionVars = this.getVariablesAtPosition(position);
+
+        let updatedIntent = intent;
+
+        variables.forEach((variable) => {
+            const scope = variable.scope;
+
+            if (scope === "local") {
+                variable.value = positionVars[0][variable.name];
+            } else if (scope === "global") {
+                variable.value = positionVars[1][variable.name];
+            };
+
+            if ("key" in variable) {
+                variable.value = variable.value[variable.key];
+            }
+
+            updatedIntent = updatedIntent.replace(variable.placeholder, variable.value);
+        });
+
+
+        return updatedIntent;
     }
 
     /**

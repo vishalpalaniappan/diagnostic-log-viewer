@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
+import {CaretDown, CaretRight} from "react-bootstrap-icons";
 
 import ActiveFileContext from "../../../../Providers/ActiveFileContext";
 import StackContext from "../../../../Providers/StackContext";
@@ -14,6 +15,7 @@ CallStackRow.propTypes = {
     filePath: PropTypes.string,
     fileName: PropTypes.string,
     lineno: PropTypes.number,
+    abstractions: PropTypes.array,
     position: PropTypes.number,
     main: PropTypes.bool,
     threadId: PropTypes.string,
@@ -25,16 +27,19 @@ CallStackRow.propTypes = {
  * @param {String} filePath
  * @param {String} fileName
  * @param {Number} lineno
+ * @param {Array} abstractions
  * @param {Number} position
  * @param {Boolean} main
  * @param {String} threadId
  * @return {JSX}
  */
-export function CallStackRow ({index, functionName, filePath, fileName, lineno, position, main, threadId}) {
+export function CallStackRow (
+    {index, functionName, filePath, fileName, lineno, position, abstractions, main, threadId}) {
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveThread} = useContext(StackContext);
     const {setActiveFile} = useContext(ActiveFileContext);
 
+    const [abs, setAbs] = useState();
     const [rowStyle, setRowStyle] = useState();
     const [nameStyle, setNameStyle] = useState();
 
@@ -46,6 +51,47 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
         setStackPosition(index);
         setActiveThread(threadId);
         setActiveFile(stacks[threadId].stack.callStack[index].filePath);
+    };
+
+
+    const checkAbstractions = (entry, index) => {
+        for (const abstraction of entry) {
+            // console.log(abstraction, index, entry.index);
+            if ("abstractions" in abstraction) {
+                checkAbstractions(abstraction["abstractions"]);
+            } else {
+                if (abstraction.index === index) {
+                    console.log("FOUND:", abstraction);
+                }
+            }
+        }
+    };
+
+    const getPostitionFromIndex = (index) => {
+        console.log("Getting index:", index);
+        const stack = stacks[activeThread].stack.callStack;
+
+        for (const entry of stack) {
+            if ("abstractions" in entry) {
+                checkAbstractions(entry["abstractions"], index);
+            }
+        }
+    };
+
+    const selectAbstraction = (e, abstraction) => {
+
+        // console.log(abstraction, abstraction["abstraction"]);
+        if (typeof abstraction["abstractions"] === "object") {
+            abstraction = abstraction["abstractions"][0];
+        }
+
+        console.log(abstraction, stacks[threadId].stack.callStack);
+        
+        setStackPosition(abstraction.index);
+        setActiveThread(threadId);
+        setActiveFile(stacks[threadId].stack.callStack[abstraction.index].filePath);
+        // getPostitionFromIndex(abstraction.index);
+        // setAbstractionPosition(abstraction);
     };
 
     const setStyle = (currStack) => {
@@ -82,14 +128,117 @@ export function CallStackRow ({index, functionName, filePath, fileName, lineno, 
         }
     }, [stacks, stackPosition, activeThread]);
 
+
+    useEffect(() => {
+        getAbstractions();
+    }, [abstractions, stackPosition]);
+
+    const toggleAbstraction = (abstraction) => {
+        console.log(abstraction);
+        if (abstraction.toggle === undefined) {
+            abstraction.toggle = false;
+        }
+        abstraction.toggle = !abstraction.toggle;
+        getAbstractions();
+    };
+
+
+    const getAbstractions = () => {
+        if (!abstractions || abstractions === undefined) {
+            return;
+        }
+        const absList = [];
+
+        // Get has exception
+        const currStack = stacks[threadId].stack.callStack;
+        const exceptions = currStack[index].exceptions;
+        const hasException = (exceptions && exceptions.length > 0);
+
+        for (const key in abstractions) {
+            if (!key) continue;
+            const abstraction = abstractions[key];
+            const violation = abstraction.violation;
+
+            if (typeof abstraction["abstractions"] !== "object") {
+                const isSelected = (stackPosition === abstraction.index);
+                let color = (isSelected)?"#184b2d":null;
+                color = (abstraction.index === 1)?"#373700":color;
+                color = (abstraction.index === 1 && hasException)?"#420b0e":color;
+                color = (violation)?"#9500f8ff":color;
+
+                absList.push(
+                    <div className="abstraction" key={key}
+                        style={{backgroundColor: color}}
+                        onClick={(e) => selectAbstraction(e, abstraction)}>
+                        <span style={{backgroundColor: color}}>
+                            {abstraction.intent}
+                        </span>
+                    </div>
+                );
+                continue;
+            }
+
+            const isSelected = (stackPosition === abstraction["abstractions"][0].index);
+            let color = (isSelected && !abstraction.toggle)?"#184b2d":null;
+            color = (abstraction["abstractions"][0].index === 1 && !abstraction.toggle)?"#373700":color;
+            color = (violation && !abstraction.toggle)?"#9500f8ff":color;
+            // Add the intention of a collapsible abstraction.
+            absList.push(
+                <div className="abstraction" key={key}
+                    style={{backgroundColor: color}}
+                    onClick={(e) => selectAbstraction(e, abstraction)}>
+                    <span>
+                        {!abstraction.toggle || abstraction.toggle === undefined ?
+                            <CaretRight role="button" className="me-1"
+                                onClick={() => {toggleAbstraction(abstraction);}}/>:
+                            <CaretDown role="button" className="me-1"
+                                onClick={() => {toggleAbstraction(abstraction);}}/>
+                        }
+                        {abstraction.intent}
+                    </span>
+                </div>
+            );
+
+            // If the abstraction is not toggled, then hide the intentions;
+            if (!abstraction.toggle) {
+                continue;
+            }
+
+            abstraction["abstractions"].forEach((child, index) => {
+                console.log(stackPosition, child);
+                const isSelected = (stackPosition === child.index);
+                let color = (isSelected)?"#184b2d":null;
+                color = (child.index === 1)?"#373700":color;
+                color = (child.violation && violation)?"#9500f8ff":color;
+                absList.push(
+                    <div className="abstraction"
+                        style={{paddingLeft: "50px", backgroundColor: color}}
+                        key={index + String(absList.length)}
+                        onClick={(e) => selectAbstraction(e, child)}>
+                        <span style={{backgroundColor: color}}>
+                            {child.intent}
+                        </span>
+                    </div>
+                );
+            });
+        }
+
+        setAbs(absList);
+    };
+
     return (
-        <div style={rowStyle} onClick={(e) => selectStackPosition(e)}
-            className="stack-row w-100 d-flex flex-row">
-            <div style={nameStyle}>{functionName}</div>
-            <div className="flex-grow-1 d-flex justify-content-end">
-                <div className="file-name">{fileName}</div>
-                <div className="pill">{lineno}:1</div>
+        <>
+            {/* <div style={rowStyle} onClick={(e) => selectStackPosition(e)}
+                className="stack-row w-100 d-flex flex-row">
+                <div style={nameStyle}>{functionName}</div>
+                <div className="flex-grow-1 d-flex justify-content-end">
+                    <div className="file-name">{fileName}</div>
+                    <div className="pill">{lineno}:1</div>
+                </div>
+            </div> */}
+            <div className="d-flex flex-column">
+                {abs}
             </div>
-        </div>
+        </>
     );
 }

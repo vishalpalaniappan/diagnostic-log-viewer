@@ -97,6 +97,7 @@ class Debugger {
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
             args: {
                 fileTree: this.header.getSourceFiles(),
+                paths: this.header.paths,
             },
         });
     }

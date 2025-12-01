@@ -132,7 +132,7 @@ export function MonacoInstance () {
                     addException(stack.callStack[0]);
                 }
 
-                if (stackPosition > 0 && activeFile === stack.callStack[stackPosition].filePath) {
+                if (stackPosition > 1 && activeFile === stack.callStack[stackPosition].filePath) {
                     selectLine(stack.callStack[stackPosition].lineno, "stackLine");
                     addException(stack.callStack[stackPosition]);
                 }
