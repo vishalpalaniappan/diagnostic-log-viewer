@@ -18,7 +18,7 @@ export function AbstractionContainer () {
     const redrawContainers = () => {
         const height = abstractionContainerRef.current.clientHeight;
         const containerHeight = height;
-        abstractionInfoContainerRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
+        abstractionInfoContainerRef.current.style.height = containerHeight + "px";
     };
 
     useEffect(() => {
@@ -28,9 +28,6 @@ export function AbstractionContainer () {
     return (
         <div ref={abstractionContainerRef}
             className="abstraction-container w-100 d-flex flex-column">
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>
-                Abstraction Information
-            </div>
             <div className="section" ref={abstractionInfoContainerRef}>
                 <ExecutionTree />
             </div>

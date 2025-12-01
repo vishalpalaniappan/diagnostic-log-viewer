@@ -3,6 +3,8 @@ import React, {useContext, useEffect, useState} from "react";
 import StackContext from "../../Providers/StackContext";
 import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
 import ExecutionTreeContext from "./ExecutionTreeContext";
+import {ExecutionTreeToolKitBottom} from "./ExecutionTreeToolKitBottom/ExecutionTreeToolKitBottom";
+import {ExecutionTreeToolKitTop} from "./ExecutionTreeToolKitTop/ExecutionTreeToolKitTop";
 
 import "./ExecutionTree.scss";
 
@@ -67,8 +69,16 @@ export function ExecutionTree () {
 
     return (
         <ExecutionTreeContext.Provider value={{executionArray, toggleCollapse}}>
-            <div className="abstractionInfoContainer w-100 h-100 ">
-                {executionTree}
+            <div className="w-100 h-100 d-flex flex-column">
+                <div style={{height: "25px"}}>
+                    <ExecutionTreeToolKitTop />
+                </div>
+                <div className="executionTreeContainer flex-grow-1">
+                    {executionTree}
+                </div>
+                <div style={{height: "25px"}}>
+                    <ExecutionTreeToolKitBottom/>
+                </div>
             </div>
         </ExecutionTreeContext.Provider>
     );
