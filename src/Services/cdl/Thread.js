@@ -315,6 +315,7 @@ class Thread {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const logType = this.header.logTypeMap[positionData.value];
+                absMap.checkCurrentLevel(logType.abstraction_meta);
             }
         } while (--position > 0);
     }
