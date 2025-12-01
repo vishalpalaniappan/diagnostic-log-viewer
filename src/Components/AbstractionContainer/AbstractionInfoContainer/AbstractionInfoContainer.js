@@ -32,6 +32,11 @@ export function AbstractionInfoContainer () {
         }
     };
 
+    const toggleCollapse = (node) => {
+        node.collapsed = !node.collapsed;
+        renderTree();
+    };
+
     useEffect(() => {
         renderTree();
     }, [executionArray]);
@@ -44,7 +49,7 @@ export function AbstractionInfoContainer () {
     }, [stacks]);
 
     return (
-        <ExecutionTreeContext.Provider value={{executionArray}}>
+        <ExecutionTreeContext.Provider value={{executionArray, toggleCollapse}}>
             <div className="abstractionInfoContainer w-100 h-100 ">
                 {executionTree}
             </div>

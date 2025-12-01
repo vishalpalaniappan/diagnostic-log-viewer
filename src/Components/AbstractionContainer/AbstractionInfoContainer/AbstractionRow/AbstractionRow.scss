@@ -1,7 +1,8 @@
 .abstractionRow {
     width:100%;
-    padding:5px 0px;
     color:white;
+    height:30px;
+    overflow:hidden;
 }
 
 .abstractionRow:hover{
@@ -9,6 +10,29 @@
     cursor: pointer;
 }
 
-.abstractionRow > .icon {
+.text-container {
+
+}
+
+.collapse-icon-container {
+    width: 10px;
     color:rgb(175, 175, 175);
+    margin:0 5px;
+}
+
+.spacer-container {
+    height: 100%;
+}
+.spacer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 100%;
+}
+
+.vertical-line {
+    width: 1px;
+    height: 100%; 
+    background-color: #3f3d3d;
 }
