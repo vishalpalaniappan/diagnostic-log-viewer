@@ -38,7 +38,7 @@ export function DebugContainer () {
                 <VariableStackContainer />
             </div>
             <VerticalHandle topDiv={variableStackRef} bottomDiv={callStackRef}/>
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Call Stack</div>
+            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Design Flow</div>
             <div className="section" ref={callStackRef}>
                 <CallStackContainer />
             </div>

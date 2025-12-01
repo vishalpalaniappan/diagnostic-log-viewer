@@ -1,6 +1,6 @@
-import { func } from "prop-types";
 import CdlHeader from "./CdlHeader";
 import StackFrames from "./StackFrames";
+import AbstractionMap from "./AbstractionMap";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -288,8 +288,10 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
-                let callStack = this.getCallStackAtPosition(position).reverse();
-                callStack = this.getExecutionSequence(callStack);
+                const callStack = this.getCallStackAtPosition(position).reverse();
+                // callStack = this.getExecutionSequence(callStack);
+
+                const folded = this.foldExecutionTree(position);
 
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
@@ -303,14 +305,28 @@ class Thread {
         return null;
     }
 
+    /**
+     * Fold the execution tree.
+     * @param {Number} position
+     */
+    foldExecutionTree (position) {
+        const absMap = new AbstractionMap(this.header.header.abstraction_info_map);
+        do {
+            const positionData = this.execution[position];
+            if (positionData.type === "adli_execution") {
+                const logType = this.header.logTypeMap[positionData.value];
+            }
+        } while (--position > 0);
+    }
+
 
     /**
      * Validate the constraint
      * @param {Object} abstractionMeta
      * @param {Number} position
+     * @return {Boolean}
      */
     validateConstraint (abstractionMeta, position) {
-
         if ("constraint" in abstractionMeta) {
             const constraint = abstractionMeta["constraint"][0];
 
@@ -409,6 +425,7 @@ class Thread {
                             fileName: ltInfo.getFileName(),
                             lineno: ltInfo.getLineNo(),
                             position: position,
+                            exceptions: null,
                         };
                         expandedStack.push(info);
                         csEntry.abstractions.push({
@@ -521,7 +538,7 @@ class Thread {
                             "position": csEntry.abstractions[position].position,
                             "intent": world.intent,
                             "abstractions": section,
-                            "violation": hasViolation
+                            "violation": hasViolation,
                         });
                         found = true;
                     }
