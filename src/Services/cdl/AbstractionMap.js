@@ -19,7 +19,8 @@ class AbstractionMap {
      * @param {Number} id
      */
     checkCurrentLevel (id) {
-        if (this.abstractionStack.length === 0 || id in this.map) {
+        // If its a function call, then add it to the abstraction stack.
+        if (this.abstractionStack.length === 0 ) {
             for (const entry in this.map) {
                 if (entry === id) {
                     this.abstractionStack.push(this.map[entry]);
@@ -39,8 +40,12 @@ class AbstractionMap {
                 });
 
                 if (found) {
+                    // If you found the abstraction, you are in the correct
+                    // level, so we can exit the loop.
                     break;
                 } else {
+                    // If you haven't found the abstraction, then move down
+                    // the abstraction stack until you find it.
                     this.abstractionStack.pop();
                     const stackSize = this.abstractionStack.length - 1;
                     this.currentAbstraction = this.abstractionStack[stackSize];
@@ -56,6 +61,11 @@ class AbstractionMap {
                         this.currentAbstraction = entry;
                     } else {
                         this.printLevel(this.abstractionStack.length, entry.intent);
+
+                        if (entry.type === "function_call") {
+                            this.abstractionStack.push(this.map[entry.target]);
+                            this.currentAbstraction = this.map[entry.target];
+                        }
                     }
                     return;
                 }
@@ -64,7 +74,7 @@ class AbstractionMap {
     }
 
     /**
-     *
+     * Prints the design stack with the indentations to visualize it.
      * @param {*} length
      * @param {*} intent
      */
