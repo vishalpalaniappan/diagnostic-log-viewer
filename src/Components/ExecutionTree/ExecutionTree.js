@@ -164,11 +164,11 @@ export function ExecutionTree () {
         <ExecutionTreeInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="w-100 h-100 d-flex flex-column">
-                <ExecutionTreeToolKitTop/>
+                <ExecutionTreeToolKitBottom/>
                 <div className="executionTreeContainer flex-grow-1">
                     {executionTreeInstance}
                 </div>
-                <ExecutionTreeToolKitBottom/>
+                <ExecutionTreeToolKitTop/>
             </div>
         </ExecutionTreeInstanceContext.Provider>
     );
