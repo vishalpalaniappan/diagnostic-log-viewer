@@ -35,9 +35,9 @@ export function ExecutionTree () {
                     node.selected = true;
                     setSelectedNode(node);
 
-                    const doc = document.getElementById("row" + node.index);
-                    if (doc) {
-                        doc.scrollIntoView({
+                    const nodeElement = document.getElementById("row" + node.index);
+                    if (nodeElement) {
+                        nodeElement.scrollIntoView({
                             behavior: "smooth",
                             block: "center",
                         });
