@@ -1,8 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort,
-    ArrowUpShort, Play, SignIntersection, Signpost, SignpostSplit,
-    ThreeDotsVertical, XCircle}  from "react-bootstrap-icons";
+    ArrowUpShort, Play} from "react-bootstrap-icons";
 
 import "./ExecutionTreeToolKitTop.scss";
 
@@ -57,17 +56,7 @@ export function ExecutionTreeToolKitTop ({}) {
                     style={{color: greenColor}}
                     size={20} />
             </div>
-            <div className="rightContent">
-                <Signpost title="Isolate Path to Current Position"
-                    className="me-2 icon"
-                    size={16} />
-                <SignpostSplit title="Collapse all levels above current level"
-                    className="me-2 icon"
-                    size={16}/>
-                <XCircle title="Clear Break Points"
-                    className="me-2 icon"
-                    size={16} />
-            </div>
+            <div className="rightContent"></div>
         </div>
     );
 }
