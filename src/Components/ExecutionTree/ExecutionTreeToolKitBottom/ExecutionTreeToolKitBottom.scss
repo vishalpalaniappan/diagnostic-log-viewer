@@ -1,5 +1,34 @@
-.menuContainer {
+.bottomMenuContainer {
     width:100%;
-    height:100%;
-    background-color: #333333;
+    height:50px;
+    color:white;
+    display:flex;
+    justify-content: space-between;
+    border-top:solid 2px #474747;
+}
+
+.bottomMenuContainer > .leftContent {
+    align-self: center;
+    font-size:12px;
+    justify-content: flex-start;
+    padding-left: 10px;
+}
+
+.bottomMenuContainer > .leftContent > select{
+    margin-left: 10px;
+}
+
+.bottomMenuContainer > .leftContent > button{
+    margin-left: 5px;
+}
+
+.bottomMenuContainer > .rightContent {
+    align-self: center;
+    display:flex;
+    justify-content: flex-end;
+}
+
+.bottomMenuContainer > .rightContent > .tooltipIcon {
+    margin: 0 8px;
+    font-size: 15px;
 }
