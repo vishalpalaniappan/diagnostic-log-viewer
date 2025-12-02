@@ -23,13 +23,13 @@ export function AbstractionRow ({node}) {
     // Set style if node is selected.
     useEffect(() => {
         if (node && selectedNode) {
-            if (selectedNode == node) {
+            if (selectedNode === node) {
                 setSelectedStyle({background: "#3b3b3b", color: "white"});
             } else {
                 setSelectedStyle({});
             }
         }
-    }, [selectedNode]);
+    }, [selectedNode, node]);
 
     /**
      * Callback when a node is toggled.
