@@ -34,7 +34,6 @@ export function ExecutionTree () {
                 if (node.position === stackLevel) {
                     node.selected = true;
                     setSelectedNode(node);
-                    console.log("Selecting node");
                 } else {
                     node.selected = false;
                 }
@@ -47,14 +46,15 @@ export function ExecutionTree () {
         if (breakPoints) {
             for (let index = 0; index < executionTree.length; index++) {
                 const node = executionTree[index];
-                let hasBreakPoint = false;
-                breakPoints.forEach((breakpoint, count) => {
-                    if (breakpoint.abstraction_meta = node.abstractionId) {
-                        hasBreakPoint = true;
+                let breakpoint;
+                breakPoints.forEach((currBreakpoint, count) => {
+                    if (currBreakpoint.abstraction_meta == node.abstractionId) {
+                        breakpoint = currBreakpoint;
                     }
                 });
-                node.breakpoint = hasBreakPoint;
+                node.breakpoint = breakpoint;
             };
+            renderTree();
         }
     }, [breakPoints]);
 
@@ -81,13 +81,22 @@ export function ExecutionTree () {
                 if (node.collapsed && !collapsing) {
                     collapsedLevel = node.level;
                     collapsing = true;
-                    execution.push(<AbstractionRow key={node.index} node={node} />);
+                    execution.push(
+                        <AbstractionRow
+                            key={node.index}
+                            node={node}
+                            breakpoint={node.breakpoint}/>
+                    );
                     continue;
                 }
 
                 // If we aren't collapsing this node, then add the node.
                 if (!collapsing) {
-                    execution.push(<AbstractionRow key={node.index} node={node} />);
+                    execution.push(<AbstractionRow
+                        key={node.index}
+                        node={node}
+                        breakpoint={node.breakpoint}/>
+                    );
                 }
             }
 

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useLayoutEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
@@ -10,6 +10,7 @@ import "./ExecutionNode.scss";
 
 AbstractionRow.propTypes = {
     node: PropTypes.object,
+    breakpoint: PropTypes.object,
 };
 
 /**
@@ -17,7 +18,7 @@ AbstractionRow.propTypes = {
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function AbstractionRow ({node}) {
+export function AbstractionRow ({node, breakpoint}) {
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
     const {breakPoints} = useContext(BreakpointsContext);
 
@@ -34,27 +35,6 @@ export function AbstractionRow ({node}) {
             }
         }
     }, [selectedNode]);
-
-    // Set style if breakpoint is enabled.
-    useEffect(() => {
-        if (breakPoints) {
-            let breakpoint;
-            breakPoints.forEach((currBreakpoint, index) => {
-                if (node.abstractionId === currBreakpoint.abstraction_meta) {
-                    breakpoint = currBreakpoint;
-                }
-            });
-            if (breakpoint) {
-                if (breakpoint.enabled) {
-                    setBreakPointStyle({background: "#ff6262ff"});
-                } else {
-                    setBreakPointStyle({background: "#7e7e7eff"});
-                }
-            } else {
-                setBreakPointStyle({});
-            }
-        }
-    }, [breakPoints]);
 
     /**
      * Callback when a node is toggled.
@@ -112,12 +92,17 @@ export function AbstractionRow ({node}) {
         return spacers;
     };
 
-
     useEffect(() => {
-        if (node) {
-            console.log(node);
+        if (breakpoint) {
+            if (breakpoint.enabled) {
+                setBreakPointStyle({background: "#ff6262ff"});
+            } else {
+                setBreakPointStyle({background: "#7e7e7eff"});
+            }
+        } else {
+            setBreakPointStyle({});
         }
-    }, [node]);
+    }, [breakpoint]);
 
     return (
         <div style={selectedStyle} className="abstractionRow d-flex flex-row w-100">
