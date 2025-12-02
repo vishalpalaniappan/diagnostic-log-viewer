@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
+
 import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
 
 import "./ExecutionNode.scss";
@@ -11,7 +12,7 @@ AbstractionRow.propTypes = {
 };
 
 /**
- * Contains the abstraction row.
+ * Contains a node in the execution tree.
  * @param {Object} node
  * @return {JSX.Element}
  */
@@ -86,6 +87,10 @@ export function AbstractionRow ({node}) {
         return spacers;
     };
 
+    /**
+     * Get the node icon type.
+     * @return {JSX}
+     */
     const getNodeIconType = () => {
         if (node.abstractionType === "function_call") {
             return <Stack className="icon" title="Function Call" style={{color: "orange"}}/>;

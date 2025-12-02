@@ -9,7 +9,7 @@ import ExecutionTreeInstanceContext from "./ExecutionTreeInstanceContext";
 import "./ExecutionTree.scss";
 
 /**
- * Contains the abstraction info container.
+ * Contains the execution tree.
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
@@ -39,7 +39,7 @@ export function ExecutionTree () {
 
 
     /**
-     * Scroll to the given node.
+     * Scroll to the selected node.
      * @param {Object} node
      */
     const scrollToNode = (node) => {
@@ -52,6 +52,9 @@ export function ExecutionTree () {
         }
     };
 
+    /**
+     * Scroll to node when selected node changes.
+     */
     useEffect(() => {
         if (selectedNode) {
             scrollToNode(selectedNode);
@@ -97,7 +100,6 @@ export function ExecutionTree () {
                     );
                 }
             }
-
             setExecutionTreeInstance(execution);
         }
     };
@@ -131,6 +133,9 @@ export function ExecutionTree () {
         }
     };
 
+    /**
+     * Render the tree when the execution tree changes.
+     */
     useEffect(() => {
         if (executionTree) {
             renderTree();
