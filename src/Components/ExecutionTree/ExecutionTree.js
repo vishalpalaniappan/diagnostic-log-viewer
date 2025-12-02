@@ -59,7 +59,7 @@ export function ExecutionTree () {
         if (selectedNode) {
             scrollToNode(selectedNode);
         }
-    }, [selectedNode]); 
+    }, [selectedNode]);
 
     // Load the breakpoints into the execution tree
     useEffect(() => {

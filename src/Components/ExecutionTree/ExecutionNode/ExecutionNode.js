@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useLayoutEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
