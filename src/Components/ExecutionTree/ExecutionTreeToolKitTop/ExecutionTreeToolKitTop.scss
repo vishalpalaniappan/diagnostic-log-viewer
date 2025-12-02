@@ -9,9 +9,9 @@
 
 .topMenuContainer > .leftContent {
     align-self: center;
-    font-size:12px;
     justify-content: flex-start;
     padding-left: 10px;
+    display:flex;
 }
 
 .topMenuContainer > .leftContent > select{
@@ -22,13 +22,13 @@
     margin-left: 5px;
 }
 
+.topMenuContainer > .leftContent > .title{
+    margin: 0 5px;
+    align-self: center;
+}
+
 .topMenuContainer > .rightContent {
     align-self: center;
     display:flex;
     justify-content: flex-end;
-}
-
-.topMenuContainer > .rightContent > .tooltipIcon {
-    margin: 0 8px;
-    font-size: 16px;
 }
