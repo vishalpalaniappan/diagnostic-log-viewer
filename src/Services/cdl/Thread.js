@@ -322,6 +322,15 @@ class Thread {
                 const abstractionInstance = this.header.logTypeMap[positionData.value];
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
+
+                // These stacks are used to replace the placeholders in the
+                // intent and to validate the constraints.
+                abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
+                const nextPosition = this._getNextPosition(position);
+                if (nextPosition) {
+                    abstractionInstance.nextVarStack = this.getVariablesAtPosition(nextPosition);
+                }
+
                 map.mapCurrentLevel(abstractionInstance);
             }
         } while (position++ < finalPosition);

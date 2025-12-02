@@ -30,7 +30,6 @@ class AbstractionMap {
     /**
      * Add the provided id to the execution tree.
      * @param {Object} abstraction
-     * @param {Number} position
      */
     mapCurrentLevel (abstraction) {
         const id = abstraction.abstraction_meta;
@@ -88,7 +87,7 @@ class AbstractionMap {
     addToExecutionTree (entry, collapsible, abstraction) {
         this.executionTree.push({
             "level": this.abstractionStack.length,
-            "intent": entry.intent,
+            "intent": this.replacePlaceHoldersInIntent(entry, abstraction.currVarStack),
             "collapsible": collapsible,
             "collapsed": false,
             "index": this.executionTree.length,
@@ -101,6 +100,39 @@ class AbstractionMap {
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);
         }
+    }
+
+    /**
+     * Replaces the intent placeholders with the variable values.
+     * @param {Object} entry
+     * @param {Object} currVarStack
+     * @return {String}
+     */
+    replacePlaceHoldersInIntent (entry, currVarStack) {
+        const variables = entry.variables;
+        if (!variables || variables.length == 0) {
+            return entry.intent;
+        }
+
+        let updatedIntent = entry.intent;
+
+        variables.forEach((variable) => {
+            const scope = variable.scope;
+
+            if (scope === "local") {
+                variable.value = currVarStack[0][variable.name];
+            } else if (scope === "global") {
+                variable.value = currVarStack[1][variable.name];
+            };
+
+            if ("key" in variable) {
+                variable.value = variable.value[variable.key];
+            }
+
+            updatedIntent = updatedIntent.replace(variable.placeholder, variable.value);
+        });
+
+        return updatedIntent;
     }
 
     /**
