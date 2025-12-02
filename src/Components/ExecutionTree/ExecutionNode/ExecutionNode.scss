@@ -8,7 +8,7 @@
 
 .abstractionRow:hover{
     background-color:rgb(44, 44, 44);
-    cursor: pointer;
+    cursor:pointer;
 }
 
 .collapse-icon-container {
@@ -42,6 +42,9 @@
     display:flex;
 }
 
+.breakpoint-container:hover .breakpoint{
+    background:red;
+}
 
 .breakpoint{
     width:10px;

@@ -3,7 +3,8 @@ import React, {useContext, useEffect, useLayoutEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
-import BreakpointsContext from "../../../Providers/BreakpointsContext";
+import WorkerContext from "../../../Providers/WorkerContext";
+import CDL_WORKER_PROTOCOL from "../../../Services/CDL_WORKER_PROTOCOL";
 import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
 
 import "./ExecutionNode.scss";
@@ -20,7 +21,7 @@ AbstractionRow.propTypes = {
  */
 export function AbstractionRow ({node, breakpoint}) {
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
-    const {breakPoints} = useContext(BreakpointsContext);
+    const {cdlWorker} = useContext(WorkerContext);
 
     const [breakPointStyle, setBreakPointStyle] = useState();
     const [selectedStyle, setSelectedStyle] = useState();
@@ -46,6 +47,26 @@ export function AbstractionRow ({node, breakpoint}) {
         if (node.collapsible) {
             toggleCollapse(node);
         }
+    };
+
+    // Cycles through the breakpoint states.
+    // Enabled -> Disable -> Toggle
+    const clickBreakpoint = (e, breakpoint, node) => {
+        let code;
+        const fileName = node.filePath;
+        const lineNumber = node.lineno;
+        if (breakpoint && breakpoint.enabled) {
+            code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
+        } else {
+            code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
+        }
+        cdlWorker.current.postMessage({
+            code: code,
+            args: {
+                fileName: fileName,
+                lineNumber: lineNumber,
+            },
+        });
     };
 
     /**
@@ -106,8 +127,11 @@ export function AbstractionRow ({node, breakpoint}) {
 
     return (
         <div style={selectedStyle} className="abstractionRow d-flex flex-row w-100">
-            <div className="breakpoint-container">
-                <div style={breakPointStyle} className="breakpoint"></div>
+            <div onClick={(e) => clickBreakpoint(e, breakpoint, node)}
+                title="Click to toggle breakpoint"
+                className="breakpoint-container">
+                <div style={breakPointStyle}
+                    className="breakpoint"></div>
             </div>
             <div className="flex-grow-1 d-flex flex-row w-100"
                 onClick={(e) => clickSelectNode(e, node)}>
