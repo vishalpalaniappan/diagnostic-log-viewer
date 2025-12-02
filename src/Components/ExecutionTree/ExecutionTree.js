@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from "react";
 
+import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
-import ExecutionTreeContext from "./ExecutionTreeContext";
+import ExecutionTreeInstanceContext from "./ExecutionTreeInstanceContext";
 import {ExecutionTreeToolKitBottom} from "./ExecutionTreeToolKitBottom/ExecutionTreeToolKitBottom";
 import {ExecutionTreeToolKitTop} from "./ExecutionTreeToolKitTop/ExecutionTreeToolKitTop";
 
@@ -13,19 +14,20 @@ import "./ExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
+    const {executionTree} = useContext(ExecutionTreeContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionArray, setExecutionArray] = useState();
-    const [executionTree, setExecutionTree] = useState();
+    const [executionTreeInstance, setExecutionTreeInstance] = useState();
 
     const renderTree = () => {
-        if (executionArray) {
+        if (executionTree) {
             const execution = [];
             let collapsedLevel;
             let collapsing = false;
 
-            for (let index = 0; index < executionArray.length; index++) {
-                const node = executionArray[index];
+            for (let index = 0; index < executionTree.length; index++) {
+                const node = executionTree[index];
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
@@ -48,7 +50,7 @@ export function ExecutionTree () {
                 }
             }
 
-            setExecutionTree(execution);
+            setExecutionTreeInstance(execution);
         }
     };
 
@@ -58,7 +60,7 @@ export function ExecutionTree () {
     };
 
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < executionArray.length; index++) {
+        for (let index = 0; index < executionTree.length; index++) {
             const node = executionArray[index];
             if (node === selectedNode) {
                 node.selected = true;
@@ -74,31 +76,26 @@ export function ExecutionTree () {
     };
 
     useEffect(() => {
-        renderTree();
-    }, [executionArray]);
-
-    useEffect(() => {
-        if (stacks) {
-            const stack = stacks[activeThread].stack;
-            setExecutionArray(stack.executionTree);
-        };
-    }, [stacks]);
+        if (executionTree) {
+            renderTree();
+        }
+    }, [executionTree]);
 
     return (
-        <ExecutionTreeContext.Provider
+        <ExecutionTreeInstanceContext.Provider
             value={{executionArray, selectedNode, selectNode, toggleCollapse}}>
             <div className="w-100 h-100 d-flex flex-column">
                 <div style={{height: "20px"}}>
                     <ExecutionTreeToolKitTop />
                 </div>
                 <div className="executionTreeContainer flex-grow-1">
-                    {executionTree}
+                    {executionTreeInstance}
                 </div>
                 <div style={{height: "20px"}}>
                     <ExecutionTreeToolKitBottom/>
                 </div>
             </div>
-        </ExecutionTreeContext.Provider>
+        </ExecutionTreeInstanceContext.Provider>
     );
 }
 

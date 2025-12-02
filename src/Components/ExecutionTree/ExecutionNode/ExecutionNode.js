@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
-import ExecutionTreeContext from "../ExecutionTreeContext";
+import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
 
 import "./ExecutionNode.scss";
 
@@ -17,7 +17,7 @@ AbstractionRow.propTypes = {
  * @return {JSX.Element}
  */
 export function AbstractionRow ({node}) {
-    const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeContext);
+    const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
 
     const [selectedStyle, setSelectedStyle] = useState();
 

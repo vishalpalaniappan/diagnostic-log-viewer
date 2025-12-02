@@ -32,6 +32,7 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
+        this.executionTree = this.getExecutionTree(this.currPosition);
     }
 
     /**
@@ -288,13 +289,11 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
-                const executionTree = this.getExecutionTree(position);
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
                     callStack: this.getCallStackAtPosition(position).reverse(),
                     exceptions: this.exception,
-                    executionTree: executionTree,
                 };
             }
         } while (--position > 0);

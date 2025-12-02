@@ -99,6 +99,8 @@ class Debugger {
                 fileTree: this.header.getSourceFiles(),
             },
         });
+
+        this.sendExecutionTree();
     }
 
     /**
@@ -156,6 +158,24 @@ class Debugger {
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
             args: stackInfo,
         });
+    }
+
+    /**
+     * This function sends the execution tree to be visualized.
+     */
+    sendExecutionTree () {
+        for (const thread in this.debuggers) {
+            if (thread) {
+                const instance = this.debuggers[thread];
+                if (instance.thread.executionTree) {
+                    postMessage({
+                        code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
+                        args: instance.thread.executionTree,
+                    });
+                    break;
+                }
+            }
+        }
     }
 
     /**
