@@ -97,6 +97,7 @@ class AbstractionMap {
             "threadId": abstraction.threadId,
             "position": abstraction.position,
             "abstractionId": abstraction.abstraction_meta,
+            "abstractionType": entry.type,
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);

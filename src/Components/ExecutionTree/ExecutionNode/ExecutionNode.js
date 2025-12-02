@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useLayoutEffect, useState} from "react";
 
 import PropTypes from "prop-types";
-import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
+import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
 
 import WorkerContext from "../../../Providers/WorkerContext";
 import CDL_WORKER_PROTOCOL from "../../../Services/CDL_WORKER_PROTOCOL";
@@ -75,6 +75,7 @@ export function AbstractionRow ({node, breakpoint}) {
      * @param {Object} node
      */
     const clickSelectNode = (e, node) => {
+        console.log(node);
         e.preventDefault();
         selectNode(node);
     };
@@ -125,6 +126,13 @@ export function AbstractionRow ({node, breakpoint}) {
         }
     }, [breakpoint]);
 
+
+    const getNodeIconType = () => {
+        if (node.abstractionType === "function_call") {
+            return <Stack className="icon" title="Function Call" style={{color: "orange"}}/>;
+        }
+    };
+
     return (
         <div style={selectedStyle} className="abstractionRow d-flex flex-row w-100">
             <div onClick={(e) => clickBreakpoint(e, breakpoint, node)}
@@ -144,6 +152,9 @@ export function AbstractionRow ({node, breakpoint}) {
                 <div className="text-container flex-grow-1">
                     {node.intent}
                 </div>
+            </div>
+            <div className="icon-container">
+                {getNodeIconType()}
             </div>
         </div>
     );

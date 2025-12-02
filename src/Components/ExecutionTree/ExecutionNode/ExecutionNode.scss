@@ -52,3 +52,16 @@
     border-radius:50%;
     align-self: center;
 }
+
+
+.icon-container{
+    margin-right:7px;
+    width:12px;
+    display:flex;
+}
+
+.icon-container > .icon {
+    width:12px;
+    height:12px;
+    align-self: center;
+}
