@@ -111,6 +111,11 @@ class AbstractionMap {
      * @return {String}
      */
     replacePlaceHoldersInIntent (entry, currVarStack) {
+        /**
+         * TODO: Make this more robust so that it doesn't try to
+         * access nonexistent keys, variables or inject malformed data
+         * into the placeholders.
+         * */
         const variables = entry.variables;
         if (!variables || variables.length == 0) {
             return entry.intent;
