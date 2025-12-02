@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
+import BreakpointsContext from "../../Providers/BreakpointsContext";
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -17,15 +18,15 @@ import "./ExecutionTree.scss";
 export function ExecutionTree () {
     const {executionTree} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
+    const {breakPoints} = useContext(BreakpointsContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
-    const [executionArray, setExecutionArray] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
 
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
     useEffect(() => {
-        if (stacks) {
+        if (stacks && stackPosition !== undefined) {
             const stack = stacks[activeThread].stack;
             const stackLevel = stack.callStack[stackPosition].position;
             for (let index = 0; index < executionTree.length; index++) {
@@ -33,12 +34,29 @@ export function ExecutionTree () {
                 if (node.position === stackLevel) {
                     node.selected = true;
                     setSelectedNode(node);
+                    console.log("Selecting node");
                 } else {
                     node.selected = false;
                 }
             }
         }
     }, [stackPosition, stacks]);
+
+    // Load the breakpoints into the execution tree
+    useEffect(() => {
+        if (breakPoints) {
+            for (let index = 0; index < executionTree.length; index++) {
+                const node = executionTree[index];
+                let hasBreakPoint = false;
+                breakPoints.forEach((breakpoint, count) => {
+                    if (breakpoint.abstraction_meta = node.abstractionId) {
+                        hasBreakPoint = true;
+                    }
+                });
+                node.breakpoint = hasBreakPoint;
+            };
+        }
+    }, [breakPoints]);
 
     /**
      * Render the execution tree.
@@ -77,11 +95,19 @@ export function ExecutionTree () {
         }
     };
 
+    /**
+     * Collapse the given node
+     * @param {Object} node
+     */
     const toggleCollapse = (node) => {
         node.collapsed = !node.collapsed;
         renderTree();
     };
 
+    /**
+     * Select the given node, this function is called from execution node.
+     * @param {Object} selectedNode
+     */
     const selectNode = (selectedNode) => {
         for (let index = 0; index < executionTree.length; index++) {
             const node = executionTree[index];
@@ -106,7 +132,7 @@ export function ExecutionTree () {
 
     return (
         <ExecutionTreeInstanceContext.Provider
-            value={{executionArray, selectedNode, selectNode, toggleCollapse}}>
+            value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="w-100 h-100 d-flex flex-column">
                 <div style={{height: "20px"}}>
                     <ExecutionTreeToolKitTop />

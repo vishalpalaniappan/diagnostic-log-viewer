@@ -96,6 +96,7 @@ class AbstractionMap {
             "lineno": abstraction.getLineNo(),
             "threadId": abstraction.threadId,
             "position": abstraction.position,
+            "abstractionId": abstraction.abstraction_meta,
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);

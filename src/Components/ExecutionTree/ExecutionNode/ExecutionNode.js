@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
+import BreakpointsContext from "../../../Providers/BreakpointsContext";
 import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
 
 import "./ExecutionNode.scss";
@@ -18,9 +19,12 @@ AbstractionRow.propTypes = {
  */
 export function AbstractionRow ({node}) {
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
+    const {breakPoints} = useContext(BreakpointsContext);
 
+    const [breakPointStyle, setBreakPointStyle] = useState();
     const [selectedStyle, setSelectedStyle] = useState();
 
+    // Set style if node is selected.
     useEffect(() => {
         if (node && selectedNode) {
             if (selectedNode == node) {
@@ -30,6 +34,27 @@ export function AbstractionRow ({node}) {
             }
         }
     }, [selectedNode]);
+
+    // Set style if breakpoint is enabled.
+    useEffect(() => {
+        if (breakPoints) {
+            let breakpoint;
+            breakPoints.forEach((currBreakpoint, index) => {
+                if (node.abstractionId === currBreakpoint.abstraction_meta) {
+                    breakpoint = currBreakpoint;
+                }
+            });
+            if (breakpoint) {
+                if (breakpoint.enabled) {
+                    setBreakPointStyle({background: "#ff6262ff"});
+                } else {
+                    setBreakPointStyle({background: "#7e7e7eff"});
+                }
+            } else {
+                setBreakPointStyle({});
+            }
+        }
+    }, [breakPoints]);
 
     /**
      * Callback when a node is toggled.
@@ -87,10 +112,19 @@ export function AbstractionRow ({node}) {
         return spacers;
     };
 
+
+    useEffect(() => {
+        if (node) {
+            console.log(node);
+        }
+    }, [node]);
+
     return (
-        <>
-            <div className="abstractionRow d-flex flex-row w-100"
-                style={selectedStyle}
+        <div style={selectedStyle} className="abstractionRow d-flex flex-row w-100">
+            <div className="breakpoint-container">
+                <div style={breakPointStyle} className="breakpoint"></div>
+            </div>
+            <div className="flex-grow-1 d-flex flex-row w-100"
                 onClick={(e) => clickSelectNode(e, node)}>
                 <div className="d-flex flex-row">
                     {getSpacers(node)}
@@ -102,6 +136,6 @@ export function AbstractionRow ({node}) {
                     {node.intent}
                 </div>
             </div>
-        </>
+        </div>
     );
 }
