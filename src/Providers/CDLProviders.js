@@ -79,7 +79,12 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
 
     useEffect(() => {
         if (activeAbstraction) {
-            console.log(activeAbstraction);
+            const code = CDL_WORKER_PROTOCOL.GO_TO_POSITION;
+            const args = {
+                position: activeAbstraction.node.position,
+                threadId: activeAbstraction.node.threadId,
+            };
+            cdlWorker.current.postMessage({code: code, args: args});
         }
     }, [activeAbstraction]);
 

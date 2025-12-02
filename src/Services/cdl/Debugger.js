@@ -258,6 +258,17 @@ class Debugger {
     }
 
     /**
+     * This function goes to the provided position in the thread.
+     * @param {Number} position
+     * @param {String} threadId
+     */
+    goToPosition (position, threadId) {
+        const threadDebugger = this.debuggers[threadId];
+        threadDebugger.goToPosition(position);
+        this.sendStackInformation(threadId);
+    }
+
+    /**
      * Play the program from the start.
      * @param {Number} position
      */
