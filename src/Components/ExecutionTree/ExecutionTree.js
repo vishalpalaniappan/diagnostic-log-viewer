@@ -60,23 +60,6 @@ export function ExecutionTree () {
         }
     }, [selectedNode]);
 
-    // Load the breakpoints into the execution tree
-    useEffect(() => {
-        if (breakPoints) {
-            for (let index = 0; index < executionTree.length; index++) {
-                const node = executionTree[index];
-                let breakpoint;
-                breakPoints.forEach((currBreakpoint, count) => {
-                    if (currBreakpoint.abstraction_meta == node.abstractionId) {
-                        breakpoint = currBreakpoint;
-                    }
-                });
-                node.breakpoint = breakpoint;
-            };
-            renderTree();
-        }
-    }, [breakPoints]);
-
     /**
      * Render the execution tree.
      */
@@ -103,8 +86,7 @@ export function ExecutionTree () {
                     execution.push(
                         <AbstractionRow
                             key={node.index}
-                            node={node}
-                            breakpoint={node.breakpoint}/>
+                            node={node}/>
                     );
                     continue;
                 }
@@ -113,8 +95,7 @@ export function ExecutionTree () {
                 if (!collapsing) {
                     execution.push(<AbstractionRow
                         key={node.index}
-                        node={node}
-                        breakpoint={node.breakpoint}/>
+                        node={node}/>
                     );
                 }
             }

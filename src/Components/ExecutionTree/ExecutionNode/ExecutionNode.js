@@ -2,16 +2,12 @@ import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
-
-import WorkerContext from "../../../Providers/WorkerContext";
-import CDL_WORKER_PROTOCOL from "../../../Services/CDL_WORKER_PROTOCOL";
 import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
 
 import "./ExecutionNode.scss";
 
 AbstractionRow.propTypes = {
     node: PropTypes.object,
-    breakpoint: PropTypes.object,
 };
 
 /**
@@ -19,11 +15,8 @@ AbstractionRow.propTypes = {
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function AbstractionRow ({node, breakpoint}) {
+export function AbstractionRow ({node}) {
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
-    const {cdlWorker} = useContext(WorkerContext);
-
-    const [breakPointStyle, setBreakPointStyle] = useState();
     const [selectedStyle, setSelectedStyle] = useState();
 
     // Set style if node is selected.
@@ -47,26 +40,6 @@ export function AbstractionRow ({node, breakpoint}) {
         if (node.collapsible) {
             toggleCollapse(node);
         }
-    };
-
-    // Cycles through the breakpoint states.
-    // Enabled -> Disable -> Toggle
-    const clickBreakpoint = (e, breakpoint, node) => {
-        let code;
-        const fileName = node.filePath;
-        const lineNumber = node.lineno;
-        if (breakpoint && breakpoint.enabled) {
-            code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
-        } else {
-            code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
-        }
-        cdlWorker.current.postMessage({
-            code: code,
-            args: {
-                fileName: fileName,
-                lineNumber: lineNumber,
-            },
-        });
     };
 
     /**
@@ -113,19 +86,6 @@ export function AbstractionRow ({node, breakpoint}) {
         return spacers;
     };
 
-    useEffect(() => {
-        if (breakpoint) {
-            if (breakpoint.enabled) {
-                setBreakPointStyle({background: "#ff6262ff"});
-            } else {
-                setBreakPointStyle({background: "#7e7e7eff"});
-            }
-        } else {
-            setBreakPointStyle({});
-        }
-    }, [breakpoint]);
-
-
     const getNodeIconType = () => {
         if (node.abstractionType === "function_call") {
             return <Stack className="icon" title="Function Call" style={{color: "orange"}}/>;
@@ -135,13 +95,6 @@ export function AbstractionRow ({node, breakpoint}) {
     return (
         <div style={selectedStyle} id={"row" + node.index}
             className="abstractionRow d-flex flex-row w-100">
-
-            <div onClick={(e) => clickBreakpoint(e, breakpoint, node)}
-                title="Click to toggle breakpoint"
-                className="breakpoint-container">
-                <div style={breakPointStyle}
-                    className="breakpoint"></div>
-            </div>
 
             <div className="flex-grow-1 d-flex flex-row w-100"
                 onClick={(e) => clickSelectNode(e, node)}>
