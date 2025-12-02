@@ -82,7 +82,7 @@ class AbstractionMap {
      * This function adds the current position to the execution tree.
      * @param {Object} entry Entry which corresponds to the intent.
      * @param {Boolean} collapsible Indicates if this row is collapsible.
-     * @param {Boolean} abstraction Object containing the abstraction info.
+     * @param {Object} abstraction Object containing the abstraction info.
      */
     addToExecutionTree (entry, collapsible, abstraction) {
         this.executionTree.push({
@@ -126,14 +126,20 @@ class AbstractionMap {
         variables.forEach((variable) => {
             const scope = variable.scope;
 
-            if (scope === "local") {
+            if (scope === "local" && variable.name in currVarStack[0]) {
                 variable.value = currVarStack[0][variable.name];
-            } else if (scope === "global") {
+            } else if (scope === "global" && variable.name in currVarStack[1]) {
                 variable.value = currVarStack[1][variable.name];
-            };
+            } else {
+                console.warn("Unable to find variable value to replace placeholder");
+                return updatedIntent;
+            }
 
-            if ("key" in variable) {
+            if ("key" in variable && variable.key in variable.value) {
                 variable.value = variable.value[variable.key];
+            } else if ("key" in variable) {
+                console.warn("Unable to access key of variable to replace placeholder");
+                return updatedIntent;
             }
 
             updatedIntent = updatedIntent.replace(variable.placeholder, variable.value);
