@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
+import StackPositionContext from "../../Providers/StackPositionContext";
 import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
 import ExecutionTreeInstanceContext from "./ExecutionTreeInstanceContext";
 import {ExecutionTreeToolKitBottom} from "./ExecutionTreeToolKitBottom/ExecutionTreeToolKitBottom";
@@ -15,11 +16,33 @@ import "./ExecutionTree.scss";
  */
 export function ExecutionTree () {
     const {executionTree} = useContext(ExecutionTreeContext);
+    const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionArray, setExecutionArray] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
 
+    // Sync selected stack with the execution tree. This is to enable
+    // backwards compatibility but in the future, we can eliminate the stack.
+    useEffect(() => {
+        if (stacks) {
+            const stack = stacks[activeThread].stack;
+            const stackLevel = stack.callStack[stackPosition].position;
+            for (let index = 0; index < executionTree.length; index++) {
+                const node = executionTree[index];
+                if (node.position === stackLevel) {
+                    node.selected = true;
+                    setSelectedNode(node);
+                } else {
+                    node.selected = false;
+                }
+            }
+        }
+    }, [stackPosition, stacks]);
+
+    /**
+     * Render the execution tree.
+     */
     const renderTree = () => {
         if (executionTree) {
             const execution = [];
