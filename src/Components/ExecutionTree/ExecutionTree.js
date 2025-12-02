@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import BreakpointsContext from "../../Providers/BreakpointsContext";
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -16,7 +15,6 @@ import "./ExecutionTree.scss";
 export function ExecutionTree () {
     const {executionTree} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
-    const {breakPoints} = useContext(BreakpointsContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
