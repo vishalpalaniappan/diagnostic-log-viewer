@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import {SignIntersection, Signpost, SignpostSplit} from "react-bootstrap-icons";
+import {SignIntersection, Signpost, SignpostSplit, XCircle} from "react-bootstrap-icons";
 
 import "./ExecutionTreeToolKitTop.scss";
 
@@ -18,9 +18,18 @@ export function ExecutionTreeToolKitTop ({}) {
                 <span>Execution Tree</span>
             </div>
             <div className="rightContent">
-                <Signpost className="tooltipIcon" />
-                <SignpostSplit className="tooltipIcon" />
-                <SignIntersection className="tooltipIcon" />
+                <div className="tooltipIcon">
+                    <Signpost title="Isolate Path to Current Position"
+                        className="tooltipIcon" />
+                </div>
+                <div className="tooltipIcon">
+                    <SignpostSplit title="Collapse all levels above current level"
+                        className="tooltipIcon" />
+                </div>
+                <div className="tooltipIcon">
+                    <XCircle title="Clear Break Points"
+                        className="toolTipIcon" />
+                </div>
             </div>
         </div>
     );
