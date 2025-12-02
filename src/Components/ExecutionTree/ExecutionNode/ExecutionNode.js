@@ -6,7 +6,6 @@ import {CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 import ExecutionTreeContext from "../ExecutionTreeContext";
 
 import "./ExecutionNode.scss";
-import { redirect } from "react-router-dom";
 
 AbstractionRow.propTypes = {
     node: PropTypes.object,
@@ -32,6 +31,11 @@ export function AbstractionRow ({node}) {
         }
     }, [selectedNode]);
 
+    /**
+     * Callback when a node is toggled.
+     * @param {Event} e
+     * @param {Object} node
+     */
     const clickToggle = (e, node) => {
         e.preventDefault();
         if (node.collapsible) {
@@ -39,11 +43,22 @@ export function AbstractionRow ({node}) {
         }
     };
 
+    /**
+     * Call back when a node is selected.
+     * @param {Event} e
+     * @param {Object} node
+     */
     const clickSelectNode = (e, node) => {
         e.preventDefault();
         selectNode(node);
     };
 
+    /**
+     * Gets the icon indicating if node can be collapsed
+     * or if it is collapsed.
+     * @param {Object} node
+     * @return {JSX}
+     */
     const getCollapsed = (node) => {
         if (!node.collapsible) {
             return <></>;
@@ -55,6 +70,11 @@ export function AbstractionRow ({node}) {
         }
     };
 
+    /**
+     * Creates space for each node level.
+     * @param {Object} node
+     * @return {Array}
+     */
     const getSpacers = (node) => {
         const spacers = [];
         for (let i = 0; i < node.level - 1; i++) {
