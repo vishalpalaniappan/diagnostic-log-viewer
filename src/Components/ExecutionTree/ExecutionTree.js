@@ -34,20 +34,33 @@ export function ExecutionTree () {
                 if (node.position === stackLevel) {
                     node.selected = true;
                     setSelectedNode(node);
-
-                    const nodeElement = document.getElementById("row" + node.index);
-                    if (nodeElement) {
-                        nodeElement.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center",
-                        });
-                    }
                 } else {
                     node.selected = false;
                 }
             }
         }
     }, [stackPosition, stacks]);
+
+
+    /**
+     * Scroll to the given node.
+     * @param {Object} node
+     */
+    const scrollToNode = (node) => {
+        const nodeElement = document.getElementById("row" + node.index);
+        if (nodeElement) {
+            nodeElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (selectedNode) {
+            scrollToNode(selectedNode);
+        }
+    }, [selectedNode]); 
 
     // Load the breakpoints into the execution tree
     useEffect(() => {
