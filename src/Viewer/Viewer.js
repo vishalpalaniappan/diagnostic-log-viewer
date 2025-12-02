@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
+import ExecutionTreeContext from "../Providers/ExecutionTreeContext";
 import {FileViewer} from "./FileViewer/FileViewer";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import {SideContainer} from "./SideContainer/SideContainer";
@@ -13,6 +14,17 @@ import "./Viewer.scss";
  * @return {JSX.Element}
  */
 export function Viewer () {
+    const {executionTree} = useContext(ExecutionTreeContext);
+    const [showExecutionTree, setShowExecutionTree] = useState(false);
+
+    useEffect(() => {
+        if (executionTree) {
+            setShowExecutionTree(true);
+        } else {
+            setShowExecutionTree(false);
+        }
+    }, [executionTree]);
+
     return (
         <div className="viewer-container">
             <DebugToolKit />
@@ -24,9 +36,12 @@ export function Viewer () {
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
                     <FileViewer/>
                 </div>
-                <div className="d-flex h-100">
-                    <RightSideContainer/>
-                </div>
+                { showExecutionTree ?
+                    <div className="d-flex h-100">
+                        <RightSideContainer/>
+                    </div>:
+                    <></>
+                }
             </div>
             <div className="status-bar-container">
                 <StatusBarContainer/>
