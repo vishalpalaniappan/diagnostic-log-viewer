@@ -61,7 +61,7 @@ export function ExecutionTree () {
 
     const selectNode = (selectedNode) => {
         for (let index = 0; index < executionTree.length; index++) {
-            const node = executionArray[index];
+            const node = executionTree[index];
             if (node === selectedNode) {
                 node.selected = true;
                 setActiveAbstraction({
