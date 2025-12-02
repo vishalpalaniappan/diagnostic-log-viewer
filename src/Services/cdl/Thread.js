@@ -289,7 +289,6 @@ class Thread {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const executionTree = this.getExecutionTree(position);
-                console.log(executionTree);
                 return {
                     currLtInfo: this.header.logTypeMap[positionData.value],
                     threadId: this.threadId,
@@ -320,10 +319,12 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
-                const logType = this.header.logTypeMap[positionData.value];
-                map.mapCurrentLevel(logType, position);
+                const abstractionInstance = this.header.logTypeMap[positionData.value];
+                abstractionInstance.threadId = this.threadId;
+                abstractionInstance.position = position;
+                map.mapCurrentLevel(abstractionInstance);
             }
-        } while (++position < finalPosition);
+        } while (position++ < finalPosition);
 
         return map.executionTree;
     }

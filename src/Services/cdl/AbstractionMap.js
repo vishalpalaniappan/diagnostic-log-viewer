@@ -32,7 +32,7 @@ class AbstractionMap {
      * @param {Object} abstraction
      * @param {Number} position
      */
-    mapCurrentLevel (abstraction, position) {
+    mapCurrentLevel (abstraction) {
         const id = abstraction.abstraction_meta;
         if (this.abstractionStack.length > 0) {
             // move down abstraction level until you find parent of current id
@@ -95,6 +95,8 @@ class AbstractionMap {
             "filePath": abstraction.getFilePath(),
             "fileName": abstraction.getFileName(),
             "lineno": abstraction.getLineNo(),
+            "threadId": abstraction.threadId,
+            "position": abstraction.position,
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);
