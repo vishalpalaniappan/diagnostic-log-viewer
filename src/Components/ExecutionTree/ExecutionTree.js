@@ -6,7 +6,6 @@ import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
 import ExecutionTreeInstanceContext from "./ExecutionTreeInstanceContext";
-import {ExecutionTreeToolKitTop} from "./ExecutionTreeToolKitTop/ExecutionTreeToolKitTop";
 
 import "./ExecutionTree.scss";
 
@@ -163,7 +162,6 @@ export function ExecutionTree () {
         <ExecutionTreeInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="w-100 h-100 d-flex flex-column">
-                <ExecutionTreeToolKitTop/>
                 <div className="executionTreeContainer flex-grow-1">
                     {executionTreeInstance}
                 </div>

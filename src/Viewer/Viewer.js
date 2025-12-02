@@ -27,10 +27,7 @@ export function Viewer () {
 
     return (
         <div className="viewer-container">
-            { showExecutionTree ?
-                <></>:
-                <DebugToolKit />
-            }
+            <DebugToolKit />
             <div className="menu-container"></div>
             <div className="body-container d-flex flex-row">
                 <div className="d-flex h-100">
