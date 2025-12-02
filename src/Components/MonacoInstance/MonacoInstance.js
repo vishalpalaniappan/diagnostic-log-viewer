@@ -123,7 +123,7 @@ export function MonacoInstance () {
         const lines = source.split("\n");
         const linesToHide = [];
 
-        for (let i = 0; i < lines.length - 1; i++) {
+        for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
 
             if (line.includes("'''{\"type\":\"adli_abstraction_id\",\"")) {
