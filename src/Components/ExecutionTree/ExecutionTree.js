@@ -22,20 +22,24 @@ export function ExecutionTree () {
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
     useEffect(() => {
-        if (stacks && stackPosition !== undefined) {
-            const stack = stacks[activeThread].stack;
-            const stackLevel = stack.callStack[stackPosition].position;
-            for (let index = 0; index < executionTree.length; index++) {
-                const node = executionTree[index];
-                if (node.position === stackLevel) {
-                    node.selected = true;
-                    setSelectedNode(node);
-                } else {
-                    node.selected = false;
-                }
+        if (!stacks || stackPosition === undefined || !executionTree || !stacks[activeThread]) {
+            return;
+        }
+        const stack = stacks[activeThread].stack;
+        if (!stack?.callStack || stackPosition >= stack.callStack.length) {
+            return;
+        }
+        const stackLevel = stack.callStack[stackPosition].position;
+        for (let index = 0; index < executionTree.length; index++) {
+            const node = executionTree[index];
+            if (node.position === stackLevel) {
+                node.selected = true;
+                setSelectedNode(node);
+            } else {
+                node.selected = false;
             }
         }
-    }, [stackPosition, stacks]);
+    }, [stackPosition, stacks, executionTree]);
 
 
     /**
