@@ -75,7 +75,6 @@ export function AbstractionRow ({node, breakpoint}) {
      * @param {Object} node
      */
     const clickSelectNode = (e, node) => {
-        console.log(node);
         e.preventDefault();
         selectNode(node);
     };
@@ -134,28 +133,37 @@ export function AbstractionRow ({node, breakpoint}) {
     };
 
     return (
-        <div style={selectedStyle} className="abstractionRow d-flex flex-row w-100">
+        <div style={selectedStyle} id={"row" + node.index}
+            className="abstractionRow d-flex flex-row w-100">
+
             <div onClick={(e) => clickBreakpoint(e, breakpoint, node)}
                 title="Click to toggle breakpoint"
                 className="breakpoint-container">
                 <div style={breakPointStyle}
                     className="breakpoint"></div>
             </div>
+
             <div className="flex-grow-1 d-flex flex-row w-100"
                 onClick={(e) => clickSelectNode(e, node)}>
+
                 <div className="d-flex flex-row">
                     {getSpacers(node)}
                 </div>
+
                 <div onClick={(e) => clickToggle(e, node)} className="collapse-icon-container">
                     {getCollapsed(node)}
                 </div>
+
                 <div className="text-container flex-grow-1">
                     {node.intent}
                 </div>
+
             </div>
+
             <div className="icon-container">
                 {getNodeIconType()}
             </div>
+
         </div>
     );
 }

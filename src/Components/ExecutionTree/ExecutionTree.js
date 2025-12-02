@@ -34,6 +34,14 @@ export function ExecutionTree () {
                 if (node.position === stackLevel) {
                     node.selected = true;
                     setSelectedNode(node);
+
+                    const doc = document.getElementById("row" + node.index);
+                    if (doc) {
+                        doc.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                        });
+                    }
                 } else {
                     node.selected = false;
                 }
