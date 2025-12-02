@@ -62,8 +62,10 @@ export function ExecutionTree () {
             const node = executionArray[index];
             if (node === selectedNode) {
                 node.selected = true;
-                console.log("Selected Node:", selectedNode);
-                setActiveAbstraction(node);
+                setActiveAbstraction({
+                    index: index,
+                    node: node,
+                });
                 setSelectedNode(node);
             } else {
                 node.selected = false;
@@ -99,3 +101,5 @@ export function ExecutionTree () {
         </ExecutionTreeContext.Provider>
     );
 }
+
+export default ExecutionTree;
