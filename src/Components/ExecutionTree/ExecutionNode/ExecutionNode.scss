@@ -38,24 +38,24 @@
 }
 
 .icon-container{
-    margin:0 4px;
-    width:12px;
+    margin:0 3px;
+    width:10px;
     display:flex;
     align-items: center;
 }
 
 .disabledBreakPoint {
     background:grey;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     align-self: center;
 }
 
 .enabledBreakPoint {
     background:#e35454;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     align-self: center;
 }

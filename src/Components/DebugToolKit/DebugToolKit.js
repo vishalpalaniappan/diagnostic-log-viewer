@@ -232,7 +232,7 @@ export function DebugToolKit ({}) {
                     size={20} />
                 <Play
                     className="me-1 icon"
-                    title="Play (Right Bracket Key)"
+                    title="Play Forward (Ctrl + →)"
                     onClick={playForward}
                     style={{color: blueColor}}
                     size={22} />
