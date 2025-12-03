@@ -1,6 +1,6 @@
 import {createContext} from "react";
 
-// This context stores the current stack for the given position.
-const ExecutionTreeContext = createContext();
+// This context stores the execution tree instance information.
+const ExecutionTreeInstanceContext = createContext();
 
-export default ExecutionTreeContext;
+export default ExecutionTreeInstanceContext;
