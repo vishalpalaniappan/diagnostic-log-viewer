@@ -3,6 +3,7 @@ import React, {useCallback, useContext, useEffect, useRef, useState} from "react
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
+import ActionsContext from "../../Providers/ActionsContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import WorkerContext from "../../Providers/WorkerContext";
@@ -22,6 +23,7 @@ export function DebugToolKit ({}) {
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread} = useContext(StackContext);
+    const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
 
     const [stack, setStack] = useState();
@@ -98,9 +100,17 @@ export function DebugToolKit ({}) {
     const keydown = useCallback((e) => {
         switch (e.code) {
             case "KeyB":
+                setActions((prev) => ({
+                    value: "Toggle Breakpoint",
+                    tick: prev.tick + 1,
+                }));
                 toggleBreakpoint();
                 break;
             case "KeyD":
+                setActions((prev) => ({
+                    value: "Disable Breakpoint",
+                    tick: prev.tick + 1,
+                }));
                 disableBreakpoint();
                 break;
             case "KeyR":
