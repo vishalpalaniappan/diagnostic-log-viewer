@@ -4,6 +4,7 @@ import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpSho
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
 import ActionsContext from "../../Providers/ActionsContext";
+import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import WorkerContext from "../../Providers/WorkerContext";
@@ -25,6 +26,7 @@ export function DebugToolKit ({}) {
     const {stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
+    const {executionTree} = useContext(ExecutionTreeContext);
 
     const [stack, setStack] = useState();
 
@@ -165,7 +167,9 @@ export function DebugToolKit ({}) {
 
             case "ArrowUp":
                 if (e.ctrlKey) {
-                    // Implement functionality to go to previous position
+                    if (!executionTree) {
+                        moveUpStack();
+                    }
                 } else {
                     setActions((prev) => ({
                         value: "Step Out of Current Level",
@@ -177,7 +181,9 @@ export function DebugToolKit ({}) {
 
             case "ArrowDown":
                 if (e.ctrlKey) {
-                    // Implement functionality to go to next position
+                    if (!executionTree) {
+                        moveDownStack();
+                    }
                 } else {
                     setActions((prev) => ({
                         value: "Step Into Next Level",
@@ -281,6 +287,18 @@ export function DebugToolKit ({}) {
         const code = CDL_WORKER_PROTOCOL.REPLAY;
         const args = {};
         sendToWorker(code, args);
+    };
+
+    const moveUpStack = () => {
+        if (stackPosition + 1 < stack.callStack.length) {
+            setStackPosition(stackPosition + 1);
+        }
+    };
+
+    const moveDownStack = () => {
+        if (stackPosition - 1 >= 0) {
+            setStackPosition(stackPosition - 1);
+        }
     };
 
     return (
