@@ -14,12 +14,9 @@ import "./DebugContainer.scss";
 export function DebugContainerSemantic () {
     const debugContainerRef = useRef();
     const variableStackRef = useRef();
-    const callStackRef = useRef();
     const breakPointRef = useRef();
 
     const TITLE_HEIGHT = 20;
-
-    // TODO: Disable call stack container if Semantic Execution Graph is loaded.
 
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
