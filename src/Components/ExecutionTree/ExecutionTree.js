@@ -146,32 +146,6 @@ export function ExecutionTree () {
         }
     }, [executionTree]);
 
-
-    // Skeleton to implement keyboard shortcuts for execution tree
-    useEffect(() => {
-        document.removeEventListener("keydown", keydown, false);
-        document.addEventListener("keydown", keydown, false);
-        return () => {
-            document.removeEventListener("keydown", keydown, false);
-        };
-    }, [executionTree, selectedNode]);
-
-    const keydown = (e) => {
-        switch (e.code) {
-            case "KeyF":
-                console.log("Folding current level");
-                break;
-            case "KeyI":
-                console.log("Isolating Current Stack");
-                break;
-            case "KeyE":
-                console.log("Expanding Entire Tree");
-                break;
-            default:
-                break;
-        }
-    };
-
     return (
         <ExecutionTreeInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
