@@ -106,6 +106,7 @@ export function DebugToolKit ({}) {
                 }));
                 toggleBreakpoint();
                 break;
+
             case "KeyD":
                 setActions((prev) => ({
                     value: "Disable Breakpoint",
@@ -113,6 +114,7 @@ export function DebugToolKit ({}) {
                 }));
                 disableBreakpoint();
                 break;
+
             case "KeyR":
                 setActions((prev) => ({
                     value: "Replay Program from Start",
@@ -120,6 +122,7 @@ export function DebugToolKit ({}) {
                 }));
                 replayProgram();
                 break;
+
             case "KeyC":
                 setActions((prev) => ({
                     value: "Clear Breakpoints",
@@ -127,34 +130,64 @@ export function DebugToolKit ({}) {
                 }));
                 clearBreakpoints();
                 break;
+
             case "ArrowRight":
-                setActions((prev) => ({
-                    value: "Step Over Forwards",
-                    tick: prev.tick + 1,
-                }));
-                (e.ctrlKey)?playForward():stepOverForward();
+                if (e.ctrlKey) {
+                    setActions((prev) => ({
+                        value: "Play Forward",
+                        tick: prev.tick + 1,
+                    }));
+                    playForward();
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Over Forwards",
+                        tick: prev.tick + 1,
+                    }));
+                    stepOverForward();
+                }
                 break;
+
             case "ArrowLeft":
-                setActions((prev) => ({
-                    value: "Step Over Backwards",
-                    tick: prev.tick + 1,
-                }));
-                (e.ctrlKey)?playBackward():stepOverBackward();
+                if (e.ctrlKey) {
+                    setActions((prev) => ({
+                        value: "Play Backward",
+                        tick: prev.tick + 1,
+                    }));
+                    playForward();
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Over Backwards",
+                        tick: prev.tick + 1,
+                    }));
+                    stepOverForward();
+                }
                 break;
+
             case "ArrowUp":
-                setActions((prev) => ({
-                    value: "Step Out of Current Level",
-                    tick: prev.tick + 1,
-                }));
-                (e.ctrlKey)?moveUpStack():stepOut();
+                if (e.ctrlKey) {
+                    // Implement functionality to go to previous position
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Out of Current Level",
+                        tick: prev.tick + 1,
+                    }));
+                    stepOverForward();
+                }
                 break;
+
             case "ArrowDown":
-                setActions((prev) => ({
-                    value: "Step Into Next Level",
-                    tick: prev.tick + 1,
-                }));
+                if (e.ctrlKey) {
+                    // Implement functionality to go to next position
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Into Next Level",
+                        tick: prev.tick + 1,
+                    }));
+                    stepOverForward();
+                }
                 (e.ctrlKey)?moveDownStack():stepInto();
                 break;
+
             default:
                 break;
         }
