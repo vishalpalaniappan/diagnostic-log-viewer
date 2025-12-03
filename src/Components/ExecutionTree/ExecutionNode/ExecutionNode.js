@@ -21,6 +21,7 @@ export function AbstractionRow ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
+    const [textStyle, setTextStyle] = useState();
 
     // Set style if node is selected.
     useEffect(() => {
@@ -29,6 +30,13 @@ export function AbstractionRow ({node}) {
                 setSelectedStyle({background: "#3b3b3b", color: "white"});
             } else {
                 setSelectedStyle({});
+            }
+        }
+        if (node) {
+            if (node.invalid) {
+                setTextStyle({color: "red"});
+            } else {
+                setTextStyle({color: "white"});
             }
         }
     }, [selectedNode, node]);
@@ -139,7 +147,7 @@ export function AbstractionRow ({node}) {
                 </div>
 
                 <div className="text-container flex-grow-1">
-                    {node.intent}
+                    <span style={textStyle}>{node.intent}</span>
                 </div>
 
             </div>

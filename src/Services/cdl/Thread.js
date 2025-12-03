@@ -348,7 +348,19 @@ class Thread {
             }
         } while (position++ < finalPosition);
 
-        console.log(map.violations);
+
+        // Save the violations to the execution tree
+        // This is a crude implementation, I will improve it later.
+        for (let i = 0; i < map.executionTree.length - 1; i++) {
+            const entry = map.executionTree[i];
+            const position = entry.position;
+
+            map.violations.forEach((violation, index) => {
+                if (position === violation.position) {
+                    map.executionTree[i].invalid = true;
+                }
+            });
+        }
 
         return map.executionTree;
     }
