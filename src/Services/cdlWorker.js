@@ -63,6 +63,10 @@ onmessage = function (e) {
                 debuggerInstance.toggleBreakpointEnabled(args.fileName, args.lineNumber);
                 break;
 
+            case CDL_WORKER_PROTOCOL.CLEAR_BREAKPOINTS:
+                debuggerInstance.clearBreakpoints();
+                break;
+
             default:
                 break;
         }

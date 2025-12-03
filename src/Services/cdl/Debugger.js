@@ -416,6 +416,19 @@ class Debugger {
             },
         });
     }
+
+    /**
+     * Clears the breakpoints
+     */
+    clearBreakpoints = () => {
+        this.breakpoints = [];
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.BREAKPOINTS,
+            args: {
+                breakpoints: this.breakpoints,
+            },
+        });
+    };
 }
 
 export default Debugger;
