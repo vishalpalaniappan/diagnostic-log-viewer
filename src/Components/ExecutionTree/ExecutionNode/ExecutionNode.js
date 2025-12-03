@@ -22,8 +22,10 @@ export function AbstractionRow ({node}) {
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
     const [debugText, setDebugText] = useState();
+    const [hasViolation, setHasViolation] = useState();
 
     // Set style if node is selected.
+    // Set information about failure, root cause and violations.
     useEffect(() => {
         if (node && selectedNode) {
             if (selectedNode === node) {
@@ -34,12 +36,15 @@ export function AbstractionRow ({node}) {
         }
         if (node) {
             if (node.invalid) {
+                setHasViolation(true);
                 setDebugText("violation");
             }
             if (node.rootCause) {
+                setHasViolation(true);
                 setDebugText("root cause");
             }
             if (node.exception) {
+                setHasViolation(true);
                 setSelectedStyle({background: "#3f191b", color: "white"});
                 setDebugText("failure");
             }
@@ -140,6 +145,10 @@ export function AbstractionRow ({node}) {
                 {getBreakPoint()}
             </div>
 
+            <div className="icon-container">
+                {getNodeIconType()}
+            </div>
+
             <div className="flex-grow-1 d-flex flex-row w-100"
                 onClick={(e) => clickSelectNode(e, node)}>
 
@@ -156,13 +165,13 @@ export function AbstractionRow ({node}) {
                 </div>
 
             </div>
-            <div className="analysis-status-container">
-                <span className="message">{debugText}</span>
-            </div>
 
-            <div className="icon-container">
-                {getNodeIconType()}
-            </div>
+            {hasViolation ?
+                <div className="analysis-status-container">
+                    <span className="message">{debugText}</span>
+                </div>:
+                <></>
+            }
 
         </div>
     );
