@@ -37,7 +37,42 @@ class AbstractionMap {
         if ("constraint" in node) {
             for (let i = 0; i < node.constraint.length; i++) {
                 const constraint = node.constraint[i];
-                console.log(constraint);
+                const abs = abstraction;
+
+                let varStack;
+                let value;
+                if (constraint.scope === "local") {
+                    varStack = abs.nextVarStack[0];
+                } else if (constraint.scope === "global") {
+                    varStack = abs.nextVarStack[1];
+                } else {
+                    console.warn("Constraint has an invalid scope for the variable");
+                    return null;
+                }
+
+                if (constraint.name in varStack) {
+                    value = abs.nextVarStack[0][constraint.name];
+                } else {
+                    console.warn("Variable name is not in stack");
+                    return null;
+                }
+
+                if ("key" in constraint && constraint.key in value) {
+                    value = value[constraint.key];
+                } else if ("key" in constraint) {
+                    console.warn("Unable to access key of variable to validate constraint.");
+                    return null;
+                }
+
+                if (constraint.type === "minLength") {
+                    if (value.length >= constraint.value) {
+                        console.log("Min length was respected.");
+                        return false;
+                    } else {
+                        console.log("Min length was not respected.");
+                        return true;
+                    }
+                }
             }
         }
     }
@@ -146,14 +181,14 @@ class AbstractionMap {
             } else if (scope === "global" && variable.name in currVarStack[1]) {
                 variable.value = currVarStack[1][variable.name];
             } else {
-                console.warn("Unable to find variable value to replace placeholder");
+                // console.warn("Unable to find variable value to replace placeholder");
                 return updatedIntent;
             }
 
             if ("key" in variable && variable.key in variable.value) {
                 variable.value = variable.value[variable.key];
             } else if ("key" in variable) {
-                console.warn("Unable to access key of variable to replace placeholder");
+                // console.warn("Unable to access key of variable to replace placeholder");
                 return updatedIntent;
             }
 

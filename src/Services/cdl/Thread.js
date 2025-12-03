@@ -325,9 +325,23 @@ class Thread {
                 // These stacks are used to replace the placeholders in the
                 // intent and to validate the constraints.
                 abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
-                const nextPosition = this._getNextPosition(position);
-                if (nextPosition) {
-                    abstractionInstance.nextVarStack = this.getVariablesAtPosition(nextPosition);
+
+                // Get the next position in the same function
+                let nextPos = this._getNextPosition(position);
+                while (nextPos && nextPos + 1 < this.execution.length) {
+                    const positionData = this.execution[nextPos].value;
+                    const ltMap = this.header.logTypeMap[positionData.value];
+                    if (ltMap.getfId() === abstractionInstance.getfId()) {
+                        break;
+                    }
+                    nextPos = this._getNextPosition(nextPos);
+                }
+
+                // Get the next var stack and add it to the abstraction instance
+                // so the constraints can be validated before adding to semantic
+                // execution graph (currently named execution tree)
+                if (nextPos) {
+                    abstractionInstance.nextVarStack = this.getVariablesAtPosition(nextPos);
                 }
 
                 map.mapCurrentLevel(abstractionInstance);
