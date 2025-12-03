@@ -108,7 +108,7 @@ export function DebugToolKit ({}) {
                 replayProgram();
                 break;
             case "KeyC":
-                clearBreakPoints();
+                clearBreakpoints();
                 break;
             case "ArrowRight":
                 (e.ctrlKey)?playForward():stepOverForward();
@@ -151,7 +151,7 @@ export function DebugToolKit ({}) {
         sendToWorker(code, args);
     };
 
-    const clearBreakPoints = () => {
+    const clearBreakpoints  = () => {
         const code = CDL_WORKER_PROTOCOL.CLEAR_BREAKPOINTS;
         const args = {};
         sendToWorker(code, args);
