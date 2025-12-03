@@ -155,7 +155,7 @@ export function DebugToolKit ({}) {
         const code = CDL_WORKER_PROTOCOL.CLEAR_BREAKPOINTS;
         const args = {};
         sendToWorker(code, args);
-    }
+    };
 
     const stepInto = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_INTO;
