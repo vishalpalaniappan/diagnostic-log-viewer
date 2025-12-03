@@ -1,6 +1,6 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 
-import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
+import { DebugContainerSemantic } from "../../Components/DebugContainer/DebugContainerSemantic";
 
 import "./RightSideContainer.scss";
 
@@ -58,7 +58,7 @@ export function RightSideContainer () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <DebugContainer />;
+            return <DebugContainerSemantic />;
         }
     };
 

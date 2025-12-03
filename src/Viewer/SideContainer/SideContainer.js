@@ -18,7 +18,7 @@ export function SideContainer () {
     const {executionTree} = useContext(ExecutionTreeContext);
     const [activeMenu, setActiveMenu] = useState(1);
     const [accordianWidth, setAccordianWidth] = useState(200);
-    const [minEditorWidth, setMinEditorWidth] = useState(350);
+    const [minEditorWidth, setMinEditorWidth] = useState(400);
     const [minAccordianWidth, setMinAccordianWidth] = useState(250);
 
     const accordian = useRef();
@@ -65,7 +65,7 @@ export function SideContainer () {
 
     useEffect(() => {
         if (executionTree) {
-            setAccordianWidth(600);
+            setAccordianWidth(500);
         } else {
             setAccordianWidth(300);
         }
