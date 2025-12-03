@@ -32,6 +32,7 @@ class AbstractionMap {
      * @param {Object} abstraction
      */
     mapCurrentLevel (abstraction) {
+        // TODO: Add constraint validation.
         const id = abstraction.abstraction_meta;
         if (this.abstractionStack.length > 0) {
             // move down abstraction level until you find parent of current id
