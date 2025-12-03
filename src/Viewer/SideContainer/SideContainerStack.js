@@ -12,7 +12,7 @@ import "./SideContainer.scss";
  * Renders the side menu and accordian containers.
  * @return {JSX.Element}
  */
-export function SideContainer () {
+export function SideContainerStack () {
     const [activeMenu, setActiveMenu] = useState(1);
 
     const accordian = useRef();
@@ -20,7 +20,7 @@ export function SideContainer () {
     const downValueX = useRef();
 
     const SIDE_MENU_WIDTH = 50;
-    const ACCORDIAN_WIDTH = 300;
+    const ACCORDIAN_WIDTH = 250;
     const MIN_EDITOR_WIDTH = 400;
     const MIN_ACCORDIAN_WIDTH = 200;
 

@@ -1,8 +1,10 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
+import ActionsContext from "../../Providers/ActionsContext";
+import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import WorkerContext from "../../Providers/WorkerContext";
@@ -22,7 +24,9 @@ export function DebugToolKit ({}) {
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread} = useContext(StackContext);
+    const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
+    const {executionTree} = useContext(ExecutionTreeContext);
 
     const [stack, setStack] = useState();
 
@@ -89,40 +93,110 @@ export function DebugToolKit ({}) {
     }, [stacks, activeThread]);
 
     useEffect(() => {
-        document.removeEventListener("keydown", keydown, false);
         document.addEventListener("keydown", keydown, false);
         return () => {
             document.removeEventListener("keydown", keydown, false);
         };
     }, [stack, activeThread, stackPosition, stacks]);
 
-    const keydown = (e) => {
+    const keydown = useCallback((e) => {
         switch (e.code) {
             case "KeyB":
+                setActions((prev) => ({
+                    value: "Toggle Breakpoint",
+                    tick: prev.tick + 1,
+                }));
                 toggleBreakpoint();
                 break;
+
             case "KeyD":
+                setActions((prev) => ({
+                    value: "Disable Breakpoint",
+                    tick: prev.tick + 1,
+                }));
                 disableBreakpoint();
                 break;
+
             case "KeyR":
+                setActions((prev) => ({
+                    value: "Replay Program from Start",
+                    tick: prev.tick + 1,
+                }));
                 replayProgram();
                 break;
+
+            case "KeyC":
+                setActions((prev) => ({
+                    value: "Clear Breakpoints",
+                    tick: prev.tick + 1,
+                }));
+                clearBreakpoints();
+                break;
+
             case "ArrowRight":
-                (e.ctrlKey)?playForward():stepOverForward();
+                if (e.ctrlKey) {
+                    setActions((prev) => ({
+                        value: "Play Forward",
+                        tick: prev.tick + 1,
+                    }));
+                    playForward();
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Over Forwards",
+                        tick: prev.tick + 1,
+                    }));
+                    stepOverForward();
+                }
                 break;
+
             case "ArrowLeft":
-                (e.ctrlKey)?playBackward():stepOverBackward();
+                if (e.ctrlKey) {
+                    setActions((prev) => ({
+                        value: "Play Backward",
+                        tick: prev.tick + 1,
+                    }));
+                    playBackward();
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Over Backwards",
+                        tick: prev.tick + 1,
+                    }));
+                    stepOverBackward();
+                }
                 break;
+
             case "ArrowUp":
-                (e.ctrlKey)?moveUpStack():stepOut();
+                if (e.ctrlKey) {
+                    if (!executionTree) {
+                        moveUpStack();
+                    }
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Out of Current Level",
+                        tick: prev.tick + 1,
+                    }));
+                    stepOut();
+                }
                 break;
+
             case "ArrowDown":
-                (e.ctrlKey)?moveDownStack():stepInto();
+                if (e.ctrlKey) {
+                    if (!executionTree) {
+                        moveDownStack();
+                    }
+                } else {
+                    setActions((prev) => ({
+                        value: "Step Into Next Level",
+                        tick: prev.tick + 1,
+                    }));
+                    stepInto();
+                }
                 break;
+
             default:
                 break;
         }
-    };
+    }, [stack, activeThread, stackPosition, stacks]);
 
     const sendToWorker = (code, args) => {
         if (cdlWorker && cdlWorker.current) {
@@ -145,6 +219,12 @@ export function DebugToolKit ({}) {
             fileName: stack.callStack[stackPosition].filePath,
             lineNumber: stack.callStack[stackPosition].lineno,
         };
+        sendToWorker(code, args);
+    };
+
+    const clearBreakpoints = () => {
+        const code = CDL_WORKER_PROTOCOL.CLEAR_BREAKPOINTS;
+        const args = {};
         sendToWorker(code, args);
     };
 
@@ -221,7 +301,6 @@ export function DebugToolKit ({}) {
         }
     };
 
-
     return (
         <div ref={container} className="toolkit-container">
             <div className="d-flex w-100 h-100">
@@ -232,7 +311,7 @@ export function DebugToolKit ({}) {
                     size={20} />
                 <Play
                     className="me-1 icon"
-                    title="Play (Right Bracket Key)"
+                    title="Play Forward (Ctrl + →)"
                     onClick={playForward}
                     style={{color: blueColor}}
                     size={22} />

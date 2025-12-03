@@ -4,7 +4,8 @@ import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
 import ExecutionTreeContext from "../Providers/ExecutionTreeContext";
 import {FileViewer} from "./FileViewer/FileViewer";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
-import {SideContainer} from "./SideContainer/SideContainer";
+import { SideContainerSemantic } from "./SideContainer/SideContainerSemantic";
+import { SideContainerStack } from "./SideContainer/SideContainerStack";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
 
 import "./Viewer.scss";
@@ -31,7 +32,10 @@ export function Viewer () {
             <div className="menu-container"></div>
             <div className="body-container d-flex flex-row">
                 <div className="d-flex h-100">
-                    <SideContainer/>
+                    { showExecutionTree ?
+                        <SideContainerSemantic/>:
+                        <SideContainerStack />
+                    }
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
                     <FileViewer/>

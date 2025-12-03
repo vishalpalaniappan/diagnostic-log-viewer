@@ -3,6 +3,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import PropTypes from "prop-types";
 
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
+import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
 import BreakpointsContext from "./BreakpointsContext";
 import ExecutionTreeContext from "./ExecutionTreeContext";
@@ -40,6 +41,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [executionTree, setExecutionTree] = useState();
+    const [actions, setActions] = useState({value: "", tick: 0});
 
     const cdlWorker = useRef(null);
 
@@ -185,7 +187,10 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             <ExecutionTreeContext.Provider value={{executionTree}}>
-                                                {children}
+                                                <ActionsContext.Provider
+                                                    value={{actions, setActions}}>
+                                                    {children}
+                                                </ActionsContext.Provider>
                                             </ExecutionTreeContext.Provider>
                                         </ActiveFileContext.Provider>
                                     </StackContext.Provider>

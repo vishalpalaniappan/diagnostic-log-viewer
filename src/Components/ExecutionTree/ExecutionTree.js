@@ -149,7 +149,14 @@ export function ExecutionTree () {
     return (
         <ExecutionTreeInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
-            <div className="w-100 h-100 d-flex flex-column">
+            <div className="treeMenuContainer">
+                <div className="topContainer">
+                    <div className="titleContainer">
+                        <span className="title">Semantic Execution Graph</span>
+                    </div>
+                    <div className="iconMenu">
+                    </div>
+                </div>
                 <div className="executionTreeContainer flex-grow-1">
                     {executionTreeInstance}
                 </div>

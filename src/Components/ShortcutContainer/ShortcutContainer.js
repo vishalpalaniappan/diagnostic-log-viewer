@@ -76,6 +76,10 @@ export function ShortcutContainer ({}) {
                     <Col>Enable/Disable Breakpoint</Col>
                     <Col><kbd>D</kbd></Col>
                 </Row>
+                <Row className="mb-2">
+                    <Col>Clear All Breakpoints</Col>
+                    <Col><kbd>C</kbd></Col>
+                </Row>
             </div>
         </div>
     );

@@ -1,14 +1,18 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import { DebugContainerSemantic } from "../../Components/DebugContainer/DebugContainerSemantic";
+import {Bug, Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
 
-import "./RightSideContainer.scss";
+import ExecutionTree from "../../Components/ExecutionTree/ExecutionTree";
+import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
+import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
+
+import "./SideContainer.scss";
 
 /**
  * Renders the side menu and accordian containers.
  * @return {JSX.Element}
  */
-export function RightSideContainer () {
+export function SideContainerSemantic () {
     const [activeMenu, setActiveMenu] = useState(1);
 
     const accordian = useRef();
@@ -16,7 +20,7 @@ export function RightSideContainer () {
     const downValueX = useRef();
 
     const SIDE_MENU_WIDTH = 50;
-    const ACCORDIAN_WIDTH = 300;
+    const ACCORDIAN_WIDTH = 500;
     const MIN_EDITOR_WIDTH = 400;
     const MIN_ACCORDIAN_WIDTH = 200;
 
@@ -33,7 +37,7 @@ export function RightSideContainer () {
         e.preventDefault();
         e.stopPropagation();
         const delta = e.clientX - downValueX.current;
-        const newWidth = accordian.current.getBoundingClientRect().width - delta;
+        const newWidth = accordian.current.getBoundingClientRect().width + delta;
         const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - SIDE_MENU_WIDTH - MIN_EDITOR_WIDTH;
         if (newWidth > MIN_ACCORDIAN_WIDTH && newWidth < MAX_ACCORDIAN_WIDTH) {
             accordian.current.style.width = newWidth + "px";
@@ -58,16 +62,35 @@ export function RightSideContainer () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <DebugContainerSemantic />;
+            return <ExecutionTree />;
+        } else if (activeMenu === 2) {
+            return <SettingsContainer />;
+        } else if (activeMenu === 3) {
+            return <ShortcutContainer />;
         }
     };
 
     return (
         <div className="side-container d-flex flex-row">
-            <div className="handle" ref={handle} onMouseDown={handleMouseDown}></div>
+            <div className="menu d-flex flex-column" style={{width: SIDE_MENU_WIDTH+"px"}}>
+                <div className="d-flex flex-column align-items-center">
+                    <Diagram2 className="menu-icon" size={25}
+                        onClick={(e) => {setActiveMenu(1);}}
+                        style={{color: activeMenu == 1 ? "white": "grey"}}/>
+                </div>
+                <div className="mt-auto d-flex flex-column align-items-center">
+                    <Keyboard className="menu-icon" size={25}
+                        onClick={(e) => {setActiveMenu(3);}}
+                        style={{color: activeMenu == 3 ? "white": "grey"}}/>
+                    <Gear className="menu-icon" size={25}
+                        onClick={(e) => {setActiveMenu(2);}}
+                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
+                </div>
+            </div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
                 {getActiveMenuComponent()}
             </div>
+            <div className="handle" ref={handle} onMouseDown={handleMouseDown}></div>
         </div>
     );
 }

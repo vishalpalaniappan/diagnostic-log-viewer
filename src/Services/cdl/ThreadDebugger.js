@@ -74,11 +74,31 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOut (position) {
-        const callStack = this.thread.getCallStackAtPosition(position);
-        if (callStack.length <= 1) {
-            return;
+        if (this.thread.executionTree) {
+            // Use execution tree instead of stack
+            const index = this.thread.executionTree.findIndex(
+                (item) => item.position === position
+            );
+            if (index === -1) {
+                console.warn("Current position was not found in semantic execution graph");
+                return;
+            }
+            const entry = this.thread.executionTree[index];
+            const level = entry.level;
+            for (let i = index - 1; i >= 0; i--) {
+                const candidate = this.thread.executionTree[i];
+                if (candidate.level < level) {
+                    this.position = candidate .position;
+                    break;
+                }
+            }
+        } else {
+            const callStack = this.thread.getCallStackAtPosition(position);
+            if (callStack.length <= 1) {
+                return;
+            }
+            this.position = callStack[callStack.length - 2].position;
         }
-        this.position = callStack[callStack.length - 2].position;
     }
 
     /**
@@ -86,20 +106,42 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOverForward (position) {
-        const originalStack = this.thread.getCallStackAtPosition(position);
-
-        while (position < this.thread.execution.length) {
-            position = this.thread._getNextPosition(position);
-
-            if (position == null) {
-                // The end of the file has been reached
+        if (this.thread.executionTree) {
+            // Use execution tree instead of stack
+            const index = this.thread.executionTree.findIndex(
+                (item) => item.position === position
+            );
+            if (index === -1) {
+                console.warn("Current position was not found in semantic execution graph");
                 return;
             }
+            const entry = this.thread.executionTree[index];
+            const level = entry.level;
+            const length = this.thread.executionTree.length;
 
-            const currStackSize = this.thread.getCallStackAtPosition(position).length;
-            if (currStackSize <= originalStack.length) {
-                this.position = position;
-                return;
+            for (let i = index + 1; i < length; i++) {
+                const candidate = this.thread.executionTree[i];
+                if (candidate.level <= level) {
+                    this.position = candidate.position;
+                    break;
+                }
+            }
+        } else {
+            const originalStack = this.thread.getCallStackAtPosition(position);
+
+            while (position < this.thread.execution.length) {
+                position = this.thread._getNextPosition(position);
+
+                if (position == null) {
+                    // The end of the file has been reached
+                    return;
+                }
+
+                const currStackSize = this.thread.getCallStackAtPosition(position).length;
+                if (currStackSize <= originalStack.length) {
+                    this.position = position;
+                    return;
+                }
             }
         }
     }
@@ -109,20 +151,40 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
-        const originalStack = this.thread.getCallStackAtPosition(position);
-
-        while (position >= 0) {
-            position = this.thread._getPreviousPosition(position);
-
-            if (position == null) {
-                // Start of file has been reached
+        if (this.thread.executionTree) {
+            // Use execution tree instead of stack
+            const index = this.thread.executionTree.findIndex(
+                (item) => item.position === position
+            );
+            if (index === -1) {
+                console.warn("Current position was not found in semantic execution graph");
                 return;
             }
+            const entry = this.thread.executionTree[index];
+            const level = entry.level;
+            for (let i = index - 1; i >= 0; i--) {
+                const candidate = this.thread.executionTree[i];
+                if (candidate.level <= level) {
+                    this.position = candidate.position;
+                    break;
+                }
+            }
+        } else {
+            const originalStack = this.thread.getCallStackAtPosition(position);
 
-            const currStackSize = this.thread.getCallStackAtPosition(position).length;
-            if (currStackSize <= originalStack.length) {
-                this.position = position;
-                return;
+            while (position >= 0) {
+                position = this.thread._getPreviousPosition(position);
+
+                if (position == null) {
+                    // Start of file has been reached
+                    return;
+                }
+
+                const currStackSize = this.thread.getCallStackAtPosition(position).length;
+                if (currStackSize <= originalStack.length) {
+                    this.position = position;
+                    return;
+                }
             }
         }
     }
