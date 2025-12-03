@@ -153,13 +153,13 @@ export function DebugToolKit ({}) {
                         value: "Play Backward",
                         tick: prev.tick + 1,
                     }));
-                    playForward();
+                    playBackward();
                 } else {
                     setActions((prev) => ({
                         value: "Step Over Backwards",
                         tick: prev.tick + 1,
                     }));
-                    stepOverForward();
+                    stepOverBackward();
                 }
                 break;
 
@@ -171,7 +171,7 @@ export function DebugToolKit ({}) {
                         value: "Step Out of Current Level",
                         tick: prev.tick + 1,
                     }));
-                    stepOverForward();
+                    stepOut();
                 }
                 break;
 
@@ -183,7 +183,7 @@ export function DebugToolKit ({}) {
                         value: "Step Into Next Level",
                         tick: prev.tick + 1,
                     }));
-                    stepOverForward();
+                    stepInto();
                 }
                 break;
 
