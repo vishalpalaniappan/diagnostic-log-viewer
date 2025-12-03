@@ -35,9 +35,12 @@ class AbstractionMap {
      */
     validateConstraints (node, abstraction) {
         if ("constraint" in node) {
-            for (let i = 0; i < node.constraint.length; i++) {
-                const constraint = node.constraint[i];
-                const abs = abstraction;
+            const abs = abstraction;
+            // Save the constraints and their validation inside
+            // the abstraction so its easy to access the results
+            abs.constraints = node.constraint;
+            for (let i = 0; i < abs.constraints.length; i++) {
+                const constraint = abs.constraints[i];
 
                 let varStack;
                 let value;
@@ -47,30 +50,33 @@ class AbstractionMap {
                     varStack = abs.nextVarStack[1];
                 } else {
                     console.warn("Constraint has an invalid scope for the variable");
-                    return null;
+                    constraint.validation = "error";
+                    continue;
                 }
 
                 if (constraint.name in varStack) {
                     value = abs.nextVarStack[0][constraint.name];
                 } else {
                     console.warn("Variable name is not in stack");
-                    return null;
+                    constraint.validation = "error";
+                    continue;
                 }
 
                 if ("key" in constraint && constraint.key in value) {
                     value = value[constraint.key];
                 } else if ("key" in constraint) {
                     console.warn("Unable to access key of variable to validate constraint.");
-                    return null;
+                    constraint.validation = "error";
+                    continue;
                 }
 
                 if (constraint.type === "minLength") {
                     if (value.length >= constraint.value) {
                         console.log("Min length was respected.");
-                        return false;
+                        constraint.validation = false;
                     } else {
                         console.log("Min length was not respected.");
-                        return true;
+                        constraint.validation = true;
                     }
                 }
             }
@@ -148,6 +154,7 @@ class AbstractionMap {
             "position": abstraction.position,
             "abstractionId": abstraction.abstraction_meta,
             "abstractionType": node.type,
+            "constraints": abstraction.constraints,
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);
