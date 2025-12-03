@@ -79,12 +79,16 @@ class ThreadDebugger {
             const index = this.thread.executionTree.findIndex(
                 (item) => item.position === position
             );
+            if (index === -1) {
+                console.warn("Current position was not found in semantic execution graph");
+                return;
+            }
             const entry = this.thread.executionTree[index];
             const level = entry.level;
             for (let i = index - 1; i > 0; i--) {
-                const entry = this.thread.executionTree[i];
-                if (entry.level < level) {
-                    this.position = entry.position;
+                const candidate = this.thread.executionTree[i];
+                if (candidate .level < level) {
+                    this.position = candidate .position;
                     break;
                 }
             }
@@ -107,14 +111,18 @@ class ThreadDebugger {
             const index = this.thread.executionTree.findIndex(
                 (item) => item.position === position
             );
+            if (index === -1) {
+                console.warn("Current position was not found in semantic execution graph");
+                return;
+            }
             const entry = this.thread.executionTree[index];
             const level = entry.level;
             const length = this.thread.executionTree.length;
 
             for (let i = index + 1; i < length; i++) {
-                const entry = this.thread.executionTree[i];
-                if (entry.level <= level) {
-                    this.position = entry.position;
+                const candidate = this.thread.executionTree[i];
+                if (candidate.level <= level) {
+                    this.position = candidate.position;
                     break;
                 }
             }
@@ -148,12 +156,16 @@ class ThreadDebugger {
             const index = this.thread.executionTree.findIndex(
                 (item) => item.position === position
             );
+            if (index === -1) {
+                console.warn("Current position was not found in semantic execution graph");
+                return;
+            }
             const entry = this.thread.executionTree[index];
             const level = entry.level;
             for (let i = index - 1; i >= 0; i--) {
-                const entry = this.thread.executionTree[i];
-                if (entry.level <= level) {
-                    this.position = entry.position;
+                const candidate = this.thread.executionTree[i];
+                if (candidate.level <= level) {
+                    this.position = candidate.position;
                     break;
                 }
             }
