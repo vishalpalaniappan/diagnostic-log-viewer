@@ -322,11 +322,13 @@ class Thread {
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
 
-                // These stacks are used to replace the placeholders in the
-                // intent and to validate the constraints.
+                // These variable stacks are used to replace the placeholders 
+                // in the intent and to validate the constraints.
                 abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
 
-                // Get the next position in the same function
+                // Get the next position in the same function so we get the
+                // variable values which will tell us if this current position
+                // violated its constraints.
                 let nextPos = this._getNextPosition(position);
                 while (nextPos && nextPos + 1 < this.execution.length) {
                     const positionData = this.execution[nextPos];
@@ -356,9 +358,9 @@ class Thread {
         });
 
 
-        // Save the violations to the execution tree. The earliest
-        // violation is the root cause.
-        // This is a crude implementation, I will improve it later.
+        // Save the violations to the semantic execution graph.
+        // The earliest violation is the root cause.
+        // TODO: Improve this crude implementation.
         for (let i = 0; i < map.executionTree.length - 1; i++) {
             const entry = map.executionTree[i];
             const position = entry.position;
@@ -372,8 +374,8 @@ class Thread {
             });
         }
 
-        // Save the exception to the final node if the program
-        // ended in failure.
+        // If the program ended in failure, save the exception
+        // to the final node in the semantic execution graph
         if (this.exception) {
             const len = map.executionTree.length;
             const lastEntry = map.executionTree[len - 1];
