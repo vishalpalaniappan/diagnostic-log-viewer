@@ -350,28 +350,30 @@ class Thread {
             }
         } while (position++ < finalPosition);
 
-        // Find earliest violation
-        const minPosition = map.violations.reduce((minObject, currentObject) => {
-            return currentObject.position > minObject.position ?
-                currentObject.position :
-                minObject.position;
-        });
-
-
-        // Save the violations to the semantic execution graph.
-        // The earliest violation is the root cause.
-        // TODO: Improve this crude implementation.
-        for (let i = 0; i < map.executionTree.length - 1; i++) {
-            const entry = map.executionTree[i];
-            const position = entry.position;
-
-            map.violations.forEach((violation, index) => {
-                if (position === minPosition) {
-                    map.executionTree[i].rootCause = true;
-                } else if (position === violation.position) {
-                    map.executionTree[i].invalid = true;
-                }
+        // Verify that there were violations before trying to map it to graph.
+        if (map.violations.length > 0) {
+            // Find earliest violation
+            const minPosition = map.violations.reduce((minObject, currentObject) => {
+                return currentObject.position > minObject.position ?
+                    currentObject.position :
+                    minObject.position;
             });
+
+            // Save the violations to the semantic execution graph.
+            // The earliest violation is the root cause.
+            // TODO: Improve this crude implementation.
+            for (let i = 0; i < map.executionTree.length - 1; i++) {
+                const entry = map.executionTree[i];
+                const position = entry.position;
+
+                map.violations.forEach((violation, index) => {
+                    if (position === minPosition) {
+                        map.executionTree[i].rootCause = true;
+                    } else if (position === violation.position) {
+                        map.executionTree[i].invalid = true;
+                    }
+                });
+            }
         }
 
         // If the program ended in failure, save the exception
