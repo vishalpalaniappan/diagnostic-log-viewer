@@ -93,7 +93,7 @@ export function DebugToolKit ({}) {
         return () => {
             document.removeEventListener("keydown", keydown, false);
         };
-    }, [keydown]);
+    }, [stack, activeThread, stackPosition, stacks]);
 
     const keydown = useCallback((e) => {
         switch (e.code) {
