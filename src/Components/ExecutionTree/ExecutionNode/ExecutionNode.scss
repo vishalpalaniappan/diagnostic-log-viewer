@@ -38,13 +38,24 @@
 }
 
 .icon-container{
-    margin-right:7px;
+    margin:0 4px;
     width:12px;
     display:flex;
+    align-items: center;
 }
 
-.icon-container > .icon {
-    width:12px;
-    height:12px;
+.disabledBreakPoint {
+    background:grey;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    align-self: center;
+}
+
+.enabledBreakPoint {
+    background:#e35454;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     align-self: center;
 }

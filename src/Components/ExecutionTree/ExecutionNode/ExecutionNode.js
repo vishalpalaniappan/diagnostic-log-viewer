@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
+import BreakpointsContext from "../../../Providers/BreakpointsContext";
 import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
 
 import "./ExecutionNode.scss";
@@ -17,6 +18,7 @@ AbstractionRow.propTypes = {
  * @return {JSX.Element}
  */
 export function AbstractionRow ({node}) {
+    const {breakPoints} = useContext(BreakpointsContext);
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
 
@@ -93,20 +95,37 @@ export function AbstractionRow ({node}) {
      */
     const getNodeIconType = () => {
         if (node.abstractionType === "function_call") {
-            return <Stack className="icon"
+            return <Stack
                 title="Function Call"
                 style={{color: "orange"}}/>;
         } else if (node.abstractionType === "conditional_branch") {
             return <SignpostFill
-                className="icon"
                 title="Conditional Branch"
                 style={{color: "#3794ff"}}/>;
+        }
+    };
+
+
+    const getBreakPoint = () => {
+        if (!breakPoints) return;
+        for (let i = 0; i < breakPoints.length; i++) {
+            const point = breakPoints[i];
+            if (point.abstraction_meta === node.abstractionId) {
+                const className = (point.enabled == true)?
+                    "enabledBreakPoint":
+                    "disabledBreakPoint";
+                return <div className={className}></div>;
+            }
         }
     };
 
     return (
         <div style={selectedStyle} id={"row" + node.index}
             className="abstractionRow d-flex flex-row w-100">
+
+            <div className="icon-container">
+                {getBreakPoint()}
+            </div>
 
             <div className="flex-grow-1 d-flex flex-row w-100"
                 onClick={(e) => clickSelectNode(e, node)}>
