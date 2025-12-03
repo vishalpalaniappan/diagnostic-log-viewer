@@ -283,19 +283,6 @@ export function DebugToolKit ({}) {
         sendToWorker(code, args);
     };
 
-    const moveUpStack = () => {
-        if (stackPosition + 1 < stack.callStack.length) {
-            setStackPosition(stackPosition + 1);
-        }
-    };
-
-    const moveDownStack = () => {
-        if (stackPosition - 1 >= 0) {
-            setStackPosition(stackPosition - 1);
-        }
-    };
-
-
     return (
         <div ref={container} className="toolkit-container">
             <div className="d-flex w-100 h-100">
