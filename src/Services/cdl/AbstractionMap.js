@@ -27,12 +27,26 @@ class AbstractionMap {
         }
     }
 
+
+    /**
+     * Validate the constraints
+     * @param {Object} node
+     * @param {Object} abstraction
+     */
+    validateConstraints (node, abstraction) {
+        if ("constraint" in node) {
+            for (let i = 0; i < node.constraint.length; i++) {
+                const constraint = node.constraint[i];
+                console.log(constraint);
+            }
+        }
+    }
+
     /**
      * Add the provided id to the execution tree.
      * @param {Object} abstraction
      */
     mapCurrentLevel (abstraction) {
-        // TODO: Add constraint validation.
         const id = abstraction.abstraction_meta;
         if (this.abstractionStack.length > 0) {
             // move down abstraction level until you find parent of current id
@@ -73,7 +87,6 @@ class AbstractionMap {
                             this.addToExecutionTree(entry, false, abstraction);
                         }
                     }
-                    return;
                 }
             });
         };
@@ -81,14 +94,15 @@ class AbstractionMap {
 
     /**
      * This function adds the current position to the execution tree.
-     * @param {Object} entry Entry which corresponds to the intent.
+     * @param {Object} node Entry which corresponds to the intent.
      * @param {Boolean} collapsible Indicates if this row is collapsible.
      * @param {Object} abstraction Object containing the abstraction info.
      */
-    addToExecutionTree (entry, collapsible, abstraction) {
+    addToExecutionTree (node, collapsible, abstraction) {
+        this.validateConstraints(node, abstraction);
         this.executionTree.push({
             "level": this.abstractionStack.length,
-            "intent": this.replacePlaceHoldersInIntent(entry, abstraction.currVarStack),
+            "intent": this.replacePlaceHoldersInIntent(node, abstraction.currVarStack),
             "collapsible": collapsible,
             "collapsed": false,
             "index": this.executionTree.length,
@@ -98,7 +112,7 @@ class AbstractionMap {
             "threadId": abstraction.threadId,
             "position": abstraction.position,
             "abstractionId": abstraction.abstraction_meta,
-            "abstractionType": entry.type,
+            "abstractionType": node.type,
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);
