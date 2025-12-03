@@ -22,18 +22,20 @@ export function StatusBar ({}) {
 
     const [statusMessage, setStatusMessage] = useState();
 
+    const STATUS_MESSAGE_TIMEOUT = 2000;
+
     useEffect(() => {
-        if (actions) {
+        if (actions?.value) {
             setStatusMessage(actions.value);
             const timerId = setTimeout(() => {
                 setStatusMessage("");
-            }, 2000);
+            }, STATUS_MESSAGE_TIMEOUT);
 
             return () => {
                 clearTimeout(timerId);
             };
         }
-    }, [actions, setStatusMessage]);
+    }, [actions]);
 
     return (
         <div id="status-bar">
