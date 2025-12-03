@@ -125,7 +125,7 @@ class CdlHeader {
      * @return {Boolean} Indicates if the header has an abstraction map.
      */
     hasAbstractionMap () {
-        return "abstraction_info_map" in this.header;
+        return "sdg" in this.header;
     }
 
     /**
@@ -133,7 +133,7 @@ class CdlHeader {
      */
     getAbstractionMap () {
         if (this.hasAbstractionMap()) {
-            return this.header["abstraction_info_map"];
+            return this.header["sdg"];
         } else {
             return null;
         }
