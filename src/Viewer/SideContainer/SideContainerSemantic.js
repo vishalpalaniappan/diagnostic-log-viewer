@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
+import {Bug, Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
 
 import ExecutionTree from "../../Components/ExecutionTree/ExecutionTree";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
@@ -74,7 +74,7 @@ export function SideContainerSemantic () {
         <div className="side-container d-flex flex-row">
             <div className="menu d-flex flex-column" style={{width: SIDE_MENU_WIDTH+"px"}}>
                 <div className="d-flex flex-column align-items-center">
-                    <Bug className="menu-icon" size={25}
+                    <Diagram2 className="menu-icon" size={25}
                         onClick={(e) => {setActiveMenu(1);}}
                         style={{color: activeMenu == 1 ? "white": "grey"}}/>
                 </div>
