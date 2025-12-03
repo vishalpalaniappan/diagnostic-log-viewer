@@ -329,7 +329,7 @@ class Thread {
                 // Get the next position in the same function
                 let nextPos = this._getNextPosition(position);
                 while (nextPos && nextPos + 1 < this.execution.length) {
-                    const positionData = this.execution[nextPos].value;
+                    const positionData = this.execution[nextPos];
                     const ltMap = this.header.logTypeMap[positionData.value];
                     if (ltMap.getfId() === abstractionInstance.getfId()) {
                         break;
