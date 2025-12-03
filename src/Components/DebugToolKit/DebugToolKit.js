@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
@@ -89,14 +89,13 @@ export function DebugToolKit ({}) {
     }, [stacks, activeThread]);
 
     useEffect(() => {
-        document.removeEventListener("keydown", keydown, false);
         document.addEventListener("keydown", keydown, false);
         return () => {
             document.removeEventListener("keydown", keydown, false);
         };
-    }, [stack, activeThread, stackPosition, stacks]);
+    }, [keydown]);
 
-    const keydown = (e) => {
+    const keydown = useCallback((e) => {
         switch (e.code) {
             case "KeyB":
                 toggleBreakpoint();
@@ -125,7 +124,7 @@ export function DebugToolKit ({}) {
             default:
                 break;
         }
-    };
+    }, [stack, activeThread, stackPosition, stacks]);
 
     const sendToWorker = (code, args) => {
         if (cdlWorker && cdlWorker.current) {
@@ -151,7 +150,7 @@ export function DebugToolKit ({}) {
         sendToWorker(code, args);
     };
 
-    const clearBreakpoints  = () => {
+    const clearBreakpoints = () => {
         const code = CDL_WORKER_PROTOCOL.CLEAR_BREAKPOINTS;
         const args = {};
         sendToWorker(code, args);
