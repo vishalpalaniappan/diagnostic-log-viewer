@@ -40,6 +40,7 @@ export function AbstractionRow ({node}) {
                 setDebugText("root cause");
             }
             if (node.exception) {
+                setSelectedStyle({background: "#3f191b", color: "white"});
                 setDebugText("failure");
             }
         }
