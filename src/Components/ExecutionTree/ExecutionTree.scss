@@ -3,38 +3,37 @@
     height:100%;
     display:flex;
     flex-direction: column;
-}
 
-.treeMenuContainer > .topContainer {
-    width:100%;
-    height:40px;
-    display:flex;
-    border-bottom: solid 1px rgb(65, 65, 65);
-}
+    .topContainer {
+        width:100%;
+        height:40px;
+        display:flex;
+        border-bottom: solid 1px rgb(65, 65, 65);
 
-.treeMenuContainer > .topContainer >.titleContainer {
-    flex: 1;
-    height:100%;
-    display:flex;
-    align-items: center;
-}
+        .titleContainer {
+            flex: 1;
+            height:100%;
+            display:flex;
+            align-items: center;
+            .title {
+                font-size: 12px;
+            }
+        }
 
-.treeMenuContainer > .topContainer >.iconMenu {
-    flex: 1;
-    height:100%;
-    display:flex;
-    align-items: center;
-    justify-content: end;
-}
-
-.treeMenuContainer > .topContainer >.titleContainer >.title {
-    font-size: 12px;
-}
-
-.treeMenuContainer > .topContainer >.iconMenu >.icon {
-    color:grey;
-    margin-right: 10px;
-}
+        .iconMenu {
+            flex: 1;
+            height:100%;
+            display:flex;
+            align-items: center;
+            justify-content: end;
+            
+            .icon {
+                color:white;
+                margin-right: 10px;
+            }
+        }
+    }   
+}   
 
 .executionTreeContainer {
     width:100%;
