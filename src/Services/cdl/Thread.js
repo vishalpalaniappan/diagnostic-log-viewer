@@ -348,6 +348,8 @@ class Thread {
             }
         } while (position++ < finalPosition);
 
+        console.log(map.violations);
+
         return map.executionTree;
     }
 

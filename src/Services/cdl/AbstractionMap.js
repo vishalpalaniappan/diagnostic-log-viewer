@@ -17,6 +17,7 @@ class AbstractionMap {
         this.abstractionStack = [];
         this.currentAbstraction = null;
         this.executionTree = [];
+        this.violations = [];
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
@@ -35,30 +36,24 @@ class AbstractionMap {
      */
     validateConstraints (node, abstraction) {
         if ("constraint" in node) {
-            const abs = abstraction;
-            // Save the constraints and their validation inside
-            // the abstraction so its easy to access the results
-            abs.constraints = node.constraint;
-            for (let i = 0; i < abs.constraints.length; i++) {
-                const constraint = abs.constraints[i];
+            for (let i = 0; i < node.constraint.length; i++) {
+                const constraint = node.constraint[i];
 
                 let varStack;
                 let value;
                 if (constraint.scope === "local") {
-                    varStack = abs.nextVarStack[0];
+                    varStack = abstraction.nextVarStack[0];
                 } else if (constraint.scope === "global") {
-                    varStack = abs.nextVarStack[1];
+                    varStack = abstraction.nextVarStack[1];
                 } else {
                     console.warn("Constraint has an invalid scope for the variable");
-                    constraint.validation = "error";
                     continue;
                 }
 
                 if (constraint.name in varStack) {
-                    value = abs.nextVarStack[0][constraint.name];
+                    value = abstraction.nextVarStack[0][constraint.name];
                 } else {
                     console.warn("Variable name is not in stack");
-                    constraint.validation = "error";
                     continue;
                 }
 
@@ -66,17 +61,23 @@ class AbstractionMap {
                     value = value[constraint.key];
                 } else if ("key" in constraint) {
                     console.warn("Unable to access key of variable to validate constraint.");
-                    constraint.validation = "error";
                     continue;
                 }
 
                 if (constraint.type === "minLength") {
+                    console.log("=======");
                     if (value.length >= constraint.value) {
                         console.log("Min length was respected.");
-                        constraint.validation = false;
+                        console.log("Variable:", value);
+                        console.log("Position:", abstraction.position);
                     } else {
+                        this.violations.push({
+                            position: abstraction.position,
+                            constraint: constraint,
+                        });
                         console.log("Min length was not respected.");
-                        constraint.validation = true;
+                        console.log("Variable:", value);
+                        console.log("Position:", abstraction.position);
                     }
                 }
             }
@@ -153,8 +154,7 @@ class AbstractionMap {
             "threadId": abstraction.threadId,
             "position": abstraction.position,
             "abstractionId": abstraction.abstraction_meta,
-            "abstractionType": node.type,
-            "constraints": abstraction.constraints,
+            "abstractionType": node.type
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, entry.intent);
