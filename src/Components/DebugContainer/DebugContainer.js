@@ -19,6 +19,8 @@ export function DebugContainer () {
 
     const TITLE_HEIGHT = 20;
 
+    // TODO: Disable call stack container if Semantic Execution Graph is loaded.
+
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
         const containerHeight = height - 500;
