@@ -150,7 +150,7 @@ class ThreadDebugger {
             );
             const entry = this.thread.executionTree[index];
             const level = entry.level;
-            for (let i = index - 1; i > 0; i--) {
+            for (let i = index - 1; i >= 0; i--) {
                 const entry = this.thread.executionTree[i];
                 if (entry.level <= level) {
                     this.position = entry.position;
