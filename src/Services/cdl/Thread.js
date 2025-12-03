@@ -1,3 +1,4 @@
+import AbstractionMap from "./AbstractionMap";
 import CdlHeader from "./CdlHeader";
 import StackFrames from "./StackFrames";
 
@@ -31,6 +32,7 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
+        this.executionTree = this.getExecutionTree(this.currPosition);
     }
 
     /**
@@ -297,6 +299,42 @@ class Thread {
         } while (--position > 0);
 
         return null;
+    }
+
+    /**
+     * This function gets the execution tree given the position.
+     * @param {*} finalPosition
+     * @return {Object|null}
+     */
+    getExecutionTree (finalPosition) {
+        if (!this.header.hasAbstractionMap()) {
+            console.log("Trace file does not have an abstraction map");
+            return null;
+        }
+
+        const map = new AbstractionMap(this.header.header.sdg);
+
+        let position = 0;
+        do {
+            const positionData = this.execution[position];
+            if (positionData.type === "adli_execution") {
+                const abstractionInstance = this.header.logTypeMap[positionData.value];
+                abstractionInstance.threadId = this.threadId;
+                abstractionInstance.position = position;
+
+                // These stacks are used to replace the placeholders in the
+                // intent and to validate the constraints.
+                abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
+                const nextPosition = this._getNextPosition(position);
+                if (nextPosition) {
+                    abstractionInstance.nextVarStack = this.getVariablesAtPosition(nextPosition);
+                }
+
+                map.mapCurrentLevel(abstractionInstance);
+            }
+        } while (position++ < finalPosition);
+
+        return map.executionTree;
     }
 
     /**

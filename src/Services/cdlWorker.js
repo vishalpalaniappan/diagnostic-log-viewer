@@ -15,6 +15,10 @@ onmessage = function (e) {
                 debuggerInstance.getVariableStack(args.position, args.threadId);
                 break;
 
+            case CDL_WORKER_PROTOCOL.GO_TO_POSITION:
+                debuggerInstance.goToPosition(args.position, args.threadId);
+                break;
+
             case CDL_WORKER_PROTOCOL.STEP_INTO:
                 debuggerInstance.stepInto(args.position, args.threadId);
                 break;

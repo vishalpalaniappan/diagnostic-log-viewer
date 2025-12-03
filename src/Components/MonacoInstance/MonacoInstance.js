@@ -115,6 +115,28 @@ export function MonacoInstance () {
     };
 
     /**
+     * Get the lines to hide given the source file.
+     * @param {String} source
+     * @return {Array}
+     */
+    const getLinesToHide = (source) => {
+        const lines = source.split("\n");
+        const linesToHide = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+
+            if (line.includes("'''{\"type\":\"adli_abstraction_id\",\"")) {
+                linesToHide.push(
+                    new monaco.Range(i+1, 1, i+1, 1)
+                );
+            }
+        }
+
+        return linesToHide;
+    };
+
+    /**
      * This function loads the content into the monaco editor.
      *  - Highlight stack position if it is in current active file
      *  - Clear existing exceptions and load new ones if they exist
@@ -138,6 +160,10 @@ export function MonacoInstance () {
                 }
 
                 drawBreakPoints();
+
+                editorRef.current.setHiddenAreas(
+                    getLinesToHide(fileTree[activeFile])
+                );
             } else {
                 editorRef.current.setValue("Loading content...");
             }

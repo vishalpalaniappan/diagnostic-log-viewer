@@ -34,6 +34,14 @@ class ThreadDebugger {
     }
 
     /**
+     * This function updates the position of the thread.
+     * @param {Number} position
+     */
+    goToPosition (position) {
+        this.position = position;
+    }
+
+    /**
      * This function goes to the start of the program.
      */
     goToStart () {

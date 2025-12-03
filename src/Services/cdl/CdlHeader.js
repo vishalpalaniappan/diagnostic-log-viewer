@@ -120,6 +120,24 @@ class CdlHeader {
         });
         return sourceTree;
     }
+
+    /**
+     * @return {Boolean} Indicates if the header has an abstraction map.
+     */
+    hasAbstractionMap () {
+        return "sdg" in this.header;
+    }
+
+    /**
+     * @return {Object} Indicates if the header has an abstraction map.
+     */
+    getAbstractionMap () {
+        if (this.hasAbstractionMap()) {
+            return this.header["sdg"];
+        } else {
+            return null;
+        }
+    }
 }
 
 export default CdlHeader;

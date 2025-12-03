@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import ActiveFileContext from "./ActiveFileContext";
 import BreakpointsContext from "./BreakpointsContext";
+import ExecutionTreeContext from "./ExecutionTreeContext";
 import FileTreeContext from "./FileTreeContext";
 import GlobalVariablesContext from "./GlobalVariablesContext";
 import StackContext from "./StackContext";
@@ -37,6 +38,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
     const [threads, setThreads] = useState();
+    const [activeAbstraction, setActiveAbstraction] = useState();
+    const [executionTree, setExecutionTree] = useState();
 
     const cdlWorker = useRef(null);
 
@@ -73,6 +76,18 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         };
     }, [stackPosition, stacks, activeThread]);
 
+
+    useEffect(() => {
+        if (activeAbstraction && cdlWorker.current) {
+            const code = CDL_WORKER_PROTOCOL.GO_TO_POSITION;
+            const args = {
+                position: activeAbstraction.node.position,
+                threadId: activeAbstraction.node.threadId,
+            };
+            cdlWorker.current.postMessage({code: code, args: args});
+        }
+    }, [activeAbstraction]);
+
     // Resets the state variables before loading new file.
     const initializeStates = () => {
         setFileTree(undefined);
@@ -82,6 +97,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveThread(undefined);
         setActiveFile(undefined);
         setBreakPoints(undefined);
+        setExecutionTree(undefined);
     };
 
     // Create worker to handle file.
@@ -147,6 +163,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             case CDL_WORKER_PROTOCOL.BREAKPOINTS:
                 setBreakPoints(event.data.args.breakpoints);
                 break;
+            case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
+                setExecutionTree(event.data.args);
+                break;
             default:
                 break;
         }
@@ -161,10 +180,13 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                             <VariablesContext.Provider value={{localVariables}}>
                                 <BreakpointsContext.Provider value={{breakPoints}}>
                                     <StackContext.Provider
-                                        value={{stacks, activeThread, setActiveThread}}>
+                                        value={{stacks, activeThread, activeAbstraction,
+                                            setActiveThread, setActiveAbstraction}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
-                                            {children}
+                                            <ExecutionTreeContext.Provider value={{executionTree}}>
+                                                {children}
+                                            </ExecutionTreeContext.Provider>
                                         </ActiveFileContext.Provider>
                                     </StackContext.Provider>
                                 </BreakpointsContext.Provider>
