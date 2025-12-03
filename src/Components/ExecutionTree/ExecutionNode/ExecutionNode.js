@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
-import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
+import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
 import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
 
@@ -93,7 +93,14 @@ export function AbstractionRow ({node}) {
      */
     const getNodeIconType = () => {
         if (node.abstractionType === "function_call") {
-            return <Stack className="icon" title="Function Call" style={{color: "orange"}}/>;
+            return <Stack className="icon"
+                title="Function Call"
+                style={{color: "orange"}}/>;
+        } else if (node.abstractionType === "conditional_branch") {
+            return <SignpostFill
+                className="icon"
+                title="Conditional Branch"
+                style={{color: "#3794ff"}}/>;
         }
     };
 
