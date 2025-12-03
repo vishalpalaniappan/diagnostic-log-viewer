@@ -59,3 +59,14 @@
     border-radius: 50%;
     align-self: center;
 }
+
+.analysis-status-container{
+    margin:0 5px;
+    font-size:13px;
+    color:rgb(255, 81, 81);
+    width:50px;
+    display:flex;
+    .message {
+        align-self: center;
+    }
+}

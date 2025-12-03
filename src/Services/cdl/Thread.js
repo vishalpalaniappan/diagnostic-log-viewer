@@ -348,18 +348,36 @@ class Thread {
             }
         } while (position++ < finalPosition);
 
+        // Find earliest violation
+        const minPosition = map.violations.reduce((minObject, currentObject) => {
+            return currentObject.position > minObject.position ?
+                currentObject.position :
+                minObject.position;
+        });
 
-        // Save the violations to the execution tree
+
+        // Save the violations to the execution tree. The earliest
+        // violation is the root cause.
         // This is a crude implementation, I will improve it later.
         for (let i = 0; i < map.executionTree.length - 1; i++) {
             const entry = map.executionTree[i];
             const position = entry.position;
 
             map.violations.forEach((violation, index) => {
-                if (position === violation.position) {
+                if (position === minPosition) {
+                    map.executionTree[i].rootCause = true;
+                } else if (position === violation.position) {
                     map.executionTree[i].invalid = true;
                 }
             });
+        }
+
+        // Save the exception to the final node if the program
+        // ended in failure.
+        if (this.exception) {
+            const len = map.executionTree.length;
+            const lastEntry = map.executionTree[len - 1];
+            lastEntry.exception = this.exception;
         }
 
         return map.executionTree;
