@@ -101,34 +101,58 @@ export function DebugToolKit ({}) {
         switch (e.code) {
             case "KeyB":
                 setActions((prev) => ({
-                    value: "Toggle Breakpoint",
+                    value: "Toggle Breakpoint (Key B)",
                     tick: prev.tick + 1,
                 }));
                 toggleBreakpoint();
                 break;
             case "KeyD":
                 setActions((prev) => ({
-                    value: "Disable Breakpoint",
+                    value: "Disable Breakpoint (Key D)",
                     tick: prev.tick + 1,
                 }));
                 disableBreakpoint();
                 break;
             case "KeyR":
+                setActions((prev) => ({
+                    value: "Replay Program from Start (Key R)",
+                    tick: prev.tick + 1,
+                }));
                 replayProgram();
                 break;
             case "KeyC":
+                setActions((prev) => ({
+                    value: "Clear Breakpoints (Key C)",
+                    tick: prev.tick + 1,
+                }));
                 clearBreakpoints();
                 break;
             case "ArrowRight":
+                setActions((prev) => ({
+                    value: "Step Over Forwards (Key CTRL + Right Arrow)",
+                    tick: prev.tick + 1,
+                }));
                 (e.ctrlKey)?playForward():stepOverForward();
                 break;
             case "ArrowLeft":
+                setActions((prev) => ({
+                    value: "Step Over Backwards (Key CTRL + Left Arrow)",
+                    tick: prev.tick + 1,
+                }));
                 (e.ctrlKey)?playBackward():stepOverBackward();
                 break;
             case "ArrowUp":
+                setActions((prev) => ({
+                    value: "Step Out of Current Level (Key CTRL + Up Arrow)",
+                    tick: prev.tick + 1,
+                }));
                 (e.ctrlKey)?moveUpStack():stepOut();
                 break;
             case "ArrowDown":
+                setActions((prev) => ({
+                    value: "Step Into Next Level (Key CTRL + Down Arrow)",
+                    tick: prev.tick + 1,
+                }));
                 (e.ctrlKey)?moveDownStack():stepInto();
                 break;
             default:
