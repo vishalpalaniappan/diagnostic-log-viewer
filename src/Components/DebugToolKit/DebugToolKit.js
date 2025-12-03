@@ -185,7 +185,6 @@ export function DebugToolKit ({}) {
                     }));
                     stepOverForward();
                 }
-                (e.ctrlKey)?moveDownStack():stepInto();
                 break;
 
             default:
