@@ -1,12 +1,10 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import {Bug, Gear, Keyboard} from "react-bootstrap-icons";
 
 import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
-import {ExecutionTree} from "../../Components/ExecutionTree/ExecutionTree";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
-import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 
 import "./SideContainer.scss";
 
@@ -14,18 +12,17 @@ import "./SideContainer.scss";
  * Renders the side menu and accordian containers.
  * @return {JSX.Element}
  */
-export function SideContainer () {
-    const {executionTree} = useContext(ExecutionTreeContext);
+export function SideContainerStack () {
     const [activeMenu, setActiveMenu] = useState(1);
-    const [accordianWidth, setAccordianWidth] = useState(200);
-    const [minEditorWidth, setMinEditorWidth] = useState(400);
-    const [minAccordianWidth, setMinAccordianWidth] = useState(250);
 
     const accordian = useRef();
     const handle = useRef();
     const downValueX = useRef();
 
     const SIDE_MENU_WIDTH = 50;
+    const ACCORDIAN_WIDTH = 250;
+    const MIN_EDITOR_WIDTH = 400;
+    const MIN_ACCORDIAN_WIDTH = 200;
 
     const handleMouseDown = (e) => {
         e.preventDefault();
@@ -41,8 +38,8 @@ export function SideContainer () {
         e.stopPropagation();
         const delta = e.clientX - downValueX.current;
         const newWidth = accordian.current.getBoundingClientRect().width + delta;
-        const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - SIDE_MENU_WIDTH - minEditorWidth;
-        if (newWidth > minAccordianWidth && newWidth < MAX_ACCORDIAN_WIDTH) {
+        const MAX_ACCORDIAN_WIDTH = document.body.clientWidth - SIDE_MENU_WIDTH - MIN_EDITOR_WIDTH;
+        if (newWidth > MIN_ACCORDIAN_WIDTH && newWidth < MAX_ACCORDIAN_WIDTH) {
             accordian.current.style.width = newWidth + "px";
             downValueX.current = e.clientX;
         }
@@ -63,21 +60,9 @@ export function SideContainer () {
         };
     }, [handleMouseMove, handleMouseUp]);
 
-    useEffect(() => {
-        if (executionTree) {
-            setAccordianWidth(500);
-        } else {
-            setAccordianWidth(300);
-        }
-    }, [executionTree]);
-
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            if (executionTree) {
-                return <ExecutionTree />;
-            } else {
-                return <DebugContainer />;
-            }
+            return <DebugContainer />;
         } else if (activeMenu === 2) {
             return <SettingsContainer />;
         } else if (activeMenu === 3) {
@@ -102,7 +87,7 @@ export function SideContainer () {
                         style={{color: activeMenu == 2 ? "white": "grey"}}/>
                 </div>
             </div>
-            <div className="accordian" ref={accordian} style={{width: accordianWidth+"px"}}>
+            <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
                 {getActiveMenuComponent()}
             </div>
             <div className="handle" ref={handle} onMouseDown={handleMouseDown}></div>
