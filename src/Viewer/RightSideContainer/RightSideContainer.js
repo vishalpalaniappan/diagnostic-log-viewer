@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import {AbstractionContainer} from "../../Components/AbstractionContainer/AbstractionContainer";
+import {DebugContainer} from "../../Components/DebugContainer/DebugContainer";
 
 import "./RightSideContainer.scss";
 
@@ -16,7 +16,7 @@ export function RightSideContainer () {
     const downValueX = useRef();
 
     const SIDE_MENU_WIDTH = 50;
-    const ACCORDIAN_WIDTH = 600;
+    const ACCORDIAN_WIDTH = 300;
     const MIN_EDITOR_WIDTH = 400;
     const MIN_ACCORDIAN_WIDTH = 200;
 
@@ -58,7 +58,7 @@ export function RightSideContainer () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <AbstractionContainer />;
+            return <DebugContainer />;
         }
     };
 
