@@ -2,7 +2,7 @@ import {createContext} from "react";
 
 /**
  * Currently this simply stores the actions that
- * were triggere by the keyboard shortcuts.
+ * were triggered by the keyboard shortcuts.
  * 
  * This will be extended in the future, there are
  * a lot of things we can do like storing the
