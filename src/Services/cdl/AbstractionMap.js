@@ -86,6 +86,14 @@ class AbstractionMap {
                             constraint: constraint,
                         });
                     }
+                } else if (constraint.type === "is_object") {
+                    if (!(typeof item === "object" && !Array.isArray(item) && item !== null)) {
+                        this.violations.push({
+                            position: abstraction.position,
+                            index: this.executionTree.length,
+                            constraint: constraint,
+                        });
+                    }
                 }
             }
         }
