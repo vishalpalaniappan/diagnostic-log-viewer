@@ -393,11 +393,17 @@ class Thread {
         // Verify that there were violations before trying to map it to graph.
         if (map.violations.length > 0) {
             // Find earliest violation
-            const earliestViolation = map.violations.reduce((minObject, currentObject) => {
-                return currentObject.position > minObject.position ?
-                    currentObject :
-                    minObject;
-            });
+            let minPosition;
+            for (let i = 0; i < map.violations.length; i++) {
+                const violation = map.violations[i];
+                if (minPosition) {
+                    minPosition = (violation.position < minPosition)?
+                        violation.position:
+                        minPosition;
+                } else {
+                    minPosition = violation.position;
+                }
+            }
 
             // Save the violations to the semantic execution graph.
             // The earliest violation is the root cause.
@@ -407,7 +413,7 @@ class Thread {
                 const position = entry.position;
 
                 map.violations.forEach((violation, index) => {
-                    if (position === earliestViolation.position) {
+                    if (position === minPosition) {
                         map.executionTree[i].rootCause = true;
                     } else if (position === violation.position) {
                         map.executionTree[i].invalid = true;
