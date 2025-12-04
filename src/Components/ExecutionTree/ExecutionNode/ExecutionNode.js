@@ -25,7 +25,6 @@ export function AbstractionRow ({node}) {
     const [hasViolation, setHasViolation] = useState();
 
     // Set style if node is selected.
-    // Set information about failure, root cause and violations 
     useEffect(() => {
         if (node && selectedNode) {
             if (selectedNode === node) {
@@ -172,9 +171,7 @@ export function AbstractionRow ({node}) {
                     </div>:
                     <></>
                 }
-
             </div>
-
         </div>
     );
 }

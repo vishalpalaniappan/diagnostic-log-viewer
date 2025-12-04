@@ -82,6 +82,7 @@ class AbstractionMap {
                     if (value.length < constraint.value) {
                         this.violations.push({
                             position: abstraction.position,
+                            index: this.executionTree.length,
                             constraint: constraint,
                         });
                     }

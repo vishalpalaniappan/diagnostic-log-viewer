@@ -361,73 +361,51 @@ class Thread {
             }
         } while (position++ < finalPosition);
 
+        // If the program ended in failure, save the exception
+        // to the final node in the semantic execution graph
+        let failedAbstraction;
+        if (this.exception && map.executionTree.length > 0) {
+            const len = map.executionTree.length;
+            const lastEntry = map.executionTree[len - 1];
+            console.log(lastEntry);
+            lastEntry.exception = this.exception;
+            failedAbstraction = lastEntry.abstractionId;
+        }
+
 
         /**
-         * A larger note on how this is implemented and the work
-         * that needs to be done:
+         * Through the instrumentation, we can now identify the failures
+         * caused by a constraint violation. Through this, when a failure
+         * happens, the violations which create this failure are identified.
          *
-         * In the case that I have listed below, I am assuming that
-         * a single root cause led to failure. Example:
-         *
-         * - received invalid book name A
-         * - attempted to read invalid book name and failed
-         *
-         * Here it is simple because there is a single failure and the
-         * earliest violation is the root cause.
-         *
-         * TODO:
-         * However, to do this properly, you need implement a variable
-         * provenence algorithm to find the violations that led to this
-         * particulr failure. This is because you can have failures c
-         * caused by multiple root causes. Example:
-         *
-         * - received invalid book name A
-         * - received invalid book name B
-         * - attempted to read invalid book name B and failed
-         *
-         * The current implementation will label name A as the root cause,
-         * however, through the variable provenance algorithm, it will be able
-         * to identify the violation that led to failure as book name B.
+         * There can be multiple violations, for example, a statement could
+         * concatonate the first character of two strings, so if you give it
+         * two empty strings, the failure is caused by two constraint
+         * violations. I choose to label both as a root cause but the failure
+         * will specifically highlight the first variable that was checked.
          */
 
         // Verify that there were violations before trying to map it to graph.
         if (map.violations.length > 0) {
-            // Find earliest violation
-            let minPosition;
+            // Find if any of the identified violations
+            // cause this abstraction to fail.
+            const filteredViolations = [];
             for (let i = 0; i < map.violations.length; i++) {
                 const violation = map.violations[i];
-                if (minPosition) {
-                    minPosition = (violation.position < minPosition)?
-                        violation.position:
-                        minPosition;
-                } else {
-                    minPosition = violation.position;
+                if (violation.constraint.failures.includes(failedAbstraction)) {
+                    filteredViolations.push(violation);
                 }
             }
 
             // Save the violations to the semantic execution graph.
             // The earliest violation is the root cause.
             // TODO: Improve this crude implementation.
-            for (let i = 0; i < map.executionTree.length; i++) {
-                const entry = map.executionTree[i];
-                const position = entry.position;
-
+            for (let i = 0; i < filteredViolations.length; i++) {
+                const entry = filteredViolations[i];
                 map.violations.forEach((violation, index) => {
-                    if (position === minPosition) {
-                        map.executionTree[i].rootCause = true;
-                    } else if (position === violation.position) {
-                        map.executionTree[i].invalid = true;
-                    }
+                    map.executionTree[entry.index].rootCause = true;
                 });
             }
-        }
-
-        // If the program ended in failure, save the exception
-        // to the final node in the semantic execution graph
-        if (this.exception && map.executionTree.length > 0) {
-            const len = map.executionTree.length;
-            const lastEntry = map.executionTree[len - 1];
-            lastEntry.exception = this.exception;
         }
 
         return map.executionTree;
