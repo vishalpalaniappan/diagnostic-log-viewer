@@ -42,6 +42,11 @@ class AbstractionMap {
                 let varStack;
                 let value;
 
+                if (!abstraction.nextVarStack) {
+                    console.warn("nextVarStack missing while validating constraints.");
+                    continue;
+                }
+
                 // Load the relevant varstack based on the instrumented scope
                 if (constraint.scope === "local") {
                     varStack = abstraction.nextVarStack[0];
@@ -52,13 +57,12 @@ class AbstractionMap {
                     continue;
                 }
 
-                // Check if the name is in the var stack
-                if (constraint.name in varStack) {
-                    value = abstraction.nextVarStack[0][constraint.name];
-                } else {
-                    console.warn("Variable name is not in stack");
+                if (!varStack || !(constraint.name in varStack)) {
+                    console.warn("Variable name is not in stack for constraint validation.");
                     continue;
                 }
+
+                value = varStack[constraint.name];
 
                 // Access the value through the key
                 // TODO: Add functionality to add nested keys
@@ -71,6 +75,10 @@ class AbstractionMap {
 
                 // Constraint type to enforce min length of string.
                 if (constraint.type === "minLength") {
+                    if (typeof value !== "string") {
+                        console.warn("minLength constraint used on non-string value.");
+                        continue;
+                    }
                     if (value.length < constraint.value) {
                         this.violations.push({
                             position: abstraction.position,
