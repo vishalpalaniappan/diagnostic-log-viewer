@@ -41,6 +41,8 @@ class AbstractionMap {
 
                 let varStack;
                 let value;
+
+                // Load the relevant varstack based on the instrumented scope
                 if (constraint.scope === "local") {
                     varStack = abstraction.nextVarStack[0];
                 } else if (constraint.scope === "global") {
@@ -50,6 +52,7 @@ class AbstractionMap {
                     continue;
                 }
 
+                // Check if the name is in the var stack
                 if (constraint.name in varStack) {
                     value = abstraction.nextVarStack[0][constraint.name];
                 } else {
@@ -57,6 +60,8 @@ class AbstractionMap {
                     continue;
                 }
 
+                // Access the value through the key
+                // TODO: Add functionality to add nested keys
                 if ("key" in constraint && constraint.key in value) {
                     value = value[constraint.key];
                 } else if ("key" in constraint) {
@@ -64,6 +69,7 @@ class AbstractionMap {
                     continue;
                 }
 
+                // Constraint type to enforce min length of string.
                 if (constraint.type === "minLength") {
                     if (value.length < constraint.value) {
                         this.violations.push({
@@ -180,14 +186,14 @@ class AbstractionMap {
             } else if (scope === "global" && variable.name in currVarStack[1]) {
                 variable.value = currVarStack[1][variable.name];
             } else {
-                // console.warn("Unable to find variable value to replace placeholder");
+                console.warn("Did to find variable value to replace placeholder.");
                 return updatedIntent;
             }
 
             if ("key" in variable && variable.key in variable.value) {
                 variable.value = variable.value[variable.key];
             } else if ("key" in variable) {
-                // console.warn("Unable to access key of variable to replace placeholder");
+                console.warn("Could not access key of variable to replace placeholder.");
                 return updatedIntent;
             }
 
@@ -202,7 +208,7 @@ class AbstractionMap {
      * @param {*} length
      * @param {*} intent
      */
-    printLevel(length, intent) {
+    printLevel (length, intent) {
         let str = "";
         for (let i = 0; i < length; i++) {
             str += "   ";
