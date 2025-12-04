@@ -166,14 +166,14 @@ export function AbstractionRow ({node}) {
                     <span>{node.intent}</span>
                 </div>
 
-            </div>
+                {hasViolation ?
+                    <div className="analysis-status-container">
+                        <span className="message">{debugText}</span>
+                    </div>:
+                    <></>
+                }
 
-            {hasViolation ?
-                <div className="analysis-status-container">
-                    <span className="message">{debugText}</span>
-                </div>:
-                <></>
-            }
+            </div>
 
         </div>
     );
