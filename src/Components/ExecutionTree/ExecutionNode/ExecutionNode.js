@@ -139,14 +139,16 @@ export function AbstractionRow ({node}) {
 
     return (
         <div style={selectedStyle} id={"row" + node.index}
-            className="abstractionRow d-flex flex-row w-100">
+            className="abstractionRow">
 
             <div className="icon-container">
                 {getBreakPoint()}
             </div>
 
             <div className="icon-container">
-                {getNodeIconType()}
+                <div className="icon">
+                    {getNodeIconType()}
+                </div>
             </div>
 
             <div className="flex-grow-1 d-flex flex-row w-100"
@@ -161,14 +163,17 @@ export function AbstractionRow ({node}) {
                 </div>
 
                 <div className="text-container flex-grow-1">
-                    <span >{node.intent}</span>
+                    <span>{node.intent}</span>
                 </div>
 
             </div>
 
-            <div className="analysis-status-container">
-                <span className="message">{debugText}</span>
-            </div>
+            {hasViolation ?
+                <div className="analysis-status-container">
+                    <span className="message">{debugText}</span>
+                </div>:
+                <></>
+            }
 
         </div>
     );
