@@ -163,7 +163,7 @@ class AbstractionMap {
             "abstractionType": node.type,
         });
         if (this.printTreeToConsole) {
-            this.printLevel(this.abstractionStack.length, entry.intent);
+            this.printLevel(this.abstractionStack.length, node.intent);
         }
     }
 
