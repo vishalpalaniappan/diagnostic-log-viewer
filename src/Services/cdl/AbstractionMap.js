@@ -186,14 +186,14 @@ class AbstractionMap {
             } else if (scope === "global" && variable.name in currVarStack[1]) {
                 variable.value = currVarStack[1][variable.name];
             } else {
-                console.warn("Did to find variable value to replace placeholder.");
+                console.warn("Did not find variable value to replace placeholder.");
                 return updatedIntent;
             }
 
             if ("key" in variable && variable.key in variable.value) {
                 variable.value = variable.value[variable.key];
             } else if ("key" in variable) {
-                console.warn("Could not access key of variable to replace placeholder.");
+                console.warn("Unable to access key of variable to replace placeholder.");
                 return updatedIntent;
             }
 
