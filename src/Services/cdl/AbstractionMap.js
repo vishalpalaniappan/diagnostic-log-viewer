@@ -65,19 +65,11 @@ class AbstractionMap {
                 }
 
                 if (constraint.type === "minLength") {
-                    console.log("=======");
-                    if (value.length >= constraint.value) {
-                        console.log("Min length was respected.");
-                        console.log("Variable:", value);
-                        console.log("Position:", abstraction.position);
-                    } else {
+                    if (value.length < constraint.value) {
                         this.violations.push({
                             position: abstraction.position,
                             constraint: constraint,
                         });
-                        console.log("Min length was not respected.");
-                        console.log("Variable:", value);
-                        console.log("Position:", abstraction.position);
                     }
                 }
             }
