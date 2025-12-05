@@ -87,7 +87,7 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_object") {
-                    if (!(typeof item === "object" && !Array.isArray(item) && item !== null)) {
+                    if (!(typeof value === "object" && !Array.isArray(value) && value !== null)) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
