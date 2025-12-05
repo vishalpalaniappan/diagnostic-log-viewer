@@ -18,6 +18,7 @@ export function ExecutionTree () {
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
+    const [rootCauses, setRootCauses] = useState();
 
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
@@ -139,12 +140,36 @@ export function ExecutionTree () {
 
     /**
      * Render the tree when the execution tree changes.
+     *
+     * TODO: Change the way this is implemented.
      */
     useEffect(() => {
         if (executionTree) {
+            getRootCause();
             renderTree();
         }
     }, [executionTree]);
+
+
+    // Adds a temporary display to show the root cause of failure below
+    // the semantic design graph if there was a failure.
+    const getRootCause = () => {
+        const lastEntry = executionTree[executionTree.length - 1];
+        if ("failureInfo" in lastEntry) {
+            const rootCauseDivs = [];
+            lastEntry["failureInfo"].forEach((failure, index) => {
+                rootCauseDivs.push(
+                    <div key={index} className="rootcause">{failure.cause}</div>
+                );
+            });
+            setRootCauses(
+                <div className="bottomContainer scrollbar">
+                    <div className="title">Root Cause of Failure</div>
+                    {rootCauseDivs}
+                </div>
+            );
+        }
+    };
 
     return (
         <ExecutionTreeInstanceContext.Provider
@@ -157,9 +182,10 @@ export function ExecutionTree () {
                     <div className="iconMenu">
                     </div>
                 </div>
-                <div className="executionTreeContainer flex-grow-1">
+                <div className="executionTreeContainer scrollbar flex-grow-1">
                     {executionTreeInstance}
                 </div>
+                {rootCauses}
             </div>
         </ExecutionTreeInstanceContext.Provider>
     );

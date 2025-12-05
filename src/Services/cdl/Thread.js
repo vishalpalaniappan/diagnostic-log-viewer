@@ -406,10 +406,27 @@ class Thread {
             }
 
 
+            /**
+             * Save root causes to last entry so we can display them.
+             * This is temporary and I will replace this with a more
+             * maintainable and scalable approach.
+             ***/
             if (this.exception && filteredViolations.length > 0 && map.executionTree.length > 0) {
-                const len = map.executionTree.length;
-                const lastEntry = map.executionTree[len - 1];
+                const lastEntry = map.executionTree[map.executionTree.length - 1];
+                const abstractionId = lastEntry["abstractionId"];
+                const failureInfo = [];
+
+                filteredViolations.forEach((violation, index) => {
+                    if ("rootcause" in violation.constraint) {
+                        const cause = violation.constraint["rootcause"][abstractionId];
+                        failureInfo.push({
+                            "index": violation.index,
+                            "cause": cause,
+                        });
+                    }
+                });
                 lastEntry.violations = filteredViolations;
+                lastEntry.failureInfo = failureInfo;
             }
         }
 
