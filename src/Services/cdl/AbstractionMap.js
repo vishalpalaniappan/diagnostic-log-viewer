@@ -17,12 +17,84 @@ class AbstractionMap {
         this.abstractionStack = [];
         this.currentAbstraction = null;
         this.executionTree = [];
+        this.violations = [];
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
             if (this.map[entry].start === true) {
                 this.abstractionStack.push(this.map[entry]);
                 this.currentAbstraction = this.map[entry];
+            }
+        }
+    }
+
+
+    /**
+     * Validate the constraints
+     * @param {Object} node
+     * @param {Object} abstraction
+     */
+    validateConstraints (node, abstraction) {
+        if ("constraint" in node) {
+            for (let i = 0; i < node.constraint.length; i++) {
+                const constraint = node.constraint[i];
+
+                let varStack;
+                let value;
+
+                if (!abstraction.nextVarStack) {
+                    console.warn("nextVarStack missing while validating constraints.");
+                    continue;
+                }
+
+                // Load the relevant varstack based on the instrumented scope
+                if (constraint.scope === "local") {
+                    varStack = abstraction.nextVarStack[0];
+                } else if (constraint.scope === "global") {
+                    varStack = abstraction.nextVarStack[1];
+                } else {
+                    console.warn("Constraint has an invalid scope for the variable");
+                    continue;
+                }
+
+                if (!varStack || !(constraint.name in varStack)) {
+                    console.warn("Variable name is not in stack for constraint validation.");
+                    continue;
+                }
+
+                value = varStack[constraint.name];
+
+                // Access the value through the key
+                // TODO: Add functionality to add nested keys
+                if ("key" in constraint && constraint.key in value) {
+                    value = value[constraint.key];
+                } else if ("key" in constraint) {
+                    console.warn("Unable to access key of variable to validate constraint.");
+                    continue;
+                }
+
+                // Constraint type to enforce min length of string.
+                if (constraint.type === "minLength") {
+                    if (typeof value !== "string") {
+                        console.warn("minLength constraint used on non-string value.");
+                        continue;
+                    }
+                    if (value.length < constraint.value) {
+                        this.violations.push({
+                            position: abstraction.position,
+                            index: this.executionTree.length,
+                            constraint: constraint,
+                        });
+                    }
+                } else if (constraint.type === "is_object") {
+                    if (!(typeof value === "object" && !Array.isArray(value) && value !== null)) {
+                        this.violations.push({
+                            position: abstraction.position,
+                            index: this.executionTree.length,
+                            constraint: constraint,
+                        });
+                    }
+                }
             }
         }
     }
@@ -72,7 +144,6 @@ class AbstractionMap {
                             this.addToExecutionTree(entry, false, abstraction);
                         }
                     }
-                    return;
                 }
             });
         };
@@ -80,14 +151,15 @@ class AbstractionMap {
 
     /**
      * This function adds the current position to the execution tree.
-     * @param {Object} entry Entry which corresponds to the intent.
+     * @param {Object} node Entry which corresponds to the intent.
      * @param {Boolean} collapsible Indicates if this row is collapsible.
      * @param {Object} abstraction Object containing the abstraction info.
      */
-    addToExecutionTree (entry, collapsible, abstraction) {
+    addToExecutionTree (node, collapsible, abstraction) {
+        this.validateConstraints(node, abstraction);
         this.executionTree.push({
             "level": this.abstractionStack.length,
-            "intent": this.replacePlaceHoldersInIntent(entry, abstraction.currVarStack),
+            "intent": this.replacePlaceHoldersInIntent(node, abstraction.currVarStack),
             "collapsible": collapsible,
             "collapsed": false,
             "index": this.executionTree.length,
@@ -97,10 +169,10 @@ class AbstractionMap {
             "threadId": abstraction.threadId,
             "position": abstraction.position,
             "abstractionId": abstraction.abstraction_meta,
-            "abstractionType": entry.type,
+            "abstractionType": node.type,
         });
         if (this.printTreeToConsole) {
-            this.printLevel(this.abstractionStack.length, entry.intent);
+            this.printLevel(this.abstractionStack.length, node.intent);
         }
     }
 
@@ -131,14 +203,14 @@ class AbstractionMap {
             } else if (scope === "global" && variable.name in currVarStack[1]) {
                 variable.value = currVarStack[1][variable.name];
             } else {
-                console.warn("Unable to find variable value to replace placeholder");
+                console.warn("Did not find variable value to replace placeholder.");
                 return updatedIntent;
             }
 
             if ("key" in variable && variable.key in variable.value) {
                 variable.value = variable.value[variable.key];
             } else if ("key" in variable) {
-                console.warn("Unable to access key of variable to replace placeholder");
+                console.warn("Unable to access key of variable to replace placeholder.");
                 return updatedIntent;
             }
 
@@ -153,7 +225,7 @@ class AbstractionMap {
      * @param {*} length
      * @param {*} intent
      */
-    printLevel(length, intent) {
+    printLevel (length, intent) {
         let str = "";
         for (let i = 0; i < length; i++) {
             str += "   ";

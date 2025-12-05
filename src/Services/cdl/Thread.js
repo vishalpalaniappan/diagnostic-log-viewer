@@ -322,17 +322,122 @@ class Thread {
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
 
-                // These stacks are used to replace the placeholders in the
-                // intent and to validate the constraints.
+                /**
+                 *  TODO: This practice of saving the var stack info in the
+                 *  abstraction info is really strange and I should not be
+                 *  doing this, so I will revisit this later to change it.
+                 */
+
+
+                // These variable stacks are used to replace the placeholders
+                // in the intent and to validate the constraints.
                 abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
-                const nextPosition = this._getNextPosition(position);
-                if (nextPosition) {
-                    abstractionInstance.nextVarStack = this.getVariablesAtPosition(nextPosition);
+                abstractionInstance.nextVarStack = null;
+
+                /*
+                 We go to the next position because the variable values for
+                 the current position are logged after the statement.
+
+                 For example:
+                 a = b + 1
+                 logVariable(a);
+                 c = d + 2
+
+                 So we need to load the value of a from the c = d + 2 statement.
+                 We save the next var stack to the abstraction so that we can
+                 access it when validating the constraints.
+
+                 TODO:
+                 This is not an ideal solution, if the constraint we are
+                 validating is in the last statement (for example a return
+                 statement), then we need to just access the variable values,
+                 the next statement is not going to be in the same function.
+                 */
+                let nextPos = this._getNextPosition(position);
+                while (nextPos !== null) {
+                    const nextPositionData = this.execution[nextPos];
+                    const nextAbstraction = this.header.logTypeMap[nextPositionData.value];
+                    if (nextAbstraction.getfId() === abstractionInstance.getfId()) {
+                        abstractionInstance.nextVarStack =
+                            this.getVariablesAtPosition(nextPos);
+                        break;
+                    }
+                    nextPos = this._getNextPosition(nextPos);
                 }
 
                 map.mapCurrentLevel(abstractionInstance);
             }
         } while (position++ < finalPosition);
+
+        // If the program ended in failure, save the exception
+        // to the final node in the semantic execution graph
+        let failedAbstraction;
+        if (this.exception && map.executionTree.length > 0) {
+            const len = map.executionTree.length;
+            const lastEntry = map.executionTree[len - 1];
+            lastEntry.exception = this.exception;
+            failedAbstraction = lastEntry.abstractionId;
+        }
+
+
+        /**
+         * Through the instrumentation, we can now identify the failures
+         * caused by a constraint violation. Through this, when a failure
+         * happens, the violations which create this failure are identified.
+         *
+         * There can be multiple violations, for example, a statement could
+         * concatonate the first character of two strings, so if you give it
+         * two empty strings, the failure is caused by two constraint
+         * violations. I choose to label both as a root cause but the failure
+         * will specifically highlight the first variable that was checked.
+         */
+
+        // Verify that there were violations before trying to map it to graph.
+        if (map.violations.length > 0) {
+            // Find if any of the identified violations
+            // cause this abstraction to fail.
+            const filteredViolations = [];
+            for (let i = 0; i < map.violations.length; i++) {
+                const violation = map.violations[i];
+                if (violation.constraint?.failures?.includes(failedAbstraction)) {
+                    filteredViolations.push(violation);
+                }
+            }
+
+            // Save the violations to the semantic execution graph.
+            // The earliest violation is the root cause.
+            // TODO: Improve this crude implementation.
+            for (let i = 0; i < filteredViolations.length; i++) {
+                const entry = filteredViolations[i];
+                map.executionTree[entry.index].rootCause = true;
+                map.executionTree[entry.index].violation = entry;
+            }
+
+
+            /**
+             * Save root causes to last entry so we can display them.
+             * This is temporary and I will replace this with a more
+             * maintainable and scalable approach.
+             ***/
+            if (this.exception && filteredViolations.length > 0 && map.executionTree.length > 0) {
+                const lastEntry = map.executionTree[map.executionTree.length - 1];
+                const abstractionId = lastEntry["abstractionId"];
+                const failureInfo = [];
+
+                filteredViolations.forEach((violation, index) => {
+                    const rootcauseMap = violation.constraint?.rootcause;
+                    if (rootcauseMap && abstractionId in rootcauseMap) {
+                        const cause = rootcauseMap[abstractionId];
+                        failureInfo.push({
+                            "index": violation.index,
+                            "cause": cause,
+                        });
+                    }
+                });
+                lastEntry.violations = filteredViolations;
+                lastEntry.failureInfo = failureInfo;
+            }
+        }
 
         return map.executionTree;
     }

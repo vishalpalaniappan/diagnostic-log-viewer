@@ -21,6 +21,8 @@ export function AbstractionRow ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
+    const [debugText, setDebugText] = useState();
+    const [hasViolation, setHasViolation] = useState();
 
     // Set style if node is selected.
     useEffect(() => {
@@ -29,6 +31,24 @@ export function AbstractionRow ({node}) {
                 setSelectedStyle({background: "#3b3b3b", color: "white"});
             } else {
                 setSelectedStyle({});
+            }
+        }
+        if (node) {
+            setHasViolation(false);
+            setDebugText(undefined);
+
+            if (node.invalid) {
+                setHasViolation(true);
+                setDebugText("violation");
+            }
+            if (node.rootCause) {
+                setHasViolation(true);
+                setDebugText("root cause");
+            }
+            if (node.exception) {
+                setHasViolation(true);
+                setSelectedStyle({background: "#3f191b", color: "white"});
+                setDebugText("failure");
             }
         }
     }, [selectedNode, node]);
@@ -121,10 +141,16 @@ export function AbstractionRow ({node}) {
 
     return (
         <div style={selectedStyle} id={"row" + node.index}
-            className="abstractionRow d-flex flex-row w-100">
+            className="abstractionRow">
 
             <div className="icon-container">
                 {getBreakPoint()}
+            </div>
+
+            <div className="icon-container">
+                <div className="icon">
+                    {getNodeIconType()}
+                </div>
             </div>
 
             <div className="flex-grow-1 d-flex flex-row w-100"
@@ -139,15 +165,16 @@ export function AbstractionRow ({node}) {
                 </div>
 
                 <div className="text-container flex-grow-1">
-                    {node.intent}
+                    <span>{node.intent}</span>
                 </div>
 
+                {hasViolation ?
+                    <div className="analysis-status-container">
+                        <span className="message">{debugText}</span>
+                    </div>:
+                    <></>
+                }
             </div>
-
-            <div className="icon-container">
-                {getNodeIconType()}
-            </div>
-
         </div>
     );
 }
