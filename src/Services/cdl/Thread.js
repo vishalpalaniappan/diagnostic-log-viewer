@@ -367,7 +367,6 @@ class Thread {
         if (this.exception && map.executionTree.length > 0) {
             const len = map.executionTree.length;
             const lastEntry = map.executionTree[len - 1];
-            console.log(lastEntry);
             lastEntry.exception = this.exception;
             failedAbstraction = lastEntry.abstractionId;
         }
@@ -402,9 +401,7 @@ class Thread {
             // TODO: Improve this crude implementation.
             for (let i = 0; i < filteredViolations.length; i++) {
                 const entry = filteredViolations[i];
-                map.violations.forEach((violation, index) => {
-                    map.executionTree[entry.index].rootCause = true;
-                });
+                map.executionTree[entry.index].rootCause = true;
             }
         }
 
