@@ -7,6 +7,7 @@ import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import { SideContainerSemantic } from "./SideContainer/SideContainerSemantic";
 import { SideContainerStack } from "./SideContainer/SideContainerStack";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
+import { CentralContainer } from "../Components/CentralContainer/CentralContainer";
 
 import "./Viewer.scss";
 
@@ -38,7 +39,7 @@ export function Viewer () {
                     }
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                    <FileViewer/>
+                    <CentralContainer/>
                 </div>
                 { showExecutionTree ?
                     <div className="d-flex h-100">
