@@ -154,8 +154,12 @@ export function ExecutionTree () {
     // Adds a temporary display to show the root cause of failure below
     // the semantic design graph if there was a failure.
     const getRootCause = () => {
+        if (executionTree.length === 0) {
+            setRootCauses(null);
+            return;
+        }
         const lastEntry = executionTree[executionTree.length - 1];
-        if ("failureInfo" in lastEntry) {
+        if (lastEntry && "failureInfo" in lastEntry) {
             const rootCauseDivs = [];
             lastEntry["failureInfo"].forEach((failure, index) => {
                 rootCauseDivs.push(
@@ -168,6 +172,8 @@ export function ExecutionTree () {
                     {rootCauseDivs}
                 </div>
             );
+        } else {
+            setRootCauses(null);
         }
     };
 

@@ -418,7 +418,7 @@ class Thread {
 
                 filteredViolations.forEach((violation, index) => {
                     const rootcauseMap = violation.constraint?.rootcause;
-                    if (rootcauseMap && "rootcause" in violation.constraint) {
+                    if (rootcauseMap && abstractionId in rootcauseMap) {
                         const cause = violation.constraint["rootcause"][abstractionId];
                         failureInfo.push({
                             "index": violation.index,
