@@ -391,7 +391,7 @@ class Thread {
             const filteredViolations = [];
             for (let i = 0; i < map.violations.length; i++) {
                 const violation = map.violations[i];
-                if (violation.constraint.failures.includes(failedAbstraction)) {
+                if (violation.constraint?.failures?.includes(failedAbstraction)) {
                     filteredViolations.push(violation);
                 }
             }
@@ -417,7 +417,8 @@ class Thread {
                 const failureInfo = [];
 
                 filteredViolations.forEach((violation, index) => {
-                    if ("rootcause" in violation.constraint) {
+                    const rootcauseMap = violation.constraint?.rootcause;
+                    if (rootcauseMap && "rootcause" in violation.constraint) {
                         const cause = violation.constraint["rootcause"][abstractionId];
                         failureInfo.push({
                             "index": violation.index,
