@@ -34,6 +34,9 @@ export function AbstractionRow ({node}) {
             }
         }
         if (node) {
+            setHasViolation(false);
+            setDebugText(undefined);
+
             if (node.invalid) {
                 setHasViolation(true);
                 setDebugText("violation");
