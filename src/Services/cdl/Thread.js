@@ -322,9 +322,17 @@ class Thread {
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
 
+                /**
+                 *  TODO: This practice of saving the var stack info in the
+                 *  abstraction info is really strange and I should not be
+                 *  doing this, so I will revisit this later to change it.
+                 */
+
+
                 // These variable stacks are used to replace the placeholders
                 // in the intent and to validate the constraints.
                 abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
+                abstractionInstance.nextVarStack = null;
 
                 /*
                  We go to the next position because the variable values for
