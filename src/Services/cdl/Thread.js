@@ -402,6 +402,14 @@ class Thread {
             for (let i = 0; i < filteredViolations.length; i++) {
                 const entry = filteredViolations[i];
                 map.executionTree[entry.index].rootCause = true;
+                map.executionTree[entry.index].violation = entry;
+            }
+
+
+            if (this.exception && filteredViolations.length > 0 && map.executionTree.length > 0) {
+                const len = map.executionTree.length;
+                const lastEntry = map.executionTree[len - 1];
+                lastEntry.violations = filteredViolations;
             }
         }
 
