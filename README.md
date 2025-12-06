@@ -25,7 +25,7 @@ A demo of the viewer for a single threaded program is available [here][demo-url]
 # How does it work? 
 
 > [!NOTE]  
-> This section contains incomplete information. Since this was written, the instrumentation of the program has grown to include the design semantics and failure modalities specifed in the Semantic Design Graph. I am leaving this here because it is still relatively accurate for stack based navigation. An update to this section is coming soon with a more complete summary of how it works and how automated debugging is enabled.
+> This section contains incomplete information. Since this was written, the instrumentation of the program has grown to include the design semantics and failure modalities specified in the Semantic Design Graph. I am leaving this here because it is still relatively accurate for stack-based navigation. An update to this section is coming soon with a more complete summary of how it works and how automated debugging is enabled.
 
 The DLV spawns a worker to do the following: 
 
