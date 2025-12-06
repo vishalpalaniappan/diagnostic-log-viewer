@@ -44,7 +44,7 @@ A simplified diagram of the diagnostic solution enabled by diagnostic logging is
 
 ![image](https://github.com/user-attachments/assets/429c667b-3b51-4171-becf-9bf946d0579f)
 
-Note: An updated background section is in developed. It will explain how by instrumenting the semantic design information into the program's abstractions (including constraints and failure modalities), we will be able to fully understand the execution of the intentional world that was designed simply by observing it. This means that we will be able to identify the difference between the designs intentions and its actual behavior, which ultimately automates debugging.
+Note: An updated background section is in development. It will explain how by instrumenting the semantic design information into the program's abstractions (including constraints and failure modalities), we will be able to fully understand the execution of the intentional world that was designed simply by observing it. This means that we will be able to identify the difference between the design's intentions and its actual behavior, which ultimately automates debugging.
 
 # Providing feedback
 
