@@ -24,6 +24,9 @@ A demo of the viewer for a single threaded program is available [here][demo-url]
   
 # How does it work? 
 
+> [!NOTE]  
+> This section contains incomplete information. Since this was written, the instrumentation of the program has grown to include the design semantics and failure modalities specifed in the Semantic Design Graph. I am leaving this here because it is still relatively accurate for stack based navigation. An update to this section is coming soon with a more complete summary of how it works and automated debugging is enabled.
+
 The DLV spawns a worker to do the following: 
 
 * Parses the header of the CDL file to extract the logtype map, variable map and the source code for each file in the program. 
@@ -40,15 +43,7 @@ The React application contains a CDL Provider which exposes all relevant data th
 #Background
 
 > [!NOTE]  
-> A more detailed introduction to diagnostic logging and the diagnostic tools it enables is in development.
-
-CDL files are generated through a process called Diagnostic Logging (DL) in which the log type, variable values and exceptions for each statement in the program are logged. Diagnostic logging is enabled by [Automated Diagnostic Log Injector][adli-url] (ADLI) tools, which automatically insert the necessary log statements to extract the diagnostic information.
-
-The ADLI tool uses Abstract Syntax Trees (AST's) to traverse through the structure of the program to extract variable names and insert the necessary log statements for logtypes and variables. It inserts try except statements to catch any exceptions which occured when running the program and logs it. It also inserts a log statement to inject the log type map of the program into the header of the CDL file. This maps every logtype and variable to a line in the program. The enables us to only log the logtype id, effectively compressing the logtypes by default.
-
-When diagnostic logs are ingested by CLP, having a map of the variables and log types will result in improved performance and a simpler implementation. It will be possible to further compress the logs by applying data specific compression to variables based on their variable type.
-
-Using Diagnostic Logging, it is possible to build a fully automated log based diagnostic solution that can perform automated root cause analysis. In the next level of abstraction, it also automates the analysis, maintenance and recovery of systems. While all types of systems will benefit from diagnostic logging, distributed systems will benefit the most.
+> This section contained information that was written early in development. While it wasn't entirely wrong, a more updated and accurate summary of the technical background is in development.
 
 A simplified diagram of the diagnostic solution enabled by diagnostic logging is provided below.
 
