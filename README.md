@@ -25,7 +25,7 @@ A demo of the viewer for a single threaded program is available [here][demo-url]
 # How does it work? 
 
 > [!NOTE]  
-> This section contains incomplete information. Since this was written, the instrumentation of the program has grown to include the design semantics and failure modalities specifed in the Semantic Design Graph. I am leaving this here because it is still relatively accurate for stack based navigation. An update to this section is coming soon with a more complete summary of how it works and automated debugging is enabled.
+> This section contains incomplete information. Since this was written, the instrumentation of the program has grown to include the design semantics and failure modalities specifed in the Semantic Design Graph. I am leaving this here because it is still relatively accurate for stack based navigation. An update to this section is coming soon with a more complete summary of how it works and how automated debugging is enabled.
 
 The DLV spawns a worker to do the following: 
 
@@ -40,14 +40,11 @@ The DLV spawns a worker to do the following:
 
 The React application contains a CDL Provider which exposes all relevant data through contexts that can be consumed by child components. The major components in the react application are the file viewer, call stack container, variable container, breakpoint container and the debug tool kit.
 
-#Background
-
-> [!NOTE]  
-> This section contained information that was written early in development. While it wasn't entirely wrong, a more updated and accurate summary of the technical background is in development.
-
 A simplified diagram of the diagnostic solution enabled by diagnostic logging is provided below.
 
 ![image](https://github.com/user-attachments/assets/429c667b-3b51-4171-becf-9bf946d0579f)
+
+Note: An updated background section is in developed. It will explain how by instrumenting the semantic design information into the program's abstractions (including constraints and failure modalities), we will be able to fully understand the execution of the intentional world that was designed simply by observing it. This means that we will be able to identify the difference between the designs intentions and its actual behavior, which ultimately automates debugging.
 
 # Providing feedback
 
