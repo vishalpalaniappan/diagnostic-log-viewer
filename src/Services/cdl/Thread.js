@@ -312,7 +312,9 @@ class Thread {
             return null;
         }
 
-        const map = new AbstractionMap(this.header.header.sdg);
+        const sdg = this.header.getSDG();
+        const sdgMeta = this.header.getSDGMeta();
+        const map = new AbstractionMap(sdg, sdgMeta);
 
         let position = 0;
         do {

@@ -138,6 +138,28 @@ class CdlHeader {
             return null;
         }
     }
+
+    /**
+     * @return {Object} Indicates if the header has an abstraction map.
+     */
+    getSDG () {
+        if ("sdg" in this.header) {
+            return this.header["sdg"];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return {Object} Indicates if the header has an abstraction map.
+     */
+    getSDGMeta () {
+        if ("sdg_meta" in this.header) {
+            return this.header["sdg_meta"];
+        } else {
+            return null;
+        }
+    }
 }
 
 export default CdlHeader;

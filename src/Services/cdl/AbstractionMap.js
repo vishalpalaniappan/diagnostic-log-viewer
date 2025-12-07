@@ -4,10 +4,12 @@
 class AbstractionMap {
     /**
      * Initialize the abstraction map.
-     * @param {Object} map
+     * @param {Object} sdg
+     * @param {Object} sdgMeta
      */
-    constructor (map) {
-        this.map = map.abstractions;
+    constructor (sdg, sdgMeta) {
+        this.map = sdg.modules;
+        this.sdgMeta = sdgMeta;
         this.printTreeToConsole = false;
 
         if (this.printTreeToConsole) {
@@ -21,7 +23,7 @@ class AbstractionMap {
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
-            if (this.map[entry].start === true) {
+            if (this.sdgMeta[entry].start === true) {
                 this.abstractionStack.push(this.map[entry]);
                 this.currentAbstraction = this.map[entry];
             }
@@ -156,6 +158,7 @@ class AbstractionMap {
      * @param {Object} abstraction Object containing the abstraction info.
      */
     addToExecutionTree (node, collapsible, abstraction) {
+        Object.assign(node, this.sdgMeta[node["id"]]);
         this.validateConstraints(node, abstraction);
         this.executionTree.push({
             "level": this.abstractionStack.length,
