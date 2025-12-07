@@ -43,7 +43,7 @@ The React application contains a CDL Provider which exposes all relevant data th
 
 ## Background
 
-Please refer to this [document][adli-docs] in the ADLI repo for background informmation.
+Please refer to this [document][adli-docs] in the ADLI repo for background information.
 
 A simplified diagram of the diagnostic solution is provided below:
 
