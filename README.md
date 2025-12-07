@@ -41,7 +41,11 @@ The DLV spawns a worker to do the following:
 
 The React application contains a CDL Provider which exposes all relevant data through contexts that can be consumed by child components. The major components in the react application are the file viewer, call stack container, variable container, breakpoint container and the debug tool kit.
 
-A simplified diagram of the diagnostic solution enabled by diagnostic logging is provided below.
+## Background
+
+Please refer to this [document][adli-docs] in the ADLI repo for background informmation.
+
+A simplified diagram of the diagnostic solution is provided below:
 
 ![image](https://github.com/user-attachments/assets/429c667b-3b51-4171-becf-9bf946d0579f)
 
@@ -69,3 +73,4 @@ You can use GitHub issues to [report a bug][bug-report] or [request a feature][f
 [demo-constraint-is-string]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_constraint_isstring_len_1.clp.zst
 [demo-constraint-is-null]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_constraint_isnull.clp.zst
 [demo-constraint-is-object]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_constraint_isobject.clp.zst
+[adli-docs]: https://github.com/vishalpalaniappan/asp-adli-python/blob/main/docs/overview.md
