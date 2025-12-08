@@ -312,7 +312,15 @@ class Thread {
             return null;
         }
 
-        const map = new AbstractionMap(this.header.header.sdg);
+        const sdg = this.header.getSDG();
+        const sdgMeta = this.header.getSDGMeta();
+
+        if (!sdg || !sdgMeta) {
+            console.log("Trace file is missing required SDG data or metadata");
+            return null;
+        }
+
+        const map = new AbstractionMap(sdg, sdgMeta);
 
         let position = 0;
         do {

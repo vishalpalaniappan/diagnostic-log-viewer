@@ -138,6 +138,30 @@ class CdlHeader {
             return null;
         }
     }
+
+    /**
+     * @return {Object|null} Returns the SDG data from the header,
+     * or null if not present.
+     */
+    getSDG () {
+        if ("sdg" in this.header) {
+            return this.header["sdg"];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return {Object|null} Returns the SDG metadata from the header,
+     * or null if not present.
+     */
+    getSDGMeta () {
+        if ("sdg_meta" in this.header) {
+            return this.header["sdg_meta"];
+        } else {
+            return null;
+        }
+    }
 }
 
 export default CdlHeader;
