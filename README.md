@@ -67,8 +67,8 @@ You can use GitHub issues to [report a bug][bug-report] or [request a feature][f
 [library-manager-sample]: https://github.com/vishalpalaniappan/asp-adli-python/tree/main/sample
 [demo-fail-name-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/library_manager_failure_empty_name.clp.zst
 [demo-library-object-url]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/library_manager_failure_book_shelf.clp.zst
-[demo-no-failures]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_no_failures.clp.zst
-[demo-constraint-is-string]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_constraint_isstring_len_1.clp.zst
-[demo-constraint-is-null]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_constraint_isnull.clp.zst
-[demo-constraint-is-object]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_constraint_isobject.clp.zst
+[demo-no-failures]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_no_failure.clp.zst
+[demo-constraint-is-string]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_string_len_failure.clp.zst
+[demo-constraint-is-null]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_shelf_none_failure.clp.zst
+[demo-constraint-is-object]: https://vishalpalaniappan.github.io/diagnostic-log-viewer/?filePath=https://diagnostic-logs-sample.s3.us-east-2.amazonaws.com/demo_shelf_array_failure.clp.zst
 [adli-docs]: https://github.com/vishalpalaniappan/asp-adli-python/blob/main/docs/overview.md
