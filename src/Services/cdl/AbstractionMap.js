@@ -89,7 +89,15 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_object") {
-                    if (!(typeof value === "object" && !Array.isArray(value) && value !== null)) {
+                    if (!(typeof value === "object" && !Array.isArray(value))) {
+                        this.violations.push({
+                            position: abstraction.position,
+                            index: this.executionTree.length,
+                            constraint: constraint,
+                        });
+                    }
+                } else if (constraint.type === "is_not_null") {
+                    if (value === null) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
