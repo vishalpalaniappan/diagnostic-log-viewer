@@ -114,7 +114,7 @@ class AbstractionMap {
                     }
                 } else if (constraint.type === "has_key" && "value" in constraint) {
                     const key = constraint["value"];
-                    if (!(typeof value === "object" && !Array.isArray(value)
+                    if (!(value && typeof value === "object" && !Array.isArray(value)
                             && constraint.hasOwnProperty(key))) {
                         this.violations.push({
                             position: abstraction.position,
