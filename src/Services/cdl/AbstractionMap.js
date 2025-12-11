@@ -81,7 +81,7 @@ class AbstractionMap {
                         console.warn("minLength constraint used on non-string value.");
                         continue;
                     }
-                    if (value.length < constraint.value) {
+                    if (value === null || typeof value !== "string" || value.length < constraint.value) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
@@ -89,7 +89,8 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_object") {
-                    if (!(typeof value === "object" && !Array.isArray(value))) {
+                    if (value === null || (typeof value === "object" && !Array.isArray(value))) {
+                        console.log("isobject");
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
@@ -105,7 +106,7 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_array") {
-                    if (!(Array.isArray(value) && value !== null)) {
+                    if (value === null || !Array.isArray(value)) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
@@ -114,7 +115,7 @@ class AbstractionMap {
                     }
                 } else if (constraint.type === "has_key" && "value" in constraint) {
                     const key = constraint["value"];
-                    if (!(value && typeof value === "object" && !Array.isArray(value)
+                    if (value === null || (typeof value === "object" && !Array.isArray(value)
                             && Object.prototype.hasOwnProperty.call(value, key))) {
                         this.violations.push({
                             position: abstraction.position,
