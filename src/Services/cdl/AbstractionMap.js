@@ -127,10 +127,10 @@ class AbstractionMap {
                     /**
                      * Flag if:
                      *  - null
-                     *  - is object and is not an array and has specified key
+                     *  - is object and is not an array and doesn't have the key
                      */
                     if (value === null || (typeof value === "object" && !Array.isArray(value)
-                            && Object.prototype.hasOwnProperty.call(value, key))) {
+                            && !Object.prototype.hasOwnProperty.call(value, key))) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
