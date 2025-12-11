@@ -109,15 +109,6 @@ class AbstractionMap {
                             constraint: constraint,
                         });
                     }
-                } else if (constraint.type === "is_not_null") {
-                    // Flag if its null
-                    if (value === null) {
-                        this.violations.push({
-                            position: abstraction.position,
-                            index: this.executionTree.length,
-                            constraint: constraint,
-                        });
-                    }
                 } else if (constraint.type === "is_array") {
                     /**
                      * Flag if:
