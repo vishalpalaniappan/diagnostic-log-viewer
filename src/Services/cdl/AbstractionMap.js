@@ -80,8 +80,12 @@ class AbstractionMap {
                         console.warn("minLength constraint used on non-string value.");
                         continue;
                     }
-                    // Fail if its null or if its not a string
-                    // or if the string is shorter than specified
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - not a string
+                     *  - string is shorter than specified
+                     */
                     if (value === null || typeof value !== "string" ||
                         value.length < constraint.value) {
                         this.violations.push({
@@ -91,7 +95,12 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_object") {
-                    // Fail if its null or if its not an object
+                    /**
+                     * Flag if:
+                     *  - its null
+                     *  - its an object but its an array
+                     *  - its not an object
+                    */
                     if (value === null || (typeof value === "object" && Array.isArray(value))
                         || (typeof value !== "object")) {
                         this.violations.push({
@@ -101,7 +110,7 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_not_null") {
-                    // Fail if its null
+                    // Flag if its null
                     if (value === null) {
                         this.violations.push({
                             position: abstraction.position,
@@ -110,7 +119,11 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_array") {
-                    // Fail if its null or if its not an array
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - its not an array
+                     */
                     if (value === null || !Array.isArray(value)) {
                         this.violations.push({
                             position: abstraction.position,
@@ -120,8 +133,11 @@ class AbstractionMap {
                     }
                 } else if (constraint.type === "has_key" && "value" in constraint) {
                     const key = constraint["value"];
-                    // Fail if its null or if its an object without
-                    // the specified key
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - is object and is not an array and has specified key
+                     */
                     if (value === null || (typeof value === "object" && !Array.isArray(value)
                             && Object.prototype.hasOwnProperty.call(value, key))) {
                         this.violations.push({
