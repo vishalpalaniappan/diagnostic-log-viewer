@@ -168,7 +168,7 @@ export function ExecutionTree () {
             });
             setRootCauses(
                 <div className="bottomContainer scrollbar">
-                    <div className="title">Root Cause of Failure</div>
+                    <div className="title">Root Cause(s) of Failure</div>
                     {rootCauseDivs}
                 </div>
             );

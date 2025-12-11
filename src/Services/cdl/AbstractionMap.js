@@ -75,13 +75,15 @@ class AbstractionMap {
                     continue;
                 }
 
-                // Constraint type to enforce min length of string.
                 if (constraint.type === "minLength") {
-                    if (typeof value !== "string") {
-                        console.warn("minLength constraint used on non-string value.");
-                        continue;
-                    }
-                    if (value.length < constraint.value) {
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - not a string
+                     *  - string is shorter than specified
+                     */
+                    if (value === null || typeof value !== "string" ||
+                        value.length < constraint.value) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
@@ -89,15 +91,14 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_object") {
-                    if (!(typeof value === "object" && !Array.isArray(value))) {
-                        this.violations.push({
-                            position: abstraction.position,
-                            index: this.executionTree.length,
-                            constraint: constraint,
-                        });
-                    }
-                } else if (constraint.type === "is_not_null") {
-                    if (value === null) {
+                    /**
+                     * Flag if:
+                     *  - its null
+                     *  - its an object but its an array
+                     *  - its not an object
+                    */
+                    if (value === null || (typeof value === "object" && Array.isArray(value))
+                        || (typeof value !== "object")) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
@@ -105,7 +106,12 @@ class AbstractionMap {
                         });
                     }
                 } else if (constraint.type === "is_array") {
-                    if (!(Array.isArray(value) && value !== null)) {
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - its not an array
+                     */
+                    if (value === null || !Array.isArray(value)) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
@@ -114,8 +120,13 @@ class AbstractionMap {
                     }
                 } else if (constraint.type === "has_key" && "value" in constraint) {
                     const key = constraint["value"];
-                    if (!(value && typeof value === "object" && !Array.isArray(value)
-                            && Object.prototype.hasOwnProperty.call(value, key))) {
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - is object and is not an array and doesn't have the key
+                     */
+                    if (value === null || (typeof value === "object" && !Array.isArray(value)
+                            && !Object.prototype.hasOwnProperty.call(value, key))) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
