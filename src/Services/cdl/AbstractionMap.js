@@ -112,6 +112,16 @@ class AbstractionMap {
                             constraint: constraint,
                         });
                     }
+                } else if (constraint.type === "has_key" && "value" in constraint) {
+                    const key = constraint["value"];
+                    if (!(value && typeof value === "object" && !Array.isArray(value)
+                            && Object.prototype.hasOwnProperty.call(value, key))) {
+                        this.violations.push({
+                            position: abstraction.position,
+                            index: this.executionTree.length,
+                            constraint: constraint,
+                        });
+                    }
                 }
             }
         }
@@ -226,7 +236,7 @@ class AbstractionMap {
                 return updatedIntent;
             }
 
-            if ("key" in variable && variable.key in variable.value) {
+            if (variable && variable.value && "key" in variable && variable.key in variable.value) {
                 variable.value = variable.value[variable.key];
             } else if ("key" in variable) {
                 console.warn("Unable to access key of variable to replace placeholder.");
