@@ -76,10 +76,6 @@ class AbstractionMap {
                 }
 
                 if (constraint.type === "minLength") {
-                    if (typeof value !== "string") {
-                        console.warn("minLength constraint used on non-string value.");
-                        continue;
-                    }
                     /**
                      * Flag if:
                      *  - null
