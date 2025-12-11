@@ -92,7 +92,8 @@ class AbstractionMap {
                     }
                 } else if (constraint.type === "is_object") {
                     // Fail if its null or if its not an object
-                    if (value === null || (typeof value === "object" && !Array.isArray(value))) {
+                    if (value === null || (typeof value === "object" && Array.isArray(value))
+                        || (typeof value !== "object")) {
                         this.violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
