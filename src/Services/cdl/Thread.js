@@ -32,7 +32,9 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
-        this.executionTree = this.getExecutionTree(this.currPosition);
+        this.map = this.getExecutionTree(this.currPosition);
+        this.executionTree = map.executionTree;
+        this.functionalSequence = this.map.functionalSequence;
     }
 
     /**
@@ -99,7 +101,8 @@ class Thread {
 
             const ltInfo = this.header.getLtFromInjectedLineno(level.filename, level.lineno);
             if (ltInfo === null) {
-                console.error(`Failed to find log type info for ${level.filename}:${level.lineno} at stack position ${index}`);
+                console.error(`Failed to find log type info for ${level.filename}:${level.lineno}\
+                     at stack position ${index}`);
                 continue;
             }
 
@@ -450,7 +453,7 @@ class Thread {
 
         console.log(map.functionalSequence);
 
-        return map.executionTree;
+        return map;
     }
 
     /**
