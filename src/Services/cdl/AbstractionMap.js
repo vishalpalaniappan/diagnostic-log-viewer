@@ -22,6 +22,7 @@ class AbstractionMap {
         this.executionTree = [];
         this.violations = [];
         this.functionalSequence = [];
+        this.lastFunctionalAbstraction = null;
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
@@ -150,28 +151,55 @@ class AbstractionMap {
         const id = abstraction["abstraction_meta"];
         const functional = this.sdg["functional_abstractions"];
 
-        const functionalSequence = this.functionalSequence;
+        const seq = this.functionalSequence;
 
         for (let i = 0; i < functional.length; i++) {
             const instance = functional[i];
             const abstractions = instance["abstractions"];
-            const isSelector = instance.hasOwnProperty("condition");
+            const hasType = instance.hasOwnProperty("type");
+            const lastFuncAbs = this.lastFunctionalAbstraction;
 
-            if (abstractions.includes(id) && !isSelector) {
-                if (functionalSequence.length > 0) {
-                    const top = functionalSequence[functionalSequence.length - 1];
-                    if (top.name !== instance.name) {
-                        functionalSequence.push({
-                            "id": i,
-                            "name": instance.name,
-                        });
+            if (hasType && instance.type === "selector") {
+                if (abstraction.nextVarStack && instance["abstraction"] === id) {
+                    const name = instance["condition"]["variable"];
+                    const scope = instance["condition"]["scope"];
+                    const scopeKey = (scope=="local")?0:1;
+                    const currentValue = abstraction.nextVarStack[scopeKey][name];
+
+                    if ("not_value" in instance["condition"]) {
+                        // Check if variable is not equal to a value
+                        const notValue = instance["condition"]["not_value"];
+                        if (!notValue.includes(currentValue)) {
+                            seq.push(
+                                {
+                                    "id": i,
+                                    "name": instance.name,
+                                }
+                            );
+                            continue;
+                        }
+                    } else {
+                        // Check if variable is equal to a value
+                        const value = instance["condition"]["value"];
+                        if (currentValue === value) {
+                            seq.push(
+                                {
+                                    "id": i,
+                                    "name": instance.name,
+                                }
+                            );
+                            continue;
+                        }
                     }
-                } else {
-                    functionalSequence.push({
-                        "id": i,
-                        "name": instance.name,
-                    });
                 }
+            } else if (abstractions.includes(id) && lastFuncAbs && seq.length > 0) {
+                if (lastFuncAbs.name !== instance.name) {
+                    this.lastFunctionalAbstraction = {"id": i, "name": instance.name};
+                    seq.push({"id": i, "name": instance.name});
+                }
+            } else if (abstractions.includes(id)) {
+                this.lastFunctionalAbstraction = {"id": i, "name": instance.name};
+                seq.push(this.lastFunctionalAbstraction);
             };
         }
     }
