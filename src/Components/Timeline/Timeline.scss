@@ -1,0 +1,34 @@
+.outer-container {
+    width: 100%;
+    height: 100%;
+}
+
+.timeline-container {
+    position:relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: #47474766 #1e1e1e;
+    scrollbar-width: thin;
+}
+
+.timeslot {
+    position:relative;
+    width:100%;
+    height:25px;
+    background:purple;
+}
+
+.track {
+    position:relative;
+    flex-grow: 1;
+}
+
+.needle {
+    width: 1px;
+    height: 100%;
+    background:red;
+}

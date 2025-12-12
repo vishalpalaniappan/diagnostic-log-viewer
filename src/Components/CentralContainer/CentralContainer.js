@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 
 import {MonacoInstance} from "../MonacoInstance/MonacoInstance";
 import {Tabs} from "../Tabs/Tabs";
+import {Timeline} from "../Timeline/Timeline";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
 import "./CentralContainer.scss";
@@ -17,8 +18,8 @@ export function CentralContainer () {
 
     const redrawContainers = () => {
         const height = centralContainerRef.current.clientHeight;
-        const containerHeight = height - 200 - 30;
-        flowRef.current.style.height = 200 + "px";
+        const containerHeight = height - 130 - 30;
+        flowRef.current.style.height = 130 + "px";
     };
 
     useEffect(() => {
@@ -35,7 +36,7 @@ export function CentralContainer () {
             </div>
             <VerticalHandle topDiv={viewerRef} bottomDiv={flowRef}/>
             <div ref={flowRef}>
-                <div className="w-100 h-100" ></div>
+                <Timeline />
             </div>
         </div>
     );
