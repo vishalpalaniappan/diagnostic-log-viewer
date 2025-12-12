@@ -138,11 +138,22 @@ class AbstractionMap {
         }
     }
 
+
+    /**
+     * Maps the provided abstracion to determine the functional
+     * component being executed currently.
+     * @param {Object} abstraction
+     */
+    mapFunctionalLevel (abstraction) {
+        // TODO: Implement
+    }
+
     /**
      * Add the provided id to the execution tree.
      * @param {Object} abstraction
      */
     mapCurrentLevel (abstraction) {
+        this.mapFunctionalLevel(this.mapFunctionalLevel);
         const id = abstraction.abstraction_meta;
         if (this.abstractionStack.length > 0) {
             // move down abstraction level until you find parent of current id
