@@ -329,6 +329,7 @@ class Thread {
                 const abstractionInstance = this.header.logTypeMap[positionData.value];
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
+                abstractionInstance.timestamp = positionData.timestamp;
 
                 /**
                  *  TODO: This practice of saving the var stack info in the

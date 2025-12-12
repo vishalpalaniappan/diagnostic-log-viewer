@@ -158,6 +158,7 @@ class AbstractionMap {
             const abstractions = instance["abstractions"];
             const hasType = instance.hasOwnProperty("type");
             const lastFuncAbs = this.lastFunctionalAbstraction;
+            let incrementSequence;
 
             if (hasType && instance.type === "selector") {
                 if (abstraction.nextVarStack && instance["abstraction"] === id) {
@@ -173,7 +174,9 @@ class AbstractionMap {
                             seq.push(
                                 {
                                     "id": i,
+                                    "type": "selector",
                                     "name": instance.name,
+                                    "timestamp": abstraction.timestamp,
                                 }
                             );
                             continue;
@@ -185,7 +188,9 @@ class AbstractionMap {
                             seq.push(
                                 {
                                     "id": i,
+                                    "type": "selector",
                                     "name": instance.name,
+                                    "timestamp": abstraction.timestamp,
                                 }
                             );
                             continue;
@@ -194,13 +199,24 @@ class AbstractionMap {
                 }
             } else if (abstractions.includes(id) && lastFuncAbs && seq.length > 0) {
                 if (lastFuncAbs.name !== instance.name) {
-                    this.lastFunctionalAbstraction = {"id": i, "name": instance.name};
-                    seq.push({"id": i, "name": instance.name});
+                    incrementSequence = true;
                 }
             } else if (abstractions.includes(id)) {
-                this.lastFunctionalAbstraction = {"id": i, "name": instance.name};
-                seq.push(this.lastFunctionalAbstraction);
+                incrementSequence = true;
             };
+
+            if (incrementSequence) {
+                const lastElem = seq[seq.length -1];
+                if (lastElem.type !== "selector") {
+                    lastElem["endTimestamp"] = abstraction.timestamp;
+                }
+                this.lastFunctionalAbstraction = {
+                    "id": i,
+                    "name": instance.name,
+                    "startTimestamp": abstraction.timestamp,
+                };
+                seq.push(this.lastFunctionalAbstraction);
+            }
         }
     }
 
