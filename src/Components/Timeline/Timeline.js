@@ -9,14 +9,18 @@ import "./Timeline.scss";
 export function Timeline ({}) {
     const timelineRef = useRef();
     const needleRef = useRef();
+    const handleRef = useRef();
 
-    useLayoutEffect(() => {
-
+    useEffect(() => {
+        needleRef.current.style.left = 60 + "px";
+        handleRef.current.style.left = 60 + "px";
     }, []);
+
     return (
         <div className="outer-container">
             <div className="timeline-container" ref={timelineRef}>
                 <div className="timeslot">
+                    <div ref={handleRef} className="needle-handle"></div>
 
                 </div>
 
