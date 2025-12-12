@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
+import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 
 import "./Timeline.scss";
 
@@ -10,6 +11,8 @@ export function Timeline ({}) {
     const timelineRef = useRef();
     const needleRef = useRef();
     const handleRef = useRef();
+
+    const {functionalSequence} = useContext(ExecutionTreeContext);
 
     const [unit, setUnit] = useState();
     const [duration, setDuration] = useState();
@@ -34,6 +37,12 @@ export function Timeline ({}) {
         handleRef.current.style.left = width/2 + "px";
         setNeedle(1765539240107);
     }, []);
+
+    useEffect(() => {
+        if (functionalSequence) {
+            console.log(functionalSequence);
+        }
+    }, [functionalSequence]);
 
 
     const setNeedle = (time) => {

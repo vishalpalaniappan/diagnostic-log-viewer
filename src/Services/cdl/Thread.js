@@ -33,7 +33,7 @@ class Thread {
 
         this.currPosition = this.lastStatement;
         this.map = this.getExecutionTree(this.currPosition);
-        this.executionTree = map.executionTree;
+        this.executionTree = this.map.executionTree;
         this.functionalSequence = this.map.functionalSequence;
     }
 

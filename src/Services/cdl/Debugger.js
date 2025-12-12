@@ -170,7 +170,10 @@ class Debugger {
                 if (instance.thread.executionTree) {
                     postMessage({
                         code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
-                        args: instance.thread.executionTree,
+                        args: {
+                            executionTree: instance.thread.executionTree,
+                            functionalSequence: instance.thread.functionalSequence,
+                        },
                     });
                     break;
                 }
