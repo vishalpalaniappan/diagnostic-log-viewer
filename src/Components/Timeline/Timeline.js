@@ -11,9 +11,27 @@ export function Timeline ({}) {
     const needleRef = useRef();
     const handleRef = useRef();
 
+    const [unit, setUnit] = useState();
+    const [duration, setDuration] = useState();
+
+    const startTime = useRef(1765539235403);
+    const endTime = useRef(1765539275107);
+
+    const PIXELS_PER_UNIT = 30;
+
     useEffect(() => {
-        needleRef.current.style.left = 60 + "px";
-        handleRef.current.style.left = 60 + "px";
+        const startTimeDate = new Date(startTime.current);
+        const endTimeDate = new Date(endTime.current);
+        const seconds = (endTimeDate.getTime() - startTimeDate.getTime()) / 1000;
+
+        setDuration(seconds);
+        setUnit("seconds");
+
+        const width = seconds * PIXELS_PER_UNIT;
+        timelineRef.current.style.width = width + "px";
+
+        needleRef.current.style.left = width/2 + "px";
+        handleRef.current.style.left = width/2 + "px";
     }, []);
 
     return (
@@ -21,12 +39,10 @@ export function Timeline ({}) {
             <div className="timeline-container" ref={timelineRef}>
                 <div className="timeslot">
                     <div ref={handleRef} className="needle-handle"></div>
-
                 </div>
 
                 <div className="track">
                     <div ref={needleRef} className="needle"></div>
-
                 </div>
 
             </div>
