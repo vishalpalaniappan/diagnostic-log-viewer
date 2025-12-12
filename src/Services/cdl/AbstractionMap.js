@@ -8,6 +8,7 @@ class AbstractionMap {
      * @param {Object} sdgMeta
      */
     constructor (sdg, sdgMeta) {
+        this.sdg = sdg;
         this.map = sdg.modules;
         this.sdgMeta = sdgMeta;
         this.printTreeToConsole = false;
@@ -20,6 +21,7 @@ class AbstractionMap {
         this.currentAbstraction = null;
         this.executionTree = [];
         this.violations = [];
+        this.functionalSequence = [];
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
@@ -145,7 +147,33 @@ class AbstractionMap {
      * @param {Object} abstraction
      */
     mapFunctionalLevel (abstraction) {
-        // TODO: Implement
+        const id = abstraction["abstraction_meta"];
+        const functional = this.sdg["functional_abstractions"];
+
+        const functionalSequence = this.functionalSequence;
+
+        for (let i = 0; i < functional.length; i++) {
+            const instance = functional[i];
+            const abstractions = instance["abstractions"];
+            const isSelector = instance.hasOwnProperty("condition");
+
+            if (abstractions.includes(id) && !isSelector) {
+                if (functionalSequence.length > 0) {
+                    const top = functionalSequence[functionalSequence.length - 1];
+                    if (top.name !== instance.name) {
+                        functionalSequence.push({
+                            "id": i,
+                            "name": instance.name,
+                        });
+                    }
+                } else {
+                    functionalSequence.push({
+                        "id": i,
+                        "name": instance.name,
+                    });
+                }
+            };
+        }
     }
 
     /**

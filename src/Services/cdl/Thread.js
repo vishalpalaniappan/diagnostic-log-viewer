@@ -447,6 +447,8 @@ class Thread {
             }
         }
 
+        console.log(map.functionalSequence);
+
         return map.executionTree;
     }
 
