@@ -32,7 +32,20 @@ export function Timeline ({}) {
 
         needleRef.current.style.left = width/2 + "px";
         handleRef.current.style.left = width/2 + "px";
+        setNeedle(1765539240107);
     }, []);
+
+
+    const setNeedle = (time) => {
+        const startTimeDate = new Date(startTime.current);
+        const currTimeDate = new Date(time);
+
+        const delta = (currTimeDate.getTime() - startTimeDate.getTime()) / 1000;
+
+        const xPos = delta * PIXELS_PER_UNIT;
+        handleRef.current.style.left = xPos + "px";
+        needleRef.current.style.left = xPos + "px";
+    };
 
     return (
         <div className="outer-container">
