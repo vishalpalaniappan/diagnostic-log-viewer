@@ -160,44 +160,7 @@ class AbstractionMap {
             const lastFuncAbs = this.lastFunctionalAbstraction;
             let incrementSequence;
 
-            if (hasType && instance.type === "selector") {
-                if (abstraction.nextVarStack && instance["abstraction"] === id) {
-                    const name = instance["condition"]["variable"];
-                    const scope = instance["condition"]["scope"];
-                    const scopeKey = (scope=="local")?0:1;
-                    const currentValue = abstraction.nextVarStack[scopeKey][name];
-
-                    if ("not_value" in instance["condition"]) {
-                        // Check if variable is not equal to a value
-                        const notValue = instance["condition"]["not_value"];
-                        if (!notValue.includes(currentValue)) {
-                            seq.push(
-                                {
-                                    "id": i,
-                                    "type": "selector",
-                                    "name": instance.name,
-                                    "timestamp": abstraction.timestamp,
-                                }
-                            );
-                            continue;
-                        }
-                    } else {
-                        // Check if variable is equal to a value
-                        const value = instance["condition"]["value"];
-                        if (currentValue === value) {
-                            seq.push(
-                                {
-                                    "id": i,
-                                    "type": "selector",
-                                    "name": instance.name,
-                                    "timestamp": abstraction.timestamp,
-                                }
-                            );
-                            continue;
-                        }
-                    }
-                }
-            } else if (abstractions.includes(id) && lastFuncAbs && seq.length > 0) {
+            if (abstractions.includes(id) && lastFuncAbs && seq.length > 0) {
                 if (lastFuncAbs.name !== instance.name) {
                     incrementSequence = true;
                 }
@@ -206,14 +169,9 @@ class AbstractionMap {
             };
 
             if (incrementSequence) {
-                const lastElem = seq[seq.length -1];
-                if (lastElem.type !== "selector") {
-                    lastElem["endTimestamp"] = abstraction.timestamp;
-                }
                 this.lastFunctionalAbstraction = {
                     "id": i,
-                    "name": instance.name,
-                    "startTimestamp": abstraction.timestamp,
+                    "name": instance.name
                 };
                 seq.push(this.lastFunctionalAbstraction);
             }
