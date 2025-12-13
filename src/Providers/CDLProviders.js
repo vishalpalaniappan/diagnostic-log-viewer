@@ -41,6 +41,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [executionTree, setExecutionTree] = useState();
+    const [functionalSequence, setFunctionalSequence] = useState();
     const [actions, setActions] = useState({value: "", tick: 0});
 
     const cdlWorker = useRef(null);
@@ -166,7 +167,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setBreakPoints(event.data.args.breakpoints);
                 break;
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
-                setExecutionTree(event.data.args);
+                setExecutionTree(event.data.args.executionTree);
+                setFunctionalSequence(event.data.args.functionalSequence);
                 break;
             default:
                 break;
@@ -186,7 +188,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                             setActiveThread, setActiveAbstraction}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
-                                            <ExecutionTreeContext.Provider value={{executionTree}}>
+                                            <ExecutionTreeContext.Provider
+                                                value={{executionTree, functionalSequence}}>
                                                 <ActionsContext.Provider
                                                     value={{actions, setActions}}>
                                                     {children}

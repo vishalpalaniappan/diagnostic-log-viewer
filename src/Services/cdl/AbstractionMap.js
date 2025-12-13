@@ -8,6 +8,7 @@ class AbstractionMap {
      * @param {Object} sdgMeta
      */
     constructor (sdg, sdgMeta) {
+        this.sdg = sdg;
         this.map = sdg.modules;
         this.sdgMeta = sdgMeta;
         this.printTreeToConsole = false;
@@ -20,6 +21,8 @@ class AbstractionMap {
         this.currentAbstraction = null;
         this.executionTree = [];
         this.violations = [];
+        this.functionalSequence = [];
+        this.lastFunctionalAbstraction = null;
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
