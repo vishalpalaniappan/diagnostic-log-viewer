@@ -141,49 +141,11 @@ class AbstractionMap {
         }
     }
 
-
-    /**
-     * Maps the provided abstracion to determine the functional
-     * component being executed currently.
-     * @param {Object} abstraction
-     */
-    mapFunctionalLevel (abstraction) {
-        const id = abstraction["abstraction_meta"];
-        const functional = this.sdg["functional_abstractions"];
-
-        const seq = this.functionalSequence;
-
-        for (let i = 0; i < functional.length; i++) {
-            const instance = functional[i];
-            const abstractions = instance["abstractions"];
-            const hasType = instance.hasOwnProperty("type");
-            const lastFuncAbs = this.lastFunctionalAbstraction;
-            let incrementSequence;
-
-            if (abstractions.includes(id) && lastFuncAbs && seq.length > 0) {
-                if (lastFuncAbs.name !== instance.name) {
-                    incrementSequence = true;
-                }
-            } else if (abstractions.includes(id)) {
-                incrementSequence = true;
-            };
-
-            if (incrementSequence) {
-                this.lastFunctionalAbstraction = {
-                    "id": i,
-                    "name": instance.name
-                };
-                seq.push(this.lastFunctionalAbstraction);
-            }
-        }
-    }
-
     /**
      * Add the provided id to the execution tree.
      * @param {Object} abstraction
      */
     mapCurrentLevel (abstraction) {
-        this.mapFunctionalLevel(abstraction);
         const id = abstraction.abstraction_meta;
         if (this.abstractionStack.length > 0) {
             // move down abstraction level until you find parent of current id
