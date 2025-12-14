@@ -162,6 +162,17 @@ class CdlHeader {
             return null;
         }
     }
+
+    /**
+     * @return {Object|null} Returns the design.
+     */
+    getDesignMap () {
+        if ("design_map" in this.header) {
+            return this.header["design_map"];
+        } else {
+            return null;
+        }
+    }
 }
 
 export default CdlHeader;

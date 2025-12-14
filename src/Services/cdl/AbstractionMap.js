@@ -6,12 +6,17 @@ class AbstractionMap {
      * Initialize the abstraction map.
      * @param {Object} sdg
      * @param {Object} sdgMeta
+     * @param {Object} designMap
      */
-    constructor (sdg, sdgMeta) {
+    constructor (sdg, sdgMeta, designMap) {
         this.sdg = sdg;
         this.map = sdg.modules;
         this.sdgMeta = sdgMeta;
         this.printTreeToConsole = false;
+
+        this.designMap = designMap;
+
+        console.log(this.designMap);
 
         if (this.printTreeToConsole) {
             console.clear();
