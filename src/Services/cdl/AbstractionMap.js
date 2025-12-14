@@ -201,12 +201,6 @@ class AbstractionMap {
     /**
      * This function maps the abstraction to the design.
      *
-     * TODO:
-     * This is an inefficient and convoluted implementation.
-     * I am simply proving out the concept with this
-     * and then I will design the entire framework
-     * from scratch.
-     *
      * @param {Object} abstraction
      * @return {Boolean}
      */
