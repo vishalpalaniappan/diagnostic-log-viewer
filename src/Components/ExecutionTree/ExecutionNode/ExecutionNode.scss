@@ -50,6 +50,16 @@
     }
 }
 
+.design-trace {
+    margin:0 3px;
+    font-size:12px;
+    width:300px;
+    display:flex;
+    align-items: center;
+    overflow:hidden;
+    white-space: normal; 
+}
+
 .disabledBreakPoint {
     background:grey;
     width: 8px;

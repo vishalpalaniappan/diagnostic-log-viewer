@@ -143,6 +143,10 @@ export function AbstractionRow ({node}) {
         <div style={selectedStyle} id={"row" + node.index}
             className="abstractionRow">
 
+            <div className="design-trace">
+                {node.designAbstraction}
+            </div>
+
             <div className="icon-container">
                 {getBreakPoint()}
             </div>

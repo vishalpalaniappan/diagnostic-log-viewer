@@ -241,9 +241,11 @@ class AbstractionMap {
                 } else {
                     designSequence.push(entry.id);
                 }
-                break;
+                return designSequence[designSequence.length -1];
             }
         }
+
+        console.log("couldn't find it");
     }
 
     /**
@@ -253,7 +255,7 @@ class AbstractionMap {
      * @param {Object} abstraction Object containing the abstraction info.
      */
     addToExecutionTree (node, collapsible, abstraction) {
-        this.mapDesign(abstraction);
+        const designAbstraction = this.mapDesign(abstraction);
         Object.assign(node, this.sdgMeta[node["id"]]);
         this.validateConstraints(node, abstraction);
         this.executionTree.push({
@@ -269,6 +271,7 @@ class AbstractionMap {
             "position": abstraction.position,
             "abstractionId": abstraction.abstraction_meta,
             "abstractionType": node.type,
+            "designAbstraction": designAbstraction,
         });
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, node.intent);
