@@ -27,7 +27,9 @@ class AbstractionMap {
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
             if (this.sdgMeta[entry].start === true) {
-                this.abstractionStack.push(this.map[entry]);
+                this.abstractionStack.push({
+                    "value": this.map[entry],
+                });
                 this.currentAbstraction = this.map[entry];
             }
         }
@@ -164,7 +166,7 @@ class AbstractionMap {
                     // move down abstraction stack level
                     this.abstractionStack.pop();
                     const stackSize = this.abstractionStack.length - 1;
-                    this.currentAbstraction = this.abstractionStack[stackSize];
+                    this.currentAbstraction = this.abstractionStack[stackSize].value;
                 }
             } while (this.abstractionStack.length > 0);
 
@@ -174,13 +176,18 @@ class AbstractionMap {
                     if ("abstractions" in entry) {
                         // root abstraction with children
                         this.addToExecutionTree(entry, true, abstraction);
-                        this.abstractionStack.push(entry);
+                        this.abstractionStack.push({
+                            "value": entry,
+                        });
                         this.currentAbstraction = entry;
                     } else {
                         // leaf abstraction with no children
                         if (entry.type === "function_call") {
                             this.addToExecutionTree(entry, true, abstraction);
-                            this.abstractionStack.push(this.map[entry.target]);
+                            this.abstractionStack.push({
+                                "parent": entry.target,
+                                "value": this.map[entry.target],
+                            });
                             this.currentAbstraction = this.map[entry.target];
                         } else {
                             this.addToExecutionTree(entry, false, abstraction);
@@ -192,12 +199,63 @@ class AbstractionMap {
     }
 
     /**
+     * This function maps the abstraction to the design.
+     *
+     * TODO:
+     * This is an inefficient and convoluted implementation.
+     * I am simply proving out the concept with this
+     * and then I will design the entire framework
+     * from scratch.
+     *
+     * @param {Object} abstraction
+     * @return {Boolean}
+     */
+    mapDesign (abstraction) {
+        // Get the module being executed
+        let module;
+        const absStack = [...this.abstractionStack];
+        for (let i = absStack.length - 1; i >= 0; i--) {
+            if (absStack[i].value.type === "function") {
+                module = absStack[i];
+                break;
+            }
+        }
+
+        if (!module) {
+            console.warn("Could not find module currently being executed");
+            return false;
+        }
+
+        if (!("functional_abstractions" in module.value)) {
+            console.warn("Could not find functional abstractions for module.");
+            return false;
+        }
+
+        const funcAbs = module.value.functional_abstractions;
+        const currAbs = abstraction["abstraction_meta"];
+
+        for (let i = 0; i < funcAbs.length; i++) {
+            const entry = funcAbs[i];
+
+            if (entry.abstractions.includes(currAbs)) {
+                if (entry.type === "selector") {
+                    console.log("selector:", entry.id);
+                } else {
+                    console.log(entry.id);
+                }
+                break;
+            }
+        }
+    }
+
+    /**
      * This function adds the current position to the execution tree.
      * @param {Object} node Entry which corresponds to the intent.
      * @param {Boolean} collapsible Indicates if this row is collapsible.
      * @param {Object} abstraction Object containing the abstraction info.
      */
     addToExecutionTree (node, collapsible, abstraction) {
+        this.mapDesign(abstraction);
         Object.assign(node, this.sdgMeta[node["id"]]);
         this.validateConstraints(node, abstraction);
         this.executionTree.push({
