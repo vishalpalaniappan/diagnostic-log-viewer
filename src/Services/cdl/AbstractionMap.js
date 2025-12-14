@@ -21,7 +21,7 @@ class AbstractionMap {
         this.currentAbstraction = null;
         this.executionTree = [];
         this.violations = [];
-        this.functionalSequence = [];
+        this.designSequence = [];
         this.lastFunctionalAbstraction = null;
 
         // Load the starting position into the abstraction map.
@@ -238,10 +238,14 @@ class AbstractionMap {
             const entry = funcAbs[i];
 
             if (entry.abstractions.includes(currAbs)) {
-                if (entry.type === "selector") {
-                    console.log("selector:", entry.id);
+                const designSequence = this.designSequence;
+                if (designSequence.length > 0) {
+                    const lastEl = designSequence[designSequence.length - 1];
+                    if (lastEl !== entry.id) {
+                        designSequence.push(entry.id);
+                    }
                 } else {
-                    console.log(entry.id);
+                    designSequence.push(entry.id);
                 }
                 break;
             }

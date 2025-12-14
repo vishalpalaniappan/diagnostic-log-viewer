@@ -34,7 +34,7 @@ class Thread {
         this.currPosition = this.lastStatement;
         this.map = this.getExecutionTree(this.currPosition);
         this.executionTree = this.map.executionTree;
-        this.functionalSequence = this.map.functionalSequence;
+        this.functionalSequence = this.map.designSequence;
     }
 
     /**
@@ -451,7 +451,7 @@ class Thread {
             }
         }
 
-        console.log(map.functionalSequence);
+        console.log(map.designSequence);
 
         return map;
     }
