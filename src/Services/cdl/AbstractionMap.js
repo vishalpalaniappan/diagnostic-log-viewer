@@ -241,6 +241,8 @@ class AbstractionMap {
                 const dSeq = this.designSequence;
                 if (dSeq.length > 0) {
                     const val = dSeq[dSeq.length - 1];
+                    // If we are in a new functional abstraction
+                    // then add it to the design sequence.
                     if (val.id !== entry.id) {
                         dSeq.push(entry);
                     }
@@ -250,7 +252,8 @@ class AbstractionMap {
 
                 const lastEntry = dSeq[dSeq.length -1];
                 for (let i = 0; i < this.designMap.behavior.length; i++) {
-                    // If this is the start of the abstraction inc indent.
+                    // If this is the start of the abstra group then inc indent
+                    // by adding it to the design stack
                     if (this.designMap.behavior[i].abstractions[0] === lastEntry.id) {
                         const currGroup = this.designMap.behavior[i].group;
 
