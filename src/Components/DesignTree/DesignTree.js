@@ -13,12 +13,18 @@ import "./DesignTree.scss";
  * @return {JSX.Element}
  */
 export function DesignTree () {
-    const {executionTree} = useContext(ExecutionTreeContext);
+    const {functionalSequence, executionTree} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
     const [rootCauses, setRootCauses] = useState();
+
+    useEffect(() => {
+        if (functionalSequence) {
+            console.log(functionalSequence);
+        }
+    }, [functionalSequence]);
 
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
