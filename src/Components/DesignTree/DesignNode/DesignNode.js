@@ -18,39 +18,11 @@ DesignNode.propTypes = {
  * @return {JSX.Element}
  */
 export function DesignNode ({node}) {
-    const {breakPoints} = useContext(BreakpointsContext);
     const {selectedNode, selectNode, toggleCollapse} = useContext(DesignTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
-    const [debugText, setDebugText] = useState();
-    const [hasViolation, setHasViolation] = useState();
 
     // Set style if node is selected.
     useEffect(() => {
-        if (node && selectedNode) {
-            if (selectedNode === node) {
-                setSelectedStyle({background: "#3b3b3b", color: "white"});
-            } else {
-                setSelectedStyle({});
-            }
-        }
-        if (node) {
-            setHasViolation(false);
-            setDebugText(undefined);
-
-            if (node.invalid) {
-                setHasViolation(true);
-                setDebugText("violation");
-            }
-            if (node.rootCause) {
-                setHasViolation(true);
-                setDebugText("root cause");
-            }
-            if (node.exception) {
-                setHasViolation(true);
-                setSelectedStyle({background: "#3f191b", color: "white"});
-                setDebugText("failure");
-            }
-        }
     }, [selectedNode, node]);
 
     /**
@@ -92,6 +64,7 @@ export function DesignNode ({node}) {
         }
     };
 
+
     /**
      * Creates space for each node level.
      * @param {Object} node
@@ -99,7 +72,7 @@ export function DesignNode ({node}) {
      */
     const getSpacers = (node) => {
         const spacers = [];
-        for (let i = 0; i < node.level - 1; i++) {
+        for (let i = 0; i < node.level; i++) {
             spacers.push(
                 <div className="spacer" key={i}>
                     <div className="vertical-line"></div>
@@ -114,42 +87,16 @@ export function DesignNode ({node}) {
      * @return {JSX}
      */
     const getNodeIconType = () => {
-        if (node.abstractionType === "function_call") {
+        if (node.isBehavior) {
             return <Stack
                 title="Function Call"
                 style={{color: "orange"}}/>;
-        } else if (node.abstractionType === "conditional_branch") {
-            return <SignpostFill
-                title="Conditional Branch"
-                style={{color: "#3794ff"}}/>;
-        }
-    };
-
-
-    const getBreakPoint = () => {
-        if (!breakPoints) return;
-        for (let i = 0; i < breakPoints.length; i++) {
-            const point = breakPoints[i];
-            if (point.abstraction_meta === node.abstractionId) {
-                const className = (point.enabled == true)?
-                    "enabledBreakPoint":
-                    "disabledBreakPoint";
-                return <div className={className}></div>;
-            }
         }
     };
 
     return (
         <div style={selectedStyle} id={"row" + node.index}
             className="abstractionRow">
-
-            {/* <div className="design-trace">
-                {String(node.designAbstraction.id)}
-            </div> */}
-
-            <div className="icon-container">
-                {getBreakPoint()}
-            </div>
 
             <div className="icon-container">
                 <div className="icon">
@@ -160,24 +107,17 @@ export function DesignNode ({node}) {
             <div className="flex-grow-1 d-flex flex-row w-100"
                 onClick={(e) => clickSelectNode(e, node)}>
 
-                {/* <div className="d-flex flex-row">
+                <div className="d-flex flex-row">
                     {getSpacers(node)}
-                </div> */}
+                </div>
 
                 <div onClick={(e) => clickToggle(e, node)} className="collapse-icon-container">
                     {getCollapsed(node)}
                 </div>
 
                 <div className="text-container flex-grow-1">
-                    <span>{node.designAbstraction.id}</span>
+                    <span>{node.id}</span>
                 </div>
-
-                {hasViolation ?
-                    <div className="analysis-status-container">
-                        <span className="message">{debugText}</span>
-                    </div>:
-                    <></>
-                }
             </div>
         </div>
     );

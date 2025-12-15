@@ -236,6 +236,10 @@ class AbstractionMap {
         for (let i = 0; i < funcAbs.length; i++) {
             const entry = funcAbs[i];
 
+            if (entry.group === "MainMenuGroup") {
+                entry.root = true;
+            }
+
             if (entry.abstractions.includes(currAbs)) {
                 // Find the functional abstraction
                 const dSeq = this.designSequence;
@@ -248,6 +252,16 @@ class AbstractionMap {
                     }
                 } else {
                     dSeq.push(entry);
+                }
+
+                const behaviors = this.designMap.behavior;
+
+                for (let i = 0; i < behaviors.length - 1; i++) {
+                    const behaviorEntry = behaviors[i];
+                    if (entry.id === behaviorEntry.abstractions[0]) {
+                        entry.isBehavior = true;
+                        break;
+                    }
                 }
 
                 return dSeq[dSeq.length -1];

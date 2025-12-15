@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
-import StackContext from "../../Providers/StackContext";
-import StackPositionContext from "../../Providers/StackPositionContext";
 import {DesignNode} from "./DesignNode/DesignNode";
 import DesignTreeInstanceContext from "./DesignTreeInstanceContext";
 
@@ -14,39 +12,14 @@ import "./DesignTree.scss";
  */
 export function DesignTree () {
     const {functionalSequence, executionTree} = useContext(ExecutionTreeContext);
-    const {stackPosition} = useContext(StackPositionContext);
-    const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
-    const [rootCauses, setRootCauses] = useState();
 
     useEffect(() => {
         if (functionalSequence) {
             console.log(functionalSequence);
         }
     }, [functionalSequence]);
-
-    // Sync selected stack with the execution tree. This is to enable
-    // backwards compatibility but in the future, we can eliminate the stack.
-    useEffect(() => {
-        if (!stacks || stackPosition === undefined || !executionTree || !stacks[activeThread]) {
-            return;
-        }
-        const stack = stacks[activeThread].stack;
-        if (!stack?.callStack || stackPosition >= stack.callStack.length) {
-            return;
-        }
-        const stackLevel = stack.callStack[stackPosition].position;
-        for (let index = 0; index < executionTree.length; index++) {
-            const node = executionTree[index];
-            if (node.position === stackLevel) {
-                node.selected = true;
-                setSelectedNode(node);
-            } else {
-                node.selected = false;
-            }
-        }
-    }, [stackPosition, stacks, executionTree]);
 
 
     /**
@@ -76,40 +49,21 @@ export function DesignTree () {
      * Render the execution tree.
      */
     const renderTree = () => {
-        if (executionTree) {
+        if (functionalSequence) {
             const execution = [];
-            let collapsedLevel;
-            let collapsing = false;
 
-            for (let index = 0; index < executionTree.length; index++) {
-                const node = executionTree[index];
+            for (let index = 0; index < functionalSequence.length; index++) {
+                const node = functionalSequence[index];
 
-                // If we are collapsing and we reached the same
-                // level or below, then stop collapsing.
-                if (collapsing && node.level <= collapsedLevel) {
-                    collapsing = false;
+                if (node.isBehavior) {
+                    node.level = 0;
+                } else {
+                    node.level = 1;
                 }
-
-                // If the node is collapsed and we aren't collapsing
-                // then start collapsing
-                if (node.collapsed && !collapsing) {
-                    collapsedLevel = node.level;
-                    collapsing = true;
-                    execution.push(
-                        <DesignNode
-                            key={node.index}
-                            node={node}/>
-                    );
-                    continue;
-                }
-
-                // If we aren't collapsing this node, then add the node.
-                if (!collapsing) {
-                    execution.push(<DesignNode
-                        key={node.index}
-                        node={node}/>
-                    );
-                }
+                execution.push(<DesignNode
+                    key={index}
+                    node={node}/>
+                );
             }
             setExecutionTreeInstance(execution);
         }
@@ -129,14 +83,10 @@ export function DesignTree () {
      * @param {Object} selectedNode
      */
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < executionTree.length; index++) {
-            const node = executionTree[index];
+        for (let index = 0; index < functionalSequence.length; index++) {
+            const node = functionalSequence[index];
             if (node === selectedNode) {
                 node.selected = true;
-                setActiveAbstraction({
-                    index: index,
-                    node: node,
-                });
                 setSelectedNode(node);
             } else {
                 node.selected = false;
@@ -151,37 +101,9 @@ export function DesignTree () {
      */
     useEffect(() => {
         if (executionTree) {
-            getRootCause();
             renderTree();
         }
     }, [executionTree]);
-
-
-    // Adds a temporary display to show the root cause of failure below
-    // the semantic design graph if there was a failure.
-    const getRootCause = () => {
-        if (executionTree.length === 0) {
-            setRootCauses(null);
-            return;
-        }
-        const lastEntry = executionTree[executionTree.length - 1];
-        if (lastEntry && "failureInfo" in lastEntry) {
-            const rootCauseDivs = [];
-            lastEntry["failureInfo"].forEach((failure, index) => {
-                rootCauseDivs.push(
-                    <div key={index} className="rootcause">{failure.cause}</div>
-                );
-            });
-            setRootCauses(
-                <div className="bottomContainer scrollbar">
-                    <div className="title">Root Cause(s) of Failure</div>
-                    {rootCauseDivs}
-                </div>
-            );
-        } else {
-            setRootCauses(null);
-        }
-    };
 
     return (
         <DesignTreeInstanceContext.Provider
@@ -189,7 +111,7 @@ export function DesignTree () {
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">
-                        <span className="title">Semantic Execution Graph</span>
+                        <span className="title">Design Trace</span>
                     </div>
                     <div className="iconMenu">
                     </div>
@@ -197,7 +119,6 @@ export function DesignTree () {
                 <div className="executionTreeContainer scrollbar flex-grow-1">
                     {executionTreeInstance}
                 </div>
-                {rootCauses}
             </div>
         </DesignTreeInstanceContext.Provider>
     );
