@@ -453,6 +453,7 @@ class Thread {
         }
 
         console.log(map.designSequence);
+        console.log(map.designStack);
 
         return map;
     }

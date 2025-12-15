@@ -16,8 +16,6 @@ class AbstractionMap {
 
         this.designMap = designMap;
 
-        console.log(this.designMap);
-
         if (this.printTreeToConsole) {
             console.clear();
         }
@@ -27,6 +25,7 @@ class AbstractionMap {
         this.executionTree = [];
         this.violations = [];
         this.designSequence = [];
+        this.designStack = [];
         this.lastFunctionalAbstraction = null;
 
         // Load the starting position into the abstraction map.
@@ -210,7 +209,8 @@ class AbstractionMap {
      * @return {Boolean}
      */
     mapDesign (abstraction) {
-        // Get the module being executed
+        // Get the module being executed so that we can
+        // identify the fuctional abstraction.
         let module;
         const absStack = [...this.abstractionStack];
         for (let i = absStack.length - 1; i >= 0; i--) {
@@ -237,16 +237,46 @@ class AbstractionMap {
             const entry = funcAbs[i];
 
             if (entry.abstractions.includes(currAbs)) {
-                const designSequence = this.designSequence;
-                if (designSequence.length > 0) {
-                    const lastEl = designSequence[designSequence.length - 1];
-                    if (lastEl !== entry.id) {
-                        designSequence.push(entry.id);
+                // Find the functional abstraction
+                const dSeq = this.designSequence;
+                if (dSeq.length > 0) {
+                    const val = dSeq[dSeq.length - 1];
+                    if (val.id !== entry.id) {
+                        dSeq.push(entry);
                     }
                 } else {
-                    designSequence.push(entry.id);
+                    dSeq.push(entry);
                 }
-                return designSequence[designSequence.length -1];
+
+                const lastEntry = dSeq[dSeq.length -1];
+                for (let i = 0; i < this.designMap.behavior.length; i++) {
+                    // If this is the start of the abstraction inc indent.
+                    if (this.designMap.behavior[i].abstractions[0] === lastEntry.id) {
+                        const currGroup = this.designMap.behavior[i].group;
+
+                        if (this.designStack.includes(currGroup)) {
+                            const index = this.designStack.findIndex(
+                                (entry) => entry === currGroup
+                            );
+
+                            if (index === this.designStack.length - 1) {
+                                break;
+                            }
+
+                            if (index !== -1) {
+                                this.designStack.splice(index + 1);
+                            }
+                        } else {
+                            this.designStack.push(currGroup);
+                        }
+
+                        console.log(this.designStack.length - 1, currGroup);
+                        lastEntry.indent = this.designStack.length - 1;
+                        break;
+                    }
+                }
+
+                return dSeq[dSeq.length -1];
             }
         }
 
