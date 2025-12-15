@@ -250,35 +250,6 @@ class AbstractionMap {
                     dSeq.push(entry);
                 }
 
-                const lastEntry = dSeq[dSeq.length -1];
-                for (let i = 0; i < this.designMap.behavior.length; i++) {
-                    // If this is the start of the abstra group then inc indent
-                    // by adding it to the design stack
-                    if (this.designMap.behavior[i].abstractions[0] === lastEntry.id) {
-                        const currGroup = this.designMap.behavior[i].group;
-
-                        if (this.designStack.includes(currGroup)) {
-                            const index = this.designStack.findIndex(
-                                (entry) => entry === currGroup
-                            );
-
-                            if (index === this.designStack.length - 1) {
-                                break;
-                            }
-
-                            if (index !== -1) {
-                                this.designStack.splice(index + 1);
-                            }
-                        } else {
-                            this.designStack.push(currGroup);
-                        }
-
-                        console.log(this.designStack.length - 1, currGroup);
-                        lastEntry.indent = this.designStack.length - 1;
-                        break;
-                    }
-                }
-
                 return dSeq[dSeq.length -1];
             }
         }
