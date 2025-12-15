@@ -27,6 +27,8 @@ class AbstractionMap {
         this.designSequence = [];
         this.designStack = [];
         this.lastFunctionalAbstraction = null;
+        this.currentBehavior = null;
+        this.behaviorStack = [];
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
@@ -35,6 +37,53 @@ class AbstractionMap {
                     "value": this.map[entry],
                 });
                 this.currentAbstraction = this.map[entry];
+            }
+        }
+    }
+
+
+    /**
+     * Processes the design trace to identify atomic behaviors
+     * that work to fullfill the designs intent.
+     */
+    processBeahvior () {
+        const seq = this.designSequence;
+
+        const atomicBehaviors = [];
+        let behavior = [];
+
+        for (let i = 0; i < seq.length; i++) {
+            const entry = seq[i];
+
+            const currentBehavior = this.getBehavior(entry.id);
+
+            if (currentBehavior) {
+                const firstIntent = currentBehavior.abstractions[0];
+                if (currentBehavior.atomic && entry.id === firstIntent) {
+                    if (behavior.length > 0) {
+                        atomicBehaviors.push(behavior);
+                        behavior = [];
+                    }
+                }
+                behavior.push(entry.id);
+            }
+        }
+        this.designSequence = atomicBehaviors;
+    }
+
+
+    /**
+     * Given an id, returns the behavior that
+     * this id belongs to.
+     * @param {String} id
+     * @return {Object}
+     */
+    getBehavior (id) {
+        for (let i = 0; i < this.designMap.behavior.length; i++) {
+            const entry = this.designMap.behavior[i];
+
+            if (entry.abstractions.includes(id)) {
+                return entry;
             }
         }
     }
@@ -253,17 +302,6 @@ class AbstractionMap {
                 } else {
                     dSeq.push(entry);
                 }
-
-                const behaviors = this.designMap.behavior;
-
-                for (let i = 0; i < behaviors.length - 1; i++) {
-                    const behaviorEntry = behaviors[i];
-                    if (entry.id === behaviorEntry.abstractions[0]) {
-                        entry.isBehavior = true;
-                        break;
-                    }
-                }
-
                 return dSeq[dSeq.length -1];
             }
         }

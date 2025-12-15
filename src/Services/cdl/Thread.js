@@ -34,6 +34,8 @@ class Thread {
         this.currPosition = this.lastStatement;
         this.map = this.getExecutionTree(this.currPosition);
         this.executionTree = this.map.executionTree;
+
+        this.map.processBeahvior();
         this.functionalSequence = this.map.designSequence;
     }
 
