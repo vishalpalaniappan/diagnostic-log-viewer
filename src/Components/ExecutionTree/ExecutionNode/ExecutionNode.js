@@ -144,7 +144,7 @@ export function AbstractionRow ({node}) {
             className="abstractionRow">
 
             <div className="design-trace">
-                {String(node.designAbstraction.indent)}
+                {String(node.designAbstraction.id)}
             </div>
 
             <div className="icon-container">
