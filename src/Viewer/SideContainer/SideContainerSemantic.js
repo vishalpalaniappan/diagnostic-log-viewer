@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import {Bug, Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
+import {Bug, Lightbulb, Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
 
+import DesignTree from "../../Components/DesignTree/DesignTree";
 import ExecutionTree from "../../Components/ExecutionTree/ExecutionTree";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
@@ -64,8 +65,10 @@ export function SideContainerSemantic () {
         if (activeMenu === 1) {
             return <ExecutionTree />;
         } else if (activeMenu === 2) {
-            return <SettingsContainer />;
+            return <DesignTree />;
         } else if (activeMenu === 3) {
+            return <SettingsContainer />;
+        } else if (activeMenu === 4) {
             return <ShortcutContainer />;
         }
     };
@@ -77,14 +80,17 @@ export function SideContainerSemantic () {
                     <Diagram2 className="menu-icon" size={25}
                         onClick={(e) => {setActiveMenu(1);}}
                         style={{color: activeMenu == 1 ? "white": "grey"}}/>
+                    <Lightbulb className="menu-icon" size={25}
+                        onClick={(e) => {setActiveMenu(2);}}
+                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
                 </div>
                 <div className="mt-auto d-flex flex-column align-items-center">
                     <Keyboard className="menu-icon" size={25}
                         onClick={(e) => {setActiveMenu(3);}}
                         style={{color: activeMenu == 3 ? "white": "grey"}}/>
                     <Gear className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(2);}}
-                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
+                        onClick={(e) => {setActiveMenu(4);}}
+                        style={{color: activeMenu == 4 ? "white": "grey"}}/>
                 </div>
             </div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>

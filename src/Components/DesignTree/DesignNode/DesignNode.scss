@@ -1,0 +1,89 @@
+.abstractionRow {
+    width:100%;
+    color:#d7d7d7;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    padding:0 5px;
+    display:flex;
+    flex-direction: row;
+}
+
+.abstractionRow:hover{
+    background-color:rgb(44, 44, 44);
+    cursor:pointer;
+}
+
+.collapse-icon-container {
+    width: 10px;
+    color:rgb(95, 95, 95);
+    margin:0px 5px;
+    align-self: center;
+}
+
+.text-container{
+    padding:5px 0;
+}
+
+.spacer {
+    position: relative;
+    width: 20px;
+}
+
+.spacer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    left: 50%;
+    width: 1px;
+    background: rgb(63, 63, 63);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.icon-container{
+    margin:0 3px;
+    width:10px;
+    display:flex;
+    align-items: center;
+    .icon {
+        width:10px;
+    }
+}
+
+.design-trace {
+    margin:0 3px;
+    font-size:12px;
+    width:300px;
+    display:flex;
+    align-items: center;
+    overflow:hidden;
+    white-space: normal; 
+}
+
+.disabledBreakPoint {
+    background:grey;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    align-self: center;
+}
+
+.enabledBreakPoint {
+    background:#e35454;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    align-self: center;
+}
+
+.analysis-status-container{
+    font-size:11px;
+    color:rgb(255, 81, 81);
+    width:60px;
+    display:flex;
+    margin: 0 5px;
+    justify-content: center;
+    .message {
+        align-self: center;
+    }
+}
