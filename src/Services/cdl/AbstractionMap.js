@@ -58,17 +58,21 @@ class AbstractionMap {
             const currentBehavior = this.getBehavior(entry.id);
 
             if (currentBehavior) {
+                behavior.push(seq[i]);
                 const firstIntent = currentBehavior.abstractions[0];
                 if (currentBehavior.atomic && entry.id === firstIntent) {
                     if (behavior.length > 0) {
+                        const updatedIntent = this.replacePlaceHoldersInIntent(
+                            currentBehavior, seq[i].abstraction.nextVarStack
+                        );
                         atomicBehaviors.push({
                             "id": currentBehavior.id,
+                            "intent": updatedIntent,
                             "behavior": behavior,
                         });
                         behavior = [];
                     }
                 }
-                behavior.push(seq[i]);
             }
         }
         this.designSequence = atomicBehaviors;

@@ -18,6 +18,7 @@ export function DesignTree () {
     useEffect(() => {
         if (functionalSequence) {
             console.log(functionalSequence);
+            renderTree();
         }
     }, [functionalSequence]);
 
@@ -101,7 +102,6 @@ export function DesignTree () {
      */
     useEffect(() => {
         if (executionTree) {
-            renderTree();
         }
     }, [executionTree]);
 
