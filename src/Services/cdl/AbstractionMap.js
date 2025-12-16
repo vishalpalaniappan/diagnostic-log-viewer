@@ -259,7 +259,8 @@ class AbstractionMap {
     }
 
     /**
-     * This function maps the abstraction to the design.
+     * This function maps execution abstractions to the
+     * functional abstraction in the design.
      *
      * @param {Object} abstraction
      * @return {Boolean}
@@ -299,7 +300,7 @@ class AbstractionMap {
                     const val = dSeq[dSeq.length - 1];
                     // If we are in a new functional abstraction
                     // then add it to the design sequence.
-                    if (val.id !== functionalAbs.id) {
+                    if (val.functionalAbs.id !== functionalAbs.id) {
                         dSeq.push({
                             "functionalAbs": functionalAbs,
                             "abstraction": abstraction,
