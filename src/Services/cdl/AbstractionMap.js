@@ -53,7 +53,7 @@ class AbstractionMap {
         let behavior = [];
 
         for (let i = 0; i < seq.length; i++) {
-            const entry = seq[i];
+            const entry = seq[i].functionalAbs;
 
             const currentBehavior = this.getBehavior(entry.id);
 
@@ -65,7 +65,7 @@ class AbstractionMap {
                         behavior = [];
                     }
                 }
-                behavior.push(entry.id);
+                behavior.push(seq[i]);
             }
         }
         this.designSequence = atomicBehaviors;
@@ -283,24 +283,28 @@ class AbstractionMap {
         const currAbs = abstraction["abstraction_meta"];
 
         for (let i = 0; i < funcAbs.length; i++) {
-            const entry = funcAbs[i];
+            const functionalAbs = funcAbs[i];
 
-            if (entry.group === "MainMenuGroup") {
-                entry.root = true;
-            }
-
-            if (entry.abstractions.includes(currAbs)) {
+            if (functionalAbs.abstractions.includes(currAbs)) {
                 // Find the functional abstraction
                 const dSeq = this.designSequence;
                 if (dSeq.length > 0) {
                     const val = dSeq[dSeq.length - 1];
                     // If we are in a new functional abstraction
                     // then add it to the design sequence.
-                    if (val.id !== entry.id) {
-                        dSeq.push(entry);
+                    if (val.id !== functionalAbs.id) {
+                        dSeq.push({
+                            "functionalAbs": functionalAbs,
+                            "abstraction": abstraction,
+                        });
+                    } else {
+                        val.abstraction = abstraction;
                     }
                 } else {
-                    dSeq.push(entry);
+                    dSeq.push({
+                        "functionalAbs": functionalAbs,
+                        "abstraction": abstraction,
+                    });
                 }
                 return dSeq[dSeq.length -1];
             }
@@ -316,7 +320,9 @@ class AbstractionMap {
      * @param {Object} abstraction Object containing the abstraction info.
      */
     addToExecutionTree (node, collapsible, abstraction) {
-        const designAbstraction = this.mapDesign(abstraction);
+        const designAbstraction = this.mapDesign(
+            {...abstraction}
+        );
         Object.assign(node, this.sdgMeta[node["id"]]);
         this.validateConstraints(node, abstraction);
         this.executionTree.push({
