@@ -35,7 +35,7 @@ class Thread {
         this.map = this.getExecutionTree(this.currPosition);
         this.executionTree = this.map.executionTree;
 
-        this.map.processBeahvior();
+        this.map.processBehavior();
         this.functionalSequence = this.map.designSequence;
     }
 
@@ -455,7 +455,6 @@ class Thread {
         }
 
         console.log(map.designSequence);
-        console.log(map.designStack);
 
         return map;
     }

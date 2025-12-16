@@ -46,7 +46,7 @@ class AbstractionMap {
      * Processes the design trace to identify atomic behaviors
      * that work to fullfill the designs intent.
      */
-    processBeahvior () {
+    processBehavior () {
         const seq = this.designSequence;
 
         const atomicBehaviors = [];
@@ -61,7 +61,10 @@ class AbstractionMap {
                 const firstIntent = currentBehavior.abstractions[0];
                 if (currentBehavior.atomic && entry.id === firstIntent) {
                     if (behavior.length > 0) {
-                        atomicBehaviors.push(behavior);
+                        atomicBehaviors.push({
+                            "id": currentBehavior.id,
+                            "behavior": behavior,
+                        });
                         behavior = [];
                     }
                 }
