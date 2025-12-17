@@ -52,19 +52,38 @@ export function DesignTree () {
     const renderTree = () => {
         if (functionalSequence) {
             const execution = [];
+            let collapsedLevel;
+            let collapsing = false;
 
             for (let index = 0; index < functionalSequence.length; index++) {
                 const node = functionalSequence[index];
 
-                if (node.isBehavior) {
-                    node.level = 0;
-                } else {
-                    node.level = 1;
+                // If we are collapsing and we reached the same
+                // level or below, then stop collapsing.
+                if (collapsing && node.level <= collapsedLevel) {
+                    collapsing = false;
                 }
-                execution.push(<DesignNode
-                    key={index}
-                    node={node}/>
-                );
+
+                // If the node is collapsed and we aren't collapsing
+                // then start collapsing
+                if (node.collapsed && !collapsing) {
+                    collapsedLevel = node.level;
+                    collapsing = true;
+                    execution.push(
+                        <DesignNode
+                            key={index}
+                            node={node}/>
+                    );
+                    continue;
+                }
+
+                // If we aren't collapsing this node, then add the node.
+                if (!collapsing) {
+                    execution.push(<DesignNode
+                        key={index}
+                        node={node}/>
+                    );
+                }
             }
             setExecutionTreeInstance(execution);
         }

@@ -116,7 +116,7 @@ export function DesignNode ({node}) {
                 </div>
 
                 <div className="text-container flex-grow-1">
-                    <span>{node.intent}</span>
+                    <span>{node.id}</span>
                 </div>
             </div>
         </div>

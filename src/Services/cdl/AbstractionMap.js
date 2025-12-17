@@ -25,10 +25,8 @@ class AbstractionMap {
         this.executionTree = [];
         this.violations = [];
         this.designSequence = [];
-        this.designStack = [];
-        this.lastFunctionalAbstraction = null;
-        this.currentBehavior = null;
-        this.behaviorStack = [];
+        this.design = [];
+
 
         // Load the starting position into the abstraction map.
         for (const entry in this.map) {
@@ -49,6 +47,7 @@ class AbstractionMap {
     processBehavior () {
         let index = 0;
         const behaviorStack = [];
+        const designMap = [];
         do {
             const entry = this.designSequence[index].functionalAbs;
             const currentBehavior = this.getBehavior(entry.id);
@@ -102,9 +101,25 @@ class AbstractionMap {
                     }
                 }
 
+                if (entry.id === firstIntent) {
+                    designMap.push({
+                        "level": level - 1,
+                        "type": "selector",
+                        "id": currentBehavior.id,
+                        "collapsible": true,
+                    });
+                } else {
+                    designMap.push({
+                        "level": level,
+                        "type": "node",
+                        "id": entry.id,
+                    });
+                }
                 this.printLevel(level, entry.id);
             }
         } while ( ++index < this.designSequence.length);
+
+        this.designSequence = designMap;
     }
 
     /**
