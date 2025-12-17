@@ -47,35 +47,37 @@ class AbstractionMap {
      * that work to fullfill the designs intent.
      */
     processBehavior () {
-        const seq = this.designSequence;
-
-        const atomicBehaviors = [];
-        let behavior = [];
-
-        for (let i = 0; i < seq.length; i++) {
-            const entry = seq[i].functionalAbs;
+        let index = 0;
+        const behaviorStack = [];
+        do {
+            const entry = this.designSequence[index].functionalAbs;
 
             const currentBehavior = this.getBehavior(entry.id);
 
             if (currentBehavior) {
-                behavior.push(seq[i]);
                 const firstIntent = currentBehavior.abstractions[0];
-                if (currentBehavior.atomic && entry.id === firstIntent) {
-                    if (behavior.length > 0) {
-                        const updatedIntent = this.replacePlaceHoldersInIntent(
-                            currentBehavior, seq[i].abstraction.nextVarStack
-                        );
-                        atomicBehaviors.push({
-                            "id": currentBehavior.id,
-                            "intent": updatedIntent,
-                            "behavior": behavior,
-                        });
-                        behavior = [];
+                const lastIntent = currentBehavior.abstractions[
+                    currentBehavior.abstractions.length - 1
+                ];
+
+                if (entry.id === firstIntent) {
+                    behaviorStack.push(currentBehavior);
+                    console.log(currentBehavior.id);
+                } else if (entry.id === lastIntent) {
+                    behaviorStack.pop();
+                }
+
+                while (behaviorStack.length > 0) {
+                    const currentBeh = behaviorStack[behaviorStack.length - 1];
+                    if (!(currentBeh.abstractions.includes(entry.id))) {
+                        behaviorStack.pop();
+                    } else {
+                        break;
                     }
                 }
+                console.log([...behaviorStack].length, ":", entry.id);
             }
-        }
-        this.designSequence = atomicBehaviors;
+        } while ( ++index < this.designSequence.length);
     }
 
 
