@@ -108,13 +108,14 @@ class AbstractionMap {
                         "id": currentBehavior.id,
                         "collapsible": true,
                     });
-                } else {
-                    designMap.push({
-                        "level": level,
-                        "type": "node",
-                        "id": entry.id,
-                    });
                 }
+
+                designMap.push({
+                    "level": level,
+                    "type": "node",
+                    "id": entry.id,
+                });
+
                 this.printLevel(level, entry.id);
             }
         } while ( ++index < this.designSequence.length);
