@@ -43,8 +43,8 @@ class AbstractionMap {
 
 
     /**
-     * Processes the design trace to identify atomic behaviors
-     * that work to fullfill the designs intent.
+     * Extracts the behaviors in the execution and the
+     * hierarchy in which they are reached.
      */
     processBehavior () {
         let index = 0;
