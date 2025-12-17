@@ -93,6 +93,7 @@ class AbstractionMap {
                          * we have to move down from this behavior.
                          */
                         behaviorStack.pop();
+                        break;
                     } else {
                         /**
                          * Current entry belongs to behavior.
