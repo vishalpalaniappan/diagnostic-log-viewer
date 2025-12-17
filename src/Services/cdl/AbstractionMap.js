@@ -60,14 +60,22 @@ class AbstractionMap {
                     currentBehavior.abstractions.length - 1
                 ];
 
+                // If its the first intent in a behavior, add to stack.
                 if (entry.id === firstIntent) {
                     behaviorStack.push(currentBehavior);
                     console.log(currentBehavior.id);
-                } else if (entry.id === lastIntent) {
+                }
+
+                const level = behaviorStack.length;
+
+                // If its the last or the ony intent in this behavior,
+                // then remove it from the stack.
+                if (entry.id === lastIntent || currentBehavior.abstractions.length === 1) {
                     behaviorStack.pop();
                 }
 
-                while (behaviorStack.length > 0) {
+                // Move down until you find the behavior this entry belongs to.
+                while (behaviorStack.length > 0 && !currentBehavior.abstractions.length === 1) {
                     const currentBeh = behaviorStack[behaviorStack.length - 1];
                     if (!(currentBeh.abstractions.includes(entry.id))) {
                         behaviorStack.pop();
@@ -75,11 +83,11 @@ class AbstractionMap {
                         break;
                     }
                 }
-                console.log([...behaviorStack].length, ":", entry.id);
+
+                this.printLevel(level, entry.id);
             }
         } while ( ++index < this.designSequence.length);
     }
-
 
     /**
      * Given an id, returns the behavior that
