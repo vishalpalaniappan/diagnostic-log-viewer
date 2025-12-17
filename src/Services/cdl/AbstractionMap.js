@@ -51,7 +51,6 @@ class AbstractionMap {
         const behaviorStack = [];
         do {
             const entry = this.designSequence[index].functionalAbs;
-
             const currentBehavior = this.getBehavior(entry.id);
 
             if (currentBehavior) {
@@ -77,9 +76,27 @@ class AbstractionMap {
                 // Move down until you find the behavior this entry belongs to.
                 while (behaviorStack.length > 0 && !currentBehavior.abstractions.length === 1) {
                     const currentBeh = behaviorStack[behaviorStack.length - 1];
+                    const lastEntry = currentBeh.abstractions[
+                        currentBeh.abstractions.length - 1
+                    ];
+
                     if (!(currentBeh.abstractions.includes(entry.id))) {
+                        /**
+                         * Current entry doesn't belong to the top of the
+                         * stack, so we move down.
+                         */
+                        behaviorStack.pop();
+                    } else if (entry.id === lastEntry) {
+                        /**
+                         * The entry does belong to the top of the stack
+                         * but its the last intent in this behavior, so
+                         * we have to move down from this behavior.
+                         */
                         behaviorStack.pop();
                     } else {
+                        /**
+                         * Current entry belongs to behavior.
+                         */
                         break;
                     }
                 }
