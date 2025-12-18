@@ -130,7 +130,7 @@ export function DesignTree () {
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">
-                        <span className="title">Design Trace</span>
+                        <span className="title">Behavioral Trace</span>
                     </div>
                     <div className="iconMenu">
                     </div>
