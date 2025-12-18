@@ -1,9 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
-import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
+import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
 
-import BreakpointsContext from "../../../Providers/BreakpointsContext";
 import DesignTreeInstanceContext from "../DesignTreeInstanceContext";
 
 import "./DesignNode.scss";
