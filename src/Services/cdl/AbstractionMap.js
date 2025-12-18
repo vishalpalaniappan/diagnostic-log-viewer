@@ -40,10 +40,76 @@ class AbstractionMap {
     }
 
     /**
+     * This function maps execution abstractions to the
+     * functional abstraction in the design.
+     *
+     * @param {Object} abstraction
+     * @return {Boolean}
+     */
+    mapExecutionToFunctionalAbstractions (abstraction) {
+        // Get the module being executed so that we can
+        // identify the fuctional abstraction.
+        let module;
+        const absStack = [...this.abstractionStack];
+        for (let i = absStack.length - 1; i >= 0; i--) {
+            if (absStack[i].value.type === "function") {
+                module = absStack[i];
+                break;
+            }
+        }
+
+        if (!module) {
+            console.warn("Could not find module currently being executed");
+            return false;
+        }
+
+        if (!("functional_abstractions" in module.value)) {
+            console.warn("Could not find functional abstractions for module.");
+            return false;
+        }
+
+        const funcAbs = module.value.functional_abstractions;
+        const currAbs = abstraction["abstraction_meta"];
+
+        for (let i = 0; i < funcAbs.length; i++) {
+            const functionalAbs = funcAbs[i];
+
+            if (functionalAbs.abstractions.includes(currAbs)) {
+                // Find the functional abstraction
+                if (this.functionalBlocks.length > 0) {
+                    const val = this.functionalBlocks[
+                        this.functionalBlocks.length - 1
+                    ];
+                    // If we are in a new functional abstraction
+                    // then add it to the functional blocks.
+                    if (val.functionalAbs.id !== functionalAbs.id) {
+                        this.functionalBlocks.push({
+                            "functionalAbs": functionalAbs,
+                            "abstraction": abstraction,
+                        });
+                    } else {
+                        val.abstraction = abstraction;
+                    }
+                } else {
+                    this.functionalBlocks.push({
+                        "functionalAbs": functionalAbs,
+                        "abstraction": abstraction,
+                    });
+                }
+                return this.functionalBlocks[
+                    this.functionalBlocks.length -1
+                ];
+            }
+        }
+
+        console.log("couldn't find it");
+    }
+
+    /**
      * Extracts the behaviors in the execution and the
      * hierarchy through which they are reached.
      */
-    mapFuncAbsToBehavior () {
+    mapFunctionalAbstractionToBehavior () {
         let index = 0;
 
         /**
@@ -309,69 +375,6 @@ class AbstractionMap {
                 }
             });
         };
-    }
-
-    /**
-     * This function maps execution abstractions to the
-     * functional abstraction in the design.
-     *
-     * @param {Object} abstraction
-     * @return {Boolean}
-     */
-    mapExecutionToFunctionalAbstractions (abstraction) {
-        // Get the module being executed so that we can
-        // identify the fuctional abstraction.
-        let module;
-        const absStack = [...this.abstractionStack];
-        for (let i = absStack.length - 1; i >= 0; i--) {
-            if (absStack[i].value.type === "function") {
-                module = absStack[i];
-                break;
-            }
-        }
-
-        if (!module) {
-            console.warn("Could not find module currently being executed");
-            return false;
-        }
-
-        if (!("functional_abstractions" in module.value)) {
-            console.warn("Could not find functional abstractions for module.");
-            return false;
-        }
-
-        const funcAbs = module.value.functional_abstractions;
-        const currAbs = abstraction["abstraction_meta"];
-
-        for (let i = 0; i < funcAbs.length; i++) {
-            const functionalAbs = funcAbs[i];
-
-            if (functionalAbs.abstractions.includes(currAbs)) {
-                // Find the functional abstraction
-                const dSeq = this.functionalBlocks;
-                if (dSeq.length > 0) {
-                    const val = dSeq[dSeq.length - 1];
-                    // If we are in a new functional abstraction
-                    // then add it to the design sequence.
-                    if (val.functionalAbs.id !== functionalAbs.id) {
-                        dSeq.push({
-                            "functionalAbs": functionalAbs,
-                            "abstraction": abstraction,
-                        });
-                    } else {
-                        val.abstraction = abstraction;
-                    }
-                } else {
-                    dSeq.push({
-                        "functionalAbs": functionalAbs,
-                        "abstraction": abstraction,
-                    });
-                }
-                return dSeq[dSeq.length -1];
-            }
-        }
-
-        console.log("couldn't find it");
     }
 
     /**
