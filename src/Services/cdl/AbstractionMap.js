@@ -39,7 +39,6 @@ class AbstractionMap {
         }
     }
 
-
     /**
      * Extracts the behaviors in the execution and the
      * hierarchy in which they are reached.
@@ -47,80 +46,73 @@ class AbstractionMap {
     processBehavior () {
         let index = 0;
         const behaviorStack = [];
-        const designMap = [];
         do {
             const entry = this.designSequence[index].functionalAbs;
             const currentBehavior = this.getBehavior(entry.id);
 
-            if (currentBehavior) {
-                const firstIntent = currentBehavior.abstractions[0];
-                const lastIntent = currentBehavior.abstractions[
-                    currentBehavior.abstractions.length - 1
-                ];
-
-                // If its the first intent in a behavior, add to stack.
-                if (entry.id === firstIntent) {
-                    behaviorStack.push(currentBehavior);
-                    console.log(currentBehavior.id);
-                }
-
-                const level = behaviorStack.length;
-
-                // If its the last or the ony intent in this behavior,
-                // then remove it from the stack.
-                if (entry.id === lastIntent || currentBehavior.abstractions.length === 1) {
-                    behaviorStack.pop();
-                }
-
-                // Move down until you find the behavior this entry belongs to.
-                while (behaviorStack.length > 0 && !currentBehavior.abstractions.length === 1) {
-                    const currentBeh = behaviorStack[behaviorStack.length - 1];
-                    const lastEntry = currentBeh.abstractions[
-                        currentBeh.abstractions.length - 1
-                    ];
-
-                    if (!(currentBeh.abstractions.includes(entry.id))) {
-                        /**
-                         * Current entry doesn't belong to the top of the
-                         * stack, so we move down.
-                         */
-                        behaviorStack.pop();
-                    } else if (entry.id === lastEntry) {
-                        /**
-                         * The entry does belong to the top of the stack
-                         * but its the last intent in this behavior, so
-                         * we have to move down from this behavior.
-                         */
-                        behaviorStack.pop();
-                        break;
-                    } else {
-                        /**
-                         * Current entry belongs to behavior.
-                         */
-                        break;
-                    }
-                }
-
-                if (entry.id === firstIntent) {
-                    designMap.push({
-                        "level": level - 1,
-                        "type": "selector",
-                        "id": currentBehavior.id,
-                        "collapsible": true,
-                    });
-                }
-
-                designMap.push({
-                    "level": level,
-                    "type": "node",
-                    "id": entry.id,
-                });
-
-                this.printLevel(level, entry.id);
+            if (!currentBehavior) {
+                continue;
             }
+
+            const isFirstIntent = (currentBehavior.abstractions[0] === entry.id);
+
+            while (behaviorStack.length > 0) {
+                const stackTop = behaviorStack[behaviorStack.length - 1];
+
+                if (stackTop.entry.type === "selector" &&
+                    stackTop.entry.targetBehaviors.includes(currentBehavior.id)) {
+                    behaviorStack.push({
+                        "behavior": currentBehavior,
+                        "entry": entry,
+                        "position": 1,
+                    });
+                    break;
+                } else if (stackTop.behavior.id === currentBehavior.id) {
+                    behaviorStack[behaviorStack.length - 1] = {
+                        "behavior": currentBehavior,
+                        "entry": entry,
+                        "position": stackTop.behavior.abstractions.indexOf(entry.id) + 1,
+                    };
+                    break;
+                }
+                behaviorStack.pop();
+            }
+
+            if (behaviorStack.length === 0) {
+                behaviorStack.push({
+                    "behavior": currentBehavior,
+                    "entry": entry,
+                    "position": 1,
+                });
+            }
+
+            const level = behaviorStack.length;
+            this.createTree(isFirstIntent, level, currentBehavior.id, entry.id);
         } while ( ++index < this.designSequence.length);
 
-        this.designSequence = designMap;
+        this.designSequence = this.design;
+    }
+
+    /**
+     * @param {Boolean} isFirst
+     * @param {Number} level
+     * @param {String} behavior
+     * @param {String} entry
+     */
+    createTree (isFirst, level, behavior, entry) {
+        if (isFirst) {
+            this.design.push({
+                "level": level - 1,
+                "type": "selector",
+                "id": behavior,
+                "collapsible": true,
+            });
+        }
+        this.design.push({
+            "level": level,
+            "type": "node",
+            "id": entry,
+        });
     }
 
     /**
