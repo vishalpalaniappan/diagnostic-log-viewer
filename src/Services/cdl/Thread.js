@@ -35,8 +35,8 @@ class Thread {
         this.map = this.getExecutionTree(this.currPosition);
         this.executionTree = this.map.executionTree;
 
-        this.map.processBehavior();
-        this.functionalSequence = this.map.designSequence;
+        this.map.mapFuncAbsToBehavior();
+        this.functionalSequence = this.map.behavioralTree;
     }
 
     /**

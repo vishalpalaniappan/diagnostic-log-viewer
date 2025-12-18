@@ -24,8 +24,8 @@ class AbstractionMap {
         this.currentAbstraction = null;
         this.executionTree = [];
         this.violations = [];
-        this.designSequence = [];
-        this.design = [];
+        this.functionalBlocks = [];
+        this.behavioralTree = [];
 
 
         // Load the starting position into the abstraction map.
@@ -41,26 +41,35 @@ class AbstractionMap {
 
     /**
      * Extracts the behaviors in the execution and the
-     * hierarchy in which they are reached.
+     * hierarchy through which they are reached.
      */
-    processBehavior () {
+    mapFuncAbsToBehavior () {
         let index = 0;
+
+        /**
+         * Note the behavioral stack is a 2d stack, it contains the
+         * horizontal movement through the functional abstractions
+         * of the behavior and the vertical movement of behavior
+         * through the selectors.
+         */
         const behaviorStack = [];
         do {
-            const entry = this.designSequence[index].functionalAbs;
+            const entry = this.functionalBlocks[index].functionalAbs;
             const currentBehavior = this.getBehavior(entry.id);
 
             if (!currentBehavior) {
                 continue;
             }
 
-            const isFirstIntent = (currentBehavior.abstractions[0] === entry.id);
+            // Check if its the first intent (used for collapsing)
+            const isFirstFuncAbs = (currentBehavior.abstractions[0] === entry.id);
 
             while (behaviorStack.length > 0) {
                 const stackTop = behaviorStack[behaviorStack.length - 1];
 
                 if (stackTop.entry.type === "selector" &&
                     stackTop.entry.targetBehaviors.includes(currentBehavior.id)) {
+                    // Find the stack position which selecte this behavior.
                     behaviorStack.push({
                         "behavior": currentBehavior,
                         "entry": entry,
@@ -68,6 +77,7 @@ class AbstractionMap {
                     });
                     break;
                 } else if (stackTop.behavior.id === currentBehavior.id) {
+                    // Update the pos of the behavior that is being executed.
                     behaviorStack[behaviorStack.length - 1] = {
                         "behavior": currentBehavior,
                         "entry": entry,
@@ -75,9 +85,12 @@ class AbstractionMap {
                     };
                     break;
                 }
+                // Remove the behavior from the stack, it is done.
                 behaviorStack.pop();
             }
 
+            // We ended up removing all the behaviors from the stack, so add
+            // the current one to it as it is the behavior being exhibited.
             if (behaviorStack.length === 0) {
                 behaviorStack.push({
                     "behavior": currentBehavior,
@@ -87,10 +100,14 @@ class AbstractionMap {
             }
 
             const level = behaviorStack.length;
-            this.createTree(isFirstIntent, level, currentBehavior.id, entry.id);
-        } while ( ++index < this.designSequence.length);
 
-        this.designSequence = this.design;
+            this.createTree(
+                isFirstFuncAbs,
+                level,
+                currentBehavior.id,
+                entry.id
+            );
+        } while ( ++index < this.functionalBlocks.length);
     }
 
     /**
@@ -101,14 +118,14 @@ class AbstractionMap {
      */
     createTree (isFirst, level, behavior, entry) {
         if (isFirst) {
-            this.design.push({
+            this.behavioralTree.push({
                 "level": level - 1,
                 "type": "selector",
                 "id": behavior,
                 "collapsible": true,
             });
         }
-        this.design.push({
+        this.behavioralTree.push({
             "level": level,
             "type": "node",
             "id": entry,
@@ -301,7 +318,7 @@ class AbstractionMap {
      * @param {Object} abstraction
      * @return {Boolean}
      */
-    mapDesign (abstraction) {
+    mapExecutionToFunctionalAbstractions (abstraction) {
         // Get the module being executed so that we can
         // identify the fuctional abstraction.
         let module;
@@ -331,7 +348,7 @@ class AbstractionMap {
 
             if (functionalAbs.abstractions.includes(currAbs)) {
                 // Find the functional abstraction
-                const dSeq = this.designSequence;
+                const dSeq = this.functionalBlocks;
                 if (dSeq.length > 0) {
                     const val = dSeq[dSeq.length - 1];
                     // If we are in a new functional abstraction
@@ -364,7 +381,7 @@ class AbstractionMap {
      * @param {Object} abstraction Object containing the abstraction info.
      */
     addToExecutionTree (node, collapsible, abstraction) {
-        const designAbstraction = this.mapDesign(
+        const designAbstraction = this.mapExecutionToFunctionalAbstractions(
             {...abstraction}
         );
         Object.assign(node, this.sdgMeta[node["id"]]);
