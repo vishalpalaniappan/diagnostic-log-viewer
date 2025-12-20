@@ -114,9 +114,17 @@ export function DesignNode ({node}) {
                     {getCollapsed(node)}
                 </div>
 
-                <div className="text-container flex-grow-1">
-                    <span>{node.id}</span>
-                </div>
+
+                {
+                    node.behavior ?
+                        <div className="text-container flex-grow-1">
+                            <span>{node.behavior.intent}</span>
+                        </div>:
+                        <div className="text-container flex-grow-1">
+                            <span>{node.id}</span>
+                        </div>
+                }
+
             </div>
         </div>
     );

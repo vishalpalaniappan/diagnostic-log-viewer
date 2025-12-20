@@ -167,11 +167,21 @@ class AbstractionMap {
 
             const level = behaviorStack.length;
 
+            // Replace the intent placeholders with the variable values
+            // The variable stack is appended to the functional blocks when
+            // parsing the execution to functional bocks.
+            if (isFirstFuncAbs) {
+                const varStack = this.functionalBlocks[index].abstraction.nextVarStack;
+                currentBehavior.intent = this.replacePlaceHoldersInIntent(
+                    currentBehavior, varStack
+                );
+            }
+
             this.createTree(
                 isFirstFuncAbs,
                 level,
-                currentBehavior.id,
-                entry.id
+                currentBehavior,
+                entry
             );
         } while ( ++index < this.functionalBlocks.length);
     }
@@ -187,14 +197,18 @@ class AbstractionMap {
             this.behavioralTree.push({
                 "level": level - 1,
                 "type": "selector",
-                "id": behavior,
+                "node": entry,
+                "id": behavior.id,
+                "behavior": behavior,
                 "collapsible": true,
+                "collapsed": true
             });
         }
         this.behavioralTree.push({
             "level": level,
             "type": "node",
-            "id": entry,
+            "node": entry,
+            "id": entry.id,
         });
     }
 
