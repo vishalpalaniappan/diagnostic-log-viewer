@@ -22,6 +22,9 @@ export function DesignNode ({node}) {
 
     // Set style if node is selected.
     useEffect(() => {
+        if (node) {
+            // console.log(node);
+        }
     }, [selectedNode, node]);
 
     /**

@@ -86,6 +86,7 @@ class AbstractionMap {
                         this.functionalBlocks.push({
                             "functionalAbs": functionalAbs,
                             "abstraction": abstraction,
+                            "execution": [],
                         });
                     } else {
                         val.abstraction = abstraction;
@@ -94,6 +95,7 @@ class AbstractionMap {
                     this.functionalBlocks.push({
                         "functionalAbs": functionalAbs,
                         "abstraction": abstraction,
+                        "execution": [],
                     });
                 }
                 return this.functionalBlocks[
@@ -134,7 +136,7 @@ class AbstractionMap {
 
                 if (stackTop.entry.type === "selector" &&
                     stackTop.entry.targetBehaviors.includes(currentBehavior.id)) {
-                    // Find the stack position which selecte this behavior.
+                    // Find the stack position which selected this behavior.
                     behaviorStack.push({
                         "behavior": currentBehavior,
                         "entry": entry,
@@ -143,11 +145,10 @@ class AbstractionMap {
                     break;
                 } else if (stackTop.behavior.id === currentBehavior.id) {
                     // Update the pos of the behavior that is being executed.
-                    behaviorStack[behaviorStack.length - 1] = {
-                        "behavior": currentBehavior,
-                        "entry": entry,
-                        "position": stackTop.behavior.abstractions.indexOf(entry.id) + 1,
-                    };
+                    const stackTop = behaviorStack[behaviorStack.length - 1];
+                    stackTop.behavior = currentBehavior;
+                    stackTop.entry = entry;
+                    stackTop.position = stackTop.behavior.abstractions.indexOf(entry.id) + 1;
                     break;
                 }
                 // Remove the behavior from the stack, it is done.
@@ -180,7 +181,14 @@ class AbstractionMap {
                     "entry": entry,
                     "behavior": currentBehavior,
                     "intent": intent,
+                    "execution": this.functionalBlocks[index].execution,
                 });
+            } else {
+                const len = this.behavioralTree.length -1;
+                const exec = this.behavioralTree[len].execution;
+                this.behavioralTree[len].execution = exec.concat(
+                    this.functionalBlocks[index].execution
+                );
             }
 
             // Uncomment if you want to include functional nodes in tree.
@@ -398,7 +406,7 @@ class AbstractionMap {
         );
         Object.assign(node, this.sdgMeta[node["id"]]);
         this.validateConstraints(node, abstraction);
-        this.executionTree.push({
+        const entry = {
             "level": this.abstractionStack.length,
             "intent": this.replacePlaceHoldersInIntent(node, abstraction.currVarStack),
             "collapsible": collapsible,
@@ -412,7 +420,16 @@ class AbstractionMap {
             "abstractionId": abstraction.abstraction_meta,
             "abstractionType": node.type,
             "designAbstraction": designAbstraction,
-        });
+        };
+        this.executionTree.push(entry);
+
+        // Add the execution to the functional blocks so that
+        // it can be used to build behaviors.
+        const ind = this.functionalBlocks.length - 1;
+        if (ind >=0 ) {
+            this.functionalBlocks[ind].execution.push(entry);
+        }
+
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, node.intent);
         }
