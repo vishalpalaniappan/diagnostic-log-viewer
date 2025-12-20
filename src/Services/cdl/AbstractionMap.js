@@ -185,36 +185,12 @@ class AbstractionMap {
                 });
             }
 
-            this.behavioralTree.push({
-                "level": level,
-                "type": "node",
-                "entry": entry,
-            });
+            // this.behavioralTree.push({
+            //     "level": level,
+            //     "type": "node",
+            //     "entry": entry,
+            // });
         } while ( ++index < this.functionalBlocks.length);
-    }
-
-    /**
-     * @param {Boolean} isFirst
-     * @param {Number} level
-     * @param {String} behavior
-     * @param {String} entry
-     */
-    createTree (isFirst, level, behavior, entry) {
-        if (isFirst) {
-            this.behavioralTree.push({
-                "level": level - 1,
-                "type": "selector",
-                "node": entry,
-                "behavior": behavior,
-                "collapsible": true,
-                "collapsed": true,
-            });
-        }
-        this.behavioralTree.push({
-            "level": level,
-            "type": "node",
-            "node": entry,
-        });
     }
 
     /**
