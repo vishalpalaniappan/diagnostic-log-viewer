@@ -1,6 +1,6 @@
 
 /**
- * This class contains all the metadata for a variable extracted by the 
+ * This class contains all the metadata for a variable extracted by the
  * ADLI tool (lineNo, colNum, varid etc...).
  */
 class VarInfo {
