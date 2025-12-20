@@ -118,10 +118,10 @@ export function DesignNode ({node}) {
                 {
                     node.behavior ?
                         <div className="text-container flex-grow-1">
-                            <span>{node.behavior.intent}</span>
+                            <span>{node.intent}</span>
                         </div>:
                         <div className="text-container flex-grow-1">
-                            <span>{node.id}</span>
+                            <span>{node.entry.id}</span>
                         </div>
                 }
 

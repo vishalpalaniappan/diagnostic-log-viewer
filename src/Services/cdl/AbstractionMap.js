@@ -101,8 +101,7 @@ class AbstractionMap {
                 ];
             }
         }
-
-        console.log("couldn't find it");
+        console.warn("Unable to find the functional abstraction.");
     }
 
     /**
@@ -172,17 +171,25 @@ class AbstractionMap {
             // parsing the execution to functional bocks.
             if (isFirstFuncAbs) {
                 const varStack = this.functionalBlocks[index].abstraction.nextVarStack;
-                currentBehavior.intent = this.replacePlaceHoldersInIntent(
+                const intent = this.replacePlaceHoldersInIntent(
                     currentBehavior, varStack
                 );
+                this.behavioralTree.push({
+                    "level": level - 1,
+                    "type": "selector",
+                    "entry": entry,
+                    "behavior": currentBehavior,
+                    "intent": intent,
+                    "collapsible": true,
+                    "collapsed": true,
+                });
             }
 
-            this.createTree(
-                isFirstFuncAbs,
-                level,
-                currentBehavior,
-                entry
-            );
+            this.behavioralTree.push({
+                "level": level,
+                "type": "node",
+                "entry": entry,
+            });
         } while ( ++index < this.functionalBlocks.length);
     }
 
@@ -198,17 +205,15 @@ class AbstractionMap {
                 "level": level - 1,
                 "type": "selector",
                 "node": entry,
-                "id": behavior.id,
                 "behavior": behavior,
                 "collapsible": true,
-                "collapsed": true
+                "collapsed": true,
             });
         }
         this.behavioralTree.push({
             "level": level,
             "type": "node",
             "node": entry,
-            "id": entry.id,
         });
     }
 
