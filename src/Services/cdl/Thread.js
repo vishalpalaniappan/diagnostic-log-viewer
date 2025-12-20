@@ -36,7 +36,7 @@ class Thread {
         this.executionTree = this.map.executionTree;
 
         this.map.mapFunctionalAbstractionToBehavior();
-        this.functionalSequence = this.map.behavioralTree;
+        this.behavior = this.map.behavioralTree;
     }
 
     /**
@@ -453,8 +453,6 @@ class Thread {
                 lastEntry.failureInfo = failureInfo;
             }
         }
-
-        console.log(map.designSequence);
 
         return map;
     }

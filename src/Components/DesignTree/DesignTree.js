@@ -11,15 +11,15 @@ import "./DesignTree.scss";
  * @return {JSX.Element}
  */
 export function DesignTree () {
-    const {functionalSequence, executionTree} = useContext(ExecutionTreeContext);
+    const {behavior, executionTree} = useContext(ExecutionTreeContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
 
     useEffect(() => {
-        if (functionalSequence) {
+        if (behavior) {
             renderTree();
         }
-    }, [functionalSequence]);
+    }, [behavior]);
 
 
     /**
@@ -49,13 +49,13 @@ export function DesignTree () {
      * Render the execution tree.
      */
     const renderTree = () => {
-        if (functionalSequence) {
+        if (behavior) {
             const execution = [];
             let collapsedLevel;
             let collapsing = false;
 
-            for (let index = 0; index < functionalSequence.length; index++) {
-                const node = functionalSequence[index];
+            for (let index = 0; index < behavior.length; index++) {
+                const node = behavior[index];
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
@@ -102,8 +102,8 @@ export function DesignTree () {
      * @param {Object} selectedNode
      */
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < functionalSequence.length; index++) {
-            const node = functionalSequence[index];
+        for (let index = 0; index < behavior.length; index++) {
+            const node = behavior[index];
             if (node === selectedNode) {
                 node.selected = true;
                 setSelectedNode(node);
