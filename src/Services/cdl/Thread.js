@@ -1,6 +1,5 @@
 import AbstractionMap from "./AbstractionMap";
 import CdlHeader from "./CdlHeader";
-import StackFrames from "./StackFrames";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -18,9 +17,6 @@ class Thread {
         this.callStacks = {};
         this.globalVariables = {};
         this.threadId = threadId;
-
-        this.stackFrames = new StackFrames();
-        this.callStack = this.stackFrames.rootFrame;
 
         this.inputs = [];
         this.outputs = [];
