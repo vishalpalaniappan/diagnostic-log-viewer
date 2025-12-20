@@ -1,6 +1,7 @@
 import React, {useEffect, useRef} from "react";
 
-import { ExecutionTree } from "../ExecutionTree/ExecutionTree";
+import DesignTree from "../DesignTree/DesignTree";
+import {ExecutionTree} from "../ExecutionTree/ExecutionTree";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
 import "./AbstractionContainer.scss";
@@ -10,12 +11,14 @@ import "./AbstractionContainer.scss";
  * @return {JSX.Element}
  */
 export function AbstractionContainer () {
+    const behaviorContainer = useRef();
     const abstractionContainerRef = useRef();
     const abstractionInfoContainerRef = useRef();
 
     const redrawContainers = () => {
         const height = abstractionContainerRef.current.clientHeight;
-        const containerHeight = height;
+        const containerHeight = height - 500;
+        behaviorContainer.current.style.height = 500 + "px";
         abstractionInfoContainerRef.current.style.height = containerHeight + "px";
     };
 
@@ -26,6 +29,12 @@ export function AbstractionContainer () {
     return (
         <div ref={abstractionContainerRef}
             className="abstraction-container w-100 d-flex flex-column">
+            <div className="section" ref={behaviorContainer}>
+                <DesignTree />
+            </div>
+            <VerticalHandle
+                topDiv={behaviorContainer}
+                bottomDiv={abstractionInfoContainerRef}/>
             <div className="section" ref={abstractionInfoContainerRef}>
                 <ExecutionTree />
             </div>

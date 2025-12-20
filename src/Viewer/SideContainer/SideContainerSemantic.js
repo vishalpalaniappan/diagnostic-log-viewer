@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import {Bug, Lightbulb, Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
+import {Bug, Diagram2, Gear, Keyboard, Lightbulb} from "react-bootstrap-icons";
 
+import {AbstractionContainer} from "../../Components/AbstractionContainer/AbstractionContainer";
 import DesignTree from "../../Components/DesignTree/DesignTree";
 import ExecutionTree from "../../Components/ExecutionTree/ExecutionTree";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
@@ -63,7 +64,7 @@ export function SideContainerSemantic () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <ExecutionTree />;
+            return <AbstractionContainer />;
         } else if (activeMenu === 2) {
             return <DesignTree />;
         } else if (activeMenu === 3) {
