@@ -180,17 +180,31 @@ class AbstractionMap {
                     "entry": entry,
                     "behavior": currentBehavior,
                     "intent": intent,
-                    "collapsible": true,
-                    "collapsed": true,
                 });
             }
 
+            // Uncomment if you want to include functional nodes in tree.
+            // I don't find it particular useful because a particular
+            // behavior being exhibted already tells me which functional
+            // abstractions are included. I find the behavior more interesting.
             // this.behavioralTree.push({
             //     "level": level,
             //     "type": "node",
             //     "entry": entry,
             // });
         } while ( ++index < this.functionalBlocks.length);
+
+
+        // Set the collapsible status and state of the behavioral tree.
+        for (let i = 0; i < this.behavioralTree.length - 1; i++) {
+            const currNode = this.behavioralTree[i];
+            const nextNode = this.behavioralTree[i + 1];
+
+            if (nextNode.level > currNode.level) {
+                currNode.collapsible = true;
+                currNode.collapsed = true;
+            }
+        }
     }
 
     /**
