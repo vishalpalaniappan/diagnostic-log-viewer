@@ -204,14 +204,24 @@ class AbstractionMap {
 
 
         // Set the collapsible status and state of the behavioral tree.
+        // Also normalize the levels of the tree for the current behavior.
         for (let i = 0; i < this.behavioralTree.length - 1; i++) {
             const currNode = this.behavioralTree[i];
             const nextNode = this.behavioralTree[i + 1];
+
+            const executionLevels = currNode.execution.map(
+                (execution) => execution.level
+            );
+            const minLevel = Math.min(...executionLevels);
+            currNode.execution.forEach((entry, key) => {
+                entry.level = entry.level - minLevel;
+            });
 
             if (nextNode.level > currNode.level) {
                 currNode.collapsible = true;
                 currNode.collapsed = true;
             }
+            console.log(currNode);
         }
     }
 
