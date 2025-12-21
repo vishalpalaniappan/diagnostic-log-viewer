@@ -11,7 +11,7 @@ import "./DesignTree.scss";
  * @return {JSX.Element}
  */
 export function DesignTree () {
-    const {behavior, executionTree} = useContext(ExecutionTreeContext);
+    const {behavior, setActiveBehavior, executionTree} = useContext(ExecutionTreeContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
 
@@ -105,6 +105,7 @@ export function DesignTree () {
         for (let index = 0; index < behavior.length; index++) {
             const node = behavior[index];
             if (node === selectedNode) {
+                setActiveBehavior(index);
                 node.selected = true;
                 setSelectedNode(node);
             } else {

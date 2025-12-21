@@ -221,7 +221,6 @@ class AbstractionMap {
                 currNode.collapsible = true;
                 currNode.collapsed = true;
             }
-            console.log(currNode);
         }
     }
 

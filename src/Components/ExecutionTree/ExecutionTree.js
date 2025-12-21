@@ -13,12 +13,19 @@ import "./ExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
-    const {executionTree} = useContext(ExecutionTreeContext);
+    const {executionTree, behavior, activeBehavior} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
     const [rootCauses, setRootCauses] = useState();
+
+
+    useEffect(() => {
+        if (activeBehavior) {
+            console.log("Current Behavior:", behavior[activeBehavior]);
+        }
+    }, [behavior, activeBehavior]);
 
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.

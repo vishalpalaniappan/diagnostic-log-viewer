@@ -42,6 +42,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [executionTree, setExecutionTree] = useState();
     const [behavior, setBehavior] = useState();
+    const [activeBehavior, setActiveBehavior] = useState();
     const [actions, setActions] = useState({value: "", tick: 0});
 
     const cdlWorker = useRef(null);
@@ -189,7 +190,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             <ExecutionTreeContext.Provider
-                                                value={{executionTree, behavior}}>
+                                                value={{executionTree, behavior,
+                                                    activeBehavior, setActiveBehavior,
+                                                }}>
                                                 <ActionsContext.Provider
                                                     value={{actions, setActions}}>
                                                     {children}
