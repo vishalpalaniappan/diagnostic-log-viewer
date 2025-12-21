@@ -209,14 +209,6 @@ class AbstractionMap {
             const currNode = this.behavioralTree[i];
             const nextNode = this.behavioralTree[i + 1];
 
-            const executionLevels = currNode.execution.map(
-                (execution) => execution.level
-            );
-            const minLevel = Math.min(...executionLevels);
-            currNode.execution.forEach((entry, key) => {
-                entry.level = entry.level - minLevel;
-            });
-
             if (nextNode.level > currNode.level) {
                 currNode.collapsible = true;
                 currNode.collapsed = true;

@@ -13,17 +13,20 @@ import "./ExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
-    const {executionTree, behavior, activeBehavior} = useContext(ExecutionTreeContext);
+    const {behavior, activeBehavior} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
     const [rootCauses, setRootCauses] = useState();
+    const [executionTree, setExecutionTree] = useState();
 
 
     useEffect(() => {
         if (activeBehavior) {
-            console.log("Current Behavior:", behavior[activeBehavior]);
+            setExecutionTree(
+                behavior[activeBehavior].execution
+            );
         }
     }, [behavior, activeBehavior]);
 
