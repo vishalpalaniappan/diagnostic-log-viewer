@@ -18,8 +18,19 @@ export function DesignTree () {
     useEffect(() => {
         if (behavior) {
             renderTree();
-            setSelectedNode(behavior[0]);
-            setActiveBehavior(0);
+
+            // Find last root behavior and expand
+            for (let i = behavior.length - 1; i >= 0; i--) {
+                const entry = behavior[i];
+                if (entry.collapsible) {
+                    entry.collapsed = false;
+                }
+                if (entry.level === 0) {
+                    break;
+                }
+            }
+            setSelectedNode(behavior[behavior.length - 1]);
+            setActiveBehavior(behavior.length - 1);
         }
     }, [behavior]);
 
