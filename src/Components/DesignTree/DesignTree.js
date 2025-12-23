@@ -100,6 +100,16 @@ export function DesignTree () {
     };
 
     /**
+     * Set the collapse state of the node.
+     * @param {Object} node
+     * @param {Object} state
+     */
+    const setCollapsed = (node, state) => {
+        node.collapsed = state;
+        renderTree();
+    };
+
+    /**
      * Select the given node, this function is called from execution node.
      * @param {Object} selectedNode
      */
@@ -128,7 +138,7 @@ export function DesignTree () {
 
     return (
         <DesignTreeInstanceContext.Provider
-            value={{selectedNode, selectNode, toggleCollapse}}>
+            value={{selectedNode, selectNode, toggleCollapse, setCollapsed}}>
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">

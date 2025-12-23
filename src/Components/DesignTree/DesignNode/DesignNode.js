@@ -17,7 +17,8 @@ DesignNode.propTypes = {
  * @return {JSX.Element}
  */
 export function DesignNode ({node}) {
-    const {selectedNode, selectNode, toggleCollapse} = useContext(DesignTreeInstanceContext);
+    const {selectedNode, selectNode,
+        toggleCollapse, setCollapsed} = useContext(DesignTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
 
     // Set style if node is selected.
@@ -38,6 +39,7 @@ export function DesignNode ({node}) {
      */
     const clickToggle = (e, node) => {
         e.preventDefault();
+        e.stopPropagation();
         if (node.collapsible) {
             toggleCollapse(node);
         }
@@ -51,6 +53,7 @@ export function DesignNode ({node}) {
     const clickSelectNode = (e, node) => {
         e.preventDefault();
         selectNode(node);
+        setCollapsed(node, false);
     };
 
     /**
