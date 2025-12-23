@@ -185,21 +185,19 @@ class AbstractionMap {
                 });
             } else {
                 const len = this.behavioralTree.length -1;
-                const exec = this.behavioralTree[len].execution;
-                this.behavioralTree[len].execution = exec.concat(
-                    this.functionalBlocks[index].execution
-                );
-            }
+                const functionalId = this.functionalBlocks[index].functionalAbs.id;
 
-            // Uncomment if you want to include functional nodes in tree.
-            // I don't find it particular useful because a particular
-            // behavior being exhibted already tells me which functional
-            // abstractions are included. I find the behavior more interesting.
-            // this.behavioralTree.push({
-            //     "level": level,
-            //     "type": "node",
-            //     "entry": entry,
-            // });
+                for (let i = len; i >= 0; i--) {
+                    const entry = this.behavioralTree[i];
+                    if (entry.behavior.abstractions.includes(functionalId)) {
+                        const exec = entry.execution;
+                        entry.execution = exec.concat(
+                            this.functionalBlocks[index].execution
+                        );
+                        break;
+                    }
+                }
+            }
         } while ( ++index < this.functionalBlocks.length);
 
 
@@ -212,6 +210,27 @@ class AbstractionMap {
             if (nextNode.level > currNode.level) {
                 currNode.collapsible = true;
                 currNode.collapsed = true;
+            }
+
+            for (let j = 0; j < currNode.execution.length - 1; j++) {
+                const currExec = currNode.execution[j];
+                const nextExec = currNode.execution[j + 1];
+
+                if (nextExec.level > currExec.level) {
+                    currExec.collapsible = true;
+                    currExec.collapsed = false;
+                } else {
+                    currExec.collapsible = false;
+                    currExec.collapsed = false;
+                }
+            }
+
+            const levels = currNode.execution.map((item) => item.level);
+            const minValue = Math.min(...levels);
+
+            for (let j = 0; j < currNode.execution.length; j++) {
+                const currExec = currNode.execution[j];
+                currExec.level = currExec.level - minValue + 1;
             }
         }
     }
@@ -427,7 +446,7 @@ class AbstractionMap {
         // Add the execution to the functional blocks so that
         // it can be used to build behaviors.
         const ind = this.functionalBlocks.length - 1;
-        if (ind >=0 ) {
+        if (ind >= 0 ) {
             this.functionalBlocks[ind].execution.push(entry);
         }
 

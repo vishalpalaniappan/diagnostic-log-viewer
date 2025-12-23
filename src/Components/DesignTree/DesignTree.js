@@ -18,6 +18,8 @@ export function DesignTree () {
     useEffect(() => {
         if (behavior) {
             renderTree();
+            setSelectedNode(behavior[0]);
+            setActiveBehavior(0);
         }
     }, [behavior]);
 

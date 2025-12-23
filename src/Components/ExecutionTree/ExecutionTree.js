@@ -24,9 +24,7 @@ export function ExecutionTree () {
 
     useEffect(() => {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
-            setExecutionTree(
-                behavior[activeBehavior].execution
-            );
+            setExecutionTree(behavior[activeBehavior].execution);
         }
     }, [behavior, activeBehavior]);
 
