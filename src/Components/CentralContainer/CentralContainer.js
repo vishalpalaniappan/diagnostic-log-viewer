@@ -17,8 +17,8 @@ export function CentralContainer () {
 
     const redrawContainers = () => {
         const height = centralContainerRef.current.clientHeight;
-        const containerHeight = height - 130 - 30;
-        flowRef.current.style.height = 130 + "px";
+        // const containerHeight = height - 130 - 30;
+        // flowRef.current.style.height = 130 + "px";
     };
 
     useEffect(() => {
@@ -33,9 +33,9 @@ export function CentralContainer () {
             <div className="flex-grow-1" ref={viewerRef}>
                 <MonacoInstance/>
             </div>
-            <VerticalHandle topDiv={viewerRef} bottomDiv={flowRef}/>
+            {/* <VerticalHandle topDiv={viewerRef} bottomDiv={flowRef}/>
             <div ref={flowRef}>
-            </div>
+            </div> */}
         </div>
     );
 }
