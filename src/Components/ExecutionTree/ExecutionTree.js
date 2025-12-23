@@ -13,18 +13,30 @@ import "./ExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
-    const {behavior, activeBehavior} = useContext(ExecutionTreeContext);
+    const {behavior, executionTree,
+        setExecutionTree, activeBehavior} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
     const [rootCauses, setRootCauses] = useState();
-    const [executionTree, setExecutionTree] = useState();
+    // const [executionTree, setExecutionTree] = useState();
 
 
     useEffect(() => {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
-            setExecutionTree(behavior[activeBehavior].execution);
+            const exec = behavior[activeBehavior].execution;
+            if (exec && exec.length > 0) {
+                setExecutionTree(behavior[activeBehavior].execution);
+                const node = behavior[activeBehavior].execution[0];
+                const index = 0;
+                setSelectedNode(behavior[activeBehavior].execution[0]);
+                node.selected = true;
+                setActiveAbstraction({
+                    index: index,
+                    node: node,
+                });
+            }
         }
     }, [behavior, activeBehavior]);
 

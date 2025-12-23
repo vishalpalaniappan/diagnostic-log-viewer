@@ -190,7 +190,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             <ExecutionTreeContext.Provider
-                                                value={{executionTree, behavior,
+                                                value={{executionTree, setExecutionTree, behavior,
                                                     activeBehavior, setActiveBehavior,
                                                 }}>
                                                 <ActionsContext.Provider
