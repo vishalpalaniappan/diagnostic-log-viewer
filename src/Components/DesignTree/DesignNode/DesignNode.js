@@ -24,7 +24,9 @@ export function DesignNode ({node}) {
     // Set style if node is selected.
     useEffect(() => {
         if (node && selectedNode) {
-            if (selectedNode === node) {
+            if (node.exception) {
+                setSelectedStyle({background: "#3f191b", color: "white"});
+            } else if (selectedNode === node) {
                 setSelectedStyle({background: "#003d35", color: "white"});
             } else {
                 setSelectedStyle({});

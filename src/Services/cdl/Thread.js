@@ -33,6 +33,11 @@ class Thread {
 
         this.map.mapFunctionalAbstractionToBehavior();
         this.behavior = this.map.behavioralTree;
+
+        if (this.exception) {
+            const index = this.behavior.length - 1;
+            this.behavior[index].exception = this.exception;
+        }
     }
 
     /**
