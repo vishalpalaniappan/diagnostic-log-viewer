@@ -20,9 +20,20 @@ export function DesignNode ({node}) {
     const {selectedNode, selectNode,
         toggleCollapse, setCollapsed} = useContext(DesignTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
+    const [hasViolation, setHasViolation] = useState();
+    const [debugText, setDebugText] = useState();
 
     // Set style if node is selected.
     useEffect(() => {
+        if (node) {
+            for (let i = 0; i < node.execution.length; i++) {
+                const exec = node.execution[i];
+                if ("violation" in exec) {
+                    setHasViolation(true);
+                    setDebugText("Root Cause");
+                }
+            }
+        }
         if (node && selectedNode) {
             if (node.exception) {
                 setSelectedStyle({background: "#3f191b", color: "white"});
@@ -135,6 +146,13 @@ export function DesignNode ({node}) {
                         <div className="text-container flex-grow-1">
                             <span>{node.entry.id}</span>
                         </div>
+                }
+
+                {hasViolation ?
+                    <div className="analysis-status-container">
+                        <span className="message">{debugText}</span>
+                    </div>:
+                    <></>
                 }
 
             </div>
