@@ -2,8 +2,8 @@ import React, {useContext, useEffect, useState} from "react";
 
 import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
+import {DebugToolKitSemantic} from "../Components/DebugToolKit/DebugToolKitSemantic";
 import ExecutionTreeContext from "../Providers/ExecutionTreeContext";
-import {FileViewer} from "./FileViewer/FileViewer";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import {SideContainerSemantic} from "./SideContainer/SideContainerSemantic";
 import {SideContainerStack} from "./SideContainer/SideContainerStack";
@@ -29,7 +29,10 @@ export function Viewer () {
 
     return (
         <div className="viewer-container">
-            <DebugToolKit />
+            { showExecutionTree ?
+                <DebugToolKitSemantic />:
+                <DebugToolKit />
+            }
             <div className="menu-container"></div>
             <div className="body-container d-flex flex-row">
                 <div className="d-flex h-100">
