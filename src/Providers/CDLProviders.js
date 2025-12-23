@@ -102,6 +102,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveFile(undefined);
         setBreakPoints(undefined);
         setExecutionTree(undefined);
+        setActiveBehavior(undefined);
+        setBehavior(undefined);
     };
 
     // Create worker to handle file.
