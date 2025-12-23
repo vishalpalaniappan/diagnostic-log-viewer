@@ -20,8 +20,6 @@ export function ExecutionTree () {
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
     const [rootCauses, setRootCauses] = useState();
-    // const [executionTree, setExecutionTree] = useState();
-
 
     useEffect(() => {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
