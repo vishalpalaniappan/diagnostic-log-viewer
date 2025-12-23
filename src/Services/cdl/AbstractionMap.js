@@ -211,7 +211,12 @@ class AbstractionMap {
                 currNode.collapsible = true;
                 currNode.collapsed = true;
             }
+        }
 
+        for (let i = 0; i < this.behavioralTree.length; i++) {
+            const currNode = this.behavioralTree[i];
+
+            // Set the collapsible state for the execution nodes
             for (let j = 0; j < currNode.execution.length - 1; j++) {
                 const currExec = currNode.execution[j];
                 const nextExec = currNode.execution[j + 1];
@@ -225,6 +230,9 @@ class AbstractionMap {
                 }
             }
 
+            // Get the minimum level of this execution sequence and
+            // normalize it because we built the tree as part of the
+            // execution tree of the entire program.
             const levels = currNode.execution.map((item) => item.level);
             const minValue = Math.min(...levels);
 
@@ -469,6 +477,11 @@ class AbstractionMap {
          * */
         const variables = entry.variables;
         if (!variables || variables.length == 0) {
+            return entry.intent;
+        }
+
+        if (!currVarStack) {
+            console.warn("Valid VAR stack was not provided for replacing placholders in intent.");
             return entry.intent;
         }
 
