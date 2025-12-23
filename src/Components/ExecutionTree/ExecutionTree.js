@@ -25,15 +25,19 @@ export function ExecutionTree () {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
             const exec = behavior[activeBehavior].execution;
             if (exec && exec.length > 0) {
+                const execIndex = behavior[activeBehavior].execution.length - 1;
+                const node = behavior[activeBehavior].execution[execIndex];
+
                 setExecutionTree(behavior[activeBehavior].execution);
-                const node = behavior[activeBehavior].execution[0];
-                const index = 0;
-                setSelectedNode(behavior[activeBehavior].execution[0]);
-                node.selected = true;
+                setSelectedNode(
+                    behavior[activeBehavior].execution[execIndex]
+                );
                 setActiveAbstraction({
-                    index: index,
+                    index: execIndex,
                     node: node,
                 });
+
+                node.selected = true;
             }
         }
     }, [behavior, activeBehavior]);
