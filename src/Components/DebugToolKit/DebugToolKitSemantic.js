@@ -23,7 +23,7 @@ import "./DebugToolKit.scss";
 export function DebugToolKitSemantic ({}) {
     const container = useRef();
 
-    const {stackPosition, setStackPosition} = useContext(StackPositionContext);
+    const {stackPosition} = useContext(StackPositionContext);
     const {activeAbstraction, setActiveAbstraction,
         stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
