@@ -21,7 +21,7 @@ export function RootCauseContainer () {
                 );
             });
             setRootCauseDivs(
-                <div className="bottomContainer scrollbar">
+                <div className="rootCauseContainer">
                     <div className="title">Root Cause(s) of Failure</div>
                     {rootCauseEntrys}
                 </div>
@@ -30,8 +30,8 @@ export function RootCauseContainer () {
     }, [rootCauses]);
 
     return (
-        <>
+        <div className="rootCauseContainer">
             {rootCauseDivs}
-        </>
+        </div>
     );
 }
