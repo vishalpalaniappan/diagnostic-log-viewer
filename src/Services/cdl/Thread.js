@@ -34,8 +34,7 @@ class Thread {
             this.executionTree = this.map.executionTree;
         }
 
-
-        if (this.map?.behavior) {
+        if (this.map?.designMap) {
             this.map.mapFunctionalAbstractionToBehavior();
             this.behavior = this.map.behavioralTree;
 
