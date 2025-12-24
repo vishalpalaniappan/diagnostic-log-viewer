@@ -64,9 +64,9 @@ export function SideContainerGraph () {
         if (activeMenu === 1) {
             return <ExecutionTree />;
         } else if (activeMenu === 2) {
-            return <SettingsContainer />;
-        } else if (activeMenu === 3) {
             return <ShortcutContainer />;
+        } else if (activeMenu === 3) {
+            return <SettingsContainer />;
         }
     };
 

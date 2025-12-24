@@ -68,9 +68,9 @@ export function SideContainerSemantic () {
         } else if (activeMenu === 2) {
             return <ExecutionTree />;
         } else if (activeMenu === 3) {
-            return <SettingsContainer />;
-        } else if (activeMenu === 4) {
             return <ShortcutContainer />;
+        } else if (activeMenu === 4) {
+            return <SettingsContainer />;
         }
     };
 
