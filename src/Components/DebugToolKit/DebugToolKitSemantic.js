@@ -23,7 +23,8 @@ export function DebugToolKitSemantic ({}) {
     const container = useRef();
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {activeAbstraction, stacks, activeThread} = useContext(StackContext);
+    const {activeAbstraction, setActiveAbstraction, 
+        stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
     const {behavior, activeBehavior, semanticState, setActiveBehavior,
@@ -231,21 +232,33 @@ export function DebugToolKitSemantic ({}) {
 
     const stepInto = () => {
         const state = semanticState;
-        console.log(state);
         if (state === "behavior" && activeBehavior < behavior.length - 1) {
             setActiveBehavior(activeBehavior + 1);
         } else if (state === "execution") {
-            console.log(activeAbstraction);
+            const index = activeAbstraction.index;
+            if (index + 1 < executionTree.length) {
+                const node = executionTree[index + 1];
+                setActiveAbstraction({
+                    index: index + 1,
+                    node: node,
+                });
+            }
         }
     };
 
     const stepOut = () => {
         const state = semanticState;
-        console.log(state);
         if (state === "behavior" && activeBehavior > 0) {
             setActiveBehavior(activeBehavior - 1);
         } else if (state === "execution") {
-            console.log(activeAbstraction);
+            const index = activeAbstraction.index;
+            if (index - 1 >= 0) {
+                const node = executionTree[index - 1];
+                setActiveAbstraction({
+                    index: index - 1,
+                    node: node,
+                });
+            }
         }
     };
 
