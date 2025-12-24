@@ -421,7 +421,7 @@ export function DebugToolKitSemantic ({}) {
                 if ((i === activeBehavior && j > activeAbstraction.index) || (i > activeBehavior)) {
                     const node = behavior[i].execution[j];
                     setActiveAbstraction({
-                        index: node.index,
+                        index: j,
                         node: node,
                     });
                     setActiveBehavior(i);
@@ -471,7 +471,7 @@ export function DebugToolKitSemantic ({}) {
                     || (i < activeBehavior)) {
                     const node = behavior[i].execution[j];
                     setActiveAbstraction({
-                        index: node.index,
+                        index: j,
                         node: node,
                     });
                     setActiveBehavior(i);
