@@ -4,6 +4,7 @@ import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpSho
     Layers, Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
 import ActionsContext from "../../Providers/ActionsContext";
+import BreakpointsContext from "../../Providers/BreakpointsContext";
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -27,6 +28,7 @@ export function DebugToolKitSemantic ({}) {
         stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
+    const {breakPoints} = useContext(BreakpointsContext);
     const {behavior, activeBehavior, semanticState, setActiveBehavior,
         setSemanticState, executionTree} = useContext(ExecutionTreeContext);
 
@@ -149,7 +151,7 @@ export function DebugToolKitSemantic ({}) {
                         value: "Play Forward",
                         tick: prev.tick + 1,
                     }));
-                    // playForward();
+                    playForward();
                 } else {
                     setActions((prev) => ({
                         value: "Step Over Forwards",
@@ -165,7 +167,7 @@ export function DebugToolKitSemantic ({}) {
                         value: "Play Backward",
                         tick: prev.tick + 1,
                     }));
-                    // playBackward();
+                    playBackward();
                 } else {
                     setActions((prev) => ({
                         value: "Step Over Backwards",
@@ -388,18 +390,80 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const playForward = () => {
+        for (let i = 0; i < behavior.length; i++) {
+            for (let j = 0; j < behavior[i].execution.length; j++) {
+                const foundBreak = isBreakPoint(behavior[i].execution[j]);
+                if (!foundBreak) {
+                    continue;
+                }
+
+                if ((i === activeBehavior && j > activeAbstraction.index) || (i > activeBehavior)) {
+                    const node = behavior[i].execution[j];
+                    setActiveAbstraction({
+                        index: node.index,
+                        node: behavior[i].execution[j],
+                    });
+                    setActiveBehavior(i);
+                    return;
+                }
+            }
+        }
+
+        // Go to last execution if no breakpoints were found
+        const execution = behavior[behavior.length - 1].execution;
+        const lastExecution = execution[execution.length - 1];
+        setActiveAbstraction({
+            index: lastExecution.index,
+            node: lastExecution,
+        });
+        setActiveBehavior(behavior.length - 1);
+    };
+
+    const isBreakPoint = (exec) => {
+        if (!breakPoints) {
+            return false;
+        }
+        for (let k = 0; k < breakPoints.length; k++) {
+            const fileName = breakPoints[k].fileName;
+            const lineNumber = breakPoints[k].lineno;
+            if (exec.fileName === fileName && exec.lineno === lineNumber) {
+                return true;
+            }
+        }
+        return false;
     };
 
     const playBackward = () => {
+        for (let i = behavior.length - 1; i >= 0; i--) {
+            for (let j = behavior[i].execution.length - 1; j >= 0; j++) {
+                const foundBreak = isBreakPoint(behavior[i].execution[j]);
+                if (!foundBreak) {
+                    continue;
+                }
+
+                if ((i === activeBehavior && j < activeAbstraction.index) || (i < activeBehavior)) {
+                    const node = behavior[i].execution[j];
+                    setActiveAbstraction({
+                        index: node.index,
+                        node: behavior[i].execution[j],
+                    });
+                    setActiveBehavior(i);
+                    return;
+                }
+            }
+        }
+
+        // Go to first execution if no breakpoints were found
+        const execution = behavior[0].execution;
+        const firstExecution = execution[0];
+        setActiveAbstraction({
+            index: firstExecution.index,
+            node: firstExecution,
+        });
+        setActiveBehavior(0);
     };
 
     const replayProgram = () => {
-    };
-
-    const moveUpStack = () => {
-    };
-
-    const moveDownStack = () => {
     };
 
     return (

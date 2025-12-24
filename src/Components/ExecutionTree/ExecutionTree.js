@@ -18,7 +18,8 @@ export function ExecutionTree () {
     const {behavior, executionTree, semanticState,
         setExecutionTree, activeBehavior} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
-    const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
+    const {stacks, activeThread,
+        activeAbstraction, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
     const [rootCauses, setRootCauses] = useState();
@@ -27,19 +28,36 @@ export function ExecutionTree () {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
             const exec = behavior[activeBehavior].execution;
             if (exec && exec.length > 0) {
-                const execIndex = behavior[activeBehavior].execution.length - 1;
-                const node = behavior[activeBehavior].execution[execIndex];
-
+                const tree = behavior[activeBehavior].execution;
                 setExecutionTree(behavior[activeBehavior].execution);
-                setSelectedNode(
-                    behavior[activeBehavior].execution[execIndex]
-                );
-                setActiveAbstraction({
-                    index: execIndex,
-                    node: node,
-                });
 
-                node.selected = true;
+                // Check if the active abstraction is in the current behavior
+                let found;
+                if (activeAbstraction) {
+                    for (let i = 0; i < tree.length; i++) {
+                        const currNode = tree[i];
+                        console.log(currNode);
+                        if (activeAbstraction.index === currNode.index) {
+                            found = true;
+                            break;
+                        }
+                    }
+                };
+
+                // If the active abstraction isn't in this behavior, then
+                // go to the last behavior.
+                if (!found) {
+                    const execIndex = behavior[activeBehavior].execution.length - 1;
+                    const node = behavior[activeBehavior].execution[execIndex];
+                    setSelectedNode(
+                        behavior[activeBehavior].execution[execIndex]
+                    );
+                    setActiveAbstraction({
+                        index: execIndex,
+                        node: node,
+                    });
+                    node.selected = true;
+                };
             }
         }
     }, [behavior, activeBehavior]);
