@@ -209,7 +209,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                             <ExecutionTreeContext.Provider
                                                 value={{executionTree, setExecutionTree,
                                                     behavior, activeBehavior, setActiveBehavior,
-                                                    semanticState, setSemanticState,
+                                                    semanticState, setSemanticState, rootCauses,
                                                 }}>
                                                 <ActionsContext.Provider
                                                     value={{actions, setActions}}>

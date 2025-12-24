@@ -22,7 +22,6 @@ export function ExecutionTree () {
         activeAbstraction, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
-    const [rootCauses, setRootCauses] = useState();
 
     useEffect(() => {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
@@ -185,37 +184,9 @@ export function ExecutionTree () {
      */
     useEffect(() => {
         if (executionTree) {
-            getRootCause();
             renderTree();
         }
     }, [executionTree]);
-
-
-    // Adds a temporary display to show the root cause of failure below
-    // the semantic design graph if there was a failure.
-    const getRootCause = () => {
-        if (executionTree.length === 0) {
-            setRootCauses(null);
-            return;
-        }
-        const lastEntry = executionTree[executionTree.length - 1];
-        if (lastEntry && "failureInfo" in lastEntry) {
-            const rootCauseDivs = [];
-            lastEntry["failureInfo"].forEach((failure, index) => {
-                rootCauseDivs.push(
-                    <div key={index} className="rootcause">{failure.cause}</div>
-                );
-            });
-            setRootCauses(
-                <div className="bottomContainer scrollbar">
-                    <div className="title">Root Cause(s) of Failure</div>
-                    {rootCauseDivs}
-                </div>
-            );
-        } else {
-            setRootCauses(null);
-        }
-    };
 
     return (
         <ExecutionTreeInstanceContext.Provider
@@ -236,7 +207,6 @@ export function ExecutionTree () {
                 <div className="executionTreeContainer scrollbar flex-grow-1">
                     {executionTreeInstance}
                 </div>
-                {rootCauses}
             </div>
         </ExecutionTreeInstanceContext.Provider>
     );
