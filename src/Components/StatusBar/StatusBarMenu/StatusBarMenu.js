@@ -111,7 +111,7 @@ export function StatusBarMenu ({className, disabled, children}) {
                     {
                         executionTree &&
                         <option className="px-2" onClick={() => setProgramMode("execution")}>
-                            Execution Graph Debugging
+                            SEG Based Debugging
                         </option>
                     }
                     <option className="px-2" onClick={() => setProgramMode("stack")}>
