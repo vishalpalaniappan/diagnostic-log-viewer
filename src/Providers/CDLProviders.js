@@ -41,8 +41,10 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [executionTree, setExecutionTree] = useState();
+    const [executionTreeFull, setExecutionTreeFull] = useState();
     const [behavior, setBehavior] = useState();
     const [rootCauses, setRootCauses] = useState();
+    const [mode, setMode] = useState("STACK");
     const [activeBehavior, setActiveBehavior] = useState();
     const [actions, setActions] = useState({value: "", tick: 0});
 
@@ -161,6 +163,24 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setRootCauses(rootCauses);
     };
 
+    // Load the program state based on the infromation available
+    const setProgramState = (args) => {
+        if (args.executionTree && args.behavior) {
+            setMode("BEHAVIORAL");
+        } else if (args.executionTree) {
+            setMode("EXECUTION");
+        } else {
+            setMode("STACK");
+        }
+    };
+
+    // If the user chooses execution mode, load the full execution tree.
+    useEffect(() => {
+        if (mode === "EXECUTION") {
+            setExecutionTree(executionTreeFull);
+        }
+    }, [mode]);
+
     /**
      * Handles message from the worker.
      * @param {object} event
@@ -184,7 +204,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setBreakPoints(event.data.args.breakpoints);
                 break;
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
+                setProgramState(event.data.args);
                 setExecutionTree(event.data.args.executionTree);
+                setExecutionTreeFull(event.data.args.executionTree);
                 setBehavior(event.data.args.behavior);
                 saveRootCauses(event.data.args.executionTree);
                 break;
@@ -212,7 +234,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                                     semanticState, setSemanticState, rootCauses,
                                                 }}>
                                                 <ActionsContext.Provider
-                                                    value={{actions, setActions}}>
+                                                    value={{actions, mode, setMode, setActions}}>
                                                     {children}
                                                 </ActionsContext.Provider>
                                             </ExecutionTreeContext.Provider>
