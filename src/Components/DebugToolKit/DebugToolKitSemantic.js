@@ -155,7 +155,7 @@ export function DebugToolKitSemantic ({}) {
                         value: "Step Over Forwards",
                         tick: prev.tick + 1,
                     }));
-                    // stepOverForward();
+                    stepOverForward();
                 }
                 break;
 
@@ -171,7 +171,7 @@ export function DebugToolKitSemantic ({}) {
                         value: "Step Over Backwards",
                         tick: prev.tick + 1,
                     }));
-                    // stepOverBackward();
+                    stepOverBackward();
                 }
                 break;
 
@@ -252,10 +252,12 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const stepInto = () => {
-        const state = semanticState;
-        if (state === "behavior" && activeBehavior < behavior.length - 1) {
+        if (semanticState === "behavior" && activeBehavior < behavior.length - 1) {
             setActiveBehavior(activeBehavior + 1);
-        } else if (state === "execution") {
+            return;
+        }
+
+        if (semanticState === "execution") {
             const index = activeAbstraction.index;
             if (index + 1 < executionTree.length) {
                 const node = executionTree[index + 1];
@@ -264,29 +266,125 @@ export function DebugToolKitSemantic ({}) {
                     node: node,
                 });
             }
+            return;
         }
     };
 
     const stepOut = () => {
-        const state = semanticState;
-        if (state === "behavior" && activeBehavior > 0) {
-            setActiveBehavior(activeBehavior - 1);
-        } else if (state === "execution") {
-            const index = activeAbstraction.index;
-            if (index - 1 >= 0) {
-                const node = executionTree[index - 1];
-                setActiveAbstraction({
-                    index: index - 1,
-                    node: node,
-                });
+        if (semanticState === "behavior" && activeBehavior > 0) {
+            let pos = activeBehavior;
+            if (pos <= 0) {
+                return;
             }
+
+            const startLevel = behavior[pos].level;
+            while (--pos >= 0) {
+                const entry = behavior[pos];
+                if (entry.level < startLevel) {
+                    setActiveBehavior(pos);
+                    break;
+                }
+            } ;
+            return;
+        }
+
+        if (semanticState === "execution") {
+            let pos = activeAbstraction.index;
+            if (pos <= 0) {
+                return;
+            }
+
+            const startLevel = executionTree[pos].level;
+            while (--pos >= 0) {
+                const entry = executionTree[pos];
+                if (entry.level < startLevel) {
+                    setActiveAbstraction({
+                        index: pos,
+                        node: executionTree[pos],
+                    });
+                    break;
+                }
+            };
+            return;
         }
     };
 
     const stepOverForward = () => {
+        if (semanticState === "behavior") {
+            let pos = activeBehavior;
+            if (pos >= behavior.length - 1) {
+                return;
+            }
+
+            const startLevel = behavior[pos].level;
+            while (++pos < behavior.length) {
+                const entry = behavior[pos];
+                if (entry.level <= startLevel) {
+                    setActiveBehavior(pos);
+                    break;
+                }
+            }
+            return;
+        };
+
+        if (semanticState === "execution") {
+            let pos = activeAbstraction.index;
+            if (pos >= executionTree.length - 1) {
+                return;
+            }
+
+            const startLevel = executionTree[pos].level;
+            while (++pos <= executionTree.length - 1) {
+                const entry = executionTree[pos];
+                if (entry.level <= startLevel) {
+                    setActiveAbstraction({
+                        index: pos,
+                        node: executionTree[pos],
+                    });
+                    break;
+                }
+            };
+            return;
+        }
     };
 
     const stepOverBackward = () => {
+        if (semanticState === "behavior") {
+            let pos = activeBehavior;
+            if (pos <= 0) {
+                return;
+            }
+
+            const startLevel = behavior[pos].level;
+            while (--pos >= 0) {
+                const entry = behavior[pos];
+                if (entry.level <= startLevel) {
+                    setActiveBehavior(pos);
+                    break;
+                }
+            } ;
+            return;
+        };
+
+        if (semanticState === "execution") {
+            let pos = activeAbstraction.index;
+            if (pos <= 0) {
+                return;
+            }
+
+            const startLevel = executionTree[pos].level;
+            while (--pos >= 0) {
+                const entry = executionTree[pos];
+                if (entry.level <= startLevel) {
+                    setActiveAbstraction({
+                        index: pos,
+                        node: executionTree[pos],
+                    });
+                    break;
+                }
+            };
+            return;
+        }
     };
 
     const playForward = () => {
