@@ -7,6 +7,7 @@ import {DesignNode} from "./DesignNode/DesignNode";
 import DesignTreeInstanceContext from "./DesignTreeInstanceContext";
 
 import "./DesignTree.scss";
+import { eventNames } from "process";
 
 /**
  * Contains the execution tree.
@@ -21,11 +22,11 @@ export function DesignTree () {
     useEffect(() => {
         if (behavior) {
             renderTree();
-
+            const targetBehavior = behavior[behavior.length - 1];
             // Find last root behavior and expand
             for (let i = behavior.length - 1; i >= 0; i--) {
                 const entry = behavior[i];
-                if (entry.collapsible) {
+                if (entry.collapsible && entry.level < targetBehavior.level) {
                     entry.collapsed = false;
                 }
                 if (entry.level === 0) {
@@ -38,10 +39,11 @@ export function DesignTree () {
 
     useEffect(() => {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
+            const targetBehavior = behavior[activeBehavior];
             // Uncollapse all the nodes in the current branch
             for (let i = activeBehavior; i >= 0; i--) {
                 const entry = behavior[i];
-                if (entry.collapsible) {
+                if (entry.collapsible && entry.level < targetBehavior.level) {
                     entry.collapsed = false;
                 }
                 if (entry.level === 0) {
