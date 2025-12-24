@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
 
+import BreakpointsContext from "../../../Providers/BreakpointsContext";
 import DesignTreeInstanceContext from "../DesignTreeInstanceContext";
 
 import "./DesignNode.scss";
@@ -22,6 +23,7 @@ export function DesignNode ({node}) {
     const [selectedStyle, setSelectedStyle] = useState();
     const [hasViolation, setHasViolation] = useState();
     const [debugText, setDebugText] = useState();
+    const {breakPoints} = useContext(BreakpointsContext);
 
     // Set style if node is selected.
     useEffect(() => {
@@ -44,6 +46,31 @@ export function DesignNode ({node}) {
             }
         }
     }, [selectedNode, node]);
+
+
+    const getBreakPoint = () => {
+        if (!breakPoints) return;
+        let isEnabled;
+        let hasBreakPoint;
+        for (let k = 0; k < node.execution.length; k++) {
+            const entry = node.execution[k];
+            for (let i = 0; i < breakPoints.length; i++) {
+                const point = breakPoints[i];
+                if (point.abstraction_meta === entry.abstractionId) {
+                    hasBreakPoint = true;
+                    if (point.enabled) {
+                        isEnabled = true;
+                    }
+                }
+            }
+        }
+        if (hasBreakPoint) {
+            const className = (isEnabled == true)?
+                "enabledBreakPoint":
+                "disabledBreakPoint";
+            return <div className={className}></div>;
+        }
+    };
 
     /**
      * Callback when a node is toggled.
@@ -119,6 +146,10 @@ export function DesignNode ({node}) {
     return (
         <div style={selectedStyle} id={"row" + node.index}
             className="abstractionRow">
+
+            <div className="icon-container">
+                {getBreakPoint()}
+            </div>
 
             <div className="icon-container">
                 <div className="icon">
