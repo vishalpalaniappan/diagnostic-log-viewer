@@ -45,6 +45,13 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [activeBehavior, setActiveBehavior] = useState();
     const [actions, setActions] = useState({value: "", tick: 0});
 
+    const [semanticState, setSemanticState] = useState({
+        focus: "behavior",
+        behavioralPos: 0,
+        executionPos: 0,
+        tick: 0,
+    });
+
     const cdlWorker = useRef(null);
 
     // Terminate worker when component is destroyed.
@@ -192,8 +199,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
                                             <ExecutionTreeContext.Provider
-                                                value={{executionTree, setExecutionTree, behavior,
-                                                    activeBehavior, setActiveBehavior,
+                                                value={{executionTree, setExecutionTree,
+                                                    behavior, activeBehavior, setActiveBehavior,
+                                                    semanticState, setSemanticState,
                                                 }}>
                                                 <ActionsContext.Provider
                                                     value={{actions, setActions}}>

@@ -1,5 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
+import {CircleFill} from "react-bootstrap-icons";
+
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
@@ -13,7 +15,7 @@ import "./ExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
-    const {behavior, executionTree,
+    const {behavior, executionTree, semanticState,
         setExecutionTree, activeBehavior} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
@@ -205,6 +207,11 @@ export function ExecutionTree () {
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">
+                        {
+                            semanticState.focus === "execution" &&
+                            <CircleFill className="focusIndicator"
+                                title="Keyboard shortcuts focused on execution"/>
+                        }
                         <span className="title">Semantic Execution Graph</span>
                     </div>
                     <div className="iconMenu">

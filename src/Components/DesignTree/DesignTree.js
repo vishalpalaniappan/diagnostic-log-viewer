@@ -1,5 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
+import {CircleFill} from "react-bootstrap-icons";
+
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import {DesignNode} from "./DesignNode/DesignNode";
 import DesignTreeInstanceContext from "./DesignTreeInstanceContext";
@@ -11,7 +13,8 @@ import "./DesignTree.scss";
  * @return {JSX.Element}
  */
 export function DesignTree () {
-    const {behavior, setActiveBehavior, executionTree} = useContext(ExecutionTreeContext);
+    const {behavior, setActiveBehavior,
+        semanticState, executionTree} = useContext(ExecutionTreeContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
 
@@ -153,6 +156,11 @@ export function DesignTree () {
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">
+                        {
+                            semanticState.focus === "behavior" &&
+                            <CircleFill className="focusIndicator"
+                                title="Keyboard shortcuts focused on behavior."/>
+                        }
                         <span className="title">Behavioral Trace</span>
                     </div>
                     <div className="iconMenu">

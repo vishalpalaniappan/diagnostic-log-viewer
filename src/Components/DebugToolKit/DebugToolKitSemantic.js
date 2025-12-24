@@ -26,7 +26,7 @@ export function DebugToolKitSemantic ({}) {
     const {stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
-    const {executionTree} = useContext(ExecutionTreeContext);
+    const {semanticState, setSemanticState, executionTree} = useContext(ExecutionTreeContext);
 
     const [stack, setStack] = useState();
 
@@ -101,12 +101,20 @@ export function DebugToolKitSemantic ({}) {
 
     const keydown = useCallback((e) => {
         switch (e.code) {
+            case "KeyT":
+                setActions((prev) => ({
+                    value: "ToggleFocus",
+                    tick: prev.tick + 1,
+                }));
+                toggleFocus();
+                break;
+
             case "KeyB":
                 setActions((prev) => ({
                     value: "Toggle Breakpoint",
                     tick: prev.tick + 1,
                 }));
-                toggleBreakpoint();
+                // toggleBreakpoint();
                 break;
 
             case "KeyD":
@@ -114,7 +122,7 @@ export function DebugToolKitSemantic ({}) {
                     value: "Disable Breakpoint",
                     tick: prev.tick + 1,
                 }));
-                disableBreakpoint();
+                // disableBreakpoint();
                 break;
 
             case "KeyR":
@@ -122,7 +130,7 @@ export function DebugToolKitSemantic ({}) {
                     value: "Replay Program from Start",
                     tick: prev.tick + 1,
                 }));
-                replayProgram();
+                // replayProgram();
                 break;
 
             case "KeyC":
@@ -130,7 +138,7 @@ export function DebugToolKitSemantic ({}) {
                     value: "Clear Breakpoints",
                     tick: prev.tick + 1,
                 }));
-                clearBreakpoints();
+                // clearBreakpoints();
                 break;
 
             case "ArrowRight":
@@ -139,13 +147,13 @@ export function DebugToolKitSemantic ({}) {
                         value: "Play Forward",
                         tick: prev.tick + 1,
                     }));
-                    playForward();
+                    // playForward();
                 } else {
                     setActions((prev) => ({
                         value: "Step Over Forwards",
                         tick: prev.tick + 1,
                     }));
-                    stepOverForward();
+                    // stepOverForward();
                 }
                 break;
 
@@ -155,41 +163,41 @@ export function DebugToolKitSemantic ({}) {
                         value: "Play Backward",
                         tick: prev.tick + 1,
                     }));
-                    playBackward();
+                    // playBackward();
                 } else {
                     setActions((prev) => ({
                         value: "Step Over Backwards",
                         tick: prev.tick + 1,
                     }));
-                    stepOverBackward();
+                    // stepOverBackward();
                 }
                 break;
 
             case "ArrowUp":
                 if (e.ctrlKey) {
                     if (!executionTree) {
-                        moveUpStack();
+                        // moveUpStack();
                     }
                 } else {
                     setActions((prev) => ({
                         value: "Step Out of Current Level",
                         tick: prev.tick + 1,
                     }));
-                    stepOut();
+                    // stepOut();
                 }
                 break;
 
             case "ArrowDown":
                 if (e.ctrlKey) {
                     if (!executionTree) {
-                        moveDownStack();
+                        // moveDownStack();
                     }
                 } else {
                     setActions((prev) => ({
                         value: "Step Into Next Level",
                         tick: prev.tick + 1,
                     }));
-                    stepInto();
+                    // stepInto();
                 }
                 break;
 
@@ -202,6 +210,15 @@ export function DebugToolKitSemantic ({}) {
         if (cdlWorker && cdlWorker.current) {
             cdlWorker.current.postMessage({code: code, args: args});
         }
+    };
+
+    const toggleFocus = () => {
+        setSemanticState((prev) => ({
+            focus: (prev.focus=="behavior")?"execution":"behavior",
+            behavioralPos: prev.behavioralPos,
+            executionPos: prev.executionPos,
+            tick: prev.tick + 1,
+        }));
     };
 
     const toggleBreakpoint = () => {
