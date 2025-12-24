@@ -162,7 +162,7 @@ export function DesignTree () {
                 <div className="topContainer">
                     <div className="titleContainer">
                         {
-                            semanticState.focus === "behavior" &&
+                            semanticState === "behavior" &&
                             <CircleFill className="focusIndicator"
                                 title="Keyboard shortcuts focused on behavior."/>
                         }

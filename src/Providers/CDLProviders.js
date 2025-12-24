@@ -45,12 +45,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [activeBehavior, setActiveBehavior] = useState();
     const [actions, setActions] = useState({value: "", tick: 0});
 
-    const [semanticState, setSemanticState] = useState({
-        focus: "behavior",
-        behavioralPos: 0,
-        executionPos: 0,
-        tick: 0,
-    });
+    const [semanticState, setSemanticState] = useState("behavior");
 
     const cdlWorker = useRef(null);
 

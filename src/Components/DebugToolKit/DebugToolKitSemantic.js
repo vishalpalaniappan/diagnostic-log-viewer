@@ -23,7 +23,7 @@ export function DebugToolKitSemantic ({}) {
     const container = useRef();
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {stacks, activeThread} = useContext(StackContext);
+    const {activeAbstraction, stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
     const {behavior, activeBehavior, semanticState, setActiveBehavior,
@@ -98,7 +98,7 @@ export function DebugToolKitSemantic ({}) {
         return () => {
             document.removeEventListener("keydown", keydown, false);
         };
-    }, [stack, activeThread, stackPosition, stacks]);
+    }, [stack, activeThread, stackPosition, stacks, semanticState]);
 
     const keydown = useCallback((e) => {
         switch (e.code) {
@@ -205,111 +205,69 @@ export function DebugToolKitSemantic ({}) {
             default:
                 break;
         }
-    }, [stack, activeThread, stackPosition, stacks]);
-
-    const sendToWorker = (code, args) => {
-        if (cdlWorker && cdlWorker.current) {
-            cdlWorker.current.postMessage({code: code, args: args});
-        }
-    };
+    }, [stack, activeThread, stackPosition, stacks, semanticState]);
 
     const toggleFocus = () => {
-        setSemanticState((prev) => ({
-            focus: (prev.focus=="behavior")?"execution":"behavior",
-            behavioralPos: prev.behavioralPos,
-            executionPos: prev.executionPos,
-            tick: prev.tick + 1,
-        }));
+        let newBehavior;
+        if (semanticState === "behavior") {
+            newBehavior = "execution";
+        } else if (semanticState === "execution") {
+            newBehavior = "behavior";
+        } else {
+            // Default behavior
+            newBehavior = "behavior";
+        }
+        setSemanticState(newBehavior);
     };
 
     const toggleBreakpoint = () => {
-        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
-        const args = {
-            fileName: stack.callStack[stackPosition].filePath,
-            lineNumber: stack.callStack[stackPosition].lineno,
-        };
-        sendToWorker(code, args);
     };
 
     const disableBreakpoint = () => {
-        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
-        const args = {
-            fileName: stack.callStack[stackPosition].filePath,
-            lineNumber: stack.callStack[stackPosition].lineno,
-        };
-        sendToWorker(code, args);
     };
 
     const clearBreakpoints = () => {
-        const code = CDL_WORKER_PROTOCOL.CLEAR_BREAKPOINTS;
-        const args = {};
-        sendToWorker(code, args);
     };
 
     const stepInto = () => {
-        if (activeBehavior < behavior.length - 1) {
+        const state = semanticState;
+        console.log(state);
+        if (state === "behavior" && activeBehavior < behavior.length - 1) {
             setActiveBehavior(activeBehavior + 1);
+        } else if (state === "execution") {
+            console.log(activeAbstraction);
         }
     };
 
     const stepOut = () => {
-        if (activeBehavior > 0) {
+        const state = semanticState;
+        console.log(state);
+        if (state === "behavior" && activeBehavior > 0) {
             setActiveBehavior(activeBehavior - 1);
+        } else if (state === "execution") {
+            console.log(activeAbstraction);
         }
     };
 
     const stepOverForward = () => {
-        const code = CDL_WORKER_PROTOCOL.STEP_OVER_FORWARD;
-        const args = {
-            position: stack.callStack[stackPosition].position,
-            threadId: stack.callStack[stackPosition].threadId,
-        };
-        sendToWorker(code, args);
     };
 
     const stepOverBackward = () => {
-        const code = CDL_WORKER_PROTOCOL.STEP_OVER_BACKWARD;
-        const args = {
-            position: stack.callStack[stackPosition].position,
-            threadId: stack.callStack[stackPosition].threadId,
-        };
-        sendToWorker(code, args);
     };
 
     const playForward = () => {
-        const code = CDL_WORKER_PROTOCOL.PLAY_FORWARD;
-        const args = {
-            position: stack.callStack[stackPosition].position,
-            threadId: stack.callStack[stackPosition].threadId,
-        };
-        sendToWorker(code, args);
     };
 
     const playBackward = () => {
-        const code = CDL_WORKER_PROTOCOL.PLAY_BACKWARD;
-        const args = {
-            position: stack.callStack[stackPosition].position,
-            threadId: stack.callStack[stackPosition].threadId,
-        };
-        sendToWorker(code, args);
     };
 
     const replayProgram = () => {
-        const code = CDL_WORKER_PROTOCOL.REPLAY;
-        const args = {};
-        sendToWorker(code, args);
     };
 
     const moveUpStack = () => {
-        if (stackPosition + 1 < stack.callStack.length) {
-            setStackPosition(stackPosition + 1);
-        }
     };
 
     const moveDownStack = () => {
-        if (stackPosition - 1 >= 0) {
-            setStackPosition(stackPosition - 1);
-        }
     };
 
     return (

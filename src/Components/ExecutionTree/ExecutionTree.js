@@ -208,7 +208,7 @@ export function ExecutionTree () {
                 <div className="topContainer">
                     <div className="titleContainer">
                         {
-                            semanticState.focus === "execution" &&
+                            semanticState === "execution" &&
                             <CircleFill className="focusIndicator"
                                 title="Keyboard shortcuts focused on execution"/>
                         }
