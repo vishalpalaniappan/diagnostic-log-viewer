@@ -108,7 +108,7 @@ export function DebugToolKitSemantic ({}) {
                     value: "ToggleFocus",
                     tick: prev.tick + 1,
                 }));
-                toggleFocus();
+                toggleFocusOfDebugOperations();
                 break;
 
             case "KeyB":
@@ -116,7 +116,7 @@ export function DebugToolKitSemantic ({}) {
                     value: "Toggle Breakpoint",
                     tick: prev.tick + 1,
                 }));
-                // toggleBreakpoint();
+                toggleBreakpoint();
                 break;
 
             case "KeyD":
@@ -124,7 +124,7 @@ export function DebugToolKitSemantic ({}) {
                     value: "Disable Breakpoint",
                     tick: prev.tick + 1,
                 }));
-                // disableBreakpoint();
+                disableBreakpoint();
                 break;
 
             case "KeyR":
@@ -140,7 +140,7 @@ export function DebugToolKitSemantic ({}) {
                     value: "Clear Breakpoints",
                     tick: prev.tick + 1,
                 }));
-                // clearBreakpoints();
+                clearBreakpoints();
                 break;
 
             case "ArrowRight":
@@ -208,7 +208,13 @@ export function DebugToolKitSemantic ({}) {
         }
     }, [stack, activeThread, stackPosition, stacks, semanticState]);
 
-    const toggleFocus = () => {
+    const sendToWorker = (code, args) => {
+        if (cdlWorker && cdlWorker.current) {
+            cdlWorker.current.postMessage({code: code, args: args});
+        }
+    };
+
+    const toggleFocusOfDebugOperations = () => {
         let newBehavior;
         if (semanticState === "behavior") {
             newBehavior = "execution";
@@ -222,12 +228,27 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const toggleBreakpoint = () => {
+        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT;
+        const args = {
+            fileName: stack.callStack[stackPosition].filePath,
+            lineNumber: stack.callStack[stackPosition].lineno,
+        };
+        sendToWorker(code, args);
     };
 
     const disableBreakpoint = () => {
+        const code = CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED;
+        const args = {
+            fileName: stack.callStack[stackPosition].filePath,
+            lineNumber: stack.callStack[stackPosition].lineno,
+        };
+        sendToWorker(code, args);
     };
 
     const clearBreakpoints = () => {
+        const code = CDL_WORKER_PROTOCOL.CLEAR_BREAKPOINTS;
+        const args = {};
+        sendToWorker(code, args);
     };
 
     const stepInto = () => {
