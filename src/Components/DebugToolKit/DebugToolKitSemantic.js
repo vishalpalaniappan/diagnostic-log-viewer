@@ -249,6 +249,19 @@ export function DebugToolKitSemantic ({}) {
         sendToWorker(code, args);
     };
 
+    /**
+     * Returns the position of the active abstraction in the execution tree.
+     * @return {Number|null}
+     */
+    const getExecutionPosFromActiveAbstraction = () => {
+        for (let i = 0; i < executionTree.length; i++) {
+            const entry = executionTree[i];
+            if (entry.index === activeAbstraction.node.index) {
+                return i;
+            }
+        }
+    };
+
     const stepInto = () => {
         // No valid behavior available, so we return
         if (behavior === undefined || !behavior || behavior.length === 0) {
@@ -261,7 +274,7 @@ export function DebugToolKitSemantic ({}) {
         }
 
         if (semanticState === "execution") {
-            const index = activeAbstraction.index;
+            const index = getExecutionPosFromActiveAbstraction();
             if (index + 1 < executionTree.length) {
                 const node = executionTree[index + 1];
                 setActiveAbstraction({
@@ -297,7 +310,7 @@ export function DebugToolKitSemantic ({}) {
         }
 
         if (semanticState === "execution") {
-            let pos = activeAbstraction.index;
+            let pos = getExecutionPosFromActiveAbstraction();
             if (pos <= 0) {
                 return;
             }
@@ -341,7 +354,7 @@ export function DebugToolKitSemantic ({}) {
         };
 
         if (semanticState === "execution") {
-            let pos = activeAbstraction.index;
+            let pos = getExecutionPosFromActiveAbstraction();
             if (pos >= executionTree.length - 1) {
                 return;
             }
@@ -385,7 +398,7 @@ export function DebugToolKitSemantic ({}) {
         };
 
         if (semanticState === "execution") {
-            let pos = activeAbstraction.index;
+            let pos = getExecutionPosFromActiveAbstraction();
             if (pos <= 0) {
                 return;
             }
