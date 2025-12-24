@@ -179,9 +179,7 @@ export function DebugToolKitSemantic ({}) {
 
             case "ArrowUp":
                 if (e.ctrlKey) {
-                    if (!executionTree) {
-                        // moveUpStack();
-                    }
+                    // Free shortcut, not used.
                 } else {
                     setActions((prev) => ({
                         value: "Step Out of Current Level",
@@ -193,9 +191,7 @@ export function DebugToolKitSemantic ({}) {
 
             case "ArrowDown":
                 if (e.ctrlKey) {
-                    if (!executionTree) {
-                        // moveDownStack();
-                    }
+                    // Free shortcut, not used.
                 } else {
                     setActions((prev) => ({
                         value: "Step Into Next Level",
@@ -254,6 +250,11 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const stepInto = () => {
+        // No valid behavior available, so we return
+        if (behavior === undefined || !behavior || behavior.length === 0) {
+            return;
+        }
+
         if (semanticState === "behavior" && activeBehavior < behavior.length - 1) {
             setActiveBehavior(activeBehavior + 1);
             return;
@@ -273,6 +274,11 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const stepOut = () => {
+        // No valid behavior available, so we return
+        if (behavior === undefined || !behavior || behavior.length === 0) {
+            return;
+        }
+
         if (semanticState === "behavior" && activeBehavior > 0) {
             let pos = activeBehavior;
             if (pos <= 0) {
@@ -312,6 +318,11 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const stepOverForward = () => {
+        // No valid behavior available, so we return
+        if (behavior === undefined || !behavior || behavior.length === 0) {
+            return;
+        }
+
         if (semanticState === "behavior") {
             let pos = activeBehavior;
             if (pos >= behavior.length - 1) {
@@ -351,6 +362,11 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const stepOverBackward = () => {
+        // No valid behavior available, so we return
+        if (behavior === undefined || !behavior || behavior.length === 0) {
+            return;
+        }
+
         if (semanticState === "behavior") {
             let pos = activeBehavior;
             if (pos <= 0) {
@@ -390,6 +406,11 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const playForward = () => {
+        // No valid behavior available, so we return
+        if (behavior === undefined || !behavior || behavior.length === 0) {
+            return;
+        }
+
         for (let i = 0; i < behavior.length; i++) {
             for (let j = 0; j < behavior[i].execution.length; j++) {
                 const foundBreak = isBreakPoint(behavior[i].execution[j]);
@@ -434,6 +455,11 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const playBackward = () => {
+        // No valid behavior available, so we return
+        if (behavior === undefined || !behavior || behavior.length === 0) {
+            return;
+        }
+
         for (let i = behavior.length - 1; i >= 0; i--) {
             for (let j = behavior[i].execution.length - 1; j >= 0; j++) {
                 const foundBreak = isBreakPoint(behavior[i].execution[j]);
