@@ -3,11 +3,10 @@ import React, {useContext, useEffect, useState} from "react";
 import {CircleFill} from "react-bootstrap-icons";
 
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
-import {DesignNode} from "./DesignNode/DesignNode";
-import DesignTreeInstanceContext from "./DesignTreeInstanceContext";
+import {BehavioralNode} from "./BehavioralNode/BehavioralNode";
+import DesignTreeInstanceContext from "./BehavioralTreeInstanceContext";
 
-import "./DesignTree.scss";
-import { eventNames } from "process";
+import "./BehavioralTree.scss";
 
 /**
  * Contains the execution tree.
@@ -103,7 +102,7 @@ export function DesignTree () {
                     collapsedLevel = node.level;
                     collapsing = true;
                     execution.push(
-                        <DesignNode
+                        <BehavioralNode
                             key={index}
                             node={node}/>
                     );
@@ -112,7 +111,7 @@ export function DesignTree () {
 
                 // If we aren't collapsing this node, then add the node.
                 if (!collapsing) {
-                    execution.push(<DesignNode
+                    execution.push(<BehavioralNode
                         key={index}
                         node={node}/>
                     );

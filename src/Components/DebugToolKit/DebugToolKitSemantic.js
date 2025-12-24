@@ -424,6 +424,10 @@ export function DebugToolKitSemantic ({}) {
             return;
         }
 
+        // Move forward through the abstractions and execution until you
+        // find a breakpoint. Its pretty inefficient because I don't start
+        // from the currnt position, instead I search from the start. I
+        // will optimize all that later.
         for (let i = 0; i < behavior.length; i++) {
             for (let j = 0; j < behavior[i].execution.length; j++) {
                 const foundBreak = isBreakPoint(behavior[i].execution[j]);
@@ -453,6 +457,7 @@ export function DebugToolKitSemantic ({}) {
         setActiveBehavior(behavior.length - 1);
     };
 
+    // Checks if the given execution position is a breakpoint.
     const isBreakPoint = (exec) => {
         if (!breakPoints || !exec) {
             return false;
@@ -473,6 +478,8 @@ export function DebugToolKitSemantic ({}) {
             return;
         }
 
+        // Move back through the abstractions and execution until you
+        // find a breakpoint
         for (let i = behavior.length - 1; i >= 0; i--) {
             for (let j = behavior[i].execution.length - 1; j >= 0; j--) {
                 const foundBreak = isBreakPoint(behavior[i].execution[j]);
@@ -509,6 +516,7 @@ export function DebugToolKitSemantic ({}) {
             return;
         }
 
+        // Replay program from the start.
         for (let i = 0; i < behavior.length; i++) {
             for (let j = 0; j < behavior[i].execution.length; j++) {
                 const foundBreak = isBreakPoint(behavior[i].execution[j]);

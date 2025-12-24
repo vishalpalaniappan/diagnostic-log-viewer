@@ -3,8 +3,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Bug, Diagram2, Gear, Keyboard, Lightbulb} from "react-bootstrap-icons";
 
 import {AbstractionContainer} from "../../Components/AbstractionContainer/AbstractionContainer";
-import DesignTree from "../../Components/DesignTree/DesignTree";
-import ExecutionTree from "../../Components/ExecutionTree/ExecutionTree";
+import DesignTree from "../../Components/BehavioralTree/BehavioralTree";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
 

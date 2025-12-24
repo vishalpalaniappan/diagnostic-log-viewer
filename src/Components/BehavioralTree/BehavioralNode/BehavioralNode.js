@@ -1,14 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
-import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
+import {CaretDownFill, CaretRightFill, Stack} from "react-bootstrap-icons";
 
 import BreakpointsContext from "../../../Providers/BreakpointsContext";
-import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
+import DesignTreeInstanceContext from "../BehavioralTreeInstanceContext";
 
-import "./ExecutionNode.scss";
+import "./BehavioralNode.scss";
 
-AbstractionRow.propTypes = {
+BehavioralNode.propTypes = {
     node: PropTypes.object,
 };
 
@@ -17,41 +17,60 @@ AbstractionRow.propTypes = {
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function AbstractionRow ({node}) {
-    const {breakPoints} = useContext(BreakpointsContext);
-    const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
+export function BehavioralNode ({node}) {
+    const {selectedNode, selectNode,
+        toggleCollapse, setCollapsed} = useContext(DesignTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
-    const [debugText, setDebugText] = useState();
     const [hasViolation, setHasViolation] = useState();
+    const [debugText, setDebugText] = useState();
+    const {breakPoints} = useContext(BreakpointsContext);
 
     // Set style if node is selected.
     useEffect(() => {
+        if (node) {
+            for (let i = 0; i < node.execution.length; i++) {
+                const exec = node.execution[i];
+                if ("violation" in exec) {
+                    setHasViolation(true);
+                    setDebugText("Root Cause");
+                }
+            }
+        }
         if (node && selectedNode) {
-            if (selectedNode === node) {
-                setSelectedStyle({background: "#3b3b3b", color: "white"});
+            if (node.exception) {
+                setSelectedStyle({background: "#3f191b", color: "white"});
+            } else if (selectedNode === node) {
+                setSelectedStyle({background: "#003d35", color: "white"});
             } else {
                 setSelectedStyle({});
             }
         }
-        if (node) {
-            setHasViolation(false);
-            setDebugText(undefined);
+    }, [selectedNode, node]);
 
-            if (node.invalid) {
-                setHasViolation(true);
-                setDebugText("violation");
-            }
-            if (node.rootCause) {
-                setHasViolation(true);
-                setDebugText("root cause");
-            }
-            if (node.exception) {
-                setHasViolation(true);
-                setSelectedStyle({background: "#3f191b", color: "white"});
-                setDebugText("failure");
+
+    const getBreakPoint = () => {
+        if (!breakPoints) return;
+        let isEnabled;
+        let hasBreakPoint;
+        for (let k = 0; k < node.execution.length; k++) {
+            const entry = node.execution[k];
+            for (let i = 0; i < breakPoints.length; i++) {
+                const point = breakPoints[i];
+                if (point.abstraction_meta === entry.abstractionId) {
+                    hasBreakPoint = true;
+                    if (point.enabled) {
+                        isEnabled = true;
+                    }
+                }
             }
         }
-    }, [selectedNode, node]);
+        if (hasBreakPoint) {
+            const className = (isEnabled == true)?
+                "enabledBreakPoint":
+                "disabledBreakPoint";
+            return <div className={className}></div>;
+        }
+    };
 
     /**
      * Callback when a node is toggled.
@@ -60,6 +79,7 @@ export function AbstractionRow ({node}) {
      */
     const clickToggle = (e, node) => {
         e.preventDefault();
+        e.stopPropagation();
         if (node.collapsible) {
             toggleCollapse(node);
         }
@@ -73,6 +93,7 @@ export function AbstractionRow ({node}) {
     const clickSelectNode = (e, node) => {
         e.preventDefault();
         selectNode(node);
+        setCollapsed(node, false);
     };
 
     /**
@@ -92,6 +113,7 @@ export function AbstractionRow ({node}) {
         }
     };
 
+
     /**
      * Creates space for each node level.
      * @param {Object} node
@@ -99,7 +121,7 @@ export function AbstractionRow ({node}) {
      */
     const getSpacers = (node) => {
         const spacers = [];
-        for (let i = 0; i < node.level - 1; i++) {
+        for (let i = 0; i < node.level; i++) {
             spacers.push(
                 <div className="spacer" key={i}>
                     <div className="vertical-line"></div>
@@ -114,28 +136,10 @@ export function AbstractionRow ({node}) {
      * @return {JSX}
      */
     const getNodeIconType = () => {
-        if (node.abstractionType === "function_call") {
+        if (node.isBehavior) {
             return <Stack
                 title="Function Call"
                 style={{color: "orange"}}/>;
-        } else if (node.abstractionType === "conditional_branch") {
-            return <SignpostFill
-                title="Conditional Branch"
-                style={{color: "#3794ff"}}/>;
-        }
-    };
-
-
-    const getBreakPoint = () => {
-        if (!breakPoints) return;
-        for (let i = 0; i < breakPoints.length; i++) {
-            const point = breakPoints[i];
-            if (point.abstraction_meta === node.abstractionId) {
-                const className = (point.enabled == true)?
-                    "enabledBreakPoint":
-                    "disabledBreakPoint";
-                return <div className={className}></div>;
-            }
         }
     };
 
@@ -164,9 +168,16 @@ export function AbstractionRow ({node}) {
                     {getCollapsed(node)}
                 </div>
 
-                <div className="text-container flex-grow-1">
-                    <span>{node.intent}</span>
-                </div>
+
+                {
+                    node.behavior ?
+                        <div className="text-container flex-grow-1">
+                            <span>{node.intent}</span>
+                        </div>:
+                        <div className="text-container flex-grow-1">
+                            <span>{node.entry.id}</span>
+                        </div>
+                }
 
                 {hasViolation ?
                     <div className="analysis-status-container">
@@ -174,6 +185,7 @@ export function AbstractionRow ({node}) {
                     </div>:
                     <></>
                 }
+
             </div>
         </div>
     );

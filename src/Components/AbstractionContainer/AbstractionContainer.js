@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useRef} from "react";
 
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
-import DesignTree from "../DesignTree/DesignTree";
-import {ExecutionTree} from "../ExecutionTree/ExecutionTree";
+import DesignTree from "../BehavioralTree/BehavioralTree";
+import {BehavioralExecutionTree} from "../BehavioralExecutionTree/BehavioralExecutionTree";
 import {RootCauseContainer} from "./RootCauseContainer/RootCauseContainer";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
@@ -56,7 +56,7 @@ export function AbstractionContainer () {
                             topDiv={rootCauseContainer}
                             bottomDiv={abstractionInfoContainerRef}/>
                         <div className="section" ref={abstractionInfoContainerRef}>
-                            <ExecutionTree />
+                            <BehavioralExecutionTree />
                         </div>
                     </>:
                     <>
@@ -64,7 +64,7 @@ export function AbstractionContainer () {
                             topDiv={behaviorContainer}
                             bottomDiv={abstractionInfoContainerRef}/>
                         <div className="section" ref={abstractionInfoContainerRef}>
-                            <ExecutionTree />
+                            <BehavioralExecutionTree />
                         </div>
                     </>
             }

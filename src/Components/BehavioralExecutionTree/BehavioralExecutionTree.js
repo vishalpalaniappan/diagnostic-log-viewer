@@ -5,16 +5,16 @@ import {CircleFill} from "react-bootstrap-icons";
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
-import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
-import ExecutionTreeInstanceContext from "./ExecutionTreeInstanceContext";
+import {BehavioralExecutionNode} from "./BehavioralExecutionNode/BehavioralExecutionNode";
+import BehavioralExecutionTreeInstanceContext from "./BehavioralExecutionTreeInstanceContext";
 
-import "./ExecutionTree.scss";
+import "./BehavioralExecutionTree.scss";
 
 /**
  * Contains the execution tree.
  * @return {JSX.Element}
  */
-export function ExecutionTree () {
+export function BehavioralExecutionTree () {
     const {behavior, executionTree, semanticState,
         setExecutionTree, activeBehavior} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
@@ -129,7 +129,7 @@ export function ExecutionTree () {
                     collapsedLevel = node.level;
                     collapsing = true;
                     execution.push(
-                        <AbstractionRow
+                        <BehavioralExecutionNode
                             key={node.index}
                             node={node}/>
                     );
@@ -138,7 +138,7 @@ export function ExecutionTree () {
 
                 // If we aren't collapsing this node, then add the node.
                 if (!collapsing) {
-                    execution.push(<AbstractionRow
+                    execution.push(<BehavioralExecutionNode
                         key={node.index}
                         node={node}/>
                     );
@@ -189,7 +189,7 @@ export function ExecutionTree () {
     }, [executionTree]);
 
     return (
-        <ExecutionTreeInstanceContext.Provider
+        <BehavioralExecutionTreeInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="treeMenuContainer">
                 <div className="topContainer">
@@ -208,8 +208,8 @@ export function ExecutionTree () {
                     {executionTreeInstance}
                 </div>
             </div>
-        </ExecutionTreeInstanceContext.Provider>
+        </BehavioralExecutionTreeInstanceContext.Provider>
     );
 }
 
-export default ExecutionTree;
+export default BehavioralExecutionTree;
