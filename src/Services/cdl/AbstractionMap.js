@@ -59,12 +59,12 @@ class AbstractionMap {
         }
 
         if (!module) {
-            console.warn("Could not find module currently being executed");
+            // console.warn("Could not find module currently being executed");
             return false;
         }
 
         if (!("functional_abstractions" in module.value)) {
-            console.warn("Could not find functional abstractions for module.");
+            // console.warn("Could not find func abstractions for module.");
             return false;
         }
 
