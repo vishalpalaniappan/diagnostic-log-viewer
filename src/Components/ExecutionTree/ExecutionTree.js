@@ -35,9 +35,7 @@ export function ExecutionTree () {
                 let found;
                 if (activeAbstraction) {
                     for (let i = 0; i < tree.length; i++) {
-                        const currNode = tree[i];
-                        console.log(currNode);
-                        if (activeAbstraction.index === currNode.index) {
+                        if (activeAbstraction.node === tree[i]) {
                             found = true;
                             break;
                         }

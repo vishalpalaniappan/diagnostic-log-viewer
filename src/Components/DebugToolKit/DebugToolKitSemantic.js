@@ -422,7 +422,7 @@ export function DebugToolKitSemantic ({}) {
                     const node = behavior[i].execution[j];
                     setActiveAbstraction({
                         index: node.index,
-                        node: behavior[i].execution[j],
+                        node: node,
                     });
                     setActiveBehavior(i);
                     return;
@@ -441,7 +441,7 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const isBreakPoint = (exec) => {
-        if (!breakPoints) {
+        if (!breakPoints || !exec) {
             return false;
         }
         for (let k = 0; k < breakPoints.length; k++) {
@@ -461,17 +461,18 @@ export function DebugToolKitSemantic ({}) {
         }
 
         for (let i = behavior.length - 1; i >= 0; i--) {
-            for (let j = behavior[i].execution.length - 1; j >= 0; j++) {
+            for (let j = behavior[i].execution.length - 1; j >= 0; j--) {
                 const foundBreak = isBreakPoint(behavior[i].execution[j]);
                 if (!foundBreak) {
                     continue;
                 }
 
-                if ((i === activeBehavior && j < activeAbstraction.index) || (i < activeBehavior)) {
+                if ((i === activeBehavior && j < activeAbstraction.index - 1)
+                    || (i < activeBehavior)) {
                     const node = behavior[i].execution[j];
                     setActiveAbstraction({
                         index: node.index,
-                        node: behavior[i].execution[j],
+                        node: node,
                     });
                     setActiveBehavior(i);
                     return;
@@ -483,13 +484,41 @@ export function DebugToolKitSemantic ({}) {
         const execution = behavior[0].execution;
         const firstExecution = execution[0];
         setActiveAbstraction({
-            index: firstExecution.index,
+            index: 0,
             node: firstExecution,
         });
         setActiveBehavior(0);
     };
 
     const replayProgram = () => {
+        // No valid behavior available, so we return
+        if (behavior === undefined || !behavior || behavior.length === 0) {
+            return;
+        }
+
+        for (let i = 0; i < behavior.length; i++) {
+            for (let j = 0; j < behavior[i].execution.length; j++) {
+                const foundBreak = isBreakPoint(behavior[i].execution[j]);
+                if (!foundBreak) {
+                    continue;
+                }
+                setActiveAbstraction({
+                    index: j,
+                    node: behavior[i].execution[j],
+                });
+                setActiveBehavior(i);
+                return;
+            }
+        }
+
+        // Go to last execution if no breakpoints were found
+        const execution = behavior[behavior.length - 1].execution;
+        const lastExecution = execution[execution.length - 1];
+        setActiveAbstraction({
+            index: lastExecution.index,
+            node: lastExecution,
+        });
+        setActiveBehavior(behavior.length - 1);
     };
 
     return (
