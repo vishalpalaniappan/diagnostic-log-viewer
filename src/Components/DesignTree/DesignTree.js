@@ -38,7 +38,18 @@ export function DesignTree () {
 
     useEffect(() => {
         if (!(activeBehavior === null || activeBehavior === undefined)) {
+            // Uncollapse all the nodes in the current branch
+            for (let i = activeBehavior; i >= 0; i--) {
+                const entry = behavior[i];
+                if (entry.collapsible) {
+                    entry.collapsed = false;
+                }
+                if (entry.level === 0) {
+                    break;
+                }
+            }
             setSelectedNode(behavior[activeBehavior]);
+            renderTree();
         }
     }, [activeBehavior]);
 
