@@ -26,7 +26,8 @@ export function DebugToolKitSemantic ({}) {
     const {stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
-    const {semanticState, setSemanticState, executionTree} = useContext(ExecutionTreeContext);
+    const {behavior, activeBehavior, semanticState, setActiveBehavior,
+        setSemanticState, executionTree} = useContext(ExecutionTreeContext);
 
     const [stack, setStack] = useState();
 
@@ -183,7 +184,7 @@ export function DebugToolKitSemantic ({}) {
                         value: "Step Out of Current Level",
                         tick: prev.tick + 1,
                     }));
-                    // stepOut();
+                    stepOut();
                 }
                 break;
 
@@ -197,7 +198,7 @@ export function DebugToolKitSemantic ({}) {
                         value: "Step Into Next Level",
                         tick: prev.tick + 1,
                     }));
-                    // stepInto();
+                    stepInto();
                 }
                 break;
 
@@ -246,22 +247,15 @@ export function DebugToolKitSemantic ({}) {
     };
 
     const stepInto = () => {
-        const code = CDL_WORKER_PROTOCOL.STEP_INTO;
-        const args = {
-            position: stack.callStack[stackPosition].position,
-            threadId: stack.callStack[stackPosition].threadId,
-        };
-        sendToWorker(code, args);
+        if (activeBehavior < behavior.length - 1) {
+            setActiveBehavior(activeBehavior + 1);
+        }
     };
 
     const stepOut = () => {
-        const code = CDL_WORKER_PROTOCOL.STEP_OUT;
-        console.log(stackPosition);
-        const args = {
-            position: stack.callStack[stackPosition].position,
-            threadId: stack.callStack[stackPosition].threadId,
-        };
-        sendToWorker(code, args);
+        if (activeBehavior > 0) {
+            setActiveBehavior(activeBehavior - 1);
+        }
     };
 
     const stepOverForward = () => {

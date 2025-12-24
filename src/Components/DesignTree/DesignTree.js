@@ -13,7 +13,7 @@ import "./DesignTree.scss";
  * @return {JSX.Element}
  */
 export function DesignTree () {
-    const {behavior, setActiveBehavior,
+    const {behavior, activeBehavior, setActiveBehavior,
         semanticState, executionTree} = useContext(ExecutionTreeContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
@@ -32,10 +32,15 @@ export function DesignTree () {
                     break;
                 }
             }
-            setSelectedNode(behavior[behavior.length - 1]);
             setActiveBehavior(behavior.length - 1);
         }
     }, [behavior]);
+
+    useEffect(() => {
+        if (!(activeBehavior === null || activeBehavior === undefined)) {
+            setSelectedNode(behavior[activeBehavior]);
+        }
+    }, [activeBehavior]);
 
 
     /**
