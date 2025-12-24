@@ -1,7 +1,7 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
-    Play, ThreeDotsVertical} from "react-bootstrap-icons";
+    Layers, Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
 import ActionsContext from "../../Providers/ActionsContext";
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
@@ -23,7 +23,7 @@ export function DebugToolKitSemantic ({}) {
     const container = useRef();
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
-    const {activeAbstraction, setActiveAbstraction, 
+    const {activeAbstraction, setActiveAbstraction,
         stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
@@ -348,6 +348,12 @@ export function DebugToolKitSemantic ({}) {
                     onClick={replayProgram}
                     style={{color: greenColor}}
                     size={22} />
+                <Layers
+                    className="ms-1 icon align-self-center"
+                    title="Toggle Focus between Behavior and Execution (T)"
+                    onClick={toggleFocusOfDebugOperations}
+                    style={{color: blueColor}}
+                    size={20} />
             </div>
         </div>
     );
