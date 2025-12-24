@@ -42,6 +42,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [executionTree, setExecutionTree] = useState();
     const [behavior, setBehavior] = useState();
+    const [rootCauses, setRootCauses] = useState();
     const [activeBehavior, setActiveBehavior] = useState();
     const [actions, setActions] = useState({value: "", tick: 0});
 
@@ -149,6 +150,17 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         });
     };
 
+    const saveRootCauses = (executionTree) => {
+        const lastEntry = executionTree[executionTree.length - 1];
+        const rootCauses = [];
+        if (lastEntry && "failureInfo" in lastEntry) {
+            lastEntry["failureInfo"].forEach((failure, index) => {
+                rootCauses.push(failure.cause);
+            });
+        };
+        setRootCauses(rootCauses);
+    };
+
     /**
      * Handles message from the worker.
      * @param {object} event
@@ -174,6 +186,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
                 setExecutionTree(event.data.args.executionTree);
                 setBehavior(event.data.args.behavior);
+                saveRootCauses(event.data.args.executionTree);
                 break;
             default:
                 break;
