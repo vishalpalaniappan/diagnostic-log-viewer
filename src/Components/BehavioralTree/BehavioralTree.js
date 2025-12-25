@@ -89,6 +89,7 @@ export function DesignTree () {
 
             for (let index = 0; index < behavior.length; index++) {
                 const node = behavior[index];
+                node.index = index;
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
