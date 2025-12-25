@@ -144,7 +144,7 @@ export function BehavioralNode ({node}) {
     };
 
     return (
-        <div style={selectedStyle} id={"row" + node.index}
+        <div style={selectedStyle} id={"behavioral-row-" + node.index}
             className="abstractionRow">
 
             <div className="icon-container">
