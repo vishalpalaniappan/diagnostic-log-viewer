@@ -60,7 +60,7 @@ export function DesignTree () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("row" + node.index);
+        const nodeElement = document.getElementById("behavioral-row-" + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",

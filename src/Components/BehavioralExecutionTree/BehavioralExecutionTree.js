@@ -87,7 +87,7 @@ export function BehavioralExecutionTree () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("row" + node.index);
+        const nodeElement = document.getElementById("row-exec-" + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -116,6 +116,7 @@ export function BehavioralExecutionTree () {
 
             for (let index = 0; index < executionTree.length; index++) {
                 const node = executionTree[index];
+                node.index = index;
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
