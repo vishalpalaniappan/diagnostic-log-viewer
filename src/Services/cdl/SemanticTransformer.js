@@ -6,12 +6,23 @@
 class SemanticTransformer {
     /**
      * Initializes the semantic transformer.
-     * @param {Object} designAbstractions
+     * @param {Object} behaviors
      * @param {Object} threads
      */
-    constructor (designAbstractions, threads) {
-
+    constructor (behaviors, threads) {
+        this.behaviors = behaviors;
+        this.threads = threads;
     }
+
+    /**
+     * Given the behaviors and threads, this function
+     * extracts the behavior of the design. It follows
+     * the outputs to their new inputs and continues the
+     * trace to assemble the designs behavior.
+     */
+    constructBehavior () {
+
+    };
 }
 
 export default SemanticTransformer;
