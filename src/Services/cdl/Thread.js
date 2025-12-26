@@ -29,16 +29,6 @@ class Thread {
 
         this.currPosition = this.lastStatement;
         this.map = this.getExecutionTree(this.currPosition);
-
-        if (this.map?.designMap) {
-            this.map.mapFunctionalAbstractionToBehavior();
-            this.behavior = this.map.behavioralTree;
-
-            if (this.exception) {
-                const index = this.behavior.length - 1;
-                this.behavior[index].exception = this.exception;
-            }
-        }
     }
 
     /**

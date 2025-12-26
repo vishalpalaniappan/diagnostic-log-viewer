@@ -25,8 +25,6 @@ class AbstractionMap {
         this.executionTree = [];
         this.executionTreeFull = [];
         this.violations = [];
-        this.functionalBlocks = [];
-        this.behavioralTree = [];
 
 
         // Load the starting position into the abstraction map.
@@ -39,227 +37,6 @@ class AbstractionMap {
             }
         }
     }
-
-    /**
-     * This function maps execution abstractions to the
-     * functional abstraction in the design.
-     *
-     * @param {Object} abstraction
-     * @return {Boolean}
-     */
-    mapExecutionToFunctionalAbstractions (abstraction) {
-        // Get the module being executed so that we can
-        // identify the fuctional abstraction.
-        let module;
-        const absStack = [...this.abstractionStack];
-        for (let i = absStack.length - 1; i >= 0; i--) {
-            if (absStack[i].value.type === "function") {
-                module = absStack[i];
-                break;
-            }
-        }
-
-        if (!module) {
-            // console.warn("Could not find module currently being executed");
-            return false;
-        }
-
-        if (!("functional_abstractions" in module.value)) {
-            // console.warn("Could not find func abstractions for module.");
-            return false;
-        }
-
-        const funcAbs = module.value.functional_abstractions;
-        const currAbs = abstraction["abstraction_meta"];
-
-        for (let i = 0; i < funcAbs.length; i++) {
-            const functionalAbs = funcAbs[i];
-
-            if (functionalAbs.abstractions.includes(currAbs)) {
-                // Find the functional abstraction
-                if (this.functionalBlocks.length > 0) {
-                    const val = this.functionalBlocks[
-                        this.functionalBlocks.length - 1
-                    ];
-                    // If we are in a new functional abstraction
-                    // then add it to the functional blocks.
-                    if (val.functionalAbs.id !== functionalAbs.id) {
-                        this.functionalBlocks.push({
-                            "functionalAbs": functionalAbs,
-                            "abstraction": abstraction,
-                            "execution": [],
-                        });
-                    } else {
-                        val.abstraction = abstraction;
-                    }
-                } else {
-                    this.functionalBlocks.push({
-                        "functionalAbs": functionalAbs,
-                        "abstraction": abstraction,
-                        "execution": [],
-                    });
-                }
-                return this.functionalBlocks[
-                    this.functionalBlocks.length -1
-                ];
-            }
-        }
-        console.warn("Unable to find the functional abstraction.");
-    }
-
-    /**
-     * Extracts the behaviors in the execution and the
-     * hierarchy through which they are reached.
-     */
-    mapFunctionalAbstractionToBehavior () {
-        let index = 0;
-
-        /**
-         * Note the behavioral stack is a 2d stack, it contains the
-         * horizontal movement through the functional abstractions
-         * of the behavior and the vertical movement of behavior
-         * through the selectors.
-         */
-        const behaviorStack = [];
-        do {
-            const entry = this.functionalBlocks[index].functionalAbs;
-            const currentBehavior = this.getBehavior(entry.id);
-
-            if (!currentBehavior) {
-                continue;
-            }
-
-            // Check if its the first intent (used for collapsing)
-            const isFirstFuncAbs = (currentBehavior.abstractions[0] === entry.id);
-
-            while (behaviorStack.length > 0) {
-                const stackTop = behaviorStack[behaviorStack.length - 1];
-
-                if (stackTop.entry.type === "selector" &&
-                    stackTop.entry.targetBehaviors.includes(currentBehavior.id)) {
-                    // Find the stack position which selected this behavior.
-                    behaviorStack.push({
-                        "behavior": currentBehavior,
-                        "entry": entry,
-                        "position": 1,
-                    });
-                    break;
-                } else if (stackTop.behavior.id === currentBehavior.id) {
-                    // Update the pos of the behavior that is being executed.
-                    const stackTop = behaviorStack[behaviorStack.length - 1];
-                    stackTop.behavior = currentBehavior;
-                    stackTop.entry = entry;
-                    stackTop.position = stackTop.behavior.abstractions.indexOf(entry.id) + 1;
-                    break;
-                }
-                // Remove the behavior from the stack, it is done.
-                behaviorStack.pop();
-            }
-
-            // We ended up removing all the behaviors from the stack, so add
-            // the current one to it as it is the behavior being exhibited.
-            if (behaviorStack.length === 0) {
-                behaviorStack.push({
-                    "behavior": currentBehavior,
-                    "entry": entry,
-                    "position": 1,
-                });
-            }
-
-            const level = behaviorStack.length;
-
-            // Replace the intent placeholders with the variable values
-            // The variable stack is appended to the functional blocks when
-            // parsing the execution to functional bocks.
-            if (isFirstFuncAbs) {
-                const varStack = this.functionalBlocks[index].abstraction.nextVarStack;
-                const intent = this.replacePlaceHoldersInIntent(
-                    currentBehavior, varStack
-                );
-                this.behavioralTree.push({
-                    "level": level - 1,
-                    "type": "selector",
-                    "entry": entry,
-                    "behavior": currentBehavior,
-                    "intent": intent,
-                    "execution": this.functionalBlocks[index].execution,
-                });
-            } else {
-                const len = this.behavioralTree.length -1;
-                const functionalId = this.functionalBlocks[index].functionalAbs.id;
-
-                for (let i = len; i >= 0; i--) {
-                    const entry = this.behavioralTree[i];
-                    if (entry.behavior.abstractions.includes(functionalId)) {
-                        const exec = entry.execution;
-                        entry.execution = exec.concat(
-                            this.functionalBlocks[index].execution
-                        );
-                        break;
-                    }
-                }
-            }
-        } while ( ++index < this.functionalBlocks.length);
-
-
-        // Set the collapsible status and state of the behavioral tree.
-        // Also normalize the levels of the tree for the current behavior.
-        for (let i = 0; i < this.behavioralTree.length - 1; i++) {
-            const currNode = this.behavioralTree[i];
-            const nextNode = this.behavioralTree[i + 1];
-
-            if (nextNode.level > currNode.level) {
-                currNode.collapsible = true;
-                currNode.collapsed = true;
-            }
-        }
-
-        for (let i = 0; i < this.behavioralTree.length; i++) {
-            const currNode = this.behavioralTree[i];
-
-            // Set the collapsible state for the execution nodes
-            for (let j = 0; j < currNode.execution.length - 1; j++) {
-                const currExec = currNode.execution[j];
-                const nextExec = currNode.execution[j + 1];
-
-                if (nextExec.level > currExec.level) {
-                    currExec.collapsible = true;
-                    currExec.collapsed = false;
-                } else {
-                    currExec.collapsible = false;
-                    currExec.collapsed = false;
-                }
-            }
-
-            // Get the minimum level of this execution sequence and
-            // normalize it because we built the tree as part of the
-            // execution tree of the entire program.
-            const levels = currNode.execution.map((item) => item.level);
-            const minValue = Math.min(...levels);
-
-            for (let j = 0; j < currNode.execution.length; j++) {
-                const currExec = currNode.execution[j];
-                currExec.level = currExec.level - minValue + 1;
-            }
-        }
-    }
-
-    /**
-     * Given an id, returns the behavior that
-     * this id belongs to.
-     * @param {String} id
-     * @return {Object}
-     */
-    getBehavior (id) {
-        for (let i = 0; i < this.designMap.behavior.length; i++) {
-            const entry = this.designMap.behavior[i];
-
-            if (entry.abstractions.includes(id)) {
-                return entry;
-            }
-        }
-    }
-
 
     /**
      * Validate the constraints
@@ -430,9 +207,6 @@ class AbstractionMap {
      * @param {Object} abstraction Object containing the abstraction info.
      */
     addToExecutionTree (node, collapsible, abstraction) {
-        const designAbstraction = this.mapExecutionToFunctionalAbstractions(
-            {...abstraction}
-        );
         Object.assign(node, this.sdgMeta[node["id"]]);
         this.validateConstraints(node, abstraction);
         const entry = {
@@ -441,6 +215,7 @@ class AbstractionMap {
             "collapsible": collapsible,
             "collapsed": false,
             "index": this.executionTree.length,
+            "abstraction": abstraction,
             "filePath": abstraction.getFilePath(),
             "fileName": abstraction.getFileName(),
             "lineno": abstraction.getLineNo(),
@@ -448,16 +223,9 @@ class AbstractionMap {
             "position": abstraction.position,
             "abstractionId": abstraction.abstraction_meta,
             "abstractionType": node.type,
-            "designAbstraction": designAbstraction,
+            "meta": this.sdgMeta[node["id"]],
         };
         this.executionTree.push(entry);
-
-        // Add the execution to the functional blocks so that
-        // it can be used to build behaviors.
-        const ind = this.functionalBlocks.length - 1;
-        if (ind >= 0 ) {
-            this.functionalBlocks[ind].execution.push(entry);
-        }
 
         if (this.printTreeToConsole) {
             this.printLevel(this.abstractionStack.length, node.intent);

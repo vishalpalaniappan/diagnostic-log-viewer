@@ -96,7 +96,7 @@ class Debugger {
 
         this.behavior = new SemanticTransformer(
             this.header.getDesignMap(),
-            this.threads
+            this.debuggers
         );
 
         postMessage({
