@@ -27,6 +27,7 @@ class SemanticTransformer {
         const keys = Object.keys(this.threadDebuggers);
         const thread = this.threadDebuggers[keys[0]].thread;
         const executionTree = thread.executionTreeFull;
+        const behaviorStack = [];
 
         let pos = 0;
         do {
@@ -39,6 +40,42 @@ class SemanticTransformer {
             }
 
             const isNewBehavior = (currentBehavior.abstractions[0] === functionalId);
+
+            while (behaviorStack.length > 0) {
+                const stackTop = behaviorStack[behaviorStack.length - 1];
+
+                if (stackTop.entry.meta.behavioral_role === "selector" &&
+                    stackTop.entry.meta.targetBehaviors.includes(currentBehavior.id)) {
+                    // Find the stack position which selected this behavior.
+                    behaviorStack.push({
+                        "behavior": currentBehavior,
+                        "entry": entry,
+                        "position": 1,
+                    });
+                    break;
+                } else if (stackTop.behavior.id === currentBehavior.id) {
+                    // Update the pos of the behavior that is being executed.
+                    const stackTop = behaviorStack[behaviorStack.length - 1];
+                    stackTop.behavior = currentBehavior;
+                    stackTop.entry = entry;
+                    stackTop.position = stackTop.behavior.abstractions.indexOf(entry.id) + 1;
+                    break;
+                }
+                // Remove the behavior from the stack, it is done.
+                behaviorStack.pop();
+            }
+
+            // We ended up removing all the behaviors from the stack, so add
+            // the current one to it as it is the behavior being exhibited.
+            if (behaviorStack.length === 0) {
+                behaviorStack.push({
+                    "behavior": currentBehavior,
+                    "entry": entry,
+                    "position": 1,
+                });
+            }
+
+            console.log([...behaviorStack]);
 
             if (isNewBehavior) {
                 console.log(functionalId);
