@@ -12,6 +12,8 @@ class SemanticTransformer {
     constructor (behaviors, threads) {
         this.behaviors = behaviors;
         this.threads = threads;
+
+        console.log("SemanticTransformer initialized", this.behaviors, this.threads);
     }
 
     /**
