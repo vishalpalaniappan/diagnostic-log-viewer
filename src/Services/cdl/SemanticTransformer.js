@@ -13,6 +13,8 @@ class SemanticTransformer {
         this.behaviors = designMap.behavior;
         this.threadDebuggers = threadDebuggers;
 
+        this.displayDebugInfo = true;
+
         console.log("SemanticTransformer initialized", this.behaviors, this.threadDebuggers);
         this.constructBehavior();
     }
@@ -42,8 +44,6 @@ class SemanticTransformer {
                 continue;
             }
 
-            const isNewBehavior = (currentBehavior.abstractions[0] === functionalId);
-
             while (behaviorStack.length > 0) {
                 const stackTop = behaviorStack[behaviorStack.length - 1];
 
@@ -59,9 +59,10 @@ class SemanticTransformer {
                 } else if (stackTop.behavior.id === currentBehavior.id) {
                     // Update the pos of the behavior that is being executed.
                     const stackTop = behaviorStack[behaviorStack.length - 1];
+                    const abstractions = stackTop.behavior.abstractions;
                     stackTop.behavior = currentBehavior;
                     stackTop.entry = entry;
-                    stackTop.position = stackTop.behavior.abstractions.indexOf(entry.id) + 1;
+                    stackTop.position = abstractions.indexOf(entry.meta.functionalid) + 1;
                     break;
                 }
                 // Remove the behavior from the stack, it is done.
@@ -78,15 +79,31 @@ class SemanticTransformer {
                 });
             }
 
-            console.log([...behaviorStack]);
-
+            const isNewBehavior = (currentBehavior.abstractions[0] === functionalId);
             if (isNewBehavior) {
-                console.log(functionalId);
             }
-        } while (++pos < executionTree.length);
 
-        console.log(thread);
+            this.printBehavioralStack(behaviorStack);
+        } while (++pos < executionTree.length);
     };
+
+    /**
+     * Prints the current behavior stack.
+     * @param {Array} stack
+     */
+    printBehavioralStack (stack) {
+        if (!this.displayDebugInfo) {
+            return;
+        }
+        let output = "";
+        for (let i = 0; i < stack.length; i++) {
+            const entry = stack[i];
+            const pos = entry.position;
+            const total = entry.behavior.abstractions.length;
+            output += `[${entry.behavior.id}(${pos}/${total})] `;
+        }
+        console.log(output);
+    }
 
     /**
      * Given an id, returns the behavior that
