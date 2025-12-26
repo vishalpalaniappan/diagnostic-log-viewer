@@ -31,7 +31,10 @@ class SemanticTransformer {
 
         let pos = 0;
         do {
+            // TODO: If entry is an output, then track it to the next
+            // input using UID for building behaviors across boundaries.
             const entry = executionTree[pos];
+
             const functionalId = entry.meta.functionalid;
             const currentBehavior = this.getBehavior(entry.meta.functionalid);
 
