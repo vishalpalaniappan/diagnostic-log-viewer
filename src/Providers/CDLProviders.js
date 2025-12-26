@@ -206,7 +206,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
                 setProgramState(event.data.args);
                 setExecutionTree(event.data.args.executionTree);
-                setExecutionTreeFull(event.data.args.executionTree);
+                setExecutionTreeFull(event.data.args.executionTreeFull);
                 setBehavior(event.data.args.behavior);
                 saveRootCauses(event.data.args.executionTree);
                 break;
@@ -230,8 +230,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                             value={{activeFile, setActiveFile}}>
                                             <ExecutionTreeContext.Provider
                                                 value={{executionTree, setExecutionTree,
-                                                    behavior, activeBehavior, setActiveBehavior,
-                                                    semanticState, setSemanticState, rootCauses,
+                                                    executionTreeFull, behavior, activeBehavior,
+                                                    setActiveBehavior, semanticState,
+                                                    setSemanticState, rootCauses,
                                                 }}>
                                                 <ActionsContext.Provider
                                                     value={{actions, mode, setMode, setActions}}>

@@ -13,7 +13,7 @@ import "./ExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function ExecutionTree () {
-    const {executionTree} = useContext(ExecutionTreeContext);
+    const {executionTreeFull} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
@@ -23,7 +23,7 @@ export function ExecutionTree () {
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
     useEffect(() => {
-        if (!stacks || stackPosition === undefined || !executionTree || !stacks[activeThread]) {
+        if (!stacks || stackPosition === undefined || !executionTreeFull || !stacks[activeThread]) {
             return;
         }
         const stack = stacks[activeThread].stack;
@@ -31,8 +31,8 @@ export function ExecutionTree () {
             return;
         }
         const stackLevel = stack.callStack[stackPosition].position;
-        for (let index = 0; index < executionTree.length; index++) {
-            const node = executionTree[index];
+        for (let index = 0; index < executionTreeFull.length; index++) {
+            const node = executionTreeFull[index];
             if (node.position === stackLevel) {
                 node.selected = true;
                 setSelectedNode(node);
@@ -40,7 +40,7 @@ export function ExecutionTree () {
                 node.selected = false;
             }
         }
-    }, [stackPosition, stacks, executionTree]);
+    }, [stackPosition, stacks, executionTreeFull]);
 
 
     /**
@@ -70,13 +70,13 @@ export function ExecutionTree () {
      * Render the execution tree.
      */
     const renderTree = () => {
-        if (executionTree) {
+        if (executionTreeFull) {
             const execution = [];
             let collapsedLevel;
             let collapsing = false;
 
-            for (let index = 0; index < executionTree.length; index++) {
-                const node = executionTree[index];
+            for (let index = 0; index < executionTreeFull.length; index++) {
+                const node = executionTreeFull[index];
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
@@ -123,8 +123,8 @@ export function ExecutionTree () {
      * @param {Object} selectedNode
      */
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < executionTree.length; index++) {
-            const node = executionTree[index];
+        for (let index = 0; index < executionTreeFull.length; index++) {
+            const node = executionTreeFull[index];
             if (node === selectedNode) {
                 node.selected = true;
                 setActiveAbstraction({
@@ -144,21 +144,21 @@ export function ExecutionTree () {
      * TODO: Change the way this is implemented.
      */
     useEffect(() => {
-        if (executionTree) {
+        if (executionTreeFull) {
             getRootCause();
             renderTree();
         }
-    }, [executionTree]);
+    }, [executionTreeFull]);
 
 
     // Adds a temporary display to show the root cause of failure below
     // the semantic design graph if there was a failure.
     const getRootCause = () => {
-        if (executionTree.length === 0) {
+        if (executionTreeFull.length === 0) {
             setRootCauses(null);
             return;
         }
-        const lastEntry = executionTree[executionTree.length - 1];
+        const lastEntry = executionTreeFull[executionTreeFull.length - 1];
         if (lastEntry && "failureInfo" in lastEntry) {
             const rootCauseDivs = [];
             lastEntry["failureInfo"].forEach((failure, index) => {

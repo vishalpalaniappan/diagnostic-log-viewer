@@ -32,6 +32,7 @@ class Thread {
 
         if (this.map?.executionTree) {
             this.executionTree = this.map.executionTree;
+            this.executionTreeFull = this.map.executionTreeFull;
         }
 
         if (this.map?.designMap) {

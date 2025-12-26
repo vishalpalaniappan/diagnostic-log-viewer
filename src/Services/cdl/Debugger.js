@@ -172,6 +172,7 @@ class Debugger {
                         code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
                         args: {
                             executionTree: instance.thread.executionTree,
+                            executionTreeFull: instance.thread.executionTreeFull,
                             behavior: instance.thread.behavior,
                         },
                     });
