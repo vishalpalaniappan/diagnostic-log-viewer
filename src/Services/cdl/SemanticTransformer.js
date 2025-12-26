@@ -27,15 +27,21 @@ class SemanticTransformer {
         const keys = Object.keys(this.threadDebuggers);
         const thread = this.threadDebuggers[keys[0]].thread;
         const executionTree = thread.executionTreeFull;
-        let pos = 0;
 
+        let pos = 0;
         do {
             const entry = executionTree[pos];
-            const abstractionId = entry.meta.functionalid;
-            const behavior = this.getBehavior(abstractionId);
+            const functionalId = entry.meta.functionalid;
+            const currentBehavior = this.getBehavior(entry.meta.functionalid);
 
-            if (behavior) {
-                console.log(behavior.id);
+            if (!currentBehavior) {
+                continue;
+            }
+
+            const isNewBehavior = (currentBehavior.abstractions[0] === functionalId);
+
+            if (isNewBehavior) {
+                console.log(functionalId);
             }
         } while (++pos < executionTree.length);
 
@@ -51,7 +57,6 @@ class SemanticTransformer {
     getBehavior (id) {
         for (let i = 0; i < this.behaviors.length; i++) {
             const entry = this.behaviors[i];
-
             if (entry.abstractions.includes(id)) {
                 return entry;
             }
