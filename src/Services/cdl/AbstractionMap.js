@@ -451,7 +451,6 @@ class AbstractionMap {
             "designAbstraction": designAbstraction,
         };
         this.executionTree.push(entry);
-        this.executionTreeFull.push({...entry});
 
         // Add the execution to the functional blocks so that
         // it can be used to build behaviors.

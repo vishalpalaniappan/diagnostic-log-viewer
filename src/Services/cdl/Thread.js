@@ -30,11 +30,6 @@ class Thread {
         this.currPosition = this.lastStatement;
         this.map = this.getExecutionTree(this.currPosition);
 
-        if (this.map?.executionTree) {
-            this.executionTree = this.map.executionTree;
-            this.executionTreeFull = this.map.executionTreeFull;
-        }
-
         if (this.map?.designMap) {
             this.map.mapFunctionalAbstractionToBehavior();
             this.behavior = this.map.behavioralTree;
@@ -459,6 +454,13 @@ class Thread {
                 lastEntry.violations = filteredViolations;
                 lastEntry.failureInfo = failureInfo;
             }
+        }
+
+        this.executionTree = map.executionTree;
+
+        this.executionTreeFull = [];
+        for (let i = 0; i < map.executionTree.length; i++) {
+            this.executionTreeFull.push({...map.executionTree[i]});
         }
 
         return map;
