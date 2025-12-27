@@ -32,6 +32,11 @@ class SemanticTransformer {
         const executionTree = thread.executionTreeFull;
         const behaviorStack = [];
 
+        if (!executionTree || executionTree.length === 0) {
+            console.warn("No execution tree found for semantic transformation.");
+            return;
+        }
+
         let pos = 0;
         do {
             // TODO: If entry is an output, then track it to the next
