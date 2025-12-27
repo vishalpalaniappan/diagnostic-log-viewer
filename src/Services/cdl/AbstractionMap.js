@@ -17,9 +17,8 @@ class AbstractionMap {
         }
 
         this.abstractionStack = [];
-        this.currentAbstraction = null;
+        this.stack = [];
         this.executionTree = [];
-        this.executionTreeFull = [];
         this.violations = [];
     }
 
@@ -139,12 +138,37 @@ class AbstractionMap {
         const levels = id.split("-");
         const thread = levels.shift();
         const module = levels.shift();
-        console.log(`Thread: ${thread}`, `Module: ${module}`, `Level: ${levels.length}`);
 
-        console.log(this.sdg.abstractions[id]);
+        // If the last entry in the execution tree is a function call,
+        // we need to push the module onto the stack.
+        if (this.executionTree.length > 0) {
+            const tree = this.executionTree;
+            if (tree[tree.length - 1].meta.type === "function_call") {
+                this.stack.push({"module": module, "length": 1});
+            }
+        }
+
+        // Move up the stack until we find current module or the stack is empty.
+        while (this.stack.length > 0) {
+            if (this.stack[this.stack.length -1].module === module) {
+                break;
+            }
+            this.stack.pop();
+        }
+
+        if (this.stack.length === 0) {
+            // If the stack is empty, we need to add the module.
+            this.stack.push({"module": module, "length": levels.length});
+        } else {
+            // Update the length of the current module in the stack.
+            this.stack[this.stack.length -1].length = levels.length;
+        }
+
+        // Calculate the current level based on the stack depth and lengths.
+        const level = this.stack.reduce((sum, level) => sum + level.length, 0);
 
         const entry = {
-            "level": levels.length,
+            "level": level,
             "intent": this.sdg.abstractions[id].intent,
             "collapsible": true,
             "collapsed": false,
@@ -160,38 +184,6 @@ class AbstractionMap {
             "meta": this.sdg.abstractions[id],
         };
         this.executionTree.push(entry);
-    }
-
-    /**
-     * This function adds the current position to the execution tree.
-     * @param {Object} node Entry which corresponds to the intent.
-     * @param {Boolean} collapsible Indicates if this row is collapsible.
-     * @param {Object} abstraction Object containing the abstraction info.
-     */
-    addToExecutionTree (node, collapsible, abstraction) {
-        Object.assign(node, this.sdgMeta[node["id"]]);
-        this.validateConstraints(node, abstraction);
-        const entry = {
-            "level": this.abstractionStack.length,
-            "intent": this.replacePlaceHoldersInIntent(node, abstraction.currVarStack),
-            "collapsible": collapsible,
-            "collapsed": false,
-            "index": this.executionTree.length,
-            "abstraction": abstraction,
-            "filePath": abstraction.getFilePath(),
-            "fileName": abstraction.getFileName(),
-            "lineno": abstraction.getLineNo(),
-            "threadId": abstraction.threadId,
-            "position": abstraction.position,
-            "abstractionId": abstraction.abstraction_meta,
-            "abstractionType": node.type,
-            "meta": this.sdgMeta[node["id"]],
-        };
-        this.executionTree.push(entry);
-
-        if (this.printTreeToConsole) {
-            this.printLevel(this.abstractionStack.length, node.intent);
-        }
     }
 
     /**
