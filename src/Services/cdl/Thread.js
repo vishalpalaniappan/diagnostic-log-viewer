@@ -375,75 +375,75 @@ class Thread {
             }
         } while (position++ < finalPosition);
 
-        // // If the program ended in failure, save the exception
-        // // to the final node in the semantic execution graph
-        // let failedAbstraction;
-        // if (this.exception && map.executionTree.length > 0) {
-        //     const len = map.executionTree.length;
-        //     const lastEntry = map.executionTree[len - 1];
-        //     lastEntry.exception = this.exception;
-        //     failedAbstraction = lastEntry.abstractionId;
-        // }
+        // If the program ended in failure, save the exception
+        // to the final node in the semantic execution graph
+        let failedAbstraction;
+        if (this.exception && map.executionTree.length > 0) {
+            const len = map.executionTree.length;
+            const lastEntry = map.executionTree[len - 1];
+            lastEntry.exception = this.exception;
+            failedAbstraction = lastEntry.abstractionId;
+        }
 
 
-        // /**
-        //  * Through the instrumentation, we can now identify the failures
-        //  * caused by a constraint violation. Through this, when a failure
-        //  * happens, the violations which create this failure are identified.
-        //  *
-        //  * There can be multiple violations, for example, a statement could
-        //  * concatonate the first character of two strings, so if you give it
-        //  * two empty strings, the failure is caused by two constraint
-        //  * violations. I choose to label both as a root cause but the failure
-        //  * will specifically highlight the first variable that was checked.
-        //  */
+        /**
+         * Through the instrumentation, we can now identify the failures
+         * caused by a constraint violation. Through this, when a failure
+         * happens, the violations which create this failure are identified.
+         *
+         * There can be multiple violations, for example, a statement could
+         * concatonate the first character of two strings, so if you give it
+         * two empty strings, the failure is caused by two constraint
+         * violations. I choose to label both as a root cause but the failure
+         * will specifically highlight the first variable that was checked.
+         */
 
-        // // Verify that there were violations before trying to map it to graph.
-        // if (map.violations.length > 0) {
-        //     // Find if any of the identified violations
-        //     // cause this abstraction to fail.
-        //     const filteredViolations = [];
-        //     for (let i = 0; i < map.violations.length; i++) {
-        //         const violation = map.violations[i];
-        //         if (violation.constraint?.failures?.includes(failedAbstraction)) {
-        //             filteredViolations.push(violation);
-        //         }
-        //     }
+        // Verify that there were violations before trying to map it to graph.
+        if (map.violations.length > 0) {
+            // Find if any of the identified violations
+            // cause this abstraction to fail.
+            const filteredViolations = [];
+            for (let i = 0; i < map.violations.length; i++) {
+                const violation = map.violations[i];
+                if (violation.constraint?.failures?.includes(failedAbstraction)) {
+                    filteredViolations.push(violation);
+                }
+            }
 
-        //     // Save the violations to the semantic execution graph.
-        //     // The earliest violation is the root cause.
-        //     // TODO: Improve this crude implementation.
-        //     for (let i = 0; i < filteredViolations.length; i++) {
-        //         const entry = filteredViolations[i];
-        //         map.executionTree[entry.index].rootCause = true;
-        //         map.executionTree[entry.index].violation = entry;
-        //     }
+            // Save the violations to the semantic execution graph.
+            // The earliest violation is the root cause.
+            // TODO: Improve this crude implementation.
+            for (let i = 0; i < filteredViolations.length; i++) {
+                const entry = filteredViolations[i];
+                map.executionTree[entry.index].rootCause = true;
+                map.executionTree[entry.index].violation = entry;
+            }
 
 
-        //     /**
-        //      * Save root causes to last entry so we can display them.
-        //      * This is temporary and I will replace this with a more
-        //      * maintainable and scalable approach.
-        //      ***/
-        //     if (this.exception && filteredViolations.length > 0 && map.executionTree.length > 0) {
-        //         const lastEntry = map.executionTree[map.executionTree.length - 1];
-        //         const abstractionId = lastEntry["abstractionId"];
-        //         const failureInfo = [];
+            /**
+             * Save root causes to last entry so we can display them.
+             * This is temporary and I will replace this with a more
+             * maintainable and scalable approach.
+             ***/
+            if (this.exception && filteredViolations.length > 0 && map.executionTree.length > 0) {
+                const lastEntry = map.executionTree[map.executionTree.length - 1];
+                const abstractionId = lastEntry["abstractionId"];
+                const failureInfo = [];
 
-        //         filteredViolations.forEach((violation, index) => {
-        //             const rootcauseMap = violation.constraint?.rootcause;
-        //             if (rootcauseMap && abstractionId in rootcauseMap) {
-        //                 const cause = rootcauseMap[abstractionId];
-        //                 failureInfo.push({
-        //                     "index": violation.index,
-        //                     "cause": cause,
-        //                 });
-        //             }
-        //         });
-        //         lastEntry.violations = filteredViolations;
-        //         lastEntry.failureInfo = failureInfo;
-        //     }
-        // }
+                filteredViolations.forEach((violation, index) => {
+                    const rootcauseMap = violation.constraint?.rootcause;
+                    if (rootcauseMap && abstractionId in rootcauseMap) {
+                        const cause = rootcauseMap[abstractionId];
+                        failureInfo.push({
+                            "index": violation.index,
+                            "cause": cause,
+                        });
+                    }
+                });
+                lastEntry.violations = filteredViolations;
+                lastEntry.failureInfo = failureInfo;
+            }
+        }
 
         this.executionTree = map.executionTree;
 

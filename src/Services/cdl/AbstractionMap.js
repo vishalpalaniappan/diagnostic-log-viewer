@@ -24,10 +24,10 @@ class AbstractionMap {
 
     /**
      * Validate the constraints
-     * @param {Object} node
      * @param {Object} abstraction
      */
-    validateConstraints (node, abstraction) {
+    validateConstraints (abstraction) {
+        const node = this.sdg.abstractions[abstraction.abstractionId];
         if ("constraint" in node) {
             for (let i = 0; i < node.constraint.length; i++) {
                 const constraint = node.constraint[i];
@@ -167,8 +167,11 @@ class AbstractionMap {
         // Calculate the current level based on the stack depth and lengths.
         const level = this.stack.reduce((sum, level) => sum + level.length, 0);
 
+        this.validateConstraints(abstraction);
+
         const entry = {
             "level": level,
+            "thread": thread,
             "intent": this.sdg.abstractions[id].intent,
             "collapsible": true,
             "collapsed": false,
