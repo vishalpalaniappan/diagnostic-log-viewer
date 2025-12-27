@@ -14,6 +14,7 @@ class SemanticTransformer {
         this.threadDebuggers = threadDebuggers;
 
         this.displayDebugInfo = true;
+        this.behavioralTree = [];
 
         console.log("SemanticTransformer initialized", this.behaviors, this.threadDebuggers);
         this.constructBehavior();
@@ -79,12 +80,26 @@ class SemanticTransformer {
                 });
             }
 
+            const level = behaviorStack.length;
             const isNewBehavior = (currentBehavior.abstractions[0] === functionalId);
             if (isNewBehavior) {
+                // New behavior being executed, add a new entry with execution.
+                this.behavioralTree.push({
+                    "level": level - 1,
+                    "behavior": currentBehavior,
+                    "intent": currentBehavior.intent,
+                    "execution": [entry],
+                });
+            } else {
+                // Existing behavior, append execution to last entry.
+                const lastBehavior = this.behavioralTree[this.behavioralTree.length - 1];
+                lastBehavior.execution.push(entry);
             }
 
             this.printBehavioralStack(behaviorStack);
         } while (++pos < executionTree.length);
+
+        console.log(this.behavioralTree);
     };
 
     /**
