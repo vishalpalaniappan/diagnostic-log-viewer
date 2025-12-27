@@ -6,10 +6,10 @@ class AbstractionMap {
      * Initialize the abstraction map.
      * @param {Object} sdg
      * @param {Object} sdgMeta
+     * @param {Object} designMap
      */
-    constructor (sdg, sdgMeta) {
-        this.map = sdg.modules;
-        this.sdgMeta = sdgMeta;
+    constructor (sdg) {
+        this.sdg = sdg;
         this.printTreeToConsole = false;
 
         if (this.printTreeToConsole) {
@@ -17,26 +17,17 @@ class AbstractionMap {
         }
 
         this.abstractionStack = [];
-        this.currentAbstraction = null;
+        this.stack = [];
         this.executionTree = [];
         this.violations = [];
-
-        // Load the starting position into the abstraction map.
-        for (const entry in this.map) {
-            if (this.sdgMeta[entry].start === true) {
-                this.abstractionStack.push(this.map[entry]);
-                this.currentAbstraction = this.map[entry];
-            }
-        }
     }
-
 
     /**
      * Validate the constraints
-     * @param {Object} node
      * @param {Object} abstraction
      */
-    validateConstraints (node, abstraction) {
+    validateConstraints (abstraction) {
+        const node = this.sdg.abstractions[abstraction.abstractionId];
         if ("constraint" in node) {
             for (let i = 0; i < node.constraint.length; i++) {
                 const constraint = node.constraint[i];
@@ -143,64 +134,46 @@ class AbstractionMap {
      * @param {Object} abstraction
      */
     mapCurrentLevel (abstraction) {
-        const id = abstraction.abstraction_meta;
-        if (this.abstractionStack.length > 0) {
-            // move down abstraction level until you find parent of current id
-            do {
-                let found = false;
-                this.currentAbstraction.abstractions.forEach((abs, index) => {
-                    found = (abs.id === id)?true:found;
-                });
+        const id = abstraction.abstractionId;
+        const levels = id.split("-");
+        const thread = levels.shift();
+        const module = levels.shift();
 
-                if (found) {
-                    // found the abstraction, in the correct level
-                    // we can exit the loop.
-                    break;
-                } else {
-                    // haven't found the abstraction
-                    // move down abstraction stack level
-                    this.abstractionStack.pop();
-                    const stackSize = this.abstractionStack.length - 1;
-                    this.currentAbstraction = this.abstractionStack[stackSize];
-                }
-            } while (this.abstractionStack.length > 0);
+        // If the last entry in the execution tree is a function call,
+        // we need to push the module onto the stack.
+        if (this.executionTree.length > 0) {
+            const tree = this.executionTree;
+            if (tree[tree.length - 1].meta.type === "function_call") {
+                this.stack.push({"module": module, "length": 1});
+            }
+        }
 
-            // check if the entry is in the abstraction.
-            this.currentAbstraction.abstractions.forEach((entry, index) => {
-                if (entry.id === id) {
-                    if ("abstractions" in entry) {
-                        // root abstraction with children
-                        this.addToExecutionTree(entry, true, abstraction);
-                        this.abstractionStack.push(entry);
-                        this.currentAbstraction = entry;
-                    } else {
-                        // leaf abstraction with no children
-                        if (entry.type === "function_call") {
-                            this.addToExecutionTree(entry, true, abstraction);
-                            this.abstractionStack.push(this.map[entry.target]);
-                            this.currentAbstraction = this.map[entry.target];
-                        } else {
-                            this.addToExecutionTree(entry, false, abstraction);
-                        }
-                    }
-                }
-            });
-        };
-    }
+        // Move up the stack until we find current module or the stack is empty.
+        while (this.stack.length > 0) {
+            if (this.stack[this.stack.length -1].module === module) {
+                break;
+            }
+            this.stack.pop();
+        }
 
-    /**
-     * This function adds the current position to the execution tree.
-     * @param {Object} node Entry which corresponds to the intent.
-     * @param {Boolean} collapsible Indicates if this row is collapsible.
-     * @param {Object} abstraction Object containing the abstraction info.
-     */
-    addToExecutionTree (node, collapsible, abstraction) {
-        Object.assign(node, this.sdgMeta[node["id"]]);
-        this.validateConstraints(node, abstraction);
-        this.executionTree.push({
-            "level": this.abstractionStack.length,
-            "intent": this.replacePlaceHoldersInIntent(node, abstraction.currVarStack),
-            "collapsible": collapsible,
+        if (this.stack.length === 0) {
+            // If the stack is empty, we need to add the module.
+            this.stack.push({"module": module, "length": levels.length});
+        } else {
+            // Update the length of the current module in the stack.
+            this.stack[this.stack.length -1].length = levels.length;
+        }
+
+        // Calculate the current level based on the stack depth and lengths.
+        const level = this.stack.reduce((sum, level) => sum + level.length, 0);
+
+        this.validateConstraints(abstraction);
+
+        const entry = {
+            "level": level,
+            "thread": thread,
+            "intent": this.sdg.abstractions[id].intent,
+            "collapsible": true,
             "collapsed": false,
             "index": this.executionTree.length,
             "filePath": abstraction.getFilePath(),
@@ -208,12 +181,12 @@ class AbstractionMap {
             "lineno": abstraction.getLineNo(),
             "threadId": abstraction.threadId,
             "position": abstraction.position,
-            "abstractionId": abstraction.abstraction_meta,
-            "abstractionType": node.type,
-        });
-        if (this.printTreeToConsole) {
-            this.printLevel(this.abstractionStack.length, node.intent);
-        }
+            "abstraction": abstraction,
+            "abstractionId": id,
+            "abstractionType": this.sdg.abstractions[id]?.type,
+            "meta": this.sdg.abstractions[id],
+        };
+        this.executionTree.push(entry);
     }
 
     /**
@@ -230,6 +203,11 @@ class AbstractionMap {
          * */
         const variables = entry.variables;
         if (!variables || variables.length == 0) {
+            return entry.intent;
+        }
+
+        if (!currVarStack) {
+            console.warn("Valid VAR stack was not provided for replacing placholders in intent.");
             return entry.intent;
         }
 

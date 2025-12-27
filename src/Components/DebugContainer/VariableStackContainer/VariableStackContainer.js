@@ -39,7 +39,7 @@ export function VariableStackContainer () {
             <ReactJsonView
                 src={localVariables}
                 theme={variableStackTheme}
-                collapsed={1}
+                collapsed={false}
                 name={"local"}
                 groupArraysAfterLength={100}
                 sortKeys={true}
@@ -50,7 +50,7 @@ export function VariableStackContainer () {
             <ReactJsonView
                 src={globalVariables}
                 theme={variableStackTheme}
-                collapsed={1}
+                collapsed={false}
                 name={"global"}
                 groupArraysAfterLength={100}
                 sortKeys={true}

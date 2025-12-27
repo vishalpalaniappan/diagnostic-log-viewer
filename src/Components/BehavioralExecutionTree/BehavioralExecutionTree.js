@@ -1,29 +1,68 @@
 import React, {useContext, useEffect, useState} from "react";
 
+import {CircleFill} from "react-bootstrap-icons";
+
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
-import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
-import ExecutionTreeInstanceContext from "./ExecutionTreeInstanceContext";
+import {BehavioralExecutionNode} from "./BehavioralExecutionNode/BehavioralExecutionNode";
+import BehavioralExecutionTreeInstanceContext from "./BehavioralExecutionTreeInstanceContext";
 
-import "./ExecutionTree.scss";
+import "./BehavioralExecutionTree.scss";
 
 /**
  * Contains the execution tree.
  * @return {JSX.Element}
  */
-export function ExecutionTree () {
-    const {executionTreeFull} = useContext(ExecutionTreeContext);
+export function BehavioralExecutionTree () {
+    const {behavior, executionTree, semanticState,
+        setExecutionTree, activeBehavior} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
-    const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
+    const {stacks, activeThread,
+        activeAbstraction, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTreeInstance, setExecutionTreeInstance] = useState();
-    const [rootCauses, setRootCauses] = useState();
+
+    useEffect(() => {
+        if (!(activeBehavior === null || activeBehavior === undefined)) {
+            const exec = behavior[activeBehavior].execution;
+            if (exec && exec.length > 0) {
+                const tree = behavior[activeBehavior].execution;
+                setExecutionTree(behavior[activeBehavior].execution);
+
+                // Check if the active abstraction is in the current behavior
+                let found;
+                if (activeAbstraction) {
+                    for (let i = 0; i < tree.length; i++) {
+                        if (activeAbstraction.node === tree[i]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                };
+
+                // If the active abstraction isn't in this behavior, then
+                // go to the last behavior.
+                if (!found) {
+                    const execIndex = behavior[activeBehavior].execution.length - 1;
+                    const node = behavior[activeBehavior].execution[execIndex];
+                    setSelectedNode(
+                        behavior[activeBehavior].execution[execIndex]
+                    );
+                    setActiveAbstraction({
+                        index: execIndex,
+                        node: node,
+                    });
+                    node.selected = true;
+                };
+            }
+        }
+    }, [behavior, activeBehavior]);
 
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
     useEffect(() => {
-        if (!stacks || stackPosition === undefined || !executionTreeFull || !stacks[activeThread]) {
+        if (!stacks || stackPosition === undefined || !executionTree || !stacks[activeThread]) {
             return;
         }
         const stack = stacks[activeThread].stack;
@@ -31,8 +70,8 @@ export function ExecutionTree () {
             return;
         }
         const stackLevel = stack.callStack[stackPosition].position;
-        for (let index = 0; index < executionTreeFull.length; index++) {
-            const node = executionTreeFull[index];
+        for (let index = 0; index < executionTree.length; index++) {
+            const node = executionTree[index];
             if (node.position === stackLevel) {
                 node.selected = true;
                 setSelectedNode(node);
@@ -40,7 +79,7 @@ export function ExecutionTree () {
                 node.selected = false;
             }
         }
-    }, [stackPosition, stacks, executionTreeFull]);
+    }, [stackPosition, stacks, executionTree]);
 
 
     /**
@@ -48,7 +87,7 @@ export function ExecutionTree () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("row" + node.index);
+        const nodeElement = document.getElementById("row-exec-" + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -70,13 +109,14 @@ export function ExecutionTree () {
      * Render the execution tree.
      */
     const renderTree = () => {
-        if (executionTreeFull) {
+        if (executionTree) {
             const execution = [];
             let collapsedLevel;
             let collapsing = false;
 
-            for (let index = 0; index < executionTreeFull.length; index++) {
-                const node = executionTreeFull[index];
+            for (let index = 0; index < executionTree.length; index++) {
+                const node = executionTree[index];
+                node.index = index;
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
@@ -90,7 +130,7 @@ export function ExecutionTree () {
                     collapsedLevel = node.level;
                     collapsing = true;
                     execution.push(
-                        <AbstractionRow
+                        <BehavioralExecutionNode
                             key={node.index}
                             node={node}/>
                     );
@@ -99,7 +139,7 @@ export function ExecutionTree () {
 
                 // If we aren't collapsing this node, then add the node.
                 if (!collapsing) {
-                    execution.push(<AbstractionRow
+                    execution.push(<BehavioralExecutionNode
                         key={node.index}
                         node={node}/>
                     );
@@ -123,8 +163,8 @@ export function ExecutionTree () {
      * @param {Object} selectedNode
      */
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < executionTreeFull.length; index++) {
-            const node = executionTreeFull[index];
+        for (let index = 0; index < executionTree.length; index++) {
+            const node = executionTree[index];
             if (node === selectedNode) {
                 node.selected = true;
                 setActiveAbstraction({
@@ -144,45 +184,22 @@ export function ExecutionTree () {
      * TODO: Change the way this is implemented.
      */
     useEffect(() => {
-        if (executionTreeFull) {
-            getRootCause();
+        if (executionTree) {
             renderTree();
         }
-    }, [executionTreeFull]);
-
-
-    // Adds a temporary display to show the root cause of failure below
-    // the semantic design graph if there was a failure.
-    const getRootCause = () => {
-        if (executionTreeFull.length === 0) {
-            setRootCauses(null);
-            return;
-        }
-        const lastEntry = executionTreeFull[executionTreeFull.length - 1];
-        if (lastEntry && "failureInfo" in lastEntry) {
-            const rootCauseDivs = [];
-            lastEntry["failureInfo"].forEach((failure, index) => {
-                rootCauseDivs.push(
-                    <div key={index} className="rootcause">{failure.cause}</div>
-                );
-            });
-            setRootCauses(
-                <div className="bottomContainer scrollbar">
-                    <div className="title">Root Cause(s) of Failure</div>
-                    {rootCauseDivs}
-                </div>
-            );
-        } else {
-            setRootCauses(null);
-        }
-    };
+    }, [executionTree]);
 
     return (
-        <ExecutionTreeInstanceContext.Provider
+        <BehavioralExecutionTreeInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">
+                        {
+                            semanticState === "execution" &&
+                            <CircleFill className="focusIndicator"
+                                title="Keyboard shortcuts focused on execution"/>
+                        }
                         <span className="title">Semantic Execution Graph</span>
                     </div>
                     <div className="iconMenu">
@@ -191,10 +208,9 @@ export function ExecutionTree () {
                 <div className="executionTreeContainer scrollbar flex-grow-1">
                     {executionTreeInstance}
                 </div>
-                {rootCauses}
             </div>
-        </ExecutionTreeInstanceContext.Provider>
+        </BehavioralExecutionTreeInstanceContext.Provider>
     );
 }
 
-export default ExecutionTree;
+export default BehavioralExecutionTree;

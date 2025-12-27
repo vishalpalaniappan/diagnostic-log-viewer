@@ -1,6 +1,5 @@
 import AbstractionMap from "./AbstractionMap";
 import CdlHeader from "./CdlHeader";
-import StackFrames from "./StackFrames";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -19,9 +18,6 @@ class Thread {
         this.globalVariables = {};
         this.threadId = threadId;
 
-        this.stackFrames = new StackFrames();
-        this.callStack = this.stackFrames.rootFrame;
-
         this.inputs = [];
         this.outputs = [];
 
@@ -32,7 +28,7 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
-        this.executionTree = this.getExecutionTree(this.currPosition);
+        this.map = this.getExecutionTree(this.currPosition);
     }
 
     /**
@@ -99,7 +95,8 @@ class Thread {
 
             const ltInfo = this.header.getLtFromInjectedLineno(level.filename, level.lineno);
             if (ltInfo === null) {
-                console.error(`Failed to find log type info for ${level.filename}:${level.lineno} at stack position ${index}`);
+                console.error(`Failed to find log type info for ${level.filename}:${level.lineno}\
+                     at stack position ${index}`);
                 continue;
             }
 
@@ -312,15 +309,15 @@ class Thread {
             return null;
         }
 
-        const sdg = this.header.getSDG();
-        const sdgMeta = this.header.getSDGMeta();
+        console.log("GET EXECUTION TREE");
+        const sdgMeta = this.header.getSDG();
 
-        if (!sdg || !sdgMeta) {
+        if (!sdgMeta) {
             console.log("Trace file is missing required SDG data or metadata");
             return null;
         }
 
-        const map = new AbstractionMap(sdg, sdgMeta);
+        const map = new AbstractionMap(sdgMeta);
 
         let position = 0;
         do {
@@ -329,6 +326,7 @@ class Thread {
                 const abstractionInstance = this.header.logTypeMap[positionData.value];
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
+                abstractionInstance.timestamp = positionData.timestamp;
 
                 /**
                  *  TODO: This practice of saving the var stack info in the
@@ -447,7 +445,16 @@ class Thread {
             }
         }
 
-        return map.executionTree;
+        this.executionTree = map.executionTree;
+
+        console.log(this.executionTree);
+
+        this.executionTreeFull = [];
+        for (let i = 0; i < map.executionTree.length; i++) {
+            this.executionTreeFull.push({...map.executionTree[i]});
+        }
+
+        return map;
     }
 
     /**

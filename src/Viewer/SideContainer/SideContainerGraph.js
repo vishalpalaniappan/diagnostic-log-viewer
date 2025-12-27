@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import {Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
 
-import {AbstractionContainer} from "../../Components/AbstractionContainer/AbstractionContainer";
+import {ExecutionTree} from "../../Components/ExecutionTree/ExecutionTree";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
 
@@ -12,7 +12,7 @@ import "./SideContainer.scss";
  * Renders the side menu and accordian containers.
  * @return {JSX.Element}
  */
-export function SideContainerSemantic () {
+export function SideContainerGraph () {
     const [activeMenu, setActiveMenu] = useState(1);
 
     const accordian = useRef();
@@ -62,7 +62,7 @@ export function SideContainerSemantic () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <AbstractionContainer />;
+            return <ExecutionTree />;
         } else if (activeMenu === 2) {
             return <ShortcutContainer />;
         } else if (activeMenu === 3) {

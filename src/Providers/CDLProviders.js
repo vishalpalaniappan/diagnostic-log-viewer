@@ -41,7 +41,14 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [executionTree, setExecutionTree] = useState();
+    const [executionTreeFull, setExecutionTreeFull] = useState();
+    const [behavior, setBehavior] = useState();
+    const [rootCauses, setRootCauses] = useState();
+    const [mode, setMode] = useState("STACK");
+    const [activeBehavior, setActiveBehavior] = useState();
     const [actions, setActions] = useState({value: "", tick: 0});
+
+    const [semanticState, setSemanticState] = useState("behavior");
 
     const cdlWorker = useRef(null);
 
@@ -100,6 +107,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveFile(undefined);
         setBreakPoints(undefined);
         setExecutionTree(undefined);
+        setActiveBehavior(undefined);
+        setBehavior(undefined);
     };
 
     // Create worker to handle file.
@@ -143,6 +152,35 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         });
     };
 
+    const saveRootCauses = (executionTree) => {
+        const lastEntry = executionTree[executionTree.length - 1];
+        const rootCauses = [];
+        if (lastEntry && "failureInfo" in lastEntry) {
+            lastEntry["failureInfo"].forEach((failure, index) => {
+                rootCauses.push(failure.cause);
+            });
+        };
+        setRootCauses(rootCauses);
+    };
+
+    // Load the program state based on the infromation available
+    const setProgramState = (args) => {
+        if (args.executionTree && args.behavior) {
+            setMode("BEHAVIORAL");
+        } else if (args.executionTree) {
+            setMode("EXECUTION");
+        } else {
+            setMode("STACK");
+        }
+    };
+
+    // If the user chooses execution mode, load the full execution tree.
+    useEffect(() => {
+        if (mode === "EXECUTION") {
+            setExecutionTree(executionTreeFull);
+        }
+    }, [mode]);
+
     /**
      * Handles message from the worker.
      * @param {object} event
@@ -166,7 +204,11 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setBreakPoints(event.data.args.breakpoints);
                 break;
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
-                setExecutionTree(event.data.args);
+                setProgramState(event.data.args);
+                setExecutionTree(event.data.args.executionTree);
+                setExecutionTreeFull(event.data.args.executionTreeFull);
+                setBehavior(event.data.args.behavior);
+                saveRootCauses(event.data.args.executionTree);
                 break;
             default:
                 break;
@@ -186,9 +228,14 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                             setActiveThread, setActiveAbstraction}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
-                                            <ExecutionTreeContext.Provider value={{executionTree}}>
+                                            <ExecutionTreeContext.Provider
+                                                value={{executionTree, setExecutionTree,
+                                                    executionTreeFull, behavior, activeBehavior,
+                                                    setActiveBehavior, semanticState,
+                                                    setSemanticState, rootCauses,
+                                                }}>
                                                 <ActionsContext.Provider
-                                                    value={{actions, setActions}}>
+                                                    value={{actions, mode, setMode, setActions}}>
                                                     {children}
                                                 </ActionsContext.Provider>
                                             </ExecutionTreeContext.Provider>

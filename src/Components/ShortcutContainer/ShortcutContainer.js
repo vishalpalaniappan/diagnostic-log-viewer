@@ -1,6 +1,8 @@
-import React, {useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 
 import {Col, Row} from "react-bootstrap";
+
+import ActionsContext from "../../Providers/ActionsContext";
 
 import "./ShortcutContainer.scss";
 
@@ -8,6 +10,7 @@ import "./ShortcutContainer.scss";
  * @return {JSX.Element}
  */
 export function ShortcutContainer ({}) {
+    const {mode} = useContext(ActionsContext);
     const settingsContainer = useRef();
     const kbdContainer = useRef();
 
@@ -28,6 +31,15 @@ export function ShortcutContainer ({}) {
                 Keyboard Shortcuts
             </div>
             <div ref={kbdContainer} className="w-100 shortcuts p-3 pt-1">
+                {
+                    mode === "BEHAVIORAL" &&
+                    <>
+                        <Row className="mb-2">
+                            <Col>Toggle Focus Between Behavioral Trace and Execution Graph</Col>
+                            <Col><kbd>T</kbd></Col>
+                        </Row>
+                    </>
+                }
                 <Row className="mb-2">
                     <Col>Step Over Forward</Col>
                     <Col><kbd>→</kbd></Col>
@@ -44,15 +56,20 @@ export function ShortcutContainer ({}) {
                     <Col>Step Out</Col>
                     <Col><kbd>↑</kbd></Col>
                 </Row>
-                <Row className="mb-2">
-                    <Col>Move Down Stack</Col>
-                    <Col><kbd>CTRL</kbd> + <kbd>↓</kbd></Col>
-                </Row>
-                <Row className="mb-2">
-                    <Col>Move Up Stack</Col>
-                    <Col><kbd>CTRL</kbd> + <kbd>↑</kbd></Col>
-                </Row>
-                
+                {
+                    (mode === "STACK" || mode === "EXECUTION") &&
+                    <>
+                        <Row className="mb-2">
+                            <Col>Move Down Stack</Col>
+                            <Col><kbd>CTRL</kbd> + <kbd>↓</kbd></Col>
+                        </Row>
+                        <Row className="mb-2">
+                            <Col>Move Up Stack</Col>
+                            <Col><kbd>CTRL</kbd> + <kbd>↑</kbd></Col>
+                        </Row>
+                    </>
+                }
+
                 <hr/>
                 <Row className="mb-2">
                     <Col>Play Forward</Col>

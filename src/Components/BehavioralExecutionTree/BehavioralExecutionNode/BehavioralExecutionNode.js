@@ -4,11 +4,11 @@ import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
 import BreakpointsContext from "../../../Providers/BreakpointsContext";
-import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
+import ExecutionTreeInstanceContext from "../BehavioralExecutionTreeInstanceContext";
 
-import "./ExecutionNode.scss";
+import "./BehavioralExecutionNode.scss";
 
-AbstractionRow.propTypes = {
+BehavioralExecutionNode.propTypes = {
     node: PropTypes.object,
 };
 
@@ -17,7 +17,7 @@ AbstractionRow.propTypes = {
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function AbstractionRow ({node}) {
+export function BehavioralExecutionNode ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
     const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
@@ -27,6 +27,7 @@ export function AbstractionRow ({node}) {
     // Set style if node is selected.
     useEffect(() => {
         if (node && selectedNode) {
+            // console.log(node.designAbstraction?.functionalAbs?.type);
             if (selectedNode === node) {
                 setSelectedStyle({background: "#3b3b3b", color: "white"});
             } else {
@@ -140,7 +141,7 @@ export function AbstractionRow ({node}) {
     };
 
     return (
-        <div style={selectedStyle} id={"row" + node.index}
+        <div style={selectedStyle} id={"row-exec-" + node.index}
             className="abstractionRow">
 
             <div className="icon-container">
