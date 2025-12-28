@@ -170,10 +170,14 @@ class AbstractionMap {
 
         this.validateConstraints(abstraction);
 
+        const updatedIntent = this.replacePlaceHoldersInIntent(
+            this.sdg.abstractions[id], abstraction.varStack
+        );
+
         const entry = {
             "level": level,
             "thread": thread,
-            "intent": this.sdg.abstractions[id].intent,
+            "intent": updatedIntent,
             "index": this.executionTree.length,
             "filePath": abstraction.filePath,
             "fileName": abstraction.fileName,
@@ -213,8 +217,8 @@ class AbstractionMap {
          * access nonexistent keys, variables or inject malformed data
          * into the placeholders.
          * */
-        const variables = entry.variables;
-        if (!variables || variables.length == 0) {
+        const placeholderList = entry.placeholders;
+        if (!placeholderList || placeholderList.length == 0) {
             return entry.intent;
         }
 
@@ -225,7 +229,7 @@ class AbstractionMap {
 
         let updatedIntent = entry.intent;
 
-        variables.forEach((variable) => {
+        placeholderList.forEach((variable) => {
             const scope = variable.scope;
 
             if (scope === "local" && variable.name in currVarStack[0]) {
