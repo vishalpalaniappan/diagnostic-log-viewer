@@ -35,23 +35,24 @@ class AbstractionMap {
                 let varStack;
                 let value;
 
-                if (!abstraction.nextVarStack) {
-                    console.warn("nextVarStack missing while validating constraints.");
+                if (!abstraction.varStack) {
+                    console.warn("varStack missing while validating constraints.");
                     continue;
                 }
 
                 // Load the relevant varstack based on the instrumented scope
                 if (constraint.scope === "local") {
-                    varStack = abstraction.nextVarStack[0];
+                    varStack = abstraction.varStack[0];
                 } else if (constraint.scope === "global") {
-                    varStack = abstraction.nextVarStack[1];
+                    varStack = abstraction.varStack[1];
                 } else {
                     console.warn("Constraint has an invalid scope for the variable");
                     continue;
                 }
 
                 if (!varStack || !(constraint.name in varStack)) {
-                    console.warn("Variable name is not in stack for constraint validation.");
+                    console.warn(`Variable name "${constraint.name}" is not in stack 
+                        for constraint validation.`);
                     continue;
                 }
 
@@ -174,9 +175,9 @@ class AbstractionMap {
             "thread": thread,
             "intent": this.sdg.abstractions[id].intent,
             "index": this.executionTree.length,
-            "filePath": abstraction.getFilePath(),
-            "fileName": abstraction.getFileName(),
-            "lineno": abstraction.getLineNo(),
+            "filePath": abstraction.filePath,
+            "fileName": abstraction.fileName,
+            "lineno": abstraction.lineno,
             "threadId": abstraction.threadId,
             "position": abstraction.position,
             "abstraction": abstraction,

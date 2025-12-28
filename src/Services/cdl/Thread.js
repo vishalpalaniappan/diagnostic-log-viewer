@@ -328,54 +328,11 @@ class Thread {
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
-                const abstractionInstance = this.header.logTypeMap[positionData.value];
+                const abstractionInstance = {...this.header.logTypeMap[positionData.value]};
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
                 abstractionInstance.timestamp = positionData.timestamp;
-
-                /**
-                 *  TODO: This practice of saving the var stack info in the
-                 *  abstraction info is really strange and I should not be
-                 *  doing this, so I will revisit this later to change it.
-                 */
-
-
-                // These variable stacks are used to replace the placeholders
-                // in the intent and to validate the constraints.
-                abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
-                abstractionInstance.nextVarStack = null;
-
-                /*
-                 We go to the next position because the variable values for
-                 the current position are logged after the statement.
-
-                 For example:
-                 a = b + 1
-                 logVariable(a);
-                 c = d + 2
-
-                 So we need to load the value of a from the c = d + 2 statement.
-                 We save the next var stack to the abstraction so that we can
-                 access it when validating the constraints.
-
-                 TODO:
-                 This is not an ideal solution, if the constraint we are
-                 validating is in the last statement (for example a return
-                 statement), then we need to just access the variable values,
-                 the next statement is not going to be in the same function.
-                 */
-                let nextPos = this._getNextPosition(position);
-                while (nextPos !== null) {
-                    const nextPositionData = this.execution[nextPos];
-                    const nextAbstraction = this.header.logTypeMap[nextPositionData.value];
-                    if (nextAbstraction.getfId() === abstractionInstance.getfId()) {
-                        abstractionInstance.nextVarStack =
-                            this.getVariablesAtPosition(nextPos);
-                        break;
-                    }
-                    nextPos = this._getNextPosition(nextPos);
-                }
-
+                abstractionInstance.varStack = this.getVariablesAtPosition(position);
                 map.mapCurrentLevel(abstractionInstance);
             }
         } while (position++ < finalPosition);
