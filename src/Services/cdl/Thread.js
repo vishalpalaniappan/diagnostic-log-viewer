@@ -194,6 +194,11 @@ class Thread {
         const startLog = this.execution[position];
         const funcId = startLog.scope_uid;
 
+        const nextPosition = this._getNextPosition(position);
+        if (nextPosition) {
+            position = nextPosition;
+        }
+
         let currPosition = 0;
         do {
             const currLog = this.execution[currPosition];
