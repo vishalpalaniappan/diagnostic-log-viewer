@@ -1,3 +1,5 @@
+import { stableStringify } from "./helper";
+
 /**
  * This class constructures the execution tree using the abstraction map.
  */
@@ -130,6 +132,55 @@ class AbstractionMap {
         }
     }
 
+
+    /**
+     * Validates that the intent of the abstraction was realized.
+     * @param {Object} abstraction
+     * @return {undefined}
+     */
+    validateIntent (abstraction) {
+        const node = this.sdg.abstractions[abstraction.abstractionId];
+        if (!node) {
+            console.warn(`Abstraction node not found for id: ${abstraction.abstractionId}`);
+            return;
+        }
+
+        if (!("intent_validation" in node)) {
+            return;
+        }
+
+        for (let i = 0; i < node.intent_validation.length; i++) {
+            const validation = node.intent_validation[i];
+
+            /**
+             * Note: Everything that is instrumented is unambigious,
+             * so my implementation below is very raw and hasn't fully
+             * leveraged the full domain knowledge. I am just setting up
+             * the structure to begin exploring intent validation.
+             */
+            if (validation.type === "data_exists") {
+                const sourceValue = abstraction.varStack[0][validation.source_var];
+                const target = abstraction.varStack[0][validation.target_var];
+
+                if (validation.position === "end") {
+                    if (target.length === 0) {
+                        console.warn("Intent validation failed: target data is not an array.");
+                        continue;
+                    }
+
+                    const sourceStr = stableStringify(sourceValue);
+                    const targetStr = stableStringify(target[target.length -1]);
+                    if (sourceStr !== targetStr) {
+                        console.warn("Intent validation failed: data not at target position.");
+                        continue;
+                    }
+
+                    console.log("Intent validation passed: data exists at target position.");
+                }
+            }
+        }
+    }
+
     /**
      * Add the provided id to the execution tree.
      * @param {Object} abstraction
@@ -167,6 +218,8 @@ class AbstractionMap {
 
         // Calculate the current level based on the stack depth and lengths.
         const level = this.stack.reduce((sum, level) => sum + level.length, 0);
+
+        this.validateIntent(abstraction);
 
         this.validateConstraints(abstraction);
 
