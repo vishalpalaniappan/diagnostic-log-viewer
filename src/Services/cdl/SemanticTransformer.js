@@ -13,7 +13,7 @@ class SemanticTransformer {
         this.behaviors = designMap.behavior;
         this.threadDebuggers = threadDebuggers;
 
-        this.displayDebugInfo = true;
+        this.displayDebugInfo = false;
         this.behavioralTree = [];
 
         console.log("SemanticTransformer initialized", this.behaviors, this.threadDebuggers);
