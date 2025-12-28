@@ -27,8 +27,10 @@ class AbstractionMap {
     /**
      * Validate the constraints
      * @param {Object} abstraction
+     * @return {Array} violations
      */
     validateConstraints (abstraction) {
+        const violations = [];
         const node = this.sdg.abstractions[abstraction.abstractionId];
         if ("constraint" in node) {
             for (let i = 0; i < node.constraint.length; i++) {
@@ -78,7 +80,7 @@ class AbstractionMap {
                      */
                     if (value === null || typeof value !== "string" ||
                         value.length < constraint.value) {
-                        this.violations.push({
+                        violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
                             constraint: constraint,
@@ -93,7 +95,7 @@ class AbstractionMap {
                     */
                     if (value === null || (typeof value === "object" && Array.isArray(value))
                         || (typeof value !== "object")) {
-                        this.violations.push({
+                        violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
                             constraint: constraint,
@@ -106,7 +108,7 @@ class AbstractionMap {
                      *  - its not an array
                      */
                     if (value === null || !Array.isArray(value)) {
-                        this.violations.push({
+                        violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
                             constraint: constraint,
@@ -121,7 +123,7 @@ class AbstractionMap {
                      */
                     if (value === null || (typeof value === "object" && !Array.isArray(value)
                             && !Object.prototype.hasOwnProperty.call(value, key))) {
-                        this.violations.push({
+                        violations.push({
                             position: abstraction.position,
                             index: this.executionTree.length,
                             constraint: constraint,
@@ -130,6 +132,8 @@ class AbstractionMap {
                 }
             }
         }
+        this.violations = this.violations.concat(violations);
+        return violations;
     }
 
 
@@ -139,14 +143,15 @@ class AbstractionMap {
      * @return {undefined}
      */
     validateIntent (abstraction) {
+        const violations = [];
         const node = this.sdg.abstractions[abstraction.abstractionId];
         if (!node) {
             console.warn(`Abstraction node not found for id: ${abstraction.abstractionId}`);
-            return;
+            return violations;
         }
 
         if (!("intent_validation" in node)) {
-            return;
+            return violations;
         }
 
         for (let i = 0; i < node.intent_validation.length; i++) {
@@ -165,6 +170,11 @@ class AbstractionMap {
                 if (validation.position === "end") {
                     if (target.length === 0) {
                         console.warn("Intent validation failed: target data is not an array.");
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.executionTree.length,
+                            validation: validation,
+                        });
                         continue;
                     }
 
@@ -172,6 +182,11 @@ class AbstractionMap {
                     const targetStr = stableStringify(target[target.length -1]);
                     if (sourceStr !== targetStr) {
                         console.warn("Intent validation failed: data not at target position.");
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.executionTree.length,
+                            validation: validation,
+                        });
                         continue;
                     }
 
@@ -179,6 +194,7 @@ class AbstractionMap {
                 }
             }
         }
+        return violations;
     }
 
     /**
@@ -219,9 +235,9 @@ class AbstractionMap {
         // Calculate the current level based on the stack depth and lengths.
         const level = this.stack.reduce((sum, level) => sum + level.length, 0);
 
-        this.validateIntent(abstraction);
-
-        this.validateConstraints(abstraction);
+        const intentViolations = this.validateIntent(abstraction);
+        const constraintViolations = this.validateConstraints(abstraction);
+        const violations = intentViolations.concat(constraintViolations);
 
         const updatedIntent = this.replacePlaceHoldersInIntent(
             this.sdg.abstractions[id], abstraction.varStack
@@ -241,6 +257,7 @@ class AbstractionMap {
             "abstractionId": id,
             "abstractionType": this.sdg.abstractions[id]?.type,
             "meta": this.sdg.abstractions[id],
+            "violations": violations,
         };
         this.executionTree.push(entry);
 

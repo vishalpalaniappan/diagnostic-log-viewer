@@ -37,14 +37,11 @@ export function AbstractionRow ({node}) {
             setHasViolation(false);
             setDebugText(undefined);
 
-            if (node.invalid) {
+            if (node.violations.length > 0) {
                 setHasViolation(true);
                 setDebugText("violation");
             }
-            if (node.rootCause) {
-                setHasViolation(true);
-                setDebugText("root cause");
-            }
+
             if (node.exception) {
                 setHasViolation(true);
                 setSelectedStyle({background: "#3f191b", color: "white"});
@@ -170,7 +167,9 @@ export function AbstractionRow ({node}) {
 
                 {hasViolation ?
                     <div className="analysis-status-container">
-                        <span className="message">{debugText}</span>
+                        <span className="message">
+                            {debugText}
+                        </span>
                     </div>:
                     <></>
                 }
