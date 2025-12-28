@@ -173,8 +173,6 @@ class AbstractionMap {
             "level": level,
             "thread": thread,
             "intent": this.sdg.abstractions[id].intent,
-            "collapsible": true,
-            "collapsed": false,
             "index": this.executionTree.length,
             "filePath": abstraction.getFilePath(),
             "fileName": abstraction.getFileName(),
@@ -187,6 +185,19 @@ class AbstractionMap {
             "meta": this.sdg.abstractions[id],
         };
         this.executionTree.push(entry);
+
+        // Set the collapseible state of the previous entry
+        // based on the current level.
+        if (this.executionTree.length > 1) {
+            const prevEntry = this.executionTree[this.executionTree.length -2];
+            if (entry.level > prevEntry.level) {
+                prevEntry.collapsible = true;
+                prevEntry.collapsed = false;
+            } else {
+                prevEntry.collapsible = false;
+                prevEntry.collapsed = false;
+            }
+        }
     }
 
     /**
