@@ -409,8 +409,6 @@ class Thread {
 
         this.executionTree = map.executionTree;
 
-        console.log(this.executionTree);
-
         this.executionTreeFull = [];
         for (let i = 0; i < map.executionTree.length; i++) {
             this.executionTreeFull.push({...map.executionTree[i]});
