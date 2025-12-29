@@ -30,8 +30,12 @@ export function SemanticExecutionGraph () {
             return;
         }
         const stackLevel = stack.callStack[stackPosition].position;
-        for (let index = 0; index < seg.length; index++) {
-            const node = seg[index];
+        const threadId = stack.callStack[stackPosition].threadId;
+        if (!("threadId" in seg)) {
+            return;
+        }
+        for (let index = 0; index < seg[threadId].length; index++) {
+            const node = seg[threadId][index];
             if (node.position === stackLevel) {
                 node.selected = true;
                 setSelectedNode(node);
@@ -47,7 +51,7 @@ export function SemanticExecutionGraph () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("row" + node.index);
+        const nodeElement = document.getElementById("row" + node.threadId+ node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -73,35 +77,43 @@ export function SemanticExecutionGraph () {
             const execution = [];
             let collapsedLevel;
             let collapsing = false;
+            const threads = Object.keys(seg);
 
-            for (let index = 0; index < seg.length; index++) {
-                const node = seg[index];
+            for (let tIndex = 0; tIndex < threads.length; tIndex++) {
+                const threadId = threads[tIndex];
+                const threadSeg = seg[threadId];
 
-                // If we are collapsing and we reached the same
-                // level or below, then stop collapsing.
-                if (collapsing && node.level <= collapsedLevel) {
-                    collapsing = false;
-                }
+                for (let index = 0; index < threadSeg.length; index++) {
+                    const node = threadSeg[index];
 
-                // If the node is collapsed and we aren't collapsing
-                // then start collapsing
-                if (node.collapsed && !collapsing) {
-                    collapsedLevel = node.level;
-                    collapsing = true;
-                    execution.push(
-                        <SEGNode
-                            key={node.index}
+                    // If we are collapsing and we reached the same
+                    // level or below, then stop collapsing.
+                    if (collapsing && node.level <= collapsedLevel) {
+                        collapsing = false;
+                    }
+
+                    // If the node is collapsed and we aren't collapsing
+                    // then start collapsing
+                    if (node.collapsed && !collapsing) {
+                        collapsedLevel = node.level;
+                        collapsing = true;
+                        execution.push(
+                            <SEGNode
+                                key={threadId + node.index}
+                                thread={threadId}
+                                node={node}/>
+                        );
+                        continue;
+                    }
+
+                    // If we aren't collapsing this node, then add the node.
+                    if (!collapsing) {
+                        execution.push(<SEGNode
+                            key={threadId + node.index}
+                            thread={threadId}
                             node={node}/>
-                    );
-                    continue;
-                }
-
-                // If we aren't collapsing this node, then add the node.
-                if (!collapsing) {
-                    execution.push(<SEGNode
-                        key={node.index}
-                        node={node}/>
-                    );
+                        );
+                    }
                 }
             }
             setSegInstance(execution);
@@ -122,8 +134,9 @@ export function SemanticExecutionGraph () {
      * @param {Object} selectedNode
      */
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < seg.length; index++) {
-            const node = seg[index];
+        const threadId = selectedNode.threadId;
+        for (let index = 0; index < seg[threadId].length; index++) {
+            const node = seg[threadId][index];
             if (node === selectedNode) {
                 node.selected = true;
                 setActiveAbstraction({

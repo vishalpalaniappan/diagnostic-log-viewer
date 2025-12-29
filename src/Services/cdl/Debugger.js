@@ -164,21 +164,22 @@ class Debugger {
      * This function sends the execution tree to be visualized.
      */
     sendExecutionTree () {
+        const segs = {};
         for (const thread in this.debuggers) {
             if (thread) {
                 const instance = this.debuggers[thread];
                 if (instance.thread.seg) {
-                    postMessage({
-                        code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
-                        args: {
-                            threadId: thread,
-                            seg: instance.thread.seg,
-                        },
-                    });
-                    break;
+                    segs[thread] = instance.thread.seg;
                 }
             }
         }
+
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
+            args: {
+                seg: segs,
+            },
+        });
     }
 
     /**
@@ -266,6 +267,7 @@ class Debugger {
      * @param {String} threadId
      */
     goToPosition (position, threadId) {
+        console.log(position, threadId, this.debuggers);
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.goToPosition(position);
         this.sendStackInformation(threadId);
