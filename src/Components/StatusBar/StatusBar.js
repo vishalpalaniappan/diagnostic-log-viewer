@@ -4,7 +4,6 @@ import {Eyeglasses} from "react-bootstrap-icons";
 
 import PROGRAM_STATE from "../../PROGRAM_STATE";
 import ActionsContext from "../../Providers/ActionsContext";
-import StackContext from "../../Providers/StackContext";
 import {StatusBarMenu} from "./StatusBarMenu/StatusBarMenu";
 
 import "./StatusBar.scss";
@@ -17,7 +16,6 @@ StatusBar.propTypes = {
  * @return {JSX.Element}
  */
 export function StatusBar ({}) {
-    const {activeThread} = useContext(StackContext);
     const {mode, actions} = useContext(ActionsContext);
 
     const statusRef = useRef();
