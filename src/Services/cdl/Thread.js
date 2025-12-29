@@ -406,6 +406,13 @@ class Thread {
             }
         }
 
+        map.seg.unshift({
+            "level": 0,
+            "threadId": this.threadId,
+            "startMarker": true,
+            "collapsible": true,
+            "collapsed": false,
+        });
         return map.seg;
     }
 

@@ -5,6 +5,7 @@ import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import SEGInstanceContext from "./SEGInstanceContext";
 import {SEGNode} from "./SEGNode/SEGNode";
+import {ThreadStartNode} from "./ThreadStartNode/ThreadStartNode";
 
 import "./SemanticExecutionGraph.scss";
 
@@ -75,16 +76,28 @@ export function SemanticExecutionGraph () {
     const renderTree = () => {
         if (seg) {
             const execution = [];
-            let collapsedLevel;
-            let collapsing = false;
             const threads = Object.keys(seg);
 
             for (let tIndex = 0; tIndex < threads.length; tIndex++) {
                 const threadId = threads[tIndex];
                 const threadSeg = seg[threadId];
+                let collapsedLevel;
+                let collapsing = false;
 
                 for (let index = 0; index < threadSeg.length; index++) {
                     const node = threadSeg[index];
+
+                    // Render the row which is the root of the thread.
+                    if (node.startMarker) {
+                        execution.push(
+                            <ThreadStartNode key={"start-" + threadId} node={node}/>
+                        );
+                        if (node.collapsed) {
+                            collapsedLevel = node.level;
+                            collapsing = true;
+                        }
+                        continue;
+                    }
 
                     // If we are collapsing and we reached the same
                     // level or below, then stop collapsing.
@@ -100,7 +113,6 @@ export function SemanticExecutionGraph () {
                         execution.push(
                             <SEGNode
                                 key={threadId + node.index}
-                                thread={threadId}
                                 node={node}/>
                         );
                         continue;
@@ -110,7 +122,6 @@ export function SemanticExecutionGraph () {
                     if (!collapsing) {
                         execution.push(<SEGNode
                             key={threadId + node.index}
-                            thread={threadId}
                             node={node}/>
                         );
                     }

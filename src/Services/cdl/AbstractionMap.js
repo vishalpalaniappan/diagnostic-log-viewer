@@ -7,8 +7,6 @@ class AbstractionMap {
     /**
      * Initialize the abstraction map.
      * @param {Object} sdg
-     * @param {Object} sdgMeta
-     * @param {Object} designMap
      */
     constructor (sdg) {
         this.sdg = sdg;
@@ -244,7 +242,7 @@ class AbstractionMap {
         );
 
         const entry = {
-            "level": level,
+            "level": level + 1,
             "thread": thread,
             "intent": updatedIntent,
             "index": this.seg.length,
