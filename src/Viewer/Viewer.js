@@ -3,7 +3,6 @@ import React, {useContext, useEffect, useState} from "react";
 import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
 import ActionsContext from "../Providers/ActionsContext";
-import ExecutionTreeContext from "../Providers/ExecutionTreeContext";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import {SideContainerGraph} from "./SideContainer/SideContainerGraph";
 import {SideContainerStack} from "./SideContainer/SideContainerStack";
