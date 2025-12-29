@@ -4,15 +4,15 @@ import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
-import ExecutionTreeInstanceContext from "./ExecutionTreeInstanceContext";
+import SDGInstanceContext from "./SDGInstanceContext";
 
-import "./ExecutionTree.scss";
+import "./SemanticDesignGraph.scss";
 
 /**
- * Contains the execution tree.
+ * Contains the semantic design graph.
  * @return {JSX.Element}
  */
-export function ExecutionTree () {
+export function SemanticDesignGraph () {
     const {executionTreeFull} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
@@ -178,7 +178,7 @@ export function ExecutionTree () {
     };
 
     return (
-        <ExecutionTreeInstanceContext.Provider
+        <SDGInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="treeMenuContainer">
                 <div className="topContainer">
@@ -193,8 +193,8 @@ export function ExecutionTree () {
                 </div>
                 {rootCauses}
             </div>
-        </ExecutionTreeInstanceContext.Provider>
+        </SDGInstanceContext.Provider>
     );
 }
 
-export default ExecutionTree;
+export default SemanticDesignGraph;

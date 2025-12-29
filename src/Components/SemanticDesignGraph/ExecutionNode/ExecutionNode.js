@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
 import BreakpointsContext from "../../../Providers/BreakpointsContext";
-import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
+import SDGInstanceContext from "../SDGInstanceContext";
 
 import "./ExecutionNode.scss";
 
@@ -19,7 +19,7 @@ AbstractionRow.propTypes = {
  */
 export function AbstractionRow ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
-    const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
+    const {selectedNode, selectNode, toggleCollapse} = useContext(SDGInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
     const [debugText, setDebugText] = useState();
     const [hasViolation, setHasViolation] = useState();
