@@ -3,8 +3,8 @@ import React, {useContext, useEffect, useState} from "react";
 import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
-import {AbstractionRow} from "./ExecutionNode/ExecutionNode";
 import SDGInstanceContext from "./SDGInstanceContext";
+import {SDGNode} from "./SDGNode/SDGNode";
 
 import "./SemanticDesignGraph.scss";
 
@@ -90,7 +90,7 @@ export function SemanticDesignGraph () {
                     collapsedLevel = node.level;
                     collapsing = true;
                     execution.push(
-                        <AbstractionRow
+                        <SDGNode
                             key={node.index}
                             node={node}/>
                     );
@@ -99,7 +99,7 @@ export function SemanticDesignGraph () {
 
                 // If we aren't collapsing this node, then add the node.
                 if (!collapsing) {
-                    execution.push(<AbstractionRow
+                    execution.push(<SDGNode
                         key={node.index}
                         node={node}/>
                     );

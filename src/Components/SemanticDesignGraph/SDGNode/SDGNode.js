@@ -6,9 +6,9 @@ import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstra
 import BreakpointsContext from "../../../Providers/BreakpointsContext";
 import SDGInstanceContext from "../SDGInstanceContext";
 
-import "./ExecutionNode.scss";
+import "./SDGNode.scss";
 
-AbstractionRow.propTypes = {
+SDGNode.propTypes = {
     node: PropTypes.object,
 };
 
@@ -17,7 +17,7 @@ AbstractionRow.propTypes = {
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function AbstractionRow ({node}) {
+export function SDGNode ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
     const {selectedNode, selectNode, toggleCollapse} = useContext(SDGInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
