@@ -173,7 +173,7 @@ class Debugger {
                         args: {
                             threadId: thread,
                             executionTree: instance.thread.executionTree,
-                        }
+                        },
                     });
                     break;
                 }

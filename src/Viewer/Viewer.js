@@ -1,7 +1,8 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 
 import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
+import PROGRAM_STATE from "../PROGRAM_STATE";
 import ActionsContext from "../Providers/ActionsContext";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import {SideContainerGraph} from "./SideContainer/SideContainerGraph";
@@ -18,23 +19,23 @@ export function Viewer () {
     const {mode} = useContext(ActionsContext);
 
     const getToolKit = () => {
-        if (mode === "STACK") {
+        if (mode === PROGRAM_STATE.STACK) {
             return <DebugToolKit />;
-        } else if (mode === "EXECUTION") {
+        } else if (mode === PROGRAM_STATE.SEG) {
             return <DebugToolKit />;
         }
     };
 
     const getSideContainer = () => {
-        if (mode === "STACK") {
+        if (mode === PROGRAM_STATE.STACK) {
             return <SideContainerStack />;
-        } else if (mode === "EXECUTION") {
+        } else if (mode === PROGRAM_STATE.SEG) {
             return <SideContainerGraph />;
         }
     };
 
     const getRightSideContainer = () => {
-        if (mode === "EXECUTION") {
+        if (mode === PROGRAM_STATE.SEG) {
             return <RightSideContainer/>;
         }
     };

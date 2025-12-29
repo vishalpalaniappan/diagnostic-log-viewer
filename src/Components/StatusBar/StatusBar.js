@@ -2,10 +2,10 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 
 import {Eyeglasses} from "react-bootstrap-icons";
 
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import ActionsContext from "../../Providers/ActionsContext";
 import StackContext from "../../Providers/StackContext";
-
-import { StatusBarMenu } from "./StatusBarMenu/StatusBarMenu";
+import {StatusBarMenu} from "./StatusBarMenu/StatusBarMenu";
 
 import "./StatusBar.scss";
 
@@ -40,11 +40,9 @@ export function StatusBar ({}) {
     }, [actions]);
 
     const getProgramMode = () => {
-        if (mode === "BEHAVIORAL") {
-            return "Program Mode: Behavioral Debugging";
-        } else if (mode === "STACK") {
+        if (mode === PROGRAM_STATE.STACK) {
             return "Program Mode: Stack Based Debugging";
-        } else if (mode === "EXECUTION") {
+        } else if (mode === PROGRAM_STATE.SEG) {
             return "Program Mode: SEG Based Debugging";
         }
     };

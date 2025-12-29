@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import PropTypes from "prop-types";
 
+import PROGRAM_STATE from "../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
@@ -144,12 +145,12 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         });
     };
 
-    // Load the program state based on the infromation available
+    // Load the program state based on the information available
     const setProgramState = (args) => {
         if (args.executionTree) {
-            setMode("EXECUTION");
+            setMode(PROGRAM_STATE.SEG);
         } else {
-            setMode("STACK");
+            setMode(PROGRAM_STATE.STACK);
         }
     };
 

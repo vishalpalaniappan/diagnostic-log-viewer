@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 
 import PropTypes from "prop-types";
 
+import PROGRAM_STATE from "../../../PROGRAM_STATE";
 import ActionsContext from "../../../Providers/ActionsContext";
 import ExecutionTreeContext from "../../../Providers/ExecutionTreeContext";
 
@@ -25,8 +26,8 @@ StatusBarMenu.propTypes = {
  * @return {JSX.Element}
  */
 export function StatusBarMenu ({className, disabled, children}) {
-    const {behavior, executionTree} = useContext(ExecutionTreeContext);
-    const {mode, setMode} = useContext(ActionsContext);
+    const {executionTree} = useContext(ExecutionTreeContext);
+    const {setMode} = useContext(ActionsContext);
     const [showMenu, setShowMenu] = useState(false);
     const [bottom, setBottom] = useState(null);
     const [left, setLeft] = useState(null);
@@ -76,16 +77,6 @@ export function StatusBarMenu ({className, disabled, children}) {
         setShowMenu(!showMenu);
     };
 
-    const setProgramMode = (mode) => {
-        if (mode === "stack") {
-            setMode("STACK");
-        } else if (mode === "execution") {
-            setMode("EXECUTION");
-        } else if (mode === "behavioral") {
-            setMode("BEHAVIORAL");
-        }
-    };
-
     return (
         <button
             className={className}
@@ -103,18 +94,12 @@ export function StatusBarMenu ({className, disabled, children}) {
                     }}
                 >
                     {
-                        behavior &&
-                        <option className="px-2" onClick={() => setProgramMode("behavioral")}>
-                            Behavioral Debugging
-                        </option>
-                    }
-                    {
                         executionTree &&
-                        <option className="px-2" onClick={() => setProgramMode("execution")}>
+                        <option className="px-2" onClick={() => setMode(PROGRAM_STATE.SEG)}>
                             SEG Based Debugging
                         </option>
                     }
-                    <option className="px-2" onClick={() => setProgramMode("stack")}>
+                    <option className="px-2" onClick={() => setMode(PROGRAM_STATE.STACK)}>
                         Traditional Stack Debugging
                     </option>
                 </div>
