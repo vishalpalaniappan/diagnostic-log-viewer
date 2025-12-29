@@ -1,14 +1,15 @@
-.abstractionRow {
+.threadStartRow {
     width:100%;
     color:#d7d7d7;
     overflow:hidden;
     text-overflow: ellipsis;
-    padding:0 5px;
+    padding:5px 5px;
     display:flex;
     flex-direction: row;
+    background: #1e1e1e;
 }
 
-.abstractionRow:hover{
+.threadStartRow:hover{
     background-color:rgb(44, 44, 44);
     cursor:pointer;
 }

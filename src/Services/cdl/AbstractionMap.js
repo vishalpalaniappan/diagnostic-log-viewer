@@ -242,7 +242,7 @@ class AbstractionMap {
         );
 
         const entry = {
-            "level": level + 1,
+            "level": level,
             "thread": thread,
             "intent": updatedIntent,
             "index": this.seg.length,

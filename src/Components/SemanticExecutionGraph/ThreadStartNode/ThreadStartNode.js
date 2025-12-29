@@ -65,20 +65,14 @@ export function ThreadStartNode ({node}) {
     };
 
     return (
-        <div id={"start-" + node.threadId} className="abstractionRow">
+        <div id={"start-" + node.threadId} className="threadStartRow">
             <div className="icon-container">
             </div>
 
-            <div className="icon-container">
-            </div>
+            <div className="flex-grow-1 d-flex flex-row w-100"
+                onClick={(e) => clickToggle(e, node)}>
 
-            <div className="flex-grow-1 d-flex flex-row w-100">
-
-                <div className="d-flex flex-row">
-                    {getSpacers(node)}
-                </div>
-
-                <div onClick={(e) => clickToggle(e, node)} className="collapse-icon-container">
+                <div className="collapse-icon-container">
                     {getCollapsed(node)}
                 </div>
 

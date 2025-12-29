@@ -96,7 +96,7 @@ export function SEGNode ({node}) {
      */
     const getSpacers = (node) => {
         const spacers = [];
-        for (let i = 0; i < node.level - 1; i++) {
+        for (let i = 0; i < node.level - 2; i++) {
             spacers.push(
                 <div className="spacer" key={i}>
                     <div className="vertical-line"></div>
