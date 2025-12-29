@@ -18,33 +18,34 @@ export function SemanticExecutionGraph () {
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
+    const [selectedNodeByThread, setSelectedNodeByThread] = useState({});
     const [segInstance, setSegInstance] = useState();
 
-    // Sync selected stack with the execution tree. This is to enable
-    // backwards compatibility but in the future, we can eliminate the stack.
+    // Sync selected stack with the SEG. We use stack position to find current
+    // executed position in SEG for each thread. This preserves backward
+    // comaptibility while also allowing us to navigate the program using SEG.
     useEffect(() => {
-        if (!stacks || stackPosition === undefined || !seg || !stacks[activeThread]) {
+        if (!stacks || !seg) {
             return;
         }
-        const stack = stacks[activeThread].stack;
-        if (!stack?.callStack || stackPosition >= stack.callStack.length) {
-            return;
-        }
-        const stackLevel = stack.callStack[stackPosition].position;
-        const threadId = stack.callStack[stackPosition].threadId;
-        if (!("threadId" in seg)) {
-            return;
-        }
-        for (let index = 0; index < seg[threadId].length; index++) {
-            const node = seg[threadId][index];
-            if (node.position === stackLevel) {
-                node.selected = true;
-                setSelectedNode(node);
-            } else {
-                node.selected = false;
+        const threads = Object.keys(stacks);
+        const selectedNodes = {};
+        for (let tIndex = 0; tIndex < threads.length; tIndex++) {
+            const threadId = threads[tIndex];
+            const stack = stacks[threadId].stack;
+            const segInstance = seg[threadId];
+            for (let index = 0; index < segInstance.length; index++) {
+                if (segInstance[index].position === stack.callStack[0].position) {
+                    selectedNodes[threadId] = segInstance[index];
+                    if (threadId === activeThread) {
+                        setSelectedNode(segInstance[index]);
+                    }
+                }
             }
         }
-    }, [stackPosition, stacks, seg]);
+        // Set the active position in each thread.
+        setSelectedNodeByThread(selectedNodes);
+    }, [stackPosition, activeThread, stacks, seg]);
 
 
     /**
@@ -52,7 +53,7 @@ export function SemanticExecutionGraph () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("row" + node.threadId+ node.index);
+        const nodeElement = document.getElementById("row" + node.threadId + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -149,14 +150,10 @@ export function SemanticExecutionGraph () {
         for (let index = 0; index < seg[threadId].length; index++) {
             const node = seg[threadId][index];
             if (node === selectedNode) {
-                node.selected = true;
                 setActiveAbstraction({
                     index: index,
                     node: node,
                 });
-                setSelectedNode(node);
-            } else {
-                node.selected = false;
             }
         }
     };
@@ -172,7 +169,7 @@ export function SemanticExecutionGraph () {
 
     return (
         <SEGInstanceContext.Provider
-            value={{selectedNode, selectNode, toggleCollapse}}>
+            value={{selectedNode, selectNode, selectedNodeByThread, toggleCollapse}}>
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">

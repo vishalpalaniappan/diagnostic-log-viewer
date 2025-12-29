@@ -267,7 +267,6 @@ class Debugger {
      * @param {String} threadId
      */
     goToPosition (position, threadId) {
-        console.log(position, threadId, this.debuggers);
         const threadDebugger = this.debuggers[threadId];
         threadDebugger.goToPosition(position);
         this.sendStackInformation(threadId);
