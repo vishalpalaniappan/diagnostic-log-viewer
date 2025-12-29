@@ -2,12 +2,10 @@ import React, {useContext, useEffect, useState} from "react";
 
 import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
-import {DebugToolKitSemantic} from "../Components/DebugToolKit/DebugToolKitSemantic";
 import ActionsContext from "../Providers/ActionsContext";
 import ExecutionTreeContext from "../Providers/ExecutionTreeContext";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
 import {SideContainerGraph} from "./SideContainer/SideContainerGraph";
-import {SideContainerSemantic} from "./SideContainer/SideContainerSemantic";
 import {SideContainerStack} from "./SideContainer/SideContainerStack";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
 
@@ -19,24 +17,12 @@ import "./Viewer.scss";
  */
 export function Viewer () {
     const {mode} = useContext(ActionsContext);
-    const {executionTree} = useContext(ExecutionTreeContext);
-    const [showExecutionTree, setShowExecutionTree] = useState(false);
-
-    useEffect(() => {
-        if (executionTree) {
-            setShowExecutionTree(true);
-        } else {
-            setShowExecutionTree(false);
-        }
-    }, [executionTree]);
 
     const getToolKit = () => {
         if (mode === "STACK") {
             return <DebugToolKit />;
         } else if (mode === "EXECUTION") {
             return <DebugToolKit />;
-        } else if (mode === "BEHAVIORAL") {
-            return <DebugToolKitSemantic />;
         }
     };
 
@@ -45,15 +31,11 @@ export function Viewer () {
             return <SideContainerStack />;
         } else if (mode === "EXECUTION") {
             return <SideContainerGraph />;
-        } else if (mode === "BEHAVIORAL") {
-            return <SideContainerSemantic />;
         }
     };
 
     const getRightSideContainer = () => {
         if (mode === "EXECUTION") {
-            return <RightSideContainer/>;
-        } else if (mode === "BEHAVIORAL") {
             return <RightSideContainer/>;
         }
     };

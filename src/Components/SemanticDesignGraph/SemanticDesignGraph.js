@@ -13,7 +13,7 @@ import "./SemanticDesignGraph.scss";
  * @return {JSX.Element}
  */
 export function SemanticDesignGraph () {
-    const {executionTreeFull} = useContext(ExecutionTreeContext);
+    const {executionTree} = useContext(ExecutionTreeContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
@@ -22,7 +22,7 @@ export function SemanticDesignGraph () {
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
     useEffect(() => {
-        if (!stacks || stackPosition === undefined || !executionTreeFull || !stacks[activeThread]) {
+        if (!stacks || stackPosition === undefined || !executionTree || !stacks[activeThread]) {
             return;
         }
         const stack = stacks[activeThread].stack;
@@ -30,8 +30,8 @@ export function SemanticDesignGraph () {
             return;
         }
         const stackLevel = stack.callStack[stackPosition].position;
-        for (let index = 0; index < executionTreeFull.length; index++) {
-            const node = executionTreeFull[index];
+        for (let index = 0; index < executionTree.length; index++) {
+            const node = executionTree[index];
             if (node.position === stackLevel) {
                 node.selected = true;
                 setSelectedNode(node);
@@ -39,7 +39,7 @@ export function SemanticDesignGraph () {
                 node.selected = false;
             }
         }
-    }, [stackPosition, stacks, executionTreeFull]);
+    }, [stackPosition, stacks, executionTree]);
 
 
     /**
@@ -69,13 +69,13 @@ export function SemanticDesignGraph () {
      * Render the execution tree.
      */
     const renderTree = () => {
-        if (executionTreeFull) {
+        if (executionTree) {
             const execution = [];
             let collapsedLevel;
             let collapsing = false;
 
-            for (let index = 0; index < executionTreeFull.length; index++) {
-                const node = executionTreeFull[index];
+            for (let index = 0; index < executionTree.length; index++) {
+                const node = executionTree[index];
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
@@ -122,8 +122,8 @@ export function SemanticDesignGraph () {
      * @param {Object} selectedNode
      */
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < executionTreeFull.length; index++) {
-            const node = executionTreeFull[index];
+        for (let index = 0; index < executionTree.length; index++) {
+            const node = executionTree[index];
             if (node === selectedNode) {
                 node.selected = true;
                 setActiveAbstraction({
@@ -141,10 +141,10 @@ export function SemanticDesignGraph () {
      * Render the tree when the execution tree changes.
      */
     useEffect(() => {
-        if (executionTreeFull) {
+        if (executionTree) {
             renderTree();
         }
-    }, [executionTreeFull]);
+    }, [executionTree]);
 
     return (
         <SDGInstanceContext.Provider

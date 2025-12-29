@@ -3,7 +3,6 @@ import clpFfiJsModuleInit from "clp-ffi-js";
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
 import CdlHeader from "./CdlHeader";
-import SemanticTransformer from "./SemanticTransformer";
 import ThreadDebugger from "./ThreadDebugger";
 
 /**
@@ -94,11 +93,6 @@ class Debugger {
         console.info(this.cdl);
         console.info(this.debuggers);
 
-        this.behavior = new SemanticTransformer(
-            this.header.getDesignMap(),
-            this.debuggers
-        );
-
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
             args: {
@@ -177,10 +171,9 @@ class Debugger {
                     postMessage({
                         code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
                         args: {
+                            threadId: thread,
                             executionTree: instance.thread.executionTree,
-                            executionTreeFull: instance.thread.executionTreeFull,
-                            behavior: instance.thread.behavior,
-                        },
+                        }
                     });
                     break;
                 }
