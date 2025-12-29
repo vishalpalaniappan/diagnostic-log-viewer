@@ -13,7 +13,7 @@ SEGNode.propTypes = {
 };
 
 /**
- * Contains a node in the execution tree.
+ * Contains a node in the semantic execution graph.
  * @param {Object} node
  * @return {JSX.Element}
  */
