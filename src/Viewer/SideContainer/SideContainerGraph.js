@@ -2,7 +2,8 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import {Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
 
-import {SemanticDesignGraph} from "../../Components/SemanticDesignGraph/SemanticDesignGraph";
+// eslint-disable-next-line max-len
+import {SemanticExecutionGraph} from "../../Components/SemanticExecutionGraph/SemanticExecutionGraph";
 import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
 
@@ -62,7 +63,7 @@ export function SideContainerGraph () {
 
     const getActiveMenuComponent = () => {
         if (activeMenu === 1) {
-            return <SemanticDesignGraph />;
+            return <SemanticExecutionGraph />;
         } else if (activeMenu === 2) {
             return <ShortcutContainer />;
         } else if (activeMenu === 3) {

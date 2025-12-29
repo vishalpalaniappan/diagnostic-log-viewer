@@ -1,28 +1,28 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
+import SegContext from "../../Providers/SegContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
-import SDGInstanceContext from "./SDGInstanceContext";
-import {SDGNode} from "./SDGNode/SDGNode";
+import SEGInstanceContext from "./SEGInstanceContext";
+import {SEGNode} from "./SEGNode/SEGNode";
 
-import "./SemanticDesignGraph.scss";
+import "./SemanticExecutionGraph.scss";
 
 /**
- * Contains the semantic design graph.
+ * Contains the semantic execution graph.
  * @return {JSX.Element}
  */
-export function SemanticDesignGraph () {
-    const {executionTree} = useContext(ExecutionTreeContext);
+export function SemanticExecutionGraph () {
+    const {seg} = useContext(SegContext);
     const {stackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
-    const [executionTreeInstance, setExecutionTreeInstance] = useState();
+    const [segInstance, setSegInstance] = useState();
 
     // Sync selected stack with the execution tree. This is to enable
     // backwards compatibility but in the future, we can eliminate the stack.
     useEffect(() => {
-        if (!stacks || stackPosition === undefined || !executionTree || !stacks[activeThread]) {
+        if (!stacks || stackPosition === undefined || !seg || !stacks[activeThread]) {
             return;
         }
         const stack = stacks[activeThread].stack;
@@ -30,8 +30,8 @@ export function SemanticDesignGraph () {
             return;
         }
         const stackLevel = stack.callStack[stackPosition].position;
-        for (let index = 0; index < executionTree.length; index++) {
-            const node = executionTree[index];
+        for (let index = 0; index < seg.length; index++) {
+            const node = seg[index];
             if (node.position === stackLevel) {
                 node.selected = true;
                 setSelectedNode(node);
@@ -39,7 +39,7 @@ export function SemanticDesignGraph () {
                 node.selected = false;
             }
         }
-    }, [stackPosition, stacks, executionTree]);
+    }, [stackPosition, stacks, seg]);
 
 
     /**
@@ -69,13 +69,13 @@ export function SemanticDesignGraph () {
      * Render the execution tree.
      */
     const renderTree = () => {
-        if (executionTree) {
+        if (seg) {
             const execution = [];
             let collapsedLevel;
             let collapsing = false;
 
-            for (let index = 0; index < executionTree.length; index++) {
-                const node = executionTree[index];
+            for (let index = 0; index < seg.length; index++) {
+                const node = seg[index];
 
                 // If we are collapsing and we reached the same
                 // level or below, then stop collapsing.
@@ -89,7 +89,7 @@ export function SemanticDesignGraph () {
                     collapsedLevel = node.level;
                     collapsing = true;
                     execution.push(
-                        <SDGNode
+                        <SEGNode
                             key={node.index}
                             node={node}/>
                     );
@@ -98,13 +98,13 @@ export function SemanticDesignGraph () {
 
                 // If we aren't collapsing this node, then add the node.
                 if (!collapsing) {
-                    execution.push(<SDGNode
+                    execution.push(<SEGNode
                         key={node.index}
                         node={node}/>
                     );
                 }
             }
-            setExecutionTreeInstance(execution);
+            setSegInstance(execution);
         }
     };
 
@@ -122,8 +122,8 @@ export function SemanticDesignGraph () {
      * @param {Object} selectedNode
      */
     const selectNode = (selectedNode) => {
-        for (let index = 0; index < executionTree.length; index++) {
-            const node = executionTree[index];
+        for (let index = 0; index < seg.length; index++) {
+            const node = seg[index];
             if (node === selectedNode) {
                 node.selected = true;
                 setActiveAbstraction({
@@ -141,13 +141,13 @@ export function SemanticDesignGraph () {
      * Render the tree when the execution tree changes.
      */
     useEffect(() => {
-        if (executionTree) {
+        if (seg) {
             renderTree();
         }
-    }, [executionTree]);
+    }, [seg]);
 
     return (
-        <SDGInstanceContext.Provider
+        <SEGInstanceContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="treeMenuContainer">
                 <div className="topContainer">
@@ -158,11 +158,11 @@ export function SemanticDesignGraph () {
                     </div>
                 </div>
                 <div className="executionTreeContainer scrollbar flex-grow-1">
-                    {executionTreeInstance}
+                    {segInstance}
                 </div>
             </div>
-        </SDGInstanceContext.Provider>
+        </SEGInstanceContext.Provider>
     );
 }
 
-export default SemanticDesignGraph;
+export default SemanticExecutionGraph;

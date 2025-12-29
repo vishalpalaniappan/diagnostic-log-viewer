@@ -7,9 +7,9 @@ import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
 import BreakpointsContext from "./BreakpointsContext";
-import ExecutionTreeContext from "./ExecutionTreeContext";
 import FileTreeContext from "./FileTreeContext";
 import GlobalVariablesContext from "./GlobalVariablesContext";
+import SegContext from "./SegContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
 import ThreadsContext from "./ThreadsContext";
@@ -41,7 +41,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [breakPoints, setBreakPoints] = useState();
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
-    const [executionTree, setExecutionTree] = useState();
+    const [seg, setSeg] = useState();
     const [mode, setMode] = useState("STACK");
     const [actions, setActions] = useState({value: "", tick: 0});
 
@@ -101,7 +101,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveThread(undefined);
         setActiveFile(undefined);
         setBreakPoints(undefined);
-        setExecutionTree(undefined);
+        setSeg(undefined);
     };
 
     // Create worker to handle file.
@@ -147,7 +147,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
 
     // Load the program state based on the information available
     const setProgramState = (args) => {
-        if (args.executionTree) {
+        if (args.seg) {
             setMode(PROGRAM_STATE.SEG);
         } else {
             setMode(PROGRAM_STATE.STACK);
@@ -178,7 +178,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 break;
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
                 setProgramState(event.data.args);
-                setExecutionTree(event.data.args.executionTree);
+                setSeg(event.data.args.seg);
                 break;
             default:
                 break;
@@ -198,12 +198,12 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                             setActiveThread, setActiveAbstraction}}>
                                         <ActiveFileContext.Provider
                                             value={{activeFile, setActiveFile}}>
-                                            <ExecutionTreeContext.Provider value={{executionTree}}>
+                                            <SegContext.Provider value={{seg}}>
                                                 <ActionsContext.Provider
                                                     value={{actions, mode, setMode, setActions}}>
                                                     {children}
                                                 </ActionsContext.Provider>
-                                            </ExecutionTreeContext.Provider>
+                                            </SegContext.Provider>
                                         </ActiveFileContext.Provider>
                                     </StackContext.Provider>
                                 </BreakpointsContext.Provider>

@@ -4,11 +4,11 @@ import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
 import BreakpointsContext from "../../../Providers/BreakpointsContext";
-import SDGInstanceContext from "../SDGInstanceContext";
+import SEGInstanceContext from "../SEGInstanceContext";
 
-import "./SDGNode.scss";
+import "./SEGNode.scss";
 
-SDGNode.propTypes = {
+SEGNode.propTypes = {
     node: PropTypes.object,
 };
 
@@ -17,9 +17,9 @@ SDGNode.propTypes = {
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function SDGNode ({node}) {
+export function SEGNode ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
-    const {selectedNode, selectNode, toggleCollapse} = useContext(SDGInstanceContext);
+    const {selectedNode, selectNode, toggleCollapse} = useContext(SEGInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
     const [debugText, setDebugText] = useState();
     const [hasViolation, setHasViolation] = useState();

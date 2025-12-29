@@ -20,7 +20,7 @@ class AbstractionMap {
 
         this.abstractionStack = [];
         this.stack = [];
-        this.executionTree = [];
+        this.seg = [];
         this.violations = [];
     }
 
@@ -82,7 +82,7 @@ class AbstractionMap {
                         value.length < constraint.value) {
                         violations.push({
                             position: abstraction.position,
-                            index: this.executionTree.length,
+                            index: this.seg.length,
                             constraint: constraint,
                         });
                     }
@@ -97,7 +97,7 @@ class AbstractionMap {
                         || (typeof value !== "object")) {
                         violations.push({
                             position: abstraction.position,
-                            index: this.executionTree.length,
+                            index: this.seg.length,
                             constraint: constraint,
                         });
                     }
@@ -110,7 +110,7 @@ class AbstractionMap {
                     if (value === null || !Array.isArray(value)) {
                         violations.push({
                             position: abstraction.position,
-                            index: this.executionTree.length,
+                            index: this.seg.length,
                             constraint: constraint,
                         });
                     }
@@ -125,7 +125,7 @@ class AbstractionMap {
                             && !Object.prototype.hasOwnProperty.call(value, key))) {
                         violations.push({
                             position: abstraction.position,
-                            index: this.executionTree.length,
+                            index: this.seg.length,
                             constraint: constraint,
                         });
                     }
@@ -172,7 +172,7 @@ class AbstractionMap {
                         console.warn("Intent validation failed: target data is not an array.");
                         violations.push({
                             position: abstraction.position,
-                            index: this.executionTree.length,
+                            index: this.seg.length,
                             validation: validation,
                         });
                         continue;
@@ -184,7 +184,7 @@ class AbstractionMap {
                         console.warn("Intent validation failed: data not at target position.");
                         violations.push({
                             position: abstraction.position,
-                            index: this.executionTree.length,
+                            index: this.seg.length,
                             validation: validation,
                         });
                         continue;
@@ -209,8 +209,8 @@ class AbstractionMap {
 
         // If the last entry in the execution tree is a function call,
         // we need to push the module onto the stack.
-        if (this.executionTree.length > 0) {
-            const tree = this.executionTree;
+        if (this.seg.length > 0) {
+            const tree = this.seg;
             if (tree[tree.length - 1].meta.type === "function_call") {
                 this.stack.push({"module": module, "length": 1});
             }
@@ -247,7 +247,7 @@ class AbstractionMap {
             "level": level,
             "thread": thread,
             "intent": updatedIntent,
-            "index": this.executionTree.length,
+            "index": this.seg.length,
             "filePath": abstraction.filePath,
             "fileName": abstraction.fileName,
             "lineno": abstraction.lineno,
@@ -259,12 +259,12 @@ class AbstractionMap {
             "meta": this.sdg.abstractions[id],
             "violations": violations,
         };
-        this.executionTree.push(entry);
+        this.seg.push(entry);
 
         // Set the collapseible state of the previous entry
         // based on the current level.
-        if (this.executionTree.length > 1) {
-            const prevEntry = this.executionTree[this.executionTree.length -2];
+        if (this.seg.length > 1) {
+            const prevEntry = this.seg[this.seg.length -2];
             if (entry.level > prevEntry.level) {
                 prevEntry.collapsible = true;
                 prevEntry.collapsed = false;

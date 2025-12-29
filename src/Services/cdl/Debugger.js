@@ -167,12 +167,12 @@ class Debugger {
         for (const thread in this.debuggers) {
             if (thread) {
                 const instance = this.debuggers[thread];
-                if (instance.thread.executionTree) {
+                if (instance.thread.seg) {
                     postMessage({
                         code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
                         args: {
                             threadId: thread,
-                            executionTree: instance.thread.executionTree,
+                            seg: instance.thread.seg,
                         },
                     });
                     break;

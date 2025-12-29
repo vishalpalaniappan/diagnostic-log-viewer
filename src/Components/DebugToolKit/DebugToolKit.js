@@ -4,7 +4,7 @@ import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpSho
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
 import ActionsContext from "../../Providers/ActionsContext";
-import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
+import SegContext from "../../Providers/SegContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import WorkerContext from "../../Providers/WorkerContext";
@@ -26,7 +26,7 @@ export function DebugToolKit ({}) {
     const {stacks, activeThread} = useContext(StackContext);
     const {setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
-    const {executionTree} = useContext(ExecutionTreeContext);
+    const {seg} = useContext(SegContext);
 
     const [stack, setStack] = useState();
 
@@ -167,7 +167,7 @@ export function DebugToolKit ({}) {
 
             case "ArrowUp":
                 if (e.ctrlKey) {
-                    if (!executionTree) {
+                    if (!seg) {
                         moveUpStack();
                     }
                 } else {
@@ -181,7 +181,7 @@ export function DebugToolKit ({}) {
 
             case "ArrowDown":
                 if (e.ctrlKey) {
-                    if (!executionTree) {
+                    if (!seg) {
                         moveDownStack();
                     }
                 } else {

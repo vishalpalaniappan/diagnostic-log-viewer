@@ -28,7 +28,7 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
-        this.map = this.getExecutionTree(this.currPosition);
+        this.seg = this.generateSeg();
     }
 
     /**
@@ -304,11 +304,10 @@ class Thread {
     }
 
     /**
-     * This function gets the execution tree given the position.
-     * @param {*} finalPosition
-     * @return {Object|null}
+     * This function processes the execution logs and generates the SEG.
+     * @return {null|Object} Returns the semantic execution graph or null.
      */
-    getExecutionTree (finalPosition) {
+    generateSeg () {
         if (!this.header.hasAbstractionMap()) {
             console.log("Trace file does not have an abstraction map");
             return null;
@@ -335,14 +334,14 @@ class Thread {
                 abstractionInstance.varStack = this.getVariablesAtPosition(position);
                 map.mapCurrentLevel(abstractionInstance);
             }
-        } while (position++ < finalPosition);
+        } while (++position < this.execution.length);
 
         // If the program ended in failure, save the exception
         // to the final node in the semantic execution graph
         let failedAbstraction;
-        if (this.exception && map.executionTree.length > 0) {
-            const len = map.executionTree.length;
-            const lastEntry = map.executionTree[len - 1];
+        if (this.exception && map.seg.length > 0) {
+            const len = map.seg.length;
+            const lastEntry = map.seg[len - 1];
             lastEntry.exception = this.exception;
             failedAbstraction = lastEntry.abstractionId;
         }
@@ -377,8 +376,8 @@ class Thread {
             // TODO: Improve this crude implementation.
             for (let i = 0; i < filteredViolations.length; i++) {
                 const entry = filteredViolations[i];
-                map.executionTree[entry.index].rootCause = true;
-                map.executionTree[entry.index].violation = entry;
+                map.seg[entry.index].rootCause = true;
+                map.seg[entry.index].violation = entry;
             }
 
 
@@ -387,8 +386,8 @@ class Thread {
              * This is temporary and I will replace this with a more
              * maintainable and scalable approach.
              ***/
-            if (this.exception && filteredViolations.length > 0 && map.executionTree.length > 0) {
-                const lastEntry = map.executionTree[map.executionTree.length - 1];
+            if (this.exception && filteredViolations.length > 0 && map.seg.length > 0) {
+                const lastEntry = map.seg[map.seg.length - 1];
                 const abstractionId = lastEntry["abstractionId"];
                 const failureInfo = [];
 
@@ -407,14 +406,7 @@ class Thread {
             }
         }
 
-        this.executionTree = map.executionTree;
-
-        this.executionTreeFull = [];
-        for (let i = 0; i < map.executionTree.length; i++) {
-            this.executionTreeFull.push({...map.executionTree[i]});
-        }
-
-        return map;
+        return map.seg;
     }
 
     /**

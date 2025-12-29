@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 import PROGRAM_STATE from "../../../PROGRAM_STATE";
 import ActionsContext from "../../../Providers/ActionsContext";
-import ExecutionTreeContext from "../../../Providers/ExecutionTreeContext";
+import SegContext from "../../../Providers/SegContext";
 
 import "./StatusBarMenu.scss";
 
@@ -26,7 +26,7 @@ StatusBarMenu.propTypes = {
  * @return {JSX.Element}
  */
 export function StatusBarMenu ({className, disabled, children}) {
-    const {executionTree} = useContext(ExecutionTreeContext);
+    const {seg} = useContext(SegContext);
     const {setMode} = useContext(ActionsContext);
     const [showMenu, setShowMenu] = useState(false);
     const [bottom, setBottom] = useState(null);
@@ -94,7 +94,7 @@ export function StatusBarMenu ({className, disabled, children}) {
                     }}
                 >
                     {
-                        executionTree &&
+                        seg &&
                         <option className="px-2" onClick={() => setMode(PROGRAM_STATE.SEG)}>
                             SEG Based Debugging
                         </option>
