@@ -1,4 +1,4 @@
-import { stableStringify } from "./helper";
+import {stableStringify} from "./helper";
 
 /**
  * This class constructures the execution tree using the abstraction map.
