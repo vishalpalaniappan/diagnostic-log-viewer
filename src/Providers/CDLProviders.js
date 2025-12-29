@@ -8,7 +8,6 @@ import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
 import BreakpointsContext from "./BreakpointsContext";
 import FileTreeContext from "./FileTreeContext";
-import GlobalVariablesContext from "./GlobalVariablesContext";
 import SegContext from "./SegContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
