@@ -3,7 +3,6 @@ import React, {useContext} from "react";
 import ReactJsonView from "@microlink/react-json-view";
 
 import VariablesContext from "../../../Providers/VariablesContext";
-import GlobalVariablesContext from "../../../Providers/GlobalVariablesContext";
 
 import "./VariableStackContainer.scss";
 
@@ -12,8 +11,7 @@ import "./VariableStackContainer.scss";
  * @return {JSX.Element}
  */
 export function VariableStackContainer () {
-    const {localVariables} = useContext(VariablesContext);
-    const {globalVariables} = useContext(GlobalVariablesContext);
+    const {variables} = useContext(VariablesContext);
 
     const variableStackTheme = {
         base00: "#252526",
@@ -37,7 +35,7 @@ export function VariableStackContainer () {
     return (
         <div className="variableStackContainer w-100 h-100 ">
             <ReactJsonView
-                src={localVariables}
+                src={variables?.local}
                 theme={variableStackTheme}
                 collapsed={false}
                 name={"local"}
@@ -48,7 +46,7 @@ export function VariableStackContainer () {
                 collapseStringsAfterLength={30}>
             </ReactJsonView>
             <ReactJsonView
-                src={globalVariables}
+                src={variables?.global}
                 theme={variableStackTheme}
                 collapsed={false}
                 name={"global"}

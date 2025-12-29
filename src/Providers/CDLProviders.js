@@ -35,8 +35,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [stacks, setStacks] = useState();
     const [activeThread, setActiveThread] = useState();
     const [stackPosition, setStackPosition] = useState();
-    const [localVariables, setLocalVariables] = useState();
-    const [globalVariables, setGlobalVariables] = useState();
+    const [variables, setVariables] = useState();
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
     const [threads, setThreads] = useState();
@@ -95,8 +94,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     // Resets the state variables before loading new file.
     const initializeStates = () => {
         setFileTree(undefined);
-        setLocalVariables(undefined);
-        setGlobalVariables(undefined);
+        setVariables(undefined);
         setStackPosition(undefined);
         setActiveThread(undefined);
         setActiveFile(undefined);
@@ -170,8 +168,10 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setActiveStack(event.data.args);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                setLocalVariables(event.data.args.localVariables);
-                setGlobalVariables(event.data.args.globalVariables);
+                setVariables({
+                    localVariables: event.data.args.localVariables,
+                    globalVariables: event.data.args.globalVariables,
+                });
                 break;
             case CDL_WORKER_PROTOCOL.BREAKPOINTS:
                 setBreakPoints(event.data.args.breakpoints);
@@ -190,25 +190,23 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
                     <ThreadsContext.Provider value={{threads, setThreads}}>
-                        <GlobalVariablesContext.Provider value={{globalVariables}}>
-                            <VariablesContext.Provider value={{localVariables}}>
-                                <BreakpointsContext.Provider value={{breakPoints}}>
-                                    <StackContext.Provider
-                                        value={{stacks, activeThread, activeAbstraction,
-                                            setActiveThread, setActiveAbstraction}}>
-                                        <ActiveFileContext.Provider
-                                            value={{activeFile, setActiveFile}}>
-                                            <SegContext.Provider value={{seg}}>
-                                                <ActionsContext.Provider
-                                                    value={{actions, mode, setMode, setActions}}>
-                                                    {children}
-                                                </ActionsContext.Provider>
-                                            </SegContext.Provider>
-                                        </ActiveFileContext.Provider>
-                                    </StackContext.Provider>
-                                </BreakpointsContext.Provider>
-                            </VariablesContext.Provider>
-                        </GlobalVariablesContext.Provider>
+                        <VariablesContext.Provider value={{variables}}>
+                            <BreakpointsContext.Provider value={{breakPoints}}>
+                                <StackContext.Provider
+                                    value={{stacks, activeThread, activeAbstraction,
+                                        setActiveThread, setActiveAbstraction}}>
+                                    <ActiveFileContext.Provider
+                                        value={{activeFile, setActiveFile}}>
+                                        <SegContext.Provider value={{seg}}>
+                                            <ActionsContext.Provider
+                                                value={{actions, mode, setMode, setActions}}>
+                                                {children}
+                                            </ActionsContext.Provider>
+                                        </SegContext.Provider>
+                                    </ActiveFileContext.Provider>
+                                </StackContext.Provider>
+                            </BreakpointsContext.Provider>
+                        </VariablesContext.Provider>
                     </ThreadsContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>
