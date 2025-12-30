@@ -3,13 +3,13 @@ import {stableStringify} from "./helper";
 /**
  * This class constructures the execution tree using the abstraction map.
  */
-class AbstractionMap {
+class MapAbstractions {
     /**
      * Initialize the abstraction map.
-     * @param {Object} sdg
+     * @param {Object} sdgMeta
      */
-    constructor (sdg) {
-        this.sdg = sdg;
+    constructor (sdgMeta) {
+        this.sdgMeta = sdgMeta;
         this.printTreeToConsole = false;
 
         if (this.printTreeToConsole) {
@@ -29,7 +29,7 @@ class AbstractionMap {
      */
     validateConstraints (abstraction) {
         const violations = [];
-        const node = this.sdg.abstractions[abstraction.abstractionId];
+        const node = this.sdgMeta.abstractions[abstraction.abstractionId];
         if ("constraint" in node) {
             for (let i = 0; i < node.constraint.length; i++) {
                 const constraint = node.constraint[i];
@@ -142,7 +142,7 @@ class AbstractionMap {
      */
     validateIntent (abstraction) {
         const violations = [];
-        const node = this.sdg.abstractions[abstraction.abstractionId];
+        const node = this.sdgMeta.abstractions[abstraction.abstractionId];
         if (!node) {
             console.warn(`Abstraction node not found for id: ${abstraction.abstractionId}`);
             return violations;
@@ -238,7 +238,7 @@ class AbstractionMap {
         const violations = intentViolations.concat(constraintViolations);
 
         const updatedIntent = this.replacePlaceHoldersInIntent(
-            this.sdg.abstractions[id], abstraction.varStack
+            this.sdgMeta.abstractions[id], abstraction.varStack
         );
 
         const entry = {
@@ -253,8 +253,8 @@ class AbstractionMap {
             "position": abstraction.position,
             "abstraction": abstraction,
             "abstractionId": id,
-            "abstractionType": this.sdg.abstractions[id]?.type,
-            "meta": this.sdg.abstractions[id],
+            "abstractionType": this.sdgMeta.abstractions[id]?.type,
+            "meta": this.sdgMeta.abstractions[id],
             "violations": violations,
         };
         this.seg.push(entry);
@@ -337,4 +337,4 @@ class AbstractionMap {
     }
 };
 
-export default AbstractionMap;
+export default MapAbstractions;

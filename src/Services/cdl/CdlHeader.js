@@ -124,7 +124,7 @@ class CdlHeader {
     /**
      * @return {Boolean} Indicates if the header has an abstraction map.
      */
-    hasAbstractionMap () {
+    hasAbstractionMetadata () {
         return "sdg_meta" in this.header;
     }
 
@@ -132,7 +132,7 @@ class CdlHeader {
      * @return {Object|null} Returns the SDG data from the header,
      * or null if not present.
      */
-    getSDG () {
+    getAbstractionMetadata () {
         if ("sdg_meta" in this.header) {
             return this.header["sdg_meta"];
         } else {

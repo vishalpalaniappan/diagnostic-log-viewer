@@ -1,5 +1,5 @@
-import AbstractionMap from "./AbstractionMap";
 import CdlHeader from "./CdlHeader";
+import MapAbstractions from "./MapAbstractions";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -308,20 +308,19 @@ class Thread {
      * @return {null|Object} Returns the semantic execution graph or null.
      */
     generateSeg () {
-        if (!this.header.hasAbstractionMap()) {
+        if (!this.header.hasAbstractionMetadata()) {
             console.log("Trace file does not have an abstraction map");
             return null;
         }
 
-        console.log("GET EXECUTION TREE");
-        const sdgMeta = this.header.getSDG();
+        const sdgMeta = this.header.getAbstractionMetadata();
 
         if (!sdgMeta) {
             console.log("Trace file is missing required SDG data or metadata");
             return null;
         }
 
-        const map = new AbstractionMap(sdgMeta);
+        const map = new MapAbstractions(sdgMeta);
 
         let position = 0;
         do {
