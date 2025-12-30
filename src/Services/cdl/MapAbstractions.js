@@ -202,8 +202,8 @@ class MapAbstractions {
     mapCurrentLevel (abstraction) {
         const id = abstraction.abstractionId;
         const levels = id.split("-");
-        const thread = levels.shift();
-        const module = levels.shift();
+        const filePath = levels.shift();
+        const module = filePath + "-" + levels.shift();
 
         // If the last entry in the execution tree is a function call,
         // we need to push the module onto the stack.
@@ -243,7 +243,7 @@ class MapAbstractions {
 
         const entry = {
             "level": level,
-            "thread": thread,
+            "module": module,
             "intent": updatedIntent,
             "index": this.seg.length,
             "filePath": abstraction.filePath,
