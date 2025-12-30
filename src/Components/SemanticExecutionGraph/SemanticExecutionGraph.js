@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 
-import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
+import {ChevronLeft, ChevronRight} from "react-bootstrap-icons";
 
 import SegContext from "../../Providers/SegContext";
 import StackContext from "../../Providers/StackContext";
@@ -17,9 +17,8 @@ import "./SemanticExecutionGraph.scss";
 export function SemanticExecutionGraph () {
     const {seg} = useContext(SegContext);
     const {stackPosition} = useContext(StackPositionContext);
-    const {stacks, activeThread, setActiveAbstraction} = useContext(StackContext);
+    const {stacks, setActiveThread, activeThread, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
-    const [selectedNodeByThread, setSelectedNodeByThread] = useState({});
     const [segInstance, setSegInstance] = useState();
     const [threads, setThreads] = useState();
     const [currThreadPosition, setCurrThreadPosition] = useState();
@@ -28,35 +27,18 @@ export function SemanticExecutionGraph () {
     // executed position in SEG for each thread. This preserves backward
     // comaptibility while also allowing us to navigate the program using SEG.
     useEffect(() => {
-        if (!stacks || !seg || !threads) {
+        if (!stacks || !seg) {
             return;
         }
-        const selectedNodes = {};
-        for (let tIndex = 0; tIndex < threads.length; tIndex++) {
-            const threadId = threads[tIndex];
 
-            // Verify that the thread ID exists in seg and the stacks.
-            if (!(threadId in stacks) || !(threadId in seg)) {
-                return;
-            }
-
-            const stack = stacks[threadId].stack;
-            const segInstance = seg[threadId];
-            for (let index = 0; index < segInstance.length; index++) {
-                if (segInstance[index].position === stack.callStack[0].position) {
-                    // Set the active position in each thread.
-                    selectedNodes[threadId] = segInstance[index];
-                    if (threadId === activeThread) {
-                        // Save the active node and the active thread
-                        setSelectedNode(segInstance[index]);
-                        setCurrThreadPosition(threads.indexOf(activeThread));
-                    }
-                }
+        const stack = stacks[activeThread].stack;
+        const segInstance = seg[activeThread];
+        for (let index = 0; index < segInstance.length; index++) {
+            if (segInstance[index].position === stack.callStack[0].position) {
+                setSelectedNode(segInstance[index]);
             }
         }
-        // Save the seleted position in each thread to state.
-        setSelectedNodeByThread(selectedNodes);
-    }, [stackPosition, activeThread, stacks, threads, seg]);
+    }, [stackPosition, activeThread, stacks, seg]);
 
     /**
      * Scroll to the selected node.
@@ -137,19 +119,12 @@ export function SemanticExecutionGraph () {
 
     /**
      * Select the given node, this function is called from execution node.
-     * @param {Object} selectedNode
+     * @param {Object} node
      */
-    const selectNode = (selectedNode) => {
-        const threadId = selectedNode.threadId;
-        for (let index = 0; index < seg[threadId].length; index++) {
-            const node = seg[threadId][index];
-            if (node === selectedNode) {
-                setActiveAbstraction({
-                    index: index,
-                    node: node,
-                });
-            }
-        }
+    const selectNode = (node) => {
+        setActiveAbstraction({
+            node: node,
+        });
     };
 
     /**
@@ -159,9 +134,10 @@ export function SemanticExecutionGraph () {
         if (seg && activeThread) {
             const threads = Object.keys(seg);
             setThreads(threads);
+            setCurrThreadPosition(threads.indexOf(activeThread));
             renderTree(activeThread);
         }
-    }, [activeThread, seg]);
+    }, [activeThread, currThreadPosition, seg]);
 
     /**
      * Load the previous thread in SEG container.
@@ -169,11 +145,8 @@ export function SemanticExecutionGraph () {
     const goToPrevThread = () => {
         const newPosition = currThreadPosition - 1;
         if (newPosition >= 0) {
-            setCurrThreadPosition(newPosition);
             renderTree(threads[newPosition]);
-            setSelectedNode(
-                selectedNodeByThread[threads[newPosition]]
-            );
+            setActiveThread(threads[newPosition]);
         }
     };
 
@@ -183,17 +156,38 @@ export function SemanticExecutionGraph () {
     const goToNextThread = () => {
         const newPosition = currThreadPosition + 1;
         if (newPosition < threads.length) {
-            setCurrThreadPosition(newPosition);
             renderTree(threads[newPosition]);
-            setSelectedNode(
-                selectedNodeByThread[threads[newPosition]]
-            );
+            setActiveThread(threads[newPosition]);
         }
     };
 
+    // Add keyboard shortcuts to navigate threads
+    useEffect(() => {
+        document.addEventListener("keydown", keydown, false);
+        return () => {
+            document.removeEventListener("keydown", keydown, false);
+        };
+    }, [threads, currThreadPosition, selectedNode]);
+
+    /**
+     * Callback function on keydown.
+     */
+    const keydown = useCallback((e) => {
+        switch (e.code) {
+            case "KeyX":
+                goToNextThread();
+                break;
+            case "KeyZ":
+                goToPrevThread();
+                break;
+            default:
+                break;
+        }
+    }, [threads, currThreadPosition, selectedNode]);
+
     return (
         <SEGInstanceContext.Provider
-            value={{selectedNode, selectNode, selectedNodeByThread, toggleCollapse}}>
+            value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <span className="prevThread" onClick={goToPrevThread}>

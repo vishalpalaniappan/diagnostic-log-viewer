@@ -19,15 +19,15 @@ SEGNode.propTypes = {
  */
 export function SEGNode ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
-    const {selectNode, toggleCollapse, selectedNodeByThread} = useContext(SEGInstanceContext);
+    const {selectNode, selectedNode, toggleCollapse} = useContext(SEGInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
     const [debugText, setDebugText] = useState();
     const [hasViolation, setHasViolation] = useState();
 
     // Set style if node is selected.
     useEffect(() => {
-        if (node && selectedNodeByThread) {
-            if (selectedNodeByThread[node.threadId] === node) {
+        if (node && selectedNode) {
+            if (selectedNode === node) {
                 setSelectedStyle({background: "#3b3b3b", color: "white"});
             } else {
                 setSelectedStyle({});
@@ -47,7 +47,7 @@ export function SEGNode ({node}) {
             setSelectedStyle({background: "#3f191b", color: "white"});
             setDebugText("failure");
         }
-    }, [selectedNodeByThread, node]);
+    }, [selectedNode, node]);
 
     /**
      * Callback when a node is toggled.
