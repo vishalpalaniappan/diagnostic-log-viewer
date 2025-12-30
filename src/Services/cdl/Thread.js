@@ -194,6 +194,15 @@ class Thread {
         const startLog = this.execution[position];
         const funcId = startLog.scope_uid;
 
+        /**
+         * TODO: This was an attempt to include all the variables
+         * that were logged for this position in the variable stack.
+         * However, if we only go to the next position, we won't load
+         * variables for cases like function calls where the stack
+         * returns the variable value. So the right way to do this is
+         * to look at the variables that were logged for this position
+         * and then scan forward until we find those unambiguous variables.
+         */
         const nextPosition = this._getNextPosition(position);
         if (nextPosition) {
             position = nextPosition;
