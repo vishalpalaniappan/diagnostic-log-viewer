@@ -74,19 +74,19 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOut (position) {
-        if (this.thread.executionTree) {
+        if (this.thread.seg) {
             // Use execution tree instead of stack
-            const index = this.thread.executionTree.findIndex(
+            const index = this.thread.seg.findIndex(
                 (item) => item.position === position
             );
             if (index === -1) {
                 console.warn("Current position was not found in semantic execution graph");
                 return;
             }
-            const entry = this.thread.executionTree[index];
+            const entry = this.thread.seg[index];
             const level = entry.level;
             for (let i = index - 1; i >= 0; i--) {
-                const candidate = this.thread.executionTree[i];
+                const candidate = this.thread.seg[i];
                 if (candidate.level < level) {
                     this.position = candidate .position;
                     break;
@@ -106,21 +106,21 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOverForward (position) {
-        if (this.thread.executionTree) {
+        if (this.thread.seg) {
             // Use execution tree instead of stack
-            const index = this.thread.executionTree.findIndex(
+            const index = this.thread.seg.findIndex(
                 (item) => item.position === position
             );
             if (index === -1) {
                 console.warn("Current position was not found in semantic execution graph");
                 return;
             }
-            const entry = this.thread.executionTree[index];
+            const entry = this.thread.seg[index];
             const level = entry.level;
-            const length = this.thread.executionTree.length;
+            const length = this.thread.seg.length;
 
             for (let i = index + 1; i < length; i++) {
-                const candidate = this.thread.executionTree[i];
+                const candidate = this.thread.seg[i];
                 if (candidate.level <= level) {
                     this.position = candidate.position;
                     break;
@@ -151,19 +151,19 @@ class ThreadDebugger {
      * @param {Number} position
      */
     stepOverBackward (position) {
-        if (this.thread.executionTree) {
+        if (this.thread.seg) {
             // Use execution tree instead of stack
-            const index = this.thread.executionTree.findIndex(
+            const index = this.thread.seg.findIndex(
                 (item) => item.position === position
             );
             if (index === -1) {
                 console.warn("Current position was not found in semantic execution graph");
                 return;
             }
-            const entry = this.thread.executionTree[index];
+            const entry = this.thread.seg[index];
             const level = entry.level;
             for (let i = index - 1; i >= 0; i--) {
-                const candidate = this.thread.executionTree[i];
+                const candidate = this.thread.seg[i];
                 if (candidate.level <= level) {
                     this.position = candidate.position;
                     break;
