@@ -33,20 +33,19 @@ export function SEGNode ({node}) {
                 setSelectedStyle({});
             }
         }
-        if (node) {
-            setHasViolation(false);
-            setDebugText(undefined);
 
-            if (node.violations.length > 0) {
-                setHasViolation(true);
-                setDebugText("violation");
-            }
+        setHasViolation(false);
+        setDebugText(undefined);
 
-            if (node.exception) {
-                setHasViolation(true);
-                setSelectedStyle({background: "#3f191b", color: "white"});
-                setDebugText("failure");
-            }
+        if (node && node?.violations && node.violations.length > 0) {
+            setHasViolation(true);
+            setDebugText("violation");
+        }
+
+        if (node && node?.exception) {
+            setHasViolation(true);
+            setSelectedStyle({background: "#3f191b", color: "white"});
+            setDebugText("failure");
         }
     }, [selectedNodeByThread, node]);
 
