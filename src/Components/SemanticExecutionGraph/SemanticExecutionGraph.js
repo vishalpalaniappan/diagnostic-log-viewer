@@ -41,6 +41,7 @@ export function SemanticExecutionGraph () {
         for (let index = 0; index < segInstance.length; index++) {
             if (segInstance[index].abstraction.position === stack.callStack[0].position) {
                 setSelectedNode(segInstance[index]);
+                renderTree(activeThread);
             }
         }
     }, [stackPosition, activeThread, stacks, seg]);
@@ -150,9 +151,16 @@ export function SemanticExecutionGraph () {
     const goToPrevThread = () => {
         const newPosition = currThreadPosition - 1;
         if (newPosition >= 0) {
-            renderTree(threads[newPosition]);
-            setActiveThread(threads[newPosition]);
+            const stackThreads = Object.keys(stacks);
+            if (stackThreads.includes(threads[newPosition])) {
+                renderTree(threads[newPosition]);
+                setActiveThread(threads[newPosition]);
+            } else {
+                renderTree(threads[newPosition]);
+                return;
+            }
         }
+        renderTree(activeThread);
     };
 
     /**
@@ -161,9 +169,16 @@ export function SemanticExecutionGraph () {
     const goToNextThread = () => {
         const newPosition = currThreadPosition + 1;
         if (newPosition < threads.length) {
-            renderTree(threads[newPosition]);
-            setActiveThread(threads[newPosition]);
+            const stackThreads = Object.keys(stacks);
+            if (stackThreads.includes(threads[newPosition])) {
+                renderTree(threads[newPosition]);
+                setActiveThread(threads[newPosition]);
+            } else {
+                renderTree(threads[newPosition]);
+                return;
+            }
         }
+        renderTree(activeThread);
     };
 
     // Add keyboard shortcuts to navigate threads
