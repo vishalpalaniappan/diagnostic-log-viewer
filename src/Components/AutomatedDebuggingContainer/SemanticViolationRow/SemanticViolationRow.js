@@ -1,14 +1,21 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
+import PropTypes from "prop-types";
 import {Bug} from "react-bootstrap-icons";
 
 import "./SemanticViolationRow.scss";
+
+SemanticViolationRow.propTypes = {
+    node: PropTypes.object,
+    violationIndex: PropTypes.number,
+    violation: PropTypes.object,
+};
 
 /**
  * Component which renders the semantic violation row.
  * @return {JSX.Element}
  */
-export function SemanticViolationRow ({}) {
+export function SemanticViolationRow ({node, violationIndex, violation}) {
     return (
         <div className="w-100 h-100 automated-debugging-container">
             <div className="semantic-violation-row">
@@ -17,8 +24,7 @@ export function SemanticViolationRow ({}) {
                 </div>
                 <div className="violation-content">
                     <div className="violation-content-text">
-                        The semantic contract that only books with\
-                        a name can be accepted was violated.
+                        {node.intent}
                     </div>
                 </div>
             </div>

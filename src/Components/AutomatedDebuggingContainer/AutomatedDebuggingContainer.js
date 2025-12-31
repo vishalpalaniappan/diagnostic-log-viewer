@@ -19,9 +19,18 @@ export function AutomatedDebuggingContainer ({}) {
             const threads = Object.keys(seg);
 
             threads.forEach((thread) => {
-                seg[thread].forEach((entry) => {
-                    if (entry.violations.length > 0) {
-                        violationsFound.push(entry);
+                seg[thread].forEach((node, nodeIndex) => {
+                    if (node.violations.length > 0) {
+                        node.violations.forEach((violation, index) => {
+                            violationsFound.push(
+                                <SemanticViolationRow
+                                    key={nodeIndex + "-" + index}
+                                    violationIndex = {index}
+                                    violation = {violation}
+                                    node = {node}
+                                />
+                            );
+                        });
                     }
                 });
             });
@@ -31,7 +40,7 @@ export function AutomatedDebuggingContainer ({}) {
 
     return (
         <div className="w-100 h-100 automated-debugging-container">
-            <SemanticViolationRow/>
+            {violations}
         </div>
     );
 }
