@@ -20,7 +20,7 @@ export function SideContainerStack () {
     const downValueX = useRef();
 
     const SIDE_MENU_WIDTH = 50;
-    const ACCORDIAN_WIDTH = 250;
+    const ACCORDIAN_WIDTH = 500;
     const MIN_EDITOR_WIDTH = 400;
     const MIN_ACCORDIAN_WIDTH = 200;
 
