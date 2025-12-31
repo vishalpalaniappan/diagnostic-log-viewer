@@ -16,6 +16,11 @@ SemanticViolationRow.propTypes = {
  * @return {JSX.Element}
  */
 export function SemanticViolationRow ({node, violationIndex, violation}) {
+    useEffect(() => {
+        if (violation) {
+            console.log(violation);
+        }
+    }, [violation]);
     return (
         <div className="w-100 h-100 automated-debugging-container">
             <div className="semantic-violation-row">
@@ -24,7 +29,8 @@ export function SemanticViolationRow ({node, violationIndex, violation}) {
                 </div>
                 <div className="violation-content">
                     <div className="violation-content-text">
-                        {node.intent}
+                        {violation.constraint.type} contract was not
+                         respected for variable {violation.constraint.name}
                     </div>
                 </div>
             </div>
