@@ -32,7 +32,7 @@ export function SemanticViolationRow ({node, violationIndex, violation}) {
                 setDescription(violation.description);
             }
         }
-    }, [violation]);
+    }, [violation, node]);
 
     const goToViolation = (e, node) => {
         setActiveAbstraction({
