@@ -28,7 +28,13 @@ export function SEGNode ({node}) {
     useEffect(() => {
         if (node && selectedNode) {
             if (selectedNode === node) {
-                setSelectedStyle({background: "#3b3b3b", color: "white"});
+                setSelectedStyle(
+                    {
+                        background: "#4b4b18",
+                        color: "#ffffff",
+                        fontSize: "14px",
+                    }
+                );
             } else {
                 setSelectedStyle({});
             }
@@ -44,7 +50,12 @@ export function SEGNode ({node}) {
 
         if (node && node?.exception) {
             setHasViolation(true);
-            setSelectedStyle({background: "#3f191b", color: "white"});
+            setSelectedStyle(
+                {
+                    background: "#3f191b",
+                    color: "white",
+                    fontSize: "14px",
+                });
             setDebugText("failure");
         }
     }, [selectedNode, node]);
