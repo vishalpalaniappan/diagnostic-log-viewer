@@ -4,6 +4,7 @@ import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
 import CdlHeader from "./CdlHeader";
 import ThreadDebugger from "./ThreadDebugger";
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 
 /**
  * This class accepts a CDL file object and allows you to
@@ -88,6 +89,7 @@ class Debugger {
 
         this.currentThread = Object.keys(this.threads)[0];
         this.cdl = this.debuggers[this.currentThread];
+        this.debuggingMode = PROGRAM_STATE.STACK;
         this.breakpoints = [];
 
         console.info(this.cdl);
