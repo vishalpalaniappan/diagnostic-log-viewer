@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useRef} from "react";
 
 import {Col, Row} from "react-bootstrap";
 
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import ActionsContext from "../../Providers/ActionsContext";
 
 import "./ShortcutContainer.scss";
@@ -31,15 +32,6 @@ export function ShortcutContainer ({}) {
                 Keyboard Shortcuts
             </div>
             <div ref={kbdContainer} className="w-100 shortcuts p-3 pt-1">
-                {
-                    mode === "BEHAVIORAL" &&
-                    <>
-                        <Row className="mb-2">
-                            <Col>Toggle Focus Between Behavioral Trace and Execution Graph</Col>
-                            <Col><kbd>T</kbd></Col>
-                        </Row>
-                    </>
-                }
                 <Row className="mb-2">
                     <Col>Step Over Forward</Col>
                     <Col><kbd>→</kbd></Col>
@@ -57,7 +49,7 @@ export function ShortcutContainer ({}) {
                     <Col><kbd>↑</kbd></Col>
                 </Row>
                 {
-                    (mode === "STACK" || mode === "EXECUTION") &&
+                    (mode === PROGRAM_STATE.STACK || mode === PROGRAM_STATE.SEG) &&
                     <>
                         <Row className="mb-2">
                             <Col>Move Down Stack</Col>
