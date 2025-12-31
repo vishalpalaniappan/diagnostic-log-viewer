@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
-import {BreakPointContainer} from "../DebugContainer/BreakPointContainer/BreakPointContainer";
+// eslint-disable-next-line max-len
+import {AutomatedDebuggingContainer} from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
 import {SemanticExecutionGraph} from "../SemanticExecutionGraph/SemanticExecutionGraph";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
@@ -13,14 +14,14 @@ import "./SemanticDebugContainer.scss";
 export function SemanticDebugContainer () {
     const semanticDebugContainerRef = useRef();
     const segRef = useRef();
-    const breakPointRef = useRef();
+    const automatedDebugRef = useRef();
 
     const TITLE_HEIGHT = 20;
 
     const redrawContainers = () => {
         const height = semanticDebugContainerRef.current.clientHeight;
         const containerHeight = height - 150;
-        breakPointRef.current.style.height = 150 - TITLE_HEIGHT + "px";
+        automatedDebugRef.current.style.height = 150 - TITLE_HEIGHT + "px";
         segRef.current.style.height = containerHeight + "px";
     };
 
@@ -33,10 +34,12 @@ export function SemanticDebugContainer () {
             <div className="section" ref={segRef}>
                 <SemanticExecutionGraph />
             </div>
-            <VerticalHandle topDiv={segRef} bottomDiv={breakPointRef}/>
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Breakpoints</div>
-            <div className="section" ref={breakPointRef}>
-                <BreakPointContainer />
+            <VerticalHandle topDiv={segRef} bottomDiv={automatedDebugRef}/>
+            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>
+                Semantic Violations
+            </div>
+            <div className="section" ref={automatedDebugRef}>
+                <AutomatedDebuggingContainer />
             </div>
         </div>
     );
