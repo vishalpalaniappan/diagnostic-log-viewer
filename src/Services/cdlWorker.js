@@ -67,6 +67,10 @@ onmessage = function (e) {
                 debuggerInstance.clearBreakpoints();
                 break;
 
+            case CDL_WORKER_PROTOCOL.SET_DEBUG_MODE:
+                debuggerInstance.setDebuggingMode(args.mode);
+                break;
+
             default:
                 break;
         }

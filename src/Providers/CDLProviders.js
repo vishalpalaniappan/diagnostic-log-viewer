@@ -151,6 +151,21 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         }
     };
 
+
+    // When the mode changes, update the mode
+    // in the worker so that it applies the
+    // correct debugging operations.
+    useEffect(() => {
+        if (mode) {
+            cdlWorker.current.postMessage({
+                code: CDL_WORKER_PROTOCOL.SET_DEBUG_MODE,
+                args: {
+                    mode: mode,
+                },
+            });
+        }
+    }, [mode]);
+
     /**
      * Handles message from the worker.
      * @param {object} event

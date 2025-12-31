@@ -104,6 +104,14 @@ class Debugger {
     }
 
     /**
+     * Sets the debugging mode so the right operation is performed.
+     * @param {Number} mode
+     */
+    setDebuggingMode (mode) {
+        this.debuggingMode = mode;
+    }
+
+    /**
      * Given a position in a thread, this function returns the position
      * in the master list.
      * @param {Number} threadPos
@@ -224,7 +232,7 @@ class Debugger {
      */
     stepInto (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepInto(position);
+        threadDebugger.stepInto(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -235,7 +243,7 @@ class Debugger {
      */
     stepOut (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepOut(position);
+        threadDebugger.stepOut(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -246,7 +254,7 @@ class Debugger {
      */
     stepOverForward (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepOverForward(position);
+        threadDebugger.stepOverForward(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -257,7 +265,7 @@ class Debugger {
      */
     stepOverBackward (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepOverBackward(position);
+        threadDebugger.stepOverBackward(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -268,7 +276,7 @@ class Debugger {
      */
     goToPosition (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.goToPosition(position);
+        threadDebugger.goToPosition(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
