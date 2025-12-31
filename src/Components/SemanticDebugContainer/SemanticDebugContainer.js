@@ -35,7 +35,7 @@ export function SemanticDebugContainer () {
                 <SemanticExecutionGraph />
             </div>
             <VerticalHandle topDiv={segRef} bottomDiv={automatedDebugRef}/>
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>
+            <div className="w-100 violation-title" style={{height: TITLE_HEIGHT + "px"}}>
                 Semantic Violations
             </div>
             <div className="section" ref={automatedDebugRef}>
