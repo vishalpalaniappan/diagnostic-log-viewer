@@ -27,7 +27,7 @@ export function VariableStackContainer () {
     }, [variables]);
 
     const variableStackTheme = {
-        base00: "#252526",
+        base00: "#1e1e1e",
         base01: "#ddd",
         base02: "#474747",
         base03: "#444",
