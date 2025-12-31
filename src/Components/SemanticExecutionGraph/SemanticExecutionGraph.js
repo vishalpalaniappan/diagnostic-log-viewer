@@ -39,7 +39,7 @@ export function SemanticExecutionGraph () {
         const stack = stacks[activeThread].stack;
         const segInstance = seg[activeThread];
         for (let index = 0; index < segInstance.length; index++) {
-            if (segInstance[index].abstraction.position === stack.callStack[0].position) {
+            if (segInstance[index].position === stack.callStack[0].position) {
                 setSelectedNode(segInstance[index]);
             }
         }

@@ -83,8 +83,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         if (activeAbstraction && cdlWorker.current) {
             const code = CDL_WORKER_PROTOCOL.GO_TO_POSITION;
             const args = {
-                position: activeAbstraction.node.abstraction.position,
-                threadId: activeAbstraction.node.abstraction.threadId,
+                position: activeAbstraction.node.position,
+                threadId: activeAbstraction.node.threadId,
             };
             cdlWorker.current.postMessage({code: code, args: args});
         }

@@ -194,20 +194,6 @@ class Thread {
         const startLog = this.execution[position];
         const funcId = startLog.scope_uid;
 
-        /**
-         * TODO: This was an attempt to include all the variables
-         * that were logged for this position in the variable stack.
-         * However, if we only go to the next position, we won't load
-         * variables for cases like function calls where the stack
-         * returns the variable value. So the right way to do this is
-         * to look at the variables that were logged for this position
-         * and then scan forward until we find those unambiguous variables.
-         */
-        const nextPosition = this._getNextPosition(position);
-        if (nextPosition) {
-            position = nextPosition;
-        }
-
         let currPosition = 0;
         do {
             const currLog = this.execution[currPosition];
@@ -224,7 +210,46 @@ class Thread {
                     this._updateVariable(variable, currLog.value, localVars, tempVars);
                 }
             }
-        } while (++currPosition <= position);
+        } while (++currPosition < position);
+
+
+        /**
+         * Once we reach the position, now we get all the logged variables
+         * for this position. This is done to get all the variables for
+         * the current abstraction.
+         */
+        const sdgMeta = this.header.getAbstractionMetadata();
+        const abstraction = this.header.logTypeMap[startLog.value];
+        const meta = sdgMeta.abstractions[abstraction.abstractionId];
+        const variables = (meta.variables)?[...meta.variables]:[];
+
+        while (variables.length > 0 && currPosition < this.execution.length) {
+            const currLog = this.execution[currPosition];
+
+            if (currLog?.type && currLog.type == "adli_variable") {
+                const variable = this.header.variableMap[currLog.varid];
+                const varFuncId = currLog.scope_uid;
+
+                let updated;
+                if (variable.isTemp) {
+                    tempVars[variable.name] = currLog.value;
+                } else if ((varFuncId == "global" || variable.isGlobal())) {
+                    this._updateVariable(variable, currLog.value, globalVars, tempVars);
+                    updated = true;
+                } else if (varFuncId === funcId) {
+                    this._updateVariable(variable, currLog.value, localVars, tempVars);
+                    updated = true;
+                }
+
+                if (updated) {
+                    const variableInd = variables.findIndex((v) => v.name === variable.name);
+                    if (variableInd !== -1) {
+                        variables.splice(variableInd, 1);
+                    }
+                }
+            }
+            currPosition++;
+        }
 
         return [localVars, globalVars];
     }
@@ -336,10 +361,11 @@ class Thread {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
                 const abstractionInstance = {...this.header.logTypeMap[positionData.value]};
+                const meta = sdgMeta.abstractions[abstractionInstance.abstractionId];
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
                 abstractionInstance.timestamp = positionData.timestamp;
-                abstractionInstance.varStack = this.getVariablesAtPosition(position);
+                abstractionInstance.varStack = this.getVariablesAtPosition(position, meta);
                 map.mapCurrentLevel(abstractionInstance);
             }
         } while (++position < this.execution.length);
