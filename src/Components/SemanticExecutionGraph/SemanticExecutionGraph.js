@@ -50,7 +50,7 @@ export function SemanticExecutionGraph () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("row" + node.threadId + node.index);
+        const nodeElement = document.getElementById("row" + node.abstraction.threadId + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",

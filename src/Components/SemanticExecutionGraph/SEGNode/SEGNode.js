@@ -147,7 +147,7 @@ export function SEGNode ({node}) {
     };
 
     return (
-        <div style={selectedStyle} id={"row" + node.threadId+ node.index}
+        <div style={selectedStyle} id={"row" + node.abstraction.threadId+ node.index}
             className="abstractionRow">
 
             <div className="icon-container">
