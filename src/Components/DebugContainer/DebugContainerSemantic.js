@@ -1,10 +1,9 @@
 import React, {useEffect, useRef} from "react";
 
-import {BreakPointContainer} from "./BreakPointContainer/BreakPointContainer";
-import {CallStackContainer} from "./CallStackContainer/CallStackContainer";
+// eslint-disable-next-line max-len
+import {AutomatedDebuggingContainer} from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
 import {VariableStackContainer} from "./VariableStackContainer/VariableStackContainer";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
-import { AutomatedDebuggingContainer } from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
 
 import "./DebugContainer.scss";
 
@@ -38,7 +37,7 @@ export function DebugContainerSemantic () {
             </div>
             <VerticalHandle topDiv={variableStackRef} bottomDiv={automatedDebuggingRef}/>
             <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>
-                Automated Debugging
+                Semantic Violations
             </div>
             <div className="section" ref={automatedDebuggingRef}>
                 <AutomatedDebuggingContainer />
