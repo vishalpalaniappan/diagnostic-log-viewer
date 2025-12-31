@@ -119,7 +119,7 @@ export function SemanticExecutionGraph () {
      */
     const toggleCollapse = (node) => {
         node.collapsed = !node.collapsed;
-        renderTree(node.threadId);
+        renderTree(node.abstraction.threadId);
     };
 
     /**
