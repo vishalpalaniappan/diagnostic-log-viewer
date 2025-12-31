@@ -20,8 +20,7 @@ export function VerticalHandle ({topDiv, bottomDiv}) {
     const topHeight = useRef();
     const bottomHeight = useRef();
 
-    const MIN_CONTAINER_HEIGHT = 50;
-    const MAX_CONTAINER_HEIGHT = 250;
+    const MIN_CONTAINER_HEIGHT = 25;
 
     const handleMouseDown = useCallback((e) => {
         e.preventDefault();
@@ -45,9 +44,7 @@ export function VerticalHandle ({topDiv, bottomDiv}) {
         const newPreHeight = topHeight.current + delta;
         const newPostHeight = bottomHeight.current - delta;
 
-        if (newPostHeight < MAX_CONTAINER_HEIGHT &&
-            newPreHeight > MIN_CONTAINER_HEIGHT &&
-            newPostHeight > MIN_CONTAINER_HEIGHT) {
+        if (newPreHeight > MIN_CONTAINER_HEIGHT && newPostHeight > MIN_CONTAINER_HEIGHT) {
             topDiv.current.style.height = newPreHeight + "px";
             bottomDiv.current.style.height = newPostHeight + "px";
         }
