@@ -3,6 +3,7 @@ import React, {useCallback, useContext, useEffect, useRef, useState} from "react
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import ActionsContext from "../../Providers/ActionsContext";
 import SegContext from "../../Providers/SegContext";
 import StackContext from "../../Providers/StackContext";
@@ -24,7 +25,7 @@ export function DebugToolKit ({}) {
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread} = useContext(StackContext);
-    const {setActions} = useContext(ActionsContext);
+    const {setMode, setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
     const {seg} = useContext(SegContext);
 
@@ -103,6 +104,22 @@ export function DebugToolKit ({}) {
 
     const keydown = useCallback((e) => {
         switch (e.code) {
+            case "Digit1":
+                setActions((prev) => ({
+                    value: "Debugging Mode: Stack",
+                    tick: prev.tick + 1,
+                }));
+                setMode(PROGRAM_STATE.STACK);
+                break;
+
+            case "Digit2":
+                setActions((prev) => ({
+                    value: "Debugging Mode: SEG ",
+                    tick: prev.tick + 1,
+                }));
+                setMode(PROGRAM_STATE.SEG);
+                break;
+
             case "KeyB":
                 setActions((prev) => ({
                     value: "Toggle Breakpoint",
