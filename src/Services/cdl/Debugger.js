@@ -178,8 +178,9 @@ class Debugger {
         for (const thread in this.debuggers) {
             if (thread) {
                 const instance = this.debuggers[thread];
-                if (instance.thread.seg) {
-                    segs[thread] = instance.thread.seg;
+                segs[thread] = instance.thread.seg;
+                if (instance.thread.seg.length > 0) {
+                    this.debuggingMode = PROGRAM_STATE.SEG;
                 }
             }
         }
