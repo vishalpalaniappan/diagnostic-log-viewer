@@ -24,7 +24,7 @@ export function AutomatedDebuggingContainer ({}) {
                         node.violations.forEach((violation, index) => {
                             violationsFound.push(
                                 <SemanticViolationRow
-                                    key={nodeIndex + "-" + index}
+                                    key={thread + "-" + nodeIndex + "-" + index}
                                     violationIndex = {index}
                                     violation = {violation}
                                     node = {node}
