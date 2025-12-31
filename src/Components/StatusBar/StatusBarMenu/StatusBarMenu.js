@@ -95,13 +95,15 @@ export function StatusBarMenu ({className, disabled, children}) {
                 >
                     {
                         seg &&
-                        <option className="px-2" onClick={() => setMode(PROGRAM_STATE.SEG)}>
+                        <div className="menu-option px-2"
+                            onClick={() => setMode(PROGRAM_STATE.SEG)}>
                             SEG Based Debugging
-                        </option>
+                        </div>
                     }
-                    <option className="px-2" onClick={() => setMode(PROGRAM_STATE.STACK)}>
+                    <div className="menu-option px-2"
+                        onClick={() => setMode(PROGRAM_STATE.STACK)}>
                         Traditional Stack Debugging
-                    </option>
+                    </div>
                 </div>
             }
             {children}
