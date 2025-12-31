@@ -30,7 +30,8 @@ export function SemanticDebugContainer () {
     }, []);
 
     return (
-        <div ref={semanticDebugContainerRef} className="debug-container w-100 d-flex flex-column">
+        <div ref={semanticDebugContainerRef} 
+            className="semantic-debug-container w-100 d-flex flex-column">
             <div className="section" ref={segRef}>
                 <SemanticExecutionGraph />
             </div>
