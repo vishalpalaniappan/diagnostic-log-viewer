@@ -152,6 +152,8 @@ class MapAbstractions {
             return violations;
         }
 
+        console.log(abstraction);
+
         for (let i = 0; i < node.intent_validation.length; i++) {
             const validation = node.intent_validation[i];
 

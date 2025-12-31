@@ -22,16 +22,13 @@ export function SemanticViolationRow ({node, violationIndex, violation}) {
         }
     }, [violation]);
     return (
-        <div className="w-100 h-100 automated-debugging-container">
-            <div className="semantic-violation-row">
-                <div className="violation-icon">
-                    <Bug />
-                </div>
-                <div className="violation-content">
-                    <div className="violation-content-text">
-                        {violation.constraint.type} contract was not
-                         respected for variable {violation.constraint.name}
-                    </div>
+        <div className="semantic-violation-row">
+            <div className="violation-icon">
+                <Bug />
+            </div>
+            <div className="violation-content">
+                <div className="violation-content-text">
+                    {node.intent}
                 </div>
             </div>
         </div>
