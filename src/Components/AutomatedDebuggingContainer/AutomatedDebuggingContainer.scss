@@ -8,12 +8,10 @@
 .semantic-violation-row {
     display:flex;
     flex-direction: row;
-    height:50px;
 
     .violation-icon {
         width:50px;
         height:100%;
-        background-color: red;
         font-size: 20px;
         display:flex;
         align-items: center;
@@ -23,6 +21,15 @@
     .violation-content {
         flex-grow: 1;
         height:100%;
-        background-color: green;
+        padding: 5px;
+
+        .violation-content-text {
+            font-size: 12px;
+        }
     }
+}
+
+.semantic-violation-row:hover {
+    background-color:rgb(70, 70, 70);
+    cursor: pointer;
 }

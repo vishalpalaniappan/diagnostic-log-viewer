@@ -35,7 +35,11 @@ export function AutomatedDebuggingContainer ({}) {
                 <div className="violation-icon">
                     <Bug />
                 </div>
-                <div className="violation-content"></div>
+                <div className="violation-content">
+                    <div className="violation-content-text">
+                        The semantic contract that only books with a name can be accepted was violated.
+                    </div>
+                </div>
             </div>
         </div>
     );
