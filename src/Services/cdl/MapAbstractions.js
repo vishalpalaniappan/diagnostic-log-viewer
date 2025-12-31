@@ -241,19 +241,16 @@ class MapAbstractions {
             this.sdgMeta.abstractions[id], abstraction.varStack
         );
 
+        if ("varStack" in abstraction) {
+            delete abstraction.varStack;
+        }
+
         const entry = {
             "level": level,
             "module": module,
             "intent": updatedIntent,
             "index": this.seg.length,
-            "filePath": abstraction.filePath,
-            "fileName": abstraction.fileName,
-            "lineno": abstraction.lineno,
-            "threadId": abstraction.threadId,
-            "position": abstraction.position,
             "abstraction": abstraction,
-            "abstractionId": id,
-            "abstractionType": this.sdgMeta.abstractions[id]?.type,
             "meta": this.sdgMeta.abstractions[id],
             "violations": violations,
         };
