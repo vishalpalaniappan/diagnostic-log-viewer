@@ -20,8 +20,8 @@ export function VerticalHandle ({topDiv, bottomDiv}) {
     const topHeight = useRef();
     const bottomHeight = useRef();
 
-    const MIN_CONTAINER_HEIGHT = 15;
-    const MAX_CONTAINER_HEIGHT = 200;
+    const MIN_CONTAINER_HEIGHT = 50;
+    const MAX_CONTAINER_HEIGHT = 250;
 
     const handleMouseDown = useCallback((e) => {
         e.preventDefault();
