@@ -126,7 +126,7 @@ export function SEGNode ({node}) {
         if (!breakPoints) return;
         for (let i = 0; i < breakPoints.length; i++) {
             const point = breakPoints[i];
-            if (point.abstractionId === node.abstractionId) {
+            if (point.abstractionId === node.abstraction.abstractionId) {
                 const className = (point.enabled == true)?
                     "enabledBreakPoint":
                     "disabledBreakPoint";
