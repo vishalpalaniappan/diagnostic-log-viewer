@@ -88,7 +88,9 @@ export function DebugToolKit ({}) {
 
     useEffect(() => {
         if (stacks && activeThread) {
-            setStack(stacks[activeThread].stack);
+            if (activeThread in stacks) {
+                setStack(stacks[activeThread].stack);
+            }
         }
     }, [stacks, activeThread]);
 

@@ -31,6 +31,11 @@ export function SemanticExecutionGraph () {
             return;
         }
 
+        if (!(activeThread in stacks)) {
+            setSelectedNode(undefined);
+            return;
+        }
+
         const stack = stacks[activeThread].stack;
         const segInstance = seg[activeThread];
         for (let index = 0; index < segInstance.length; index++) {
