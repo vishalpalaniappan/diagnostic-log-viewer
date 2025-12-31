@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
 import SegContext from "../../Providers/SegContext";
+import { Bug } from "react-bootstrap-icons";
 
 import "./AutomatedDebuggingContainer.scss";
 
@@ -30,6 +31,12 @@ export function AutomatedDebuggingContainer ({}) {
 
     return (
         <div className="w-100 h-100 automated-debugging-container">
+            <div className="semantic-violation-row">
+                <div className="violation-icon">
+                    <Bug />
+                </div>
+                <div className="violation-content"></div>
+            </div>
         </div>
     );
 }
