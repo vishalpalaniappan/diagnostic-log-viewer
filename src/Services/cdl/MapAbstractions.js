@@ -81,6 +81,7 @@ class MapAbstractions {
                         violations.push({
                             position: abstraction.position,
                             index: this.seg.length,
+                            description: constraint?.description,
                             constraint: constraint,
                         });
                     }
@@ -96,6 +97,7 @@ class MapAbstractions {
                         violations.push({
                             position: abstraction.position,
                             index: this.seg.length,
+                            description: constraint?.description,
                             constraint: constraint,
                         });
                     }
@@ -109,6 +111,7 @@ class MapAbstractions {
                         violations.push({
                             position: abstraction.position,
                             index: this.seg.length,
+                            description: constraint?.description,
                             constraint: constraint,
                         });
                     }
@@ -124,6 +127,7 @@ class MapAbstractions {
                         violations.push({
                             position: abstraction.position,
                             index: this.seg.length,
+                            description: constraint?.description,
                             constraint: constraint,
                         });
                     }
@@ -152,8 +156,6 @@ class MapAbstractions {
             return violations;
         }
 
-        console.log(abstraction);
-
         for (let i = 0; i < node.intent_validation.length; i++) {
             const validation = node.intent_validation[i];
 
@@ -173,6 +175,7 @@ class MapAbstractions {
                         violations.push({
                             position: abstraction.position,
                             index: this.seg.length,
+                            description: validation?.description,
                             validation: validation,
                         });
                         continue;
@@ -185,6 +188,7 @@ class MapAbstractions {
                         violations.push({
                             position: abstraction.position,
                             index: this.seg.length,
+                            description: validation?.description,
                             validation: validation,
                         });
                         continue;

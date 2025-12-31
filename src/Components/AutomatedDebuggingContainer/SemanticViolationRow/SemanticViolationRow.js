@@ -1,7 +1,9 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 import {Bug} from "react-bootstrap-icons";
+
+import StackContext from "../../../Providers/StackContext";
 
 import "./SemanticViolationRow.scss";
 
@@ -16,19 +18,36 @@ SemanticViolationRow.propTypes = {
  * @return {JSX.Element}
  */
 export function SemanticViolationRow ({node, violationIndex, violation}) {
+    const [description, setDescription] = useState();
+    const {setActiveAbstraction} = useContext(StackContext);
+
     useEffect(() => {
         if (violation) {
-            console.log(violation);
+            if (!violation.description) {
+                setDescription(
+                    `No description for violation was provided. 
+                    The intent description is: ${node.intent}`
+                );
+            } else {
+                setDescription(violation.description);
+            }
         }
     }, [violation]);
+
+    const goToViolation = (e, node) => {
+        setActiveAbstraction({
+            node: node,
+        });
+    };
+
     return (
-        <div className="semantic-violation-row">
+        <div className="semantic-violation-row" onClick={(e) => goToViolation(e, node)}>
             <div className="violation-icon">
                 <Bug />
             </div>
             <div className="violation-content">
                 <div className="violation-content-text">
-                    {node.intent}
+                    {description}
                 </div>
             </div>
         </div>
