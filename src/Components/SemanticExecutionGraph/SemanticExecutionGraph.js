@@ -22,6 +22,7 @@ export function SemanticExecutionGraph () {
     const [segInstance, setSegInstance] = useState();
     const [threads, setThreads] = useState();
     const [currThreadPosition, setCurrThreadPosition] = useState();
+    const [title, setTitle] = useState();
 
     // Sync selected stack with the SEG. We use stack position to find current
     // executed position in SEG for each thread. This preserves backward
@@ -42,6 +43,7 @@ export function SemanticExecutionGraph () {
             if (segInstance[index].abstraction.position === stack.callStack[0].position) {
                 setSelectedNode(segInstance[index]);
                 renderTree(activeThread);
+                setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
             }
         }
     }, [stackPosition, activeThread, stacks, seg]);
@@ -142,6 +144,7 @@ export function SemanticExecutionGraph () {
             setThreads(threads);
             setCurrThreadPosition(threads.indexOf(activeThread));
             renderTree(activeThread);
+            setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
         }
     }, [activeThread, currThreadPosition, seg]);
 
@@ -155,12 +158,12 @@ export function SemanticExecutionGraph () {
             if (stackThreads.includes(threads[newPosition])) {
                 renderTree(threads[newPosition]);
                 setActiveThread(threads[newPosition]);
+                setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
             } else {
                 renderTree(threads[newPosition]);
-                return;
+                setTitle(`Thread (${newPosition + 1}/${threads?.length}) has not started yet.`);
             }
         }
-        renderTree(activeThread);
     };
 
     /**
@@ -173,12 +176,12 @@ export function SemanticExecutionGraph () {
             if (stackThreads.includes(threads[newPosition])) {
                 renderTree(threads[newPosition]);
                 setActiveThread(threads[newPosition]);
+                setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
             } else {
                 renderTree(threads[newPosition]);
-                return;
+                setTitle(`Thread (${newPosition + 1}/${threads?.length}) has not started yet.`);
             }
         }
-        renderTree(activeThread);
     };
 
     // Add keyboard shortcuts to navigate threads
@@ -214,9 +217,7 @@ export function SemanticExecutionGraph () {
                         <ChevronLeft/>
                     </span>
                     <div className="titleContainer">
-                        <span className="title">
-                            Thread ({currThreadPosition + 1}/{threads?.length}) : {activeThread}
-                        </span>
+                        <span className="title">{title}</span>
                     </div>
                     <span className="nextThread" onClick={goToNextThread}>
                         <ChevronRight/>
