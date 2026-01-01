@@ -1,10 +1,10 @@
 import clpFfiJsModuleInit from "clp-ffi-js";
 
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
 import CdlHeader from "./CdlHeader";
 import ThreadDebugger from "./ThreadDebugger";
-import PROGRAM_STATE from "../../PROGRAM_STATE";
 
 /**
  * This class accepts a CDL file object and allows you to
@@ -178,19 +178,21 @@ class Debugger {
         for (const thread in this.debuggers) {
             if (thread) {
                 const instance = this.debuggers[thread];
-                segs[thread] = instance.thread.seg;
-                if (instance.thread.seg.length > 0) {
-                    this.debuggingMode = PROGRAM_STATE.SEG;
+                if (instance.thread.seg) {
+                    segs[thread] = instance.thread.seg;
                 }
             }
         }
 
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
-            args: {
-                seg: segs,
-            },
-        });
+        if (Object.keys(segs).length > 0) {
+            this.debuggingMode = PROGRAM_STATE.SEG;
+            postMessage({
+                code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
+                args: {
+                    seg: segs,
+                },
+            });
+        }
     }
 
     /**
