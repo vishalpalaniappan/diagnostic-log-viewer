@@ -1,0 +1,343 @@
+import {stableStringify} from "./helper";
+
+/**
+ * This class constructures the execution tree using the abstraction map.
+ */
+class MapAbstractions {
+    /**
+     * Initialize the abstraction map.
+     * @param {Object} sdgMeta
+     */
+    constructor (sdgMeta) {
+        this.sdgMeta = sdgMeta;
+        this.printTreeToConsole = false;
+
+        if (this.printTreeToConsole) {
+            console.clear();
+        }
+
+        this.abstractionStack = [];
+        this.stack = [];
+        this.seg = [];
+        this.violations = [];
+    }
+
+    /**
+     * Validate the constraints
+     * @param {Object} abstraction
+     * @return {Array} violations
+     */
+    validateConstraints (abstraction) {
+        const violations = [];
+        const node = this.sdgMeta.abstractions[abstraction.abstractionId];
+        if ("constraint" in node) {
+            for (let i = 0; i < node.constraint.length; i++) {
+                const constraint = node.constraint[i];
+
+                let varStack;
+                let value;
+
+                if (!abstraction.varStack) {
+                    console.warn("varStack missing while validating constraints.");
+                    continue;
+                }
+
+                // Load the relevant varstack based on the instrumented scope
+                if (constraint.scope === "local") {
+                    varStack = abstraction.varStack[0];
+                } else if (constraint.scope === "global") {
+                    varStack = abstraction.varStack[1];
+                } else {
+                    console.warn("Constraint has an invalid scope for the variable");
+                    continue;
+                }
+
+                if (!varStack || !(constraint.name in varStack)) {
+                    console.warn(`Variable name "${constraint.name}" is not in stack 
+                        for constraint validation.`);
+                    continue;
+                }
+
+                value = varStack[constraint.name];
+
+                // Access the value through the key
+                // TODO: Add functionality to add nested keys
+                if ("key" in constraint && constraint.key in value) {
+                    value = value[constraint.key];
+                } else if ("key" in constraint) {
+                    console.warn("Unable to access key of variable to validate constraint.");
+                    continue;
+                }
+
+                if (constraint.type === "minLength") {
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - not a string
+                     *  - string is shorter than specified
+                     */
+                    if (value === null || typeof value !== "string" ||
+                        value.length < constraint.value) {
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.seg.length,
+                            description: constraint?.description,
+                            constraint: constraint,
+                        });
+                    }
+                } else if (constraint.type === "is_object") {
+                    /**
+                     * Flag if:
+                     *  - its null
+                     *  - its an object but its an array
+                     *  - its not an object
+                    */
+                    if (value === null || (typeof value === "object" && Array.isArray(value))
+                        || (typeof value !== "object")) {
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.seg.length,
+                            description: constraint?.description,
+                            constraint: constraint,
+                        });
+                    }
+                } else if (constraint.type === "is_array") {
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - its not an array
+                     */
+                    if (value === null || !Array.isArray(value)) {
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.seg.length,
+                            description: constraint?.description,
+                            constraint: constraint,
+                        });
+                    }
+                } else if (constraint.type === "has_key" && "value" in constraint) {
+                    const key = constraint["value"];
+                    /**
+                     * Flag if:
+                     *  - null
+                     *  - is object and is not an array and doesn't have the key
+                     */
+                    if (value === null || (typeof value === "object" && !Array.isArray(value)
+                            && !Object.prototype.hasOwnProperty.call(value, key))) {
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.seg.length,
+                            description: constraint?.description,
+                            constraint: constraint,
+                        });
+                    }
+                }
+            }
+        }
+        this.violations = this.violations.concat(violations);
+        return violations;
+    }
+
+
+    /**
+     * Validates that the intent of the abstraction was realized.
+     * @param {Object} abstraction
+     * @return {undefined}
+     */
+    validateIntent (abstraction) {
+        const violations = [];
+        const node = this.sdgMeta.abstractions[abstraction.abstractionId];
+        if (!node) {
+            console.warn(`Abstraction node not found for id: ${abstraction.abstractionId}`);
+            return violations;
+        }
+
+        if (!("intent_validation" in node)) {
+            return violations;
+        }
+
+        for (let i = 0; i < node.intent_validation.length; i++) {
+            const validation = node.intent_validation[i];
+
+            /**
+             * Note: Everything that is instrumented is unambigious,
+             * so my implementation below is very raw and hasn't fully
+             * leveraged the full domain knowledge. I am just setting up
+             * the structure to begin exploring intent validation.
+             */
+            if (validation.type === "data_exists") {
+                const sourceValue = abstraction.varStack[0][validation.source_var];
+                const target = abstraction.varStack[0][validation.target_var];
+
+                if (validation.position === "end") {
+                    if (target.length === 0) {
+                        console.warn("Intent validation failed: target data is not an array.");
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.seg.length,
+                            description: validation?.description,
+                            validation: validation,
+                        });
+                        continue;
+                    }
+
+                    const sourceStr = stableStringify(sourceValue);
+                    const targetStr = stableStringify(target[target.length -1]);
+                    if (sourceStr !== targetStr) {
+                        console.warn("Intent validation failed: data not at target position.");
+                        violations.push({
+                            position: abstraction.position,
+                            index: this.seg.length,
+                            description: validation?.description,
+                            validation: validation,
+                        });
+                        continue;
+                    }
+
+                    console.log("Intent validation passed: data exists at target position.");
+                }
+            }
+        }
+        return violations;
+    }
+
+    /**
+     * Add the provided id to the execution tree.
+     * @param {Object} abstraction
+     */
+    mapCurrentLevel (abstraction) {
+        const id = abstraction.abstractionId;
+        const levels = id.split("-");
+        const filePath = levels.shift();
+        const module = filePath + "-" + levels.shift();
+
+        // If the last entry in the execution tree is a function call,
+        // we need to push the module onto the stack.
+        if (this.seg.length > 0) {
+            const tree = this.seg;
+            if (tree[tree.length - 1].meta.type === "function_call") {
+                this.stack.push({"module": module, "length": 1});
+            }
+        }
+
+        // Move up the stack until we find current module or the stack is empty.
+        while (this.stack.length > 0) {
+            if (this.stack[this.stack.length -1].module === module) {
+                break;
+            }
+            this.stack.pop();
+        }
+
+        if (this.stack.length === 0) {
+            // If the stack is empty, we need to add the module.
+            this.stack.push({"module": module, "length": levels.length});
+        } else {
+            // Update the length of the current module in the stack.
+            this.stack[this.stack.length -1].length = levels.length;
+        }
+
+        // Calculate the current level based on the stack depth and lengths.
+        const level = this.stack.reduce((sum, level) => sum + level.length, 0);
+
+        const intentViolations = this.validateIntent(abstraction);
+        const constraintViolations = this.validateConstraints(abstraction);
+        const violations = intentViolations.concat(constraintViolations);
+
+        const updatedIntent = this.replacePlaceHoldersInIntent(
+            this.sdgMeta.abstractions[id], abstraction.varStack
+        );
+
+        if ("varStack" in abstraction) {
+            delete abstraction.varStack;
+        }
+
+        const entry = {
+            "level": level,
+            "module": module,
+            "intent": updatedIntent,
+            "index": this.seg.length,
+            "abstraction": abstraction,
+            "meta": this.sdgMeta.abstractions[id],
+            "violations": violations,
+        };
+        this.seg.push(entry);
+
+        // Set the collapseible state of the previous entry
+        // based on the current level.
+        if (this.seg.length > 1) {
+            const prevEntry = this.seg[this.seg.length -2];
+            if (entry.level > prevEntry.level) {
+                prevEntry.collapsible = true;
+                prevEntry.collapsed = false;
+            } else {
+                prevEntry.collapsible = false;
+                prevEntry.collapsed = false;
+            }
+        }
+    }
+
+    /**
+     * Replaces the intent placeholders with the variable values.
+     * @param {Object} entry
+     * @param {Object} currVarStack
+     * @return {String}
+     */
+    replacePlaceHoldersInIntent (entry, currVarStack) {
+        /**
+         * TODO: Make this more robust so that it doesn't try to
+         * access nonexistent keys, variables or inject malformed data
+         * into the placeholders.
+         * */
+        const placeholderList = entry.placeholders;
+        if (!placeholderList || placeholderList.length == 0) {
+            return entry.intent;
+        }
+
+        if (!currVarStack) {
+            console.warn("Valid VAR stack was not provided for replacing placholders in intent.");
+            return entry.intent;
+        }
+
+        let updatedIntent = entry.intent;
+
+        placeholderList.forEach((variable) => {
+            const scope = variable.scope;
+
+            if (scope === "local" && variable.name in currVarStack[0]) {
+                variable.value = currVarStack[0][variable.name];
+            } else if (scope === "global" && variable.name in currVarStack[1]) {
+                variable.value = currVarStack[1][variable.name];
+            } else {
+                console.warn("Did not find variable value to replace placeholder.");
+                return updatedIntent;
+            }
+
+            if (variable && variable.value && "key" in variable && variable.key in variable.value) {
+                variable.value = variable.value[variable.key];
+            } else if ("key" in variable) {
+                console.warn("Unable to access key of variable to replace placeholder.");
+                return updatedIntent;
+            }
+
+            updatedIntent = updatedIntent.replace(variable.placeholder, variable.value);
+        });
+
+        return updatedIntent;
+    }
+
+    /**
+     * Prints the design stack with the indentations to visualize it.
+     * @param {*} length
+     * @param {*} intent
+     */
+    printLevel (length, intent) {
+        let str = "";
+        for (let i = 0; i < length; i++) {
+            str += "   ";
+        }
+        str = str + intent;
+        console.log(str);
+    }
+};
+
+export default MapAbstractions;

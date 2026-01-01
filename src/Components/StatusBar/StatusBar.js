@@ -1,9 +1,10 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
-import {Diagram2Fill} from "react-bootstrap-icons";
+import {Eyeglasses} from "react-bootstrap-icons";
 
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import ActionsContext from "../../Providers/ActionsContext";
-import StackContext from "../../Providers/StackContext";
+import {StatusBarMenu} from "./StatusBarMenu/StatusBarMenu";
 
 import "./StatusBar.scss";
 
@@ -15,8 +16,7 @@ StatusBar.propTypes = {
  * @return {JSX.Element}
  */
 export function StatusBar ({}) {
-    const {activeThread} = useContext(StackContext);
-    const {actions} = useContext(ActionsContext);
+    const {mode, actions} = useContext(ActionsContext);
 
     const statusRef = useRef();
 
@@ -37,6 +37,16 @@ export function StatusBar ({}) {
         }
     }, [actions]);
 
+    const getProgramMode = () => {
+        if (mode === PROGRAM_STATE.STACK) {
+            return "Program Mode: Stack Based Debugging";
+        } else if (mode === PROGRAM_STATE.SEG) {
+            return "Program Mode: SEG Based Debugging";
+        } else {
+            return "Program Mode: Unknown";
+        }
+    };
+
     return (
         <div id="status-bar">
             <div className="status-bar">
@@ -46,14 +56,14 @@ export function StatusBar ({}) {
                     </span>
                 </div>
                 <div className="status-right ">
-                    {activeThread &&
-                        <div className="status-item status-item-button status-thread-accent">
-                            <Diagram2Fill/>
-                            <span className="ms-2 me-1">
-                                Current Thread: {activeThread}
-                            </span>
-                        </div>
-                    }
+
+                    <StatusBarMenu
+                        className="status-item status-item-button status-verbosity-accent"
+                        disabled={false}
+                    >
+                        <Eyeglasses/>
+                        <span className="ms-2 me-2">{getProgramMode()}</span>
+                    </StatusBarMenu>
                 </div>
             </div>
         </div>

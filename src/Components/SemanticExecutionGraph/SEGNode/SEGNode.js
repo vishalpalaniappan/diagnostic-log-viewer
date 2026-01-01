@@ -4,22 +4,22 @@ import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
 import BreakpointsContext from "../../../Providers/BreakpointsContext";
-import ExecutionTreeInstanceContext from "../ExecutionTreeInstanceContext";
+import SEGInstanceContext from "../SEGInstanceContext";
 
-import "./ExecutionNode.scss";
+import "./SEGNode.scss";
 
-AbstractionRow.propTypes = {
+SEGNode.propTypes = {
     node: PropTypes.object,
 };
 
 /**
- * Contains a node in the execution tree.
+ * Contains a node in the semantic execution graph.
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function AbstractionRow ({node}) {
+export function SEGNode ({node}) {
     const {breakPoints} = useContext(BreakpointsContext);
-    const {selectedNode, selectNode, toggleCollapse} = useContext(ExecutionTreeInstanceContext);
+    const {selectNode, selectedNode, toggleCollapse} = useContext(SEGInstanceContext);
     const [selectedStyle, setSelectedStyle] = useState();
     const [debugText, setDebugText] = useState();
     const [hasViolation, setHasViolation] = useState();
@@ -28,28 +28,35 @@ export function AbstractionRow ({node}) {
     useEffect(() => {
         if (node && selectedNode) {
             if (selectedNode === node) {
-                setSelectedStyle({background: "#3b3b3b", color: "white"});
+                setSelectedStyle(
+                    {
+                        background: "#4b4b18",
+                        color: "#ffffff",
+                        fontSize: "14px",
+                    }
+                );
             } else {
                 setSelectedStyle({});
             }
         }
-        if (node) {
-            setHasViolation(false);
-            setDebugText(undefined);
 
-            if (node.invalid) {
-                setHasViolation(true);
-                setDebugText("violation");
-            }
-            if (node.rootCause) {
-                setHasViolation(true);
-                setDebugText("root cause");
-            }
-            if (node.exception) {
-                setHasViolation(true);
-                setSelectedStyle({background: "#3f191b", color: "white"});
-                setDebugText("failure");
-            }
+        setHasViolation(false);
+        setDebugText(undefined);
+
+        if (node && node?.violations && node.violations.length > 0) {
+            setHasViolation(true);
+            setDebugText("violation");
+        }
+
+        if (node && node?.exception) {
+            setHasViolation(true);
+            setSelectedStyle(
+                {
+                    background: "#3f191b",
+                    color: "white",
+                    fontSize: "14px",
+                });
+            setDebugText("failure");
         }
     }, [selectedNode, node]);
 
@@ -130,7 +137,7 @@ export function AbstractionRow ({node}) {
         if (!breakPoints) return;
         for (let i = 0; i < breakPoints.length; i++) {
             const point = breakPoints[i];
-            if (point.abstraction_meta === node.abstractionId) {
+            if (point.abstractionId === node.abstraction.abstractionId) {
                 const className = (point.enabled == true)?
                     "enabledBreakPoint":
                     "disabledBreakPoint";
@@ -140,7 +147,7 @@ export function AbstractionRow ({node}) {
     };
 
     return (
-        <div style={selectedStyle} id={"row" + node.index}
+        <div style={selectedStyle} id={"row" + node.abstraction.threadId+ node.index}
             className="abstractionRow">
 
             <div className="icon-container">
@@ -170,7 +177,9 @@ export function AbstractionRow ({node}) {
 
                 {hasViolation ?
                     <div className="analysis-status-container">
-                        <span className="message">{debugText}</span>
+                        <span className="message">
+                            {debugText}
+                        </span>
                     </div>:
                     <></>
                 }

@@ -1,11 +1,12 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 
+import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
-import ExecutionTreeContext from "../Providers/ExecutionTreeContext";
-import {FileViewer} from "./FileViewer/FileViewer";
+import PROGRAM_STATE from "../PROGRAM_STATE";
+import ActionsContext from "../Providers/ActionsContext";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
-import { SideContainerSemantic } from "./SideContainer/SideContainerSemantic";
-import { SideContainerStack } from "./SideContainer/SideContainerStack";
+import {SideContainerGraph} from "./SideContainer/SideContainerGraph";
+import {SideContainerStack} from "./SideContainer/SideContainerStack";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
 
 import "./Viewer.scss";
@@ -15,37 +16,42 @@ import "./Viewer.scss";
  * @return {JSX.Element}
  */
 export function Viewer () {
-    const {executionTree} = useContext(ExecutionTreeContext);
-    const [showExecutionTree, setShowExecutionTree] = useState(false);
+    const {mode} = useContext(ActionsContext);
 
-    useEffect(() => {
-        if (executionTree) {
-            setShowExecutionTree(true);
-        } else {
-            setShowExecutionTree(false);
+    const getToolKit = () => {
+        if (mode === PROGRAM_STATE.STACK) {
+            return <DebugToolKit />;
+        } else if (mode === PROGRAM_STATE.SEG) {
+            return <DebugToolKit />;
         }
-    }, [executionTree]);
+    };
+
+    const getSideContainer = () => {
+        if (mode === PROGRAM_STATE.STACK) {
+            return <SideContainerStack />;
+        } else if (mode === PROGRAM_STATE.SEG) {
+            return <SideContainerGraph />;
+        }
+    };
+
+    const getRightSideContainer = () => {
+        if (mode === PROGRAM_STATE.SEG) {
+            return <RightSideContainer/>;
+        }
+    };
 
     return (
         <div className="viewer-container">
-            <DebugToolKit />
+            {getToolKit()}
             <div className="menu-container"></div>
             <div className="body-container d-flex flex-row">
                 <div className="d-flex h-100">
-                    { showExecutionTree ?
-                        <SideContainerSemantic/>:
-                        <SideContainerStack />
-                    }
+                    {getSideContainer()}
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                    <FileViewer/>
+                    <CentralContainer/>
                 </div>
-                { showExecutionTree ?
-                    <div className="d-flex h-100">
-                        <RightSideContainer/>
-                    </div>:
-                    <></>
-                }
+                { getRightSideContainer()}
             </div>
             <div className="status-bar-container">
                 <StatusBarContainer/>

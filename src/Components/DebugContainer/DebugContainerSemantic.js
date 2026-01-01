@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
 import {BreakPointContainer} from "./BreakPointContainer/BreakPointContainer";
-import {CallStackContainer} from "./CallStackContainer/CallStackContainer";
 import {VariableStackContainer} from "./VariableStackContainer/VariableStackContainer";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 

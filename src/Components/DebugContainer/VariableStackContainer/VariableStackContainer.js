@@ -1,9 +1,8 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 
 import ReactJsonView from "@microlink/react-json-view";
 
 import VariablesContext from "../../../Providers/VariablesContext";
-import GlobalVariablesContext from "../../../Providers/GlobalVariablesContext";
 
 import "./VariableStackContainer.scss";
 
@@ -12,11 +11,23 @@ import "./VariableStackContainer.scss";
  * @return {JSX.Element}
  */
 export function VariableStackContainer () {
-    const {localVariables} = useContext(VariablesContext);
-    const {globalVariables} = useContext(GlobalVariablesContext);
+    const {variables} = useContext(VariablesContext);
+    const [localVariables, setLocalVariables] = useState();
+    const [globalVariables, setGlobalVariables] = useState();
+
+    useEffect(() => {
+        if (variables) {
+            if ("localVariables" in variables) {
+                setLocalVariables(variables.localVariables);
+            }
+            if ("globalVariables" in variables) {
+                setGlobalVariables(variables.globalVariables);
+            }
+        }
+    }, [variables]);
 
     const variableStackTheme = {
-        base00: "#252526",
+        base00: "#1e1e1e",
         base01: "#ddd",
         base02: "#474747",
         base03: "#444",
@@ -39,7 +50,7 @@ export function VariableStackContainer () {
             <ReactJsonView
                 src={localVariables}
                 theme={variableStackTheme}
-                collapsed={1}
+                collapsed={false}
                 name={"local"}
                 groupArraysAfterLength={100}
                 sortKeys={true}
@@ -50,7 +61,7 @@ export function VariableStackContainer () {
             <ReactJsonView
                 src={globalVariables}
                 theme={variableStackTheme}
-                collapsed={1}
+                collapsed={false}
                 name={"global"}
                 groupArraysAfterLength={100}
                 sortKeys={true}

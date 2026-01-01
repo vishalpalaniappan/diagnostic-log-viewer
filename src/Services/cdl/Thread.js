@@ -1,6 +1,5 @@
-import AbstractionMap from "./AbstractionMap";
 import CdlHeader from "./CdlHeader";
-import StackFrames from "./StackFrames";
+import MapAbstractions from "./MapAbstractions";
 
 /**
  * This class processes threads execution and exposes functions to
@@ -19,9 +18,6 @@ class Thread {
         this.globalVariables = {};
         this.threadId = threadId;
 
-        this.stackFrames = new StackFrames();
-        this.callStack = this.stackFrames.rootFrame;
-
         this.inputs = [];
         this.outputs = [];
 
@@ -32,7 +28,7 @@ class Thread {
         this.firstStatement = this._getFirstStatement();
 
         this.currPosition = this.lastStatement;
-        this.executionTree = this.getExecutionTree(this.currPosition);
+        this.seg = this.generateSeg();
     }
 
     /**
@@ -99,7 +95,8 @@ class Thread {
 
             const ltInfo = this.header.getLtFromInjectedLineno(level.filename, level.lineno);
             if (ltInfo === null) {
-                console.error(`Failed to find log type info for ${level.filename}:${level.lineno} at stack position ${index}`);
+                console.error(`Failed to find log type info for ${level.filename}:${level.lineno}\
+                     at stack position ${index}`);
                 continue;
             }
 
@@ -213,7 +210,49 @@ class Thread {
                     this._updateVariable(variable, currLog.value, localVars, tempVars);
                 }
             }
-        } while (++currPosition <= position);
+        } while (++currPosition < position);
+
+        if (!this.header.hasAbstractionMetadata()) {
+            return [localVars, globalVars];
+        }
+
+        /**
+         * Once we reach the position, now we get all the logged variables
+         * for this position. This is done to get all the variables for
+         * the current abstraction.
+         */
+        const sdgMeta = this.header.getAbstractionMetadata();
+        const abstraction = this.header.logTypeMap[startLog.value];
+        const meta = sdgMeta.abstractions[abstraction.abstractionId];
+        const variables = (meta.variables)?[...meta.variables]:[];
+
+        while (variables.length > 0 && currPosition < this.execution.length) {
+            const currLog = this.execution[currPosition];
+
+            if (currLog?.type && currLog.type == "adli_variable") {
+                const variable = this.header.variableMap[currLog.varid];
+                const varFuncId = currLog.scope_uid;
+
+                let updated;
+                if (variable.isTemp) {
+                    tempVars[variable.name] = currLog.value;
+                } else if ((varFuncId == "global" || variable.isGlobal())) {
+                    this._updateVariable(variable, currLog.value, globalVars, tempVars);
+                    updated = true;
+                } else if (varFuncId === funcId) {
+                    this._updateVariable(variable, currLog.value, localVars, tempVars);
+                    updated = true;
+                }
+
+                if (updated) {
+                    const variableInd = variables.findIndex((v) => v.name === variable.name);
+                    if (variableInd !== -1) {
+                        variables.splice(variableInd, 1);
+                    }
+                }
+            }
+            currPosition++;
+        }
 
         return [localVars, globalVars];
     }
@@ -302,152 +341,47 @@ class Thread {
     }
 
     /**
-     * This function gets the execution tree given the position.
-     * @param {*} finalPosition
-     * @return {Object|null}
+     * This function processes the execution logs and generates the SEG.
+     * @return {null|Object} Returns the semantic execution graph or null.
      */
-    getExecutionTree (finalPosition) {
-        if (!this.header.hasAbstractionMap()) {
+    generateSeg () {
+        if (!this.header.hasAbstractionMetadata()) {
             console.log("Trace file does not have an abstraction map");
             return null;
         }
 
-        const sdg = this.header.getSDG();
-        const sdgMeta = this.header.getSDGMeta();
+        const sdgMeta = this.header.getAbstractionMetadata();
 
-        if (!sdg || !sdgMeta) {
+        if (!sdgMeta) {
             console.log("Trace file is missing required SDG data or metadata");
             return null;
         }
 
-        const map = new AbstractionMap(sdg, sdgMeta);
+        const map = new MapAbstractions(sdgMeta);
 
         let position = 0;
         do {
             const positionData = this.execution[position];
             if (positionData.type === "adli_execution") {
-                const abstractionInstance = this.header.logTypeMap[positionData.value];
+                const abstractionInstance = {...this.header.logTypeMap[positionData.value]};
+                const meta = sdgMeta.abstractions[abstractionInstance.abstractionId];
                 abstractionInstance.threadId = this.threadId;
                 abstractionInstance.position = position;
-
-                /**
-                 *  TODO: This practice of saving the var stack info in the
-                 *  abstraction info is really strange and I should not be
-                 *  doing this, so I will revisit this later to change it.
-                 */
-
-
-                // These variable stacks are used to replace the placeholders
-                // in the intent and to validate the constraints.
-                abstractionInstance.currVarStack = this.getVariablesAtPosition(position);
-                abstractionInstance.nextVarStack = null;
-
-                /*
-                 We go to the next position because the variable values for
-                 the current position are logged after the statement.
-
-                 For example:
-                 a = b + 1
-                 logVariable(a);
-                 c = d + 2
-
-                 So we need to load the value of a from the c = d + 2 statement.
-                 We save the next var stack to the abstraction so that we can
-                 access it when validating the constraints.
-
-                 TODO:
-                 This is not an ideal solution, if the constraint we are
-                 validating is in the last statement (for example a return
-                 statement), then we need to just access the variable values,
-                 the next statement is not going to be in the same function.
-                 */
-                let nextPos = this._getNextPosition(position);
-                while (nextPos !== null) {
-                    const nextPositionData = this.execution[nextPos];
-                    const nextAbstraction = this.header.logTypeMap[nextPositionData.value];
-                    if (nextAbstraction.getfId() === abstractionInstance.getfId()) {
-                        abstractionInstance.nextVarStack =
-                            this.getVariablesAtPosition(nextPos);
-                        break;
-                    }
-                    nextPos = this._getNextPosition(nextPos);
-                }
-
+                abstractionInstance.timestamp = positionData.timestamp;
+                abstractionInstance.varStack = this.getVariablesAtPosition(position, meta);
                 map.mapCurrentLevel(abstractionInstance);
             }
-        } while (position++ < finalPosition);
+        } while (++position < this.execution.length);
 
         // If the program ended in failure, save the exception
         // to the final node in the semantic execution graph
-        let failedAbstraction;
-        if (this.exception && map.executionTree.length > 0) {
-            const len = map.executionTree.length;
-            const lastEntry = map.executionTree[len - 1];
+        if (this.exception && map.seg.length > 0) {
+            const len = map.seg.length;
+            const lastEntry = map.seg[len - 1];
             lastEntry.exception = this.exception;
-            failedAbstraction = lastEntry.abstractionId;
         }
 
-
-        /**
-         * Through the instrumentation, we can now identify the failures
-         * caused by a constraint violation. Through this, when a failure
-         * happens, the violations which create this failure are identified.
-         *
-         * There can be multiple violations, for example, a statement could
-         * concatonate the first character of two strings, so if you give it
-         * two empty strings, the failure is caused by two constraint
-         * violations. I choose to label both as a root cause but the failure
-         * will specifically highlight the first variable that was checked.
-         */
-
-        // Verify that there were violations before trying to map it to graph.
-        if (map.violations.length > 0) {
-            // Find if any of the identified violations
-            // cause this abstraction to fail.
-            const filteredViolations = [];
-            for (let i = 0; i < map.violations.length; i++) {
-                const violation = map.violations[i];
-                if (violation.constraint?.failures?.includes(failedAbstraction)) {
-                    filteredViolations.push(violation);
-                }
-            }
-
-            // Save the violations to the semantic execution graph.
-            // The earliest violation is the root cause.
-            // TODO: Improve this crude implementation.
-            for (let i = 0; i < filteredViolations.length; i++) {
-                const entry = filteredViolations[i];
-                map.executionTree[entry.index].rootCause = true;
-                map.executionTree[entry.index].violation = entry;
-            }
-
-
-            /**
-             * Save root causes to last entry so we can display them.
-             * This is temporary and I will replace this with a more
-             * maintainable and scalable approach.
-             ***/
-            if (this.exception && filteredViolations.length > 0 && map.executionTree.length > 0) {
-                const lastEntry = map.executionTree[map.executionTree.length - 1];
-                const abstractionId = lastEntry["abstractionId"];
-                const failureInfo = [];
-
-                filteredViolations.forEach((violation, index) => {
-                    const rootcauseMap = violation.constraint?.rootcause;
-                    if (rootcauseMap && abstractionId in rootcauseMap) {
-                        const cause = rootcauseMap[abstractionId];
-                        failureInfo.push({
-                            "index": violation.index,
-                            "cause": cause,
-                        });
-                    }
-                });
-                lastEntry.violations = filteredViolations;
-                lastEntry.failureInfo = failureInfo;
-            }
-        }
-
-        return map.executionTree;
+        return map.seg;
     }
 
     /**

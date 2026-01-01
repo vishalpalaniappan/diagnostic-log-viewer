@@ -2,13 +2,13 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import PropTypes from "prop-types";
 
+import PROGRAM_STATE from "../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
 import BreakpointsContext from "./BreakpointsContext";
-import ExecutionTreeContext from "./ExecutionTreeContext";
 import FileTreeContext from "./FileTreeContext";
-import GlobalVariablesContext from "./GlobalVariablesContext";
+import SegContext from "./SegContext";
 import StackContext from "./StackContext";
 import StackPositionContext from "./StackPositionContext";
 import ThreadsContext from "./ThreadsContext";
@@ -34,13 +34,13 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [stacks, setStacks] = useState();
     const [activeThread, setActiveThread] = useState();
     const [stackPosition, setStackPosition] = useState();
-    const [localVariables, setLocalVariables] = useState();
-    const [globalVariables, setGlobalVariables] = useState();
+    const [variables, setVariables] = useState();
     const [fileTree, setFileTree] = useState();
     const [breakPoints, setBreakPoints] = useState();
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
-    const [executionTree, setExecutionTree] = useState();
+    const [seg, setSeg] = useState();
+    const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
 
     const cdlWorker = useRef(null);
@@ -83,8 +83,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         if (activeAbstraction && cdlWorker.current) {
             const code = CDL_WORKER_PROTOCOL.GO_TO_POSITION;
             const args = {
-                position: activeAbstraction.node.position,
-                threadId: activeAbstraction.node.threadId,
+                position: activeAbstraction.node.abstraction.position,
+                threadId: activeAbstraction.node.abstraction.threadId,
             };
             cdlWorker.current.postMessage({code: code, args: args});
         }
@@ -93,13 +93,13 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     // Resets the state variables before loading new file.
     const initializeStates = () => {
         setFileTree(undefined);
-        setLocalVariables(undefined);
-        setGlobalVariables(undefined);
+        setVariables(undefined);
         setStackPosition(undefined);
         setActiveThread(undefined);
         setActiveFile(undefined);
         setBreakPoints(undefined);
-        setExecutionTree(undefined);
+        setSeg(undefined);
+        setMode(PROGRAM_STATE.STACK);
     };
 
     // Create worker to handle file.
@@ -143,6 +143,20 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         });
     };
 
+    // When the mode changes, update the mode
+    // in the worker so that it applies the
+    // correct debugging operations.
+    useEffect(() => {
+        if (mode) {
+            cdlWorker.current.postMessage({
+                code: CDL_WORKER_PROTOCOL.SET_DEBUG_MODE,
+                args: {
+                    mode: mode,
+                },
+            });
+        }
+    }, [mode]);
+
     /**
      * Handles message from the worker.
      * @param {object} event
@@ -159,14 +173,17 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setActiveStack(event.data.args);
                 break;
             case CDL_WORKER_PROTOCOL.GET_VARIABLE_STACK:
-                setLocalVariables(event.data.args.localVariables);
-                setGlobalVariables(event.data.args.globalVariables);
+                setVariables({
+                    localVariables: event.data.args.localVariables,
+                    globalVariables: event.data.args.globalVariables,
+                });
                 break;
             case CDL_WORKER_PROTOCOL.BREAKPOINTS:
                 setBreakPoints(event.data.args.breakpoints);
                 break;
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
-                setExecutionTree(event.data.args);
+                setMode(PROGRAM_STATE.SEG);
+                setSeg(event.data.args.seg);
                 break;
             default:
                 break;
@@ -178,25 +195,23 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
             <FileTreeContext.Provider value={{fileTree}}>
                 <WorkerContext.Provider value={{cdlWorker}}>
                     <ThreadsContext.Provider value={{threads, setThreads}}>
-                        <GlobalVariablesContext.Provider value={{globalVariables}}>
-                            <VariablesContext.Provider value={{localVariables}}>
-                                <BreakpointsContext.Provider value={{breakPoints}}>
-                                    <StackContext.Provider
-                                        value={{stacks, activeThread, activeAbstraction,
-                                            setActiveThread, setActiveAbstraction}}>
-                                        <ActiveFileContext.Provider
-                                            value={{activeFile, setActiveFile}}>
-                                            <ExecutionTreeContext.Provider value={{executionTree}}>
-                                                <ActionsContext.Provider
-                                                    value={{actions, setActions}}>
-                                                    {children}
-                                                </ActionsContext.Provider>
-                                            </ExecutionTreeContext.Provider>
-                                        </ActiveFileContext.Provider>
-                                    </StackContext.Provider>
-                                </BreakpointsContext.Provider>
-                            </VariablesContext.Provider>
-                        </GlobalVariablesContext.Provider>
+                        <VariablesContext.Provider value={{variables}}>
+                            <BreakpointsContext.Provider value={{breakPoints}}>
+                                <StackContext.Provider
+                                    value={{stacks, activeThread, activeAbstraction,
+                                        setActiveThread, setActiveAbstraction}}>
+                                    <ActiveFileContext.Provider
+                                        value={{activeFile, setActiveFile}}>
+                                        <SegContext.Provider value={{seg}}>
+                                            <ActionsContext.Provider
+                                                value={{actions, mode, setMode, setActions}}>
+                                                {children}
+                                            </ActionsContext.Provider>
+                                        </SegContext.Provider>
+                                    </ActiveFileContext.Provider>
+                                </StackContext.Provider>
+                            </BreakpointsContext.Provider>
+                        </VariablesContext.Provider>
                     </ThreadsContext.Provider>
                 </WorkerContext.Provider>
             </FileTreeContext.Provider>

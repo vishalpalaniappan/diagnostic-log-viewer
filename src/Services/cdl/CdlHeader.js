@@ -124,40 +124,28 @@ class CdlHeader {
     /**
      * @return {Boolean} Indicates if the header has an abstraction map.
      */
-    hasAbstractionMap () {
-        return "sdg" in this.header;
-    }
-
-    /**
-     * @return {Object} Indicates if the header has an abstraction map.
-     */
-    getAbstractionMap () {
-        if (this.hasAbstractionMap()) {
-            return this.header["sdg"];
-        } else {
-            return null;
-        }
+    hasAbstractionMetadata () {
+        return "sdg_meta" in this.header;
     }
 
     /**
      * @return {Object|null} Returns the SDG data from the header,
      * or null if not present.
      */
-    getSDG () {
-        if ("sdg" in this.header) {
-            return this.header["sdg"];
+    getAbstractionMetadata () {
+        if ("sdg_meta" in this.header) {
+            return this.header["sdg_meta"];
         } else {
             return null;
         }
     }
 
     /**
-     * @return {Object|null} Returns the SDG metadata from the header,
-     * or null if not present.
+     * @return {Object|null} Returns the design.
      */
-    getSDGMeta () {
-        if ("sdg_meta" in this.header) {
-            return this.header["sdg_meta"];
+    getDesignMap () {
+        if ("design_map" in this.header) {
+            return this.header["design_map"];
         } else {
             return null;
         }

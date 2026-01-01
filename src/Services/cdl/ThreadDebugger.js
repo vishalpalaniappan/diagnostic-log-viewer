@@ -1,3 +1,4 @@
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import Thread from "./Thread";
 
 /**
@@ -58,8 +59,9 @@ class ThreadDebugger {
     /**
      * This function steps into the next position.
      * @param {Number} position
+     * @param {Number} mode
      */
-    stepInto (position) {
+    stepInto (position, mode) {
         const nextPosition = this.thread._getNextPosition(position);
         if (nextPosition == null) {
             // End of file has been reached
@@ -72,27 +74,27 @@ class ThreadDebugger {
     /**
      * This function steps out of the current position.
      * @param {Number} position
+     * @param {Number} mode
      */
-    stepOut (position) {
-        if (this.thread.executionTree) {
-            // Use execution tree instead of stack
-            const index = this.thread.executionTree.findIndex(
-                (item) => item.position === position
+    stepOut (position, mode) {
+        if (mode === PROGRAM_STATE.SEG) {
+            const index = this.thread.seg.findIndex(
+                (item) => item.abstraction.position === position
             );
             if (index === -1) {
                 console.warn("Current position was not found in semantic execution graph");
                 return;
             }
-            const entry = this.thread.executionTree[index];
+            const entry = this.thread.seg[index];
             const level = entry.level;
             for (let i = index - 1; i >= 0; i--) {
-                const candidate = this.thread.executionTree[i];
+                const candidate = this.thread.seg[i];
                 if (candidate.level < level) {
-                    this.position = candidate .position;
+                    this.position = candidate.abstraction.position;
                     break;
                 }
             }
-        } else {
+        } else if (mode === PROGRAM_STATE.STACK) {
             const callStack = this.thread.getCallStackAtPosition(position);
             if (callStack.length <= 1) {
                 return;
@@ -104,29 +106,29 @@ class ThreadDebugger {
     /**
      * This function steps over any function calls forwards.
      * @param {Number} position
+     * @param {Number} mode
      */
-    stepOverForward (position) {
-        if (this.thread.executionTree) {
-            // Use execution tree instead of stack
-            const index = this.thread.executionTree.findIndex(
-                (item) => item.position === position
+    stepOverForward (position, mode) {
+        if (mode === PROGRAM_STATE.SEG) {
+            const index = this.thread.seg.findIndex(
+                (item) => item.abstraction.position === position
             );
             if (index === -1) {
                 console.warn("Current position was not found in semantic execution graph");
                 return;
             }
-            const entry = this.thread.executionTree[index];
+            const entry = this.thread.seg[index];
             const level = entry.level;
-            const length = this.thread.executionTree.length;
+            const length = this.thread.seg.length;
 
             for (let i = index + 1; i < length; i++) {
-                const candidate = this.thread.executionTree[i];
+                const candidate = this.thread.seg[i];
                 if (candidate.level <= level) {
-                    this.position = candidate.position;
+                    this.position = candidate.abstraction.position;
                     break;
                 }
             }
-        } else {
+        } else if (mode === PROGRAM_STATE.STACK) {
             const originalStack = this.thread.getCallStackAtPosition(position);
 
             while (position < this.thread.execution.length) {
@@ -149,27 +151,27 @@ class ThreadDebugger {
     /**
      * This function steps over any function calls backwards.
      * @param {Number} position
+     * @param {Number} mode
      */
-    stepOverBackward (position) {
-        if (this.thread.executionTree) {
-            // Use execution tree instead of stack
-            const index = this.thread.executionTree.findIndex(
-                (item) => item.position === position
+    stepOverBackward (position, mode) {
+        if (mode === PROGRAM_STATE.SEG) {
+            const index = this.thread.seg.findIndex(
+                (item) => item.abstraction.position === position
             );
             if (index === -1) {
                 console.warn("Current position was not found in semantic execution graph");
                 return;
             }
-            const entry = this.thread.executionTree[index];
+            const entry = this.thread.seg[index];
             const level = entry.level;
             for (let i = index - 1; i >= 0; i--) {
-                const candidate = this.thread.executionTree[i];
+                const candidate = this.thread.seg[i];
                 if (candidate.level <= level) {
-                    this.position = candidate.position;
+                    this.position = candidate.abstraction.position;
                     break;
                 }
             }
-        } else {
+        } else if (mode === PROGRAM_STATE.STACK) {
             const originalStack = this.thread.getCallStackAtPosition(position);
 
             while (position >= 0) {

@@ -3,8 +3,9 @@ import React, {useCallback, useContext, useEffect, useRef, useState} from "react
 import {ArrowDownShort, ArrowLeftShort, ArrowRepeat, ArrowRightShort, ArrowUpShort,
     Play, ThreeDotsVertical} from "react-bootstrap-icons";
 
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import ActionsContext from "../../Providers/ActionsContext";
-import ExecutionTreeContext from "../../Providers/ExecutionTreeContext";
+import SegContext from "../../Providers/SegContext";
 import StackContext from "../../Providers/StackContext";
 import StackPositionContext from "../../Providers/StackPositionContext";
 import WorkerContext from "../../Providers/WorkerContext";
@@ -24,9 +25,9 @@ export function DebugToolKit ({}) {
 
     const {stackPosition, setStackPosition} = useContext(StackPositionContext);
     const {stacks, activeThread} = useContext(StackContext);
-    const {setActions} = useContext(ActionsContext);
+    const {setMode, setActions} = useContext(ActionsContext);
     const {cdlWorker} = useContext(WorkerContext);
-    const {executionTree} = useContext(ExecutionTreeContext);
+    const {seg} = useContext(SegContext);
 
     const [stack, setStack] = useState();
 
@@ -88,7 +89,9 @@ export function DebugToolKit ({}) {
 
     useEffect(() => {
         if (stacks && activeThread) {
-            setStack(stacks[activeThread].stack);
+            if (activeThread in stacks) {
+                setStack(stacks[activeThread].stack);
+            }
         }
     }, [stacks, activeThread]);
 
@@ -101,6 +104,22 @@ export function DebugToolKit ({}) {
 
     const keydown = useCallback((e) => {
         switch (e.code) {
+            case "Digit1":
+                setActions((prev) => ({
+                    value: "Debugging Mode: Stack",
+                    tick: prev.tick + 1,
+                }));
+                setMode(PROGRAM_STATE.STACK);
+                break;
+
+            case "Digit2":
+                setActions((prev) => ({
+                    value: "Debugging Mode: SEG ",
+                    tick: prev.tick + 1,
+                }));
+                setMode(PROGRAM_STATE.SEG);
+                break;
+
             case "KeyB":
                 setActions((prev) => ({
                     value: "Toggle Breakpoint",
@@ -167,7 +186,7 @@ export function DebugToolKit ({}) {
 
             case "ArrowUp":
                 if (e.ctrlKey) {
-                    if (!executionTree) {
+                    if (!seg) {
                         moveUpStack();
                     }
                 } else {
@@ -181,7 +200,7 @@ export function DebugToolKit ({}) {
 
             case "ArrowDown":
                 if (e.ctrlKey) {
-                    if (!executionTree) {
+                    if (!seg) {
                         moveDownStack();
                     }
                 } else {
@@ -239,7 +258,6 @@ export function DebugToolKit ({}) {
 
     const stepOut = () => {
         const code = CDL_WORKER_PROTOCOL.STEP_OUT;
-        console.log(stackPosition);
         const args = {
             position: stack.callStack[stackPosition].position,
             threadId: stack.callStack[stackPosition].threadId,

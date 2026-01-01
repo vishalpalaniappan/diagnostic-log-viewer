@@ -5,7 +5,7 @@ module.exports = merge(common, {
     mode: "development",
     devtool: "cheap-module-source-map",
     devServer: {
-        port: 3011,
+        port: 3012,
         static: "./dist",
     },
 });

@@ -1,0 +1,10 @@
+.automated-debugging-container {
+    color:white;
+    display: flex;
+    background: #1e1e1e;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: #47474766 #252526;
+    scrollbar-width: thin;
+}

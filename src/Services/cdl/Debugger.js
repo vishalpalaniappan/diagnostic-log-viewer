@@ -1,5 +1,6 @@
 import clpFfiJsModuleInit from "clp-ffi-js";
 
+import PROGRAM_STATE from "../../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
 import CdlHeader from "./CdlHeader";
@@ -88,6 +89,7 @@ class Debugger {
 
         this.currentThread = Object.keys(this.threads)[0];
         this.cdl = this.debuggers[this.currentThread];
+        this.debuggingMode = PROGRAM_STATE.STACK;
         this.breakpoints = [];
 
         console.info(this.cdl);
@@ -101,6 +103,14 @@ class Debugger {
         });
 
         this.sendExecutionTree();
+    }
+
+    /**
+     * Sets the debugging mode so the right operation is performed.
+     * @param {Number} mode
+     */
+    setDebuggingMode (mode) {
+        this.debuggingMode = mode;
     }
 
     /**
@@ -164,17 +174,24 @@ class Debugger {
      * This function sends the execution tree to be visualized.
      */
     sendExecutionTree () {
+        const segs = {};
         for (const thread in this.debuggers) {
             if (thread) {
                 const instance = this.debuggers[thread];
-                if (instance.thread.executionTree) {
-                    postMessage({
-                        code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
-                        args: instance.thread.executionTree,
-                    });
-                    break;
+                if (instance.thread.seg) {
+                    segs[thread] = instance.thread.seg;
                 }
             }
+        }
+
+        if (Object.keys(segs).length > 0) {
+            this.debuggingMode = PROGRAM_STATE.SEG;
+            postMessage({
+                code: CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE,
+                args: {
+                    seg: segs,
+                },
+            });
         }
     }
 
@@ -220,7 +237,7 @@ class Debugger {
      */
     stepInto (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepInto(position);
+        threadDebugger.stepInto(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -231,7 +248,7 @@ class Debugger {
      */
     stepOut (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepOut(position);
+        threadDebugger.stepOut(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -242,7 +259,7 @@ class Debugger {
      */
     stepOverForward (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepOverForward(position);
+        threadDebugger.stepOverForward(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -253,7 +270,7 @@ class Debugger {
      */
     stepOverBackward (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.stepOverBackward(position);
+        threadDebugger.stepOverBackward(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 
@@ -264,7 +281,7 @@ class Debugger {
      */
     goToPosition (position, threadId) {
         const threadDebugger = this.debuggers[threadId];
-        threadDebugger.goToPosition(position);
+        threadDebugger.goToPosition(position, this.debuggingMode);
         this.sendStackInformation(threadId);
     }
 

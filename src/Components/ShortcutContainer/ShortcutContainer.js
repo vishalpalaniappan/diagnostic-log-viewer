@@ -1,6 +1,9 @@
-import React, {useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 
 import {Col, Row} from "react-bootstrap";
+
+import PROGRAM_STATE from "../../PROGRAM_STATE";
+import ActionsContext from "../../Providers/ActionsContext";
 
 import "./ShortcutContainer.scss";
 
@@ -8,6 +11,7 @@ import "./ShortcutContainer.scss";
  * @return {JSX.Element}
  */
 export function ShortcutContainer ({}) {
+    const {mode} = useContext(ActionsContext);
     const settingsContainer = useRef();
     const kbdContainer = useRef();
 
@@ -44,15 +48,19 @@ export function ShortcutContainer ({}) {
                     <Col>Step Out</Col>
                     <Col><kbd>↑</kbd></Col>
                 </Row>
-                <Row className="mb-2">
-                    <Col>Move Down Stack</Col>
-                    <Col><kbd>CTRL</kbd> + <kbd>↓</kbd></Col>
-                </Row>
-                <Row className="mb-2">
-                    <Col>Move Up Stack</Col>
-                    <Col><kbd>CTRL</kbd> + <kbd>↑</kbd></Col>
-                </Row>
-                
+                {
+                    (mode === PROGRAM_STATE.STACK) &&
+                    <>
+                        <Row className="mb-2">
+                            <Col>Move Down Stack</Col>
+                            <Col><kbd>CTRL</kbd> + <kbd>↓</kbd></Col>
+                        </Row>
+                        <Row className="mb-2">
+                            <Col>Move Up Stack</Col>
+                            <Col><kbd>CTRL</kbd> + <kbd>↑</kbd></Col>
+                        </Row>
+                    </>
+                }
                 <hr/>
                 <Row className="mb-2">
                     <Col>Play Forward</Col>
@@ -79,6 +87,24 @@ export function ShortcutContainer ({}) {
                 <Row className="mb-2">
                     <Col>Clear All Breakpoints</Col>
                     <Col><kbd>C</kbd></Col>
+                </Row>
+                <hr/>
+                <Row className="mb-2">
+                    <Col>Previous Thread</Col>
+                    <Col><kbd>Z</kbd></Col>
+                </Row>
+                <Row className="mb-2">
+                    <Col>Next Thread</Col>
+                    <Col><kbd>X</kbd></Col>
+                </Row>
+                <hr/>
+                <Row className="mb-2">
+                    <Col>Stack Debugging</Col>
+                    <Col><kbd>1</kbd></Col>
+                </Row>
+                <Row className="mb-2">
+                    <Col>SEG Debugging</Col>
+                    <Col><kbd>2</kbd></Col>
                 </Row>
             </div>
         </div>
