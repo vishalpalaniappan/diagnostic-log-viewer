@@ -212,6 +212,9 @@ class Thread {
             }
         } while (++currPosition < position);
 
+        if (!this.header.hasAbstractionMetadata()) {
+            return [localVars, globalVars];
+        }
 
         /**
          * Once we reach the position, now we get all the logged variables
