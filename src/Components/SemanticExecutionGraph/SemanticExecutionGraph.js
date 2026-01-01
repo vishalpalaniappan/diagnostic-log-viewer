@@ -159,11 +159,15 @@ export function SemanticExecutionGraph () {
                 renderTree(threads[newPosition]);
                 setActiveThread(threads[newPosition]);
                 setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
+                return;
             } else {
                 renderTree(threads[newPosition]);
                 setTitle(`Thread (${newPosition + 1}/${threads?.length}) has not started yet.`);
+                return;
             }
         }
+        setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
+        renderTree(activeThread);
     };
 
     /**
@@ -177,11 +181,15 @@ export function SemanticExecutionGraph () {
                 renderTree(threads[newPosition]);
                 setActiveThread(threads[newPosition]);
                 setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
+                return;
             } else {
                 renderTree(threads[newPosition]);
                 setTitle(`Thread (${newPosition + 1}/${threads?.length}) has not started yet.`);
+                return;
             }
         }
+        setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
+        renderTree(activeThread);
     };
 
     // Add keyboard shortcuts to navigate threads
