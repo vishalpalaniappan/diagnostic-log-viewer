@@ -1,5 +1,3 @@
-import { Egg } from "react-bootstrap-icons";
-
 /**
  * This class is responsible for performing the semantic transformation
  * on the threads to observe the behavior of the design.
