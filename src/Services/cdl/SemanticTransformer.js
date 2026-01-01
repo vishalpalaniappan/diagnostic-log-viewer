@@ -121,7 +121,7 @@ class SemanticTransformer {
             const entry = stack[i];
             const pos = entry.position;
             const total = entry.behavior.abstractions.length;
-            output += `${entry.entry.meta.functionalId} [${entry.behavior.id}(${pos}/${total})] `;
+            output += `[${entry.behavior.id}(${pos}/${total})] `;
         }
         console.log(output);
     }
