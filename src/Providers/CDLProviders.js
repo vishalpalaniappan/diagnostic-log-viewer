@@ -40,7 +40,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [seg, setSeg] = useState();
-    const [mode, setMode] = useState("STACK");
+    const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
 
     const cdlWorker = useRef(null);
@@ -99,7 +99,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveFile(undefined);
         setBreakPoints(undefined);
         setSeg(undefined);
-        setMode(undefined);
+        setMode(PROGRAM_STATE.STACK);
     };
 
     // Create worker to handle file.
@@ -143,16 +143,6 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         });
     };
 
-    // Load the program state based on the information available
-    const setProgramState = (args) => {
-        if (args.seg) {
-            setMode(PROGRAM_STATE.SEG);
-        } else {
-            setMode(PROGRAM_STATE.STACK);
-        }
-    };
-
-
     // When the mode changes, update the mode
     // in the worker so that it applies the
     // correct debugging operations.
@@ -192,7 +182,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setBreakPoints(event.data.args.breakpoints);
                 break;
             case CDL_WORKER_PROTOCOL.GET_EXECUTION_TREE:
-                setProgramState(event.data.args);
+                setMode(PROGRAM_STATE.SEG);
                 setSeg(event.data.args.seg);
                 break;
             default:
