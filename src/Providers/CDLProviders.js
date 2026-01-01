@@ -6,6 +6,7 @@ import PROGRAM_STATE from "../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
 import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
+import BehaviorContext from "./BehaviorContext";
 import BreakpointsContext from "./BreakpointsContext";
 import FileTreeContext from "./FileTreeContext";
 import SegContext from "./SegContext";
@@ -40,6 +41,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [seg, setSeg] = useState();
+    const [behavior, setBehavior] = useState();
     const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
 
@@ -202,12 +204,14 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                         setActiveThread, setActiveAbstraction}}>
                                     <ActiveFileContext.Provider
                                         value={{activeFile, setActiveFile}}>
-                                        <SegContext.Provider value={{seg}}>
-                                            <ActionsContext.Provider
-                                                value={{actions, mode, setMode, setActions}}>
-                                                {children}
-                                            </ActionsContext.Provider>
-                                        </SegContext.Provider>
+                                        <BehaviorContext.Provider value={{behavior}}>
+                                            <SegContext.Provider value={{seg}}>
+                                                <ActionsContext.Provider
+                                                    value={{actions, mode, setMode, setActions}}>
+                                                    {children}
+                                                </ActionsContext.Provider>
+                                            </SegContext.Provider>
+                                        </BehaviorContext.Provider>
                                     </ActiveFileContext.Provider>
                                 </StackContext.Provider>
                             </BreakpointsContext.Provider>

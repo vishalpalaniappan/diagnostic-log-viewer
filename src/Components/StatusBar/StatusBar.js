@@ -45,6 +45,8 @@ export function StatusBar ({}) {
             return "Program Mode: Stack Based Debugging";
         } else if (mode === PROGRAM_STATE.SEG) {
             return "Program Mode: SEG Based Debugging";
+        } else if (mode === PROGRAM_STATE.BEHAVIORAL) {
+            return "Program Mode: Behavioral Debugging";
         } else {
             return "Program Mode: Unknown";
         }
