@@ -103,7 +103,7 @@ class SemanticTransformer {
             this.printBehavioralStack(behaviorStack);
 
             if (entry.meta?.output) {
-                this.trackOutput();
+                this.trackOutput(entry);
             }
         } while (++pos < seg.length);
 
@@ -114,9 +114,56 @@ class SemanticTransformer {
     /**
      * Given an output, this function tracks it to an input
      * in another part of the program using the UID.
+     * @param {Object} entry
      */
-    trackOutput () {
-        console.log("Tracking output");
+    trackOutput (entry) {
+        console.log("Tracking output", entry);
+        const thread = entry.abstraction.threadId;
+        const position = entry.abstraction.position;
+
+        // Get the debugger
+        const threadDebugger = this.threadDebuggers[thread];
+        const outputs = threadDebugger.thread.outputs;
+        const outputPosition = position - 1;
+
+        // Find the output
+        let output;
+        for (let i = 0; i < outputs.length; i++) {
+            if (outputs[i].position === outputPosition) {
+                console.log("Found output:", outputs[i]);
+                output = outputs[i];
+                break;
+            }
+        }
+
+        // Output was not found, so indicate that there is a major error
+        if (!output) {
+            console.error("Could not find the output position, error in trace structure");
+            return;
+        }
+
+        // Find the input
+        const threads = Object.keys(this.threadDebuggers);
+        let input;
+        for (let i = 0; i < threads.length; i++) {
+            const thread = threads[i];
+            const threadDebugger = this.threadDebuggers[thread];
+            const inputs = threadDebugger.thread.inputs;
+
+            for (let j = 0; j < inputs.length; j++) {
+                const input = inputs[j];
+                if (input.value.adliExecutionId === output.value.adliExecutionId) {
+                    console.log("Found input", inputs[j]);
+                    break;
+                }
+            }
+        }
+
+        // Input was not found, so indicate that there is a major error
+        if (!input) {
+            console.error("Could not find the Input position, error in trace structure");
+            return;
+        }
     }
 
     /**
