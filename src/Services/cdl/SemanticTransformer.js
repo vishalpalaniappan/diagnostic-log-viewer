@@ -28,7 +28,7 @@ class SemanticTransformer {
     constructBehavior () {
         const keys = Object.keys(this.threadDebuggers);
         const thread = this.threadDebuggers[keys[0]].thread;
-        const seg = thread.seg;
+        let seg = thread.seg;
         const behaviorStack = [];
 
         if (!seg || seg.length === 0) {
@@ -105,6 +105,9 @@ class SemanticTransformer {
             if (entry.meta?.output) {
                 const newState = this.trackOutput(entry);
                 console.log("Output continues at:", newState.seg[newState.pos]);
+                pos = newState.pos - 1;
+                seg = newState.seg;
+                continue;
             }
         } while (++pos < seg.length);
 
