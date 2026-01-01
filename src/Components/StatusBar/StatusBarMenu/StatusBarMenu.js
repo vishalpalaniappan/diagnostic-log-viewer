@@ -72,9 +72,13 @@ export function StatusBarMenu ({className, disabled, children}) {
         setLeft(left);
     };
 
-    const toggleMenu = () => {
+    const toggleMenu = (e) => {
         setPositionOfMenu();
         setShowMenu(!showMenu);
+    };
+
+    const selectMenu = (e, mode) => {
+        setMode(mode);
     };
 
     return (
@@ -96,12 +100,12 @@ export function StatusBarMenu ({className, disabled, children}) {
                     {
                         seg &&
                         <div className="menu-option px-2"
-                            onClick={() => setMode(PROGRAM_STATE.SEG)}>
+                            onClick={(e) => selectMenu(e, PROGRAM_STATE.SEG)}>
                             SEG Based Debugging
                         </div>
                     }
                     <div className="menu-option px-2"
-                        onClick={() => setMode(PROGRAM_STATE.STACK)}>
+                        onClick={(e) => selectMenu(e, PROGRAM_STATE.STACK)}>
                         Traditional Stack Debugging
                     </div>
                 </div>
