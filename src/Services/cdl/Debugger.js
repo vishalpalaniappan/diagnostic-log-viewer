@@ -4,6 +4,7 @@ import PROGRAM_STATE from "../../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
 import CdlHeader from "./CdlHeader";
+import SemanticTransformer from "./SemanticTransformer";
 import ThreadDebugger from "./ThreadDebugger";
 
 /**
@@ -95,6 +96,7 @@ class Debugger {
         console.info(this.cdl);
         console.info(this.debuggers);
 
+
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_METADATA,
             args: {
@@ -103,6 +105,9 @@ class Debugger {
         });
 
         this.sendExecutionTree();
+
+        const designMap = this.header.getDesignMap();
+        this.transformer = new SemanticTransformer(designMap, this.debuggers);
         this.sendBehavior();
     }
 

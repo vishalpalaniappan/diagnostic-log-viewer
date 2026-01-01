@@ -1,3 +1,4 @@
+import { Egg } from "react-bootstrap-icons";
 
 /**
  * This class is responsible for performing the semantic transformation
@@ -13,7 +14,7 @@ class SemanticTransformer {
         this.behaviors = designMap.behavior;
         this.threadDebuggers = threadDebuggers;
 
-        this.displayDebugInfo = false;
+        this.displayDebugInfo = true;
         this.behavioralTree = [];
 
         console.log("SemanticTransformer initialized", this.behaviors, this.threadDebuggers);
@@ -29,10 +30,10 @@ class SemanticTransformer {
     constructBehavior () {
         const keys = Object.keys(this.threadDebuggers);
         const thread = this.threadDebuggers[keys[0]].thread;
-        const executionTree = thread.seg[thread];
+        const seg = thread.seg;
         const behaviorStack = [];
 
-        if (!executionTree || executionTree.length === 0) {
+        if (!seg || seg.length === 0) {
             console.warn("No execution tree found for semantic transformation.");
             return;
         }
@@ -41,7 +42,7 @@ class SemanticTransformer {
         do {
             // TODO: If entry is an output, then track it to the next
             // input using UID for building behaviors across boundaries.
-            const entry = executionTree[pos];
+            const entry = seg[pos];
 
             const functionalId = entry.meta.functionalid;
             const currentBehavior = this.getBehavior(entry.meta.functionalid);
@@ -102,7 +103,7 @@ class SemanticTransformer {
             }
 
             this.printBehavioralStack(behaviorStack);
-        } while (++pos < executionTree.length);
+        } while (++pos < seg.length);
 
         console.log(this.behavioralTree);
     };
