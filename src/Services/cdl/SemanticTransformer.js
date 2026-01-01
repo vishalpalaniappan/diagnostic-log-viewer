@@ -103,7 +103,8 @@ class SemanticTransformer {
             this.printBehavioralStack(behaviorStack);
 
             if (entry.meta?.output) {
-                this.trackOutput(entry);
+                const newState = this.trackOutput(entry);
+                console.log("Output continues at:", newState.seg[newState.pos]);
             }
         } while (++pos < seg.length);
 
@@ -115,6 +116,7 @@ class SemanticTransformer {
      * Given an output, this function tracks it to an input
      * in another part of the program using the UID.
      * @param {Object} entry
+     * @return {Object}
      */
     trackOutput (entry) {
         console.log("Tracking output", entry);
@@ -130,7 +132,7 @@ class SemanticTransformer {
         let output;
         for (let i = 0; i < outputs.length; i++) {
             if (outputs[i].position === outputPosition) {
-                console.log("Found output:", outputs[i]);
+                // console.log("Found output:", outputs[i]);
                 output = outputs[i];
                 break;
             }
@@ -151,9 +153,9 @@ class SemanticTransformer {
             const inputs = threadDebugger.thread.inputs;
 
             for (let j = 0; j < inputs.length; j++) {
-                const input = inputs[j];
-                if (input.value.adliExecutionId === output.value.adliExecutionId) {
-                    console.log("Found input", inputs[j]);
+                if (inputs[j].value.adliExecutionId === output.value.adliExecutionId) {
+                    input = inputs[j];
+                    // console.log("Found input", inputs[j]);
                     break;
                 }
             }
@@ -164,6 +166,21 @@ class SemanticTransformer {
             console.error("Could not find the Input position, error in trace structure");
             return;
         }
+
+        const newSeg = this.threadDebuggers[input.value.thread].thread.seg;
+        let segIndex;
+        for (let i = 0; i < newSeg.length; i++) {
+            if (newSeg[i].abstraction.position > input.position) {
+                break;
+            };
+            segIndex = i;
+        }
+
+        return {
+            thread: input.value.thread,
+            seg: newSeg,
+            pos: segIndex,
+        };
     }
 
     /**
