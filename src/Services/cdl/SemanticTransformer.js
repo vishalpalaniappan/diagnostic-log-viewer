@@ -101,10 +101,23 @@ class SemanticTransformer {
             }
 
             this.printBehavioralStack(behaviorStack);
+
+            if (entry.meta?.output) {
+                this.trackOutput();
+            }
         } while (++pos < seg.length);
 
         console.log(this.behavioralTree);
     };
+
+
+    /**
+     * Given an output, this function tracks it to an input
+     * in another part of the program using the UID.
+     */
+    trackOutput () {
+        console.log("Tracking output");
+    }
 
     /**
      * Prints the current behavior stack.
