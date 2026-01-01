@@ -46,7 +46,7 @@ export function SemanticExecutionGraph () {
                 setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
             }
         }
-    }, [stackPosition, activeThread, stacks, seg]);
+    }, [stackPosition, currThreadPosition, threads, activeThread, stacks, seg]);
 
     /**
      * Scroll to the selected node.
@@ -144,7 +144,9 @@ export function SemanticExecutionGraph () {
             setThreads(threads);
             setCurrThreadPosition(threads.indexOf(activeThread));
             renderTree(activeThread);
-            setTitle(`Current Position: Thread (${currThreadPosition + 1}/${threads?.length})`);
+            setTitle(
+                `Current Position: Thread (${threads.indexOf(activeThread) + 1}/${threads?.length})`
+            );
         }
     }, [activeThread, currThreadPosition, seg]);
 
