@@ -32,7 +32,7 @@ export function BehavioralDebugContainer () {
     }, []);
 
     return (
-        <div ref={behavioralDebugContainer} 
+        <div ref={behavioralDebugContainer}
             className="semantic-debug-container w-100 d-flex flex-column">
             <div className="section" ref={behavioralRef}>
                 <SemanticExecutionGraph />
