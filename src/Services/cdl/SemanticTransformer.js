@@ -44,8 +44,8 @@ class SemanticTransformer {
             // input using UID for building behaviors across boundaries.
             const entry = seg[pos];
 
-            const functionalId = entry.meta.functionalid;
-            const currentBehavior = this.getBehavior(entry.meta.functionalid);
+            const functionalId = entry.meta.functionalId;
+            const currentBehavior = this.getBehavior(entry.meta.functionalId);
 
             if (!currentBehavior) {
                 continue;
@@ -69,7 +69,7 @@ class SemanticTransformer {
                     const abstractions = stackTop.behavior.abstractions;
                     stackTop.behavior = currentBehavior;
                     stackTop.entry = entry;
-                    stackTop.position = abstractions.indexOf(entry.meta.functionalid) + 1;
+                    stackTop.position = abstractions.indexOf(entry.meta.functionalId) + 1;
                     break;
                 }
                 // Remove the behavior from the stack, it is done.
@@ -121,7 +121,7 @@ class SemanticTransformer {
             const entry = stack[i];
             const pos = entry.position;
             const total = entry.behavior.abstractions.length;
-            output += `[${entry.behavior.id}(${pos}/${total})] `;
+            output += `${entry.entry.meta.functionalId} [${entry.behavior.id}(${pos}/${total})] `;
         }
         console.log(output);
     }
