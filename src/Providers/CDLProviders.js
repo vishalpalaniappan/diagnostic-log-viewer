@@ -187,6 +187,10 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setMode(PROGRAM_STATE.SEG);
                 setSeg(event.data.args.seg);
                 break;
+            case CDL_WORKER_PROTOCOL.GET_BEHAVIOR:
+                setMode(PROGRAM_STATE.BEHAVIORAL);
+                setBehavior(event.data.args.behavior);
+                break;
             default:
                 break;
         }

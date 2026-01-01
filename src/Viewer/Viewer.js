@@ -23,6 +23,8 @@ export function Viewer () {
             return <DebugToolKit />;
         } else if (mode === PROGRAM_STATE.SEG) {
             return <DebugToolKit />;
+        } else if (mode === PROGRAM_STATE.BEHAVIORAL) {
+            return <DebugToolKit />;
         }
     };
 

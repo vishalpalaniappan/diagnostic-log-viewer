@@ -103,6 +103,7 @@ class Debugger {
         });
 
         this.sendExecutionTree();
+        this.sendBehavior();
     }
 
     /**
@@ -167,6 +168,19 @@ class Debugger {
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_POSITION_DATA,
             args: stackInfo,
+        });
+    }
+
+    /**
+     * This function sends the behavior to the front end.
+     */
+    sendBehavior () {
+        // this.debuggingMode = PROGRAM_STATE.BEHAVIORAL;
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
+            args: {
+                behavior: {},
+            },
         });
     }
 
