@@ -79,7 +79,10 @@ export function BehavioralGraph () {
                 }
             }
             setBehavioralInstance(nodes);
-            setActiveBehavior(behavior[behavior.length - 1]);
+
+            if (!activeBehavior) {
+                setActiveBehavior(behavior[behavior.length - 1]);
+            }
         }
     };
 
