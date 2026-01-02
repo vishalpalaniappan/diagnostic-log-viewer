@@ -140,7 +140,6 @@ class SemanticTransformer {
             // based on the current level.
             if (this.behavioralTree.length > 1) {
                 const prevEntry = this.behavioralTree[this.behavioralTree.length -2];
-                console.log(entry.level, prevEntry.level);
                 if (entry.level > prevEntry.level) {
                     prevEntry.collapsible = true;
                     prevEntry.collapsed = false;
@@ -150,6 +149,30 @@ class SemanticTransformer {
                 }
             }
         } while (++pos < seg.length);
+
+        // Identify boundary behaviors that happen between threads
+        // and shift the levels up one to prepare to remove boundaries.
+        pos = 0;
+        const boundaryBehavior = [];
+        do {
+            const entry = this.behavioralTree[pos];
+            if (entry.behavior.type == "atomic" && pos > 0) {
+                const prevEntry = this.behavioralTree[pos - 1];
+                prevEntry.execution = prevEntry.execution.concat(entry.execution);
+                boundaryBehavior.push(entry);
+                while (++pos < this.behavioralTree.length) {
+                    if (this.behavioralTree[pos].level <= prevEntry.level) {
+                        break;
+                    }
+                    this.behavioralTree[pos].level = this.behavioralTree[pos].level - 1;
+                }
+            }
+        } while (++pos < this.behavioralTree.length);
+
+        // Remove the boundary behaviors
+        this.behavioralTree = this.behavioralTree.filter((item) => {
+            return !boundaryBehavior.includes(item);
+        });
 
         console.log(this.behavioralTree);
     };
