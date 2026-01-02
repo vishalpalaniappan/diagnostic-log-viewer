@@ -151,6 +151,19 @@ class SemanticTransformer {
         // Get the debugger
         const threadDebugger = this.threadDebuggers[thread];
         const outputs = threadDebugger.thread.outputs;
+
+        /**
+         * TODO: This is a very simple assumption. It assumes
+         * that given an output abstraction, the statement which
+         * encodes the output to another part of the design is right
+         * above it. This holds true for the way that I have implemented
+         * the library manager, the encoded output statement is right
+         * above the abstraction which sends the message to the other
+         * thread. I can't rely on this, instead, I think it is better
+         * to unambiguously indicate which variable this abstraction
+         * is outputting and then scan backwards until you find that
+         * specific output. I will return to this to fix this.
+         */
         const outputPosition = position - 1;
 
         // Find the output
