@@ -184,7 +184,7 @@ class Debugger {
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
             args: {
-                behavior: {},
+                behavior: this.transformer.behavioralTree,
             },
         });
     }

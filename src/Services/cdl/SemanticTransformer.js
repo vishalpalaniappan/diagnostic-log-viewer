@@ -140,6 +140,7 @@ class SemanticTransformer {
             // based on the current level.
             if (this.behavioralTree.length > 1) {
                 const prevEntry = this.behavioralTree[this.behavioralTree.length -2];
+                console.log(entry.level, prevEntry.level);
                 if (entry.level > prevEntry.level) {
                     prevEntry.collapsible = true;
                     prevEntry.collapsed = false;

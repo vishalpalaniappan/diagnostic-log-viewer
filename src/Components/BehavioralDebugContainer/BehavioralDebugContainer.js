@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 
 // eslint-disable-next-line max-len
 import {AutomatedDebuggingContainer} from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
-import {SemanticExecutionGraph} from "../SemanticExecutionGraph/SemanticExecutionGraph";
+import {BehavioralGraph} from "../BehavioralGraph/BehavioralGraph";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
 import "./BehavioralDebugContainer.scss";
@@ -35,7 +35,7 @@ export function BehavioralDebugContainer () {
         <div ref={behavioralDebugContainer}
             className="semantic-debug-container w-100 d-flex flex-column">
             <div className="section" ref={behavioralRef}>
-                <SemanticExecutionGraph />
+                <BehavioralGraph />
             </div>
             <VerticalHandle topDiv={behavioralRef} bottomDiv={segRef}/>
             <div className="section" ref={segRef}>
