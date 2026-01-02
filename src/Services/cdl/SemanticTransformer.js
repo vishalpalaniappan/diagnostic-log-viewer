@@ -134,21 +134,20 @@ class SemanticTransformer {
                 seg = newState.seg;
                 continue;
             }
-
-
-            // Set the collapseible state of the previous entry
-            // based on the current level.
-            if (this.behavioralTree.length > 1) {
-                const prevEntry = this.behavioralTree[this.behavioralTree.length -2];
-                if (entry.level > prevEntry.level) {
-                    prevEntry.collapsible = true;
-                    prevEntry.collapsed = false;
-                } else {
-                    prevEntry.collapsible = false;
-                    prevEntry.collapsed = false;
-                }
-            }
         } while (++pos < seg.length);
+
+        // Set the collapsible states of the tree nodes
+        pos = 1;
+        do {
+            const prevEntry = this.behavioralTree[pos - 1];
+            if (this.behavioralTree[pos].level > prevEntry.level) {
+                prevEntry.collapsible = true;
+                prevEntry.collapsed = false;
+            } else {
+                prevEntry.collapsible = false;
+                prevEntry.collapsed = false;
+            }
+        } while (++pos < this.behavioralTree.length);
 
         // Identify boundary behaviors that happen between threads
         // and shift the levels up one to prepare to remove boundaries.
@@ -159,13 +158,13 @@ class SemanticTransformer {
             if (entry.behavior.type == "atomic" && pos > 0) {
                 const prevEntry = this.behavioralTree[pos - 1];
                 prevEntry.execution = prevEntry.execution.concat(entry.execution);
-                boundaryBehavior.push(entry);
                 while (++pos < this.behavioralTree.length) {
                     if (this.behavioralTree[pos].level <= prevEntry.level) {
                         break;
                     }
                     this.behavioralTree[pos].level = this.behavioralTree[pos].level - 1;
                 }
+                boundaryBehavior.push(entry);
             }
         } while (++pos < this.behavioralTree.length);
 
