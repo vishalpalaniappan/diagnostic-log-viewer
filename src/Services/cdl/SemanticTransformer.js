@@ -107,6 +107,7 @@ class SemanticTransformer {
                 // New behavior being executed, add a new entry with execution.
                 this.behavioralTree.push({
                     "level": level - 1,
+                    "index": this.behavioralTree.length,
                     "behavior": currentBehavior,
                     "intent": currentBehavior.intent,
                     "execution": [entry],
@@ -132,6 +133,20 @@ class SemanticTransformer {
                 pos = newState.pos - 1;
                 seg = newState.seg;
                 continue;
+            }
+
+
+            // Set the collapseible state of the previous entry
+            // based on the current level.
+            if (this.behavioralTree.length > 1) {
+                const prevEntry = this.behavioralTree[this.behavioralTree.length -2];
+                if (entry.level > prevEntry.level) {
+                    prevEntry.collapsible = true;
+                    prevEntry.collapsed = false;
+                } else {
+                    prevEntry.collapsible = false;
+                    prevEntry.collapsed = false;
+                }
             }
         } while (++pos < seg.length);
 
