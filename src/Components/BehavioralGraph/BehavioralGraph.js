@@ -11,9 +11,9 @@ import "./BehavioralGraph.scss";
  * @return {JSX.Element}
  */
 export function BehavioralGraph () {
-    const {behavior} = useContext(BehaviorContext);
+    const {behavior, activeBehavior, setActiveBehavior} = useContext(BehaviorContext);
     const [selectedNode, setSelectedNode] = useState();
-    const [segInstance, setSegInstance] = useState();
+    const [behavioralInstance, setBehavioralInstance] = useState();
     const [title, setTitle] = useState();
 
     /**
@@ -21,7 +21,7 @@ export function BehavioralGraph () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("row" + node.abstraction.intent + node.index);
+        const nodeElement = document.getElementById("behavior-row" + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -34,10 +34,10 @@ export function BehavioralGraph () {
      * Scroll to node when selected node changes.
      */
     useEffect(() => {
-        if (selectedNode) {
-            scrollToNode(selectedNode);
+        if (activeBehavior) {
+            scrollToNode(activeBehavior);
         }
-    }, [selectedNode]);
+    }, [activeBehavior]);
 
     /**
      * Renders the behavioral tree.
@@ -78,7 +78,8 @@ export function BehavioralGraph () {
                     );
                 }
             }
-            setSegInstance(nodes);
+            setBehavioralInstance(nodes);
+            setActiveBehavior(behavior[behavior.length - 1]);
         }
     };
 
@@ -87,7 +88,7 @@ export function BehavioralGraph () {
             setTitle("Behavioral Tree");
             renderTree();
         }
-    }, [behavior]);
+    }, [behavior, activeBehavior]);
 
     /**
      * Collapse the given node
@@ -103,6 +104,7 @@ export function BehavioralGraph () {
      * @param {Object} node
      */
     const selectNode = (node) => {
+        setActiveBehavior(node);
     };
 
 
@@ -116,7 +118,7 @@ export function BehavioralGraph () {
                     </div>
                 </div>
                 <div className="behavioralTreeContainer scrollbar flex-grow-1">
-                    {segInstance}
+                    {behavioralInstance}
                 </div>
             </div>
         </BehavioralGraphContext.Provider>

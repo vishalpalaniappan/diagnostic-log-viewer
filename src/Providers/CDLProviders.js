@@ -42,6 +42,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [seg, setSeg] = useState();
     const [behavior, setBehavior] = useState();
+    const [activeBehavior, setActiveBehavior] = useState();
     const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
 
@@ -208,7 +209,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                         setActiveThread, setActiveAbstraction}}>
                                     <ActiveFileContext.Provider
                                         value={{activeFile, setActiveFile}}>
-                                        <BehaviorContext.Provider value={{behavior}}>
+                                        <BehaviorContext.Provider value={{behavior,
+                                            activeBehavior, setActiveBehavior}}>
                                             <SegContext.Provider value={{seg}}>
                                                 <ActionsContext.Provider
                                                     value={{actions, mode, setMode, setActions}}>

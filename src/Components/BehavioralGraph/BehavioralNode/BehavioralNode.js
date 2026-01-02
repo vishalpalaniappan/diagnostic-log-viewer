@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
+import BehaviorContext from "../../../Providers/BehaviorContext";
 import BehavioralGraphContext from "../BehavioralGraphContext";
 
 import "./BehavioralNode.scss";
@@ -17,16 +18,17 @@ BehavioralNode.propTypes = {
  * @return {JSX.Element}
  */
 export function BehavioralNode ({node}) {
-    const {selectNode, selectedNode, toggleCollapse} = useContext(BehavioralGraphContext);
+    const {activeBehavior} = useContext(BehaviorContext);
+    const {selectNode, toggleCollapse} = useContext(BehavioralGraphContext);
     const [selectedStyle, setSelectedStyle] = useState();
 
     // Set style if node is selected.
     useEffect(() => {
-        if (node && selectedNode) {
-            if (selectedNode === node) {
+        if (node && activeBehavior) {
+            if (activeBehavior === node) {
                 setSelectedStyle(
                     {
-                        background: "#4b4b18",
+                        background: "#184b2c",
                         color: "#ffffff",
                         fontSize: "14px",
                     }
@@ -35,7 +37,7 @@ export function BehavioralNode ({node}) {
                 setSelectedStyle({});
             }
         }
-    }, [selectedNode, node]);
+    }, [activeBehavior, node]);
 
     /**
      * Callback when a node is toggled.
@@ -115,7 +117,7 @@ export function BehavioralNode ({node}) {
     };
 
     return (
-        <div style={selectedStyle} id={"row" + node.index}
+        <div style={selectedStyle} id={"behavior-row" + node.index}
             className="abstractionRow">
 
             <div className="icon-container">
