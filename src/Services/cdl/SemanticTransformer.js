@@ -65,28 +65,30 @@ class SemanticTransformer {
                     const stackTop = behaviorStack[behaviorStack.length - 1];
                     const abstractions = stackTop.behavior.abstractions;
 
-                    // Check if we have forward in the same behavior
                     const newPosition = abstractions.indexOf(entry.meta.functionalId) + 1;
-                    if (newPosition > stackTop.position) {
-                        // Update the pos of the curr behavior.
+                    if (newPosition >= stackTop.position) {
+                        // Check if we have moved forward in the same behavior
                         stackTop.behavior = currentBehavior;
                         stackTop.entry = entry;
                         stackTop.position = abstractions.indexOf(entry.meta.functionalId) + 1;
                         break;
+                    } else if (stackTop.behavior.type === "atomic" && newPosition == 1) {
+                        // Within the thread, if we have returned to the start
+                        // of the atomic behavior, then remove it from the stack
+                        // and restore the position in the previous thread that
+                        // sent it the message.
+                        behaviorStack.pop();
+                        const stackTop = behaviorStack[behaviorStack.length -1];
+                        seg = stackTop.seg;
+                        pos = stackTop.pos;
+                        entry = seg[pos];
+                        functionalId = entry.meta.functionalId;
+                        currentBehavior = this.getBehavior(entry.meta.functionalId);
+                        continue;
                     }
                 }
-                // Remove the behavior from the stack, it is done.
-                const removed = behaviorStack.pop();
-                if (removed.seg) {
-                    // We are moving back to the location where
-                    // this behavior started, so we need to reset
-                    // the state of all the variables.
-                    seg = removed.seg;
-                    pos = removed.pos + 1;
-                    entry = seg[pos];
-                    functionalId = entry.meta.functionalId;
-                    currentBehavior = this.getBehavior(entry.meta.functionalId);
-                }
+
+                behaviorStack.pop();
             }
 
             // We ended up removing all the behaviors from the stack, so add
@@ -124,7 +126,7 @@ class SemanticTransformer {
                 const stackTop = behaviorStack[behaviorStack.length - 1];
                 if (!stackTop?.seg) {
                     stackTop.seg = seg;
-                    stackTop.pos = pos;
+                    stackTop.pos = pos + 1;
                 }
 
                 pos = newState.pos - 1;
