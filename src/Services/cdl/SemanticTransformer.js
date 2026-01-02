@@ -40,10 +40,10 @@ class SemanticTransformer {
         do {
             // TODO: If entry is an output, then track it to the next
             // input using UID for building behaviors across boundaries.
-            const entry = seg[pos];
+            let entry = seg[pos];
 
-            const functionalId = entry.meta.functionalId;
-            const currentBehavior = this.getBehavior(entry.meta.functionalId);
+            let functionalId = entry.meta.functionalId;
+            let currentBehavior = this.getBehavior(entry.meta.functionalId);
 
             if (!currentBehavior) {
                 continue;
@@ -62,16 +62,31 @@ class SemanticTransformer {
                     });
                     break;
                 } else if (stackTop.behavior.id === currentBehavior.id) {
-                    // Update the pos of the behavior that is being executed.
                     const stackTop = behaviorStack[behaviorStack.length - 1];
                     const abstractions = stackTop.behavior.abstractions;
-                    stackTop.behavior = currentBehavior;
-                    stackTop.entry = entry;
-                    stackTop.position = abstractions.indexOf(entry.meta.functionalId) + 1;
-                    break;
+
+                    // Check if we have forward in the same behavior
+                    const newPosition = abstractions.indexOf(entry.meta.functionalId) + 1;
+                    if (newPosition > stackTop.position) {
+                        // Update the pos of the curr behavior.
+                        stackTop.behavior = currentBehavior;
+                        stackTop.entry = entry;
+                        stackTop.position = abstractions.indexOf(entry.meta.functionalId) + 1;
+                        break;
+                    }
                 }
                 // Remove the behavior from the stack, it is done.
-                behaviorStack.pop();
+                const removed = behaviorStack.pop();
+                if (removed.seg) {
+                    // We are moving back to the location where
+                    // this behavior started, so we need to reset
+                    // the state of all the variables.
+                    seg = removed.seg;
+                    pos = removed.pos + 1;
+                    entry = seg[pos];
+                    functionalId = entry.meta.functionalId;
+                    currentBehavior = this.getBehavior(entry.meta.functionalId);
+                }
             }
 
             // We ended up removing all the behaviors from the stack, so add
@@ -104,7 +119,14 @@ class SemanticTransformer {
 
             if (entry.meta?.output) {
                 const newState = this.trackOutput(entry);
-                console.log("Output continues at:", newState.seg[newState.pos]);
+                // console.log("Output continues at:",
+                //     newState.seg[newState.pos]);
+                const stackTop = behaviorStack[behaviorStack.length - 1];
+                if (!stackTop?.seg) {
+                    stackTop.seg = seg;
+                    stackTop.pos = pos;
+                }
+
                 pos = newState.pos - 1;
                 seg = newState.seg;
                 continue;
@@ -122,7 +144,7 @@ class SemanticTransformer {
      * @return {Object}
      */
     trackOutput (entry) {
-        console.log("Tracking output", entry);
+        // console.log("Tracking output", entry);
         const thread = entry.abstraction.threadId;
         const position = entry.abstraction.position;
 
@@ -199,6 +221,8 @@ class SemanticTransformer {
             const entry = stack[i];
             const pos = entry.position;
             const total = entry.behavior.abstractions.length;
+            // output += `${entry.entry.meta.functionalId}
+            // [${entry.behavior.id}(${pos}/${total})] `;
             output += `[${entry.behavior.id}(${pos}/${total})] `;
         }
         console.log(output);
