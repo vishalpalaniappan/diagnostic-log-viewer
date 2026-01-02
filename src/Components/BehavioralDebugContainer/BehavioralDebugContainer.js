@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 
 // eslint-disable-next-line max-len
 import {AutomatedDebuggingContainer} from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
+import {BehavioralExecutionTree} from "../BehavioralExecutionTree/BehavioralExecutionTree";
 import {BehavioralGraph} from "../BehavioralGraph/BehavioralGraph";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
@@ -39,7 +40,7 @@ export function BehavioralDebugContainer () {
             </div>
             <VerticalHandle topDiv={behavioralRef} bottomDiv={segRef}/>
             <div className="section" ref={segRef}>
-                <AutomatedDebuggingContainer />
+                <BehavioralExecutionTree />
             </div>
             <VerticalHandle topDiv={segRef} bottomDiv={violationsRef}/>
             <div className="w-100 violation-title" style={{height: TITLE_HEIGHT + "px"}}>
