@@ -5,6 +5,7 @@ import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
 import PROGRAM_STATE from "../PROGRAM_STATE";
 import ActionsContext from "../Providers/ActionsContext";
 import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
+import {SideContainerBehavioral} from "./SideContainer/SideContainerBehavioral";
 import {SideContainerGraph} from "./SideContainer/SideContainerGraph";
 import {SideContainerStack} from "./SideContainer/SideContainerStack";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
@@ -23,6 +24,8 @@ export function Viewer () {
             return <DebugToolKit />;
         } else if (mode === PROGRAM_STATE.SEG) {
             return <DebugToolKit />;
+        } else if (mode === PROGRAM_STATE.BEHAVIORAL) {
+            return <DebugToolKit />;
         }
     };
 
@@ -31,11 +34,15 @@ export function Viewer () {
             return <SideContainerStack />;
         } else if (mode === PROGRAM_STATE.SEG) {
             return <SideContainerGraph />;
+        } else if (mode === PROGRAM_STATE.BEHAVIORAL) {
+            return <SideContainerBehavioral />;
         }
     };
 
     const getRightSideContainer = () => {
         if (mode === PROGRAM_STATE.SEG) {
+            return <RightSideContainer/>;
+        } else if (mode === PROGRAM_STATE.BEHAVIORAL) {
             return <RightSideContainer/>;
         }
     };

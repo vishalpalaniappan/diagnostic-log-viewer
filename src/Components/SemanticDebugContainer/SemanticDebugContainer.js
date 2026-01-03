@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 
 // eslint-disable-next-line max-len
 import {AutomatedDebuggingContainer} from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
@@ -30,7 +30,7 @@ export function SemanticDebugContainer () {
     }, []);
 
     return (
-        <div ref={semanticDebugContainerRef} 
+        <div ref={semanticDebugContainerRef}
             className="semantic-debug-container w-100 d-flex flex-column">
             <div className="section" ref={segRef}>
                 <SemanticExecutionGraph />

@@ -1,0 +1,68 @@
+.treeMenuContainer {
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+
+    .topContainer {
+        width:100%;
+        height:40px;
+        display:flex;
+        flex-direction: row;
+        border-bottom: solid 1px rgb(65, 65, 65);
+
+        .titleContainer {
+            width:100%;
+            height:100%;
+            display:flex;
+
+            .title {
+                font-size: 12px;
+                flex-grow: 1;
+                align-self:center;
+                margin-left:10px;
+                background-color: #252526;
+            }
+        }
+
+        .prevThread{
+            color:rgb(136, 136, 136);
+            padding:0 5px;
+            align-self:center;
+            font-size: 15px;
+        }
+
+        .prevThread:hover{
+            cursor:pointer;
+            color:white;
+        }
+
+        .nextThread{
+            color:rgb(136, 136, 136);
+            padding:0 5px;
+            align-self:center;
+            font-size: 15px;
+        }
+
+        .nextThread:hover{
+            cursor:pointer;
+            color:white;
+        }
+
+    }   
+}   
+
+.scrollbar {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: #47474766 #252526;
+    scrollbar-width: thin;
+}
+
+.behavioralTreeContainer {
+    width:100%;
+    height:100%;
+    font-size:12px;
+    color:white;
+    background-color:#1e1e1e;
+}

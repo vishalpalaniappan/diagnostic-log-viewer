@@ -120,6 +120,14 @@ export function DebugToolKit ({}) {
                 setMode(PROGRAM_STATE.SEG);
                 break;
 
+            case "Digit3":
+                setActions((prev) => ({
+                    value: "Debugging Mode: Behavioral ",
+                    tick: prev.tick + 1,
+                }));
+                setMode(PROGRAM_STATE.BEHAVIORAL);
+                break;
+
             case "KeyB":
                 setActions((prev) => ({
                     value: "Toggle Breakpoint",

@@ -60,10 +60,16 @@ class Thread {
                     this.exception = currLog.value;
                     break;
                 case "adli_input":
-                    this.inputs.push(currLog.value);
+                    this.inputs.push({
+                        position: position,
+                        value: currLog,
+                    });
                     break;
                 case "adli_output":
-                    this.outputs.push(currLog.value);
+                    this.outputs.push({
+                        position: position,
+                        value: currLog,
+                    });
                     break;
                 default:
                     break;
