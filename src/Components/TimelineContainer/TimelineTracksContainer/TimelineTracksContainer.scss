@@ -3,4 +3,13 @@
     height:100%;
     display:flex;
     flex-direction: column;
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: #47474766 #252526;
+    scrollbar-width: thin;
+    background-color: #1e1e1e;
 }   
+
+.timeline {
+    flex: 1;
+}

@@ -2,12 +2,19 @@
     width:100%;
     height:100%;
     border-top: solid 1px #474747;
+    display: flex;
+    flex-direction: row;
 }   
 
-.timelineContainer > .accordian {
+.timelineContainer > .labelsContainer {
     height:100%;
     width:300px;
     background:#252526;
+}
+
+.timelineContainer > .tracksContainer {
+    flex: 1;
+    height:100%;
 }
 
 .timelineContainer > .handle {

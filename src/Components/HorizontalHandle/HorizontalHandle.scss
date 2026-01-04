@@ -1,0 +1,10 @@
+.horizontal-handle {
+    height:100%;
+    width:2px;
+    background-color: #474747;
+    cursor: ew-resize;
+}
+
+.handle-active{
+    background-color:#007acc;
+}
