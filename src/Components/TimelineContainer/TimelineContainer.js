@@ -3,6 +3,7 @@ import React, {useCallback, useContext, useEffect, useRef, useState} from "react
 import TimelineContainerContext from "./TimelineContainerContext";
 
 import "./TimelineContainer.scss";
+import TimelineLabelsContainer from "./TimelineLabelsContainer/TimelineLabelsContainer";
 
 /**
  * Contains the timeline container.
@@ -60,7 +61,9 @@ export function TimelineContainer () {
         <TimelineContainerContext.Provider value={{}}>
             <div className="treeMenuContainer d-flex flex-row">
                 <div style={{width: ACCORDIAN_WIDTH+"px"}}
-                    ref={accordian} className="accordian"></div>
+                    ref={accordian} className="accordian">
+                        <TimelineLabelsContainer />
+                    </div>
                 <div className="handle" ref={handle} onMouseDown={handleMouseDown} />
                 <div className="flex-grow-1"></div>
             </div>
