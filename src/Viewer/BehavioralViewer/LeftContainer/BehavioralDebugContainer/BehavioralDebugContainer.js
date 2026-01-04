@@ -40,6 +40,9 @@ export function BehavioralDebugContainer () {
                 <BehavioralGraph />
             </div>
             <VerticalHandle topDiv={behavioralRef} bottomDiv={segRef}/>
+            <div className="w-100 violation-title" style={{height: TITLE_HEIGHT + "px"}}>
+                Execution
+            </div>
             <div className="section" ref={segRef}>
                 <BehavioralExecutionTree />
             </div>
