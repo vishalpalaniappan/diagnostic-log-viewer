@@ -1,11 +1,11 @@
 import React from "react";
 
-import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
-import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
-import {SideContainerStack} from "./SideContainer/SideContainerStack";
-import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
+import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
+import {FileViewer} from "../FileViewer/FileViewer";
+import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
+import {SideContainerStack} from "./LeftContainer/SideContainerStack";
 
-import "./Viewer.scss";
+import "./StackViewer.scss";
 
 /**
  * Renders the Stack Viewer.
@@ -21,7 +21,7 @@ export function StackViewer () {
                     <SideContainerStack />
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                    <CentralContainer/>
+                    <FileViewer/>
                 </div>
             </div>
             <div className="status-bar-container">

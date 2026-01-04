@@ -1,12 +1,12 @@
 import React, {useContext} from "react";
 
-import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
-import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
-import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
-import {SideContainerGraph} from "./SideContainer/SideContainerGraph";
-import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
+import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
+import {FileViewer} from "../FileViewer/FileViewer";
+import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
+import {RightSideContainer} from "./RightContainer/RightSideContainer";
+import {SideContainerGraph} from "./LeftContainer/SideContainerGraph";
 
-import "./Viewer.scss";
+import "./SEGViewer.scss";
 
 /**
  * Renders the SEG Viewer.
@@ -17,14 +17,16 @@ export function SEGViewer () {
         <div className="viewer-container">
             <DebugToolKit />
             <div className="menu-container"></div>
-            <div className="body-container d-flex flex-row">
+            <div className="body-container w-100 d-flex flex-row">
                 <div className="d-flex h-100">
                     <SideContainerGraph />;
                 </div>
                 <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                    <CentralContainer/>
+                    <FileViewer/>
                 </div>
-                <RightSideContainer/>;
+                <div className="d-flex h-100">
+                    <RightSideContainer/>;
+                </div>
             </div>
             <div className="status-bar-container">
                 <StatusBarContainer/>

@@ -11,7 +11,16 @@ import "./TimelineContainer.scss";
 export function TimelineContainer () {
     return (
         <TimelineContainerContext.Provider value={{}}>
-            <div className="treeMenuContainer">
+            <div className="w-100 h-100 d-flex flex-row">
+                <div style={{width: "300px"}} className="">
+
+                </div>
+                <div style={{width: "1px", backgroundColor: "red"}} className="">
+
+                </div>
+                <div className="flex-grow-1">
+                    
+                </div>
             </div>
         </TimelineContainerContext.Provider>
     );

@@ -5,9 +5,9 @@ import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
 import {TimelineContainer} from "../../Components/TimelineContainer/TimelineContainer";
 import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
 // eslint-disable-next-line max-len
-import {LeftSideContainerBehavioral} from "./LeftSideContainerBehavioral/LeftSideContainerBehavioral";
+import {LeftSideContainerBehavioral} from "./LeftContainer/LeftSideContainerBehavioral";
 // eslint-disable-next-line max-len
-import {RightSideContainerBehavioral} from "./RightSideContainerBehavioral/RightSideContainerBehavioral";
+import {RightSideContainerBehavioral} from "./RightContainer/RightSideContainerBehavioral";
 import {SideMenu} from "./SideMenu/SideMenu";
 
 import "./BehavioralViewer.scss";
