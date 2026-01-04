@@ -79,7 +79,7 @@ export function BehavioralExecutionTree () {
                     );
                 }
             }
-            setExecutionTreeNodes(nodes);
+            // setExecutionTreeNodes(nodes);
         }
     };
 
