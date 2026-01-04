@@ -31,7 +31,7 @@ export function TimelineLabelsContainer () {
         const threadDivs = [];
         for (let i = 0; i < threads.length; i++) {
             threadDivs.push(
-                <div className="label-row">
+                <div key={i} className="label-row">
                     <div className="icon-row"></div>
                     <span>{threads[i]}</span>
                 </div>
