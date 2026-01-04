@@ -3,6 +3,7 @@ import React, {useCallback, useContext, useEffect, useRef, useState} from "react
 import SegContext from "../../Providers/SegContext";
 import TimelineContainerContext from "./TimelineContainerContext";
 import TimelineLabelsContainer from "./TimelineLabelsContainer/TimelineLabelsContainer";
+import TimelineTracksContainer from "./TimelineTracksContainer/TimelineTracksContainer";
 
 import "./TimelineContainer.scss";
 
@@ -90,21 +91,17 @@ export function TimelineContainer () {
         }
     }, [seg]);
 
-    useEffect(() => {
-        if (durations) {
-            console.log(durations);
-        }
-    }, [durations]);
-
     return (
-        <TimelineContainerContext.Provider value={{}}>
+        <TimelineContainerContext.Provider value={{durations}}>
             <div className="timelineContainer d-flex flex-row">
                 <div style={{width: ACCORDIAN_WIDTH+"px"}}
                     ref={accordian} className="accordian">
                     <TimelineLabelsContainer />
                 </div>
                 <div className="handle" ref={handle} onMouseDown={handleMouseDown} />
-                <div className="flex-grow-1"></div>
+                <div className="flex-grow-1">
+                    <TimelineTracksContainer />
+                </div>
             </div>
         </TimelineContainerContext.Provider>
     );
