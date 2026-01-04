@@ -32,6 +32,7 @@ export function MonacoInstance () {
     const [zoneIds, setZoneIds] = useState([]);
     const [breakPointDecorations, setBreakPointDecorations] = useState([]);
     const [lineDecorations, setLineDecorations] = useState([]);
+    const [editorLoaded, setEditorLoaded] = useState(false);
 
     // Refs
     // ActiveFileRef is used to access active file in callback
@@ -53,12 +54,13 @@ export function MonacoInstance () {
         editorRef.current.onMouseDown(onMonacoMouseDown);
         editorRef.current.onMouseMove(onMonacoMouseMove);
         editorRef.current.onMouseLeave(onMonacoMouseLeave);
+        setEditorLoaded(true);
     };
 
     useEffect(() => {
         activeFileRef.current = activeFile;
         loadContent();
-    }, [activeFile, activeThread, stacks, stackPosition]);
+    }, [activeFile, activeThread, editorLoaded, stacks, stackPosition]);
 
     useEffect(() => {
         drawBreakPoints();
