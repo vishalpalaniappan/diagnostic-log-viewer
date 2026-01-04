@@ -23,6 +23,7 @@ export function TimelineTracksContainer () {
     return (
         <div className="timelineTracksContainer">
             <div className="timeline" ref={timelineContainer}>
+                <div className="track-time-row"></div>
 
             </div>
         </div>
