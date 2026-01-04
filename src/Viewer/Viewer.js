@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 
 import PROGRAM_STATE from "../PROGRAM_STATE";
 import ActionsContext from "../Providers/ActionsContext";
-import {BehavioralViewer} from "./BehavioralViewer";
+import {BehavioralViewer} from "./BehavioralViewer/BehavioralViewer";
 import {SEGViewer} from "./SEGViewer";
 import {StackViewer} from "./StackViewer";
 

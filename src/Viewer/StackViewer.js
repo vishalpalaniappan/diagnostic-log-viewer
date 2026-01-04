@@ -1,12 +1,7 @@
-import React, {useContext} from "react";
+import React from "react";
 
 import {CentralContainer} from "../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../Components/DebugToolKit/DebugToolKit";
-import PROGRAM_STATE from "../PROGRAM_STATE";
-import ActionsContext from "../Providers/ActionsContext";
-import {RightSideContainer} from "./RightSideContainer/RightSideContainer";
-import {SideContainerBehavioral} from "./SideContainer/SideContainerBehavioral";
-import {SideContainerGraph} from "./SideContainer/SideContainerGraph";
 import {SideContainerStack} from "./SideContainer/SideContainerStack";
 import {StatusBarContainer} from "./StatusBarContainer/StatusBarContainer";
 

@@ -17,4 +17,4 @@ export function TimelineContainer () {
     );
 }
 
-export default BehavioralExecutionTree;
+export default TimelineContainer;

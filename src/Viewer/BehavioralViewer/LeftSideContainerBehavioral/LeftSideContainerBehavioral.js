@@ -3,17 +3,17 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
 
 // eslint-disable-next-line max-len
-import {BehavioralDebugContainer} from "../../Components/BehavioralDebugContainer/BehavioralDebugContainer";
-import {SettingsContainer} from "../../Components/SettingsContainer/SettingsContainer";
-import {ShortcutContainer} from "../../Components/ShortcutContainer/ShortcutContainer";
+import {BehavioralDebugContainer} from "../../../Components/BehavioralDebugContainer/BehavioralDebugContainer";
+import {SettingsContainer} from "../../../Components/SettingsContainer/SettingsContainer";
+import {ShortcutContainer} from "../../../Components/ShortcutContainer/ShortcutContainer";
 
-import "./SideContainer.scss";
+import "./LeftSideContainerBehavioral.scss";
 
 /**
  * Renders the side menu and accordian containers.
  * @return {JSX.Element}
  */
-export function SideContainerBehavioral () {
+export function LeftSideContainerBehavioral () {
     const [activeMenu, setActiveMenu] = useState(1);
 
     const accordian = useRef();
@@ -73,21 +73,6 @@ export function SideContainerBehavioral () {
 
     return (
         <div className="side-container d-flex flex-row">
-            <div className="menu d-flex flex-column" style={{width: SIDE_MENU_WIDTH+"px"}}>
-                <div className="d-flex flex-column align-items-center">
-                    <Diagram2 className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(1);}}
-                        style={{color: activeMenu == 1 ? "white": "grey"}}/>
-                </div>
-                <div className="mt-auto d-flex flex-column align-items-center">
-                    <Keyboard className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(2);}}
-                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
-                    <Gear className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(3);}}
-                        style={{color: activeMenu == 3 ? "white": "grey"}}/>
-                </div>
-            </div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
                 {getActiveMenuComponent()}
             </div>
