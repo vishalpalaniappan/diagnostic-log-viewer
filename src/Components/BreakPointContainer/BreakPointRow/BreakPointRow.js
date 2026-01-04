@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useState} from "react";
-import { Form } from 'react-bootstrap';
+
 import PropTypes from "prop-types";
+import {Form} from "react-bootstrap";
 import {X} from "react-bootstrap-icons";
 
-import WorkerContext from "../../../../Providers/WorkerContext";
-
-import CDL_WORKER_PROTOCOL from "../../../../Services/CDL_WORKER_PROTOCOL";
+import WorkerContext from "../../../Providers/WorkerContext";
+import CDL_WORKER_PROTOCOL from "../../../Services/CDL_WORKER_PROTOCOL";
 
 import "./BreakPointRow.scss";
 
@@ -26,7 +26,6 @@ BreakPointRow.propTypes = {
  * @return {JSX}
  */
 export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled}) {
-
     const {cdlWorker} = useContext(WorkerContext);
     const [isEnabled, setIsEnabled] = useState();
 
@@ -35,20 +34,20 @@ export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled})
             code: CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT_ENABLED,
             args: {
                 fileName: filePath,
-                lineNumber: lineNumber
+                lineNumber: lineNumber,
             },
         });
-    }
+    };
 
     const removeBreakpoint = (e) => {
         cdlWorker.current.postMessage({
             code: CDL_WORKER_PROTOCOL.TOGGLE_BREAKPOINT,
             args: {
                 fileName: filePath,
-                lineNumber: lineNumber,  
+                lineNumber: lineNumber,
             },
         });
-    }
+    };
 
     useEffect(() => {
         setIsEnabled(enabled);
@@ -60,7 +59,7 @@ export function BreakPointRow ({index, fileName, filePath, lineNumber, enabled})
             <div className="check">
                 <Form.Check type="checkbox" onClick={toggleEnabled} defaultChecked={isEnabled} />
             </div>
-            
+
             {filePath}
 
             <div className="flex-grow-1 d-flex justify-content-end">

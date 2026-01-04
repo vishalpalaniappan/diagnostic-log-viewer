@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import BreakpointsContext from "../../../Providers/BreakpointsContext";
+import BreakpointsContext from "../../../../../Providers/BreakpointsContext";
 import {BreakPointRow} from "./BreakPointRow/BreakPointRow";
 
 import "./BreakPointContainer.scss";

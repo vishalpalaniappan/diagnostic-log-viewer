@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
-import { DebugContainerSemantic } from "../../../Components/DebugContainer/DebugContainerSemantic";
+import {DebugContainerSemantic} from "./DebugContainerSemantic/DebugContainerSemantic";
 
 import "./RightSideContainerBehavioral.scss";
 

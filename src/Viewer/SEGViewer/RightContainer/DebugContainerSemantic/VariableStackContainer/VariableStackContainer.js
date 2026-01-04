@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import ReactJsonView from "@microlink/react-json-view";
 
-import VariablesContext from "../../../Providers/VariablesContext";
+import VariablesContext from "../../../../../Providers/VariablesContext";
 
 import "./VariableStackContainer.scss";
 

@@ -2,9 +2,9 @@ import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 
-import ActiveFileContext from "../../../../Providers/ActiveFileContext";
-import StackContext from "../../../../Providers/StackContext";
-import StackPositionContext from "../../../../Providers/StackPositionContext";
+import ActiveFileContext from "../../../Providers/ActiveFileContext";
+import StackContext from "../../../Providers/StackContext";
+import StackPositionContext from "../../../Providers/StackPositionContext";
 
 import "./CallStackRow.scss";
 

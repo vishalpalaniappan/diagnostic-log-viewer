@@ -2,10 +2,10 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import {Diagram2, Gear, Keyboard} from "react-bootstrap-icons";
 
-// eslint-disable-next-line max-len
-import {BehavioralDebugContainer} from "../../../Components/BehavioralDebugContainer/BehavioralDebugContainer";
 import {SettingsContainer} from "../../../Components/SettingsContainer/SettingsContainer";
 import {ShortcutContainer} from "../../../Components/ShortcutContainer/ShortcutContainer";
+// eslint-disable-next-line max-len
+import {BehavioralDebugContainer} from "./BehavioralDebugContainer/BehavioralDebugContainer";
 
 import "./LeftSideContainerBehavioral.scss";
 

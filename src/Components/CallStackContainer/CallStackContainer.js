@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import {CaretDown, CaretRight} from "react-bootstrap-icons";
 
-import StackContext from "../../../Providers/StackContext";
+import StackContext from "../../Providers/StackContext";
 import {CallStackRow} from "./CallStackRow/CallStackRow";
 
 import "./CallStackContainer.scss";

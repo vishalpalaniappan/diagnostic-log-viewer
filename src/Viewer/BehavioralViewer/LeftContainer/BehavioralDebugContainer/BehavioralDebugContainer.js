@@ -1,9 +1,10 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
 // eslint-disable-next-line max-len
-import {AutomatedDebuggingContainer} from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
-import {BehavioralExecutionTree} from "../BehavioralExecutionTree/BehavioralExecutionTree";
-import {BehavioralGraph} from "../BehavioralGraph/BehavioralGraph";
+import {AutomatedDebuggingContainer} from "../../../../Components/AutomatedDebuggingContainer/AutomatedDebuggingContainer";
+// eslint-disable-next-line max-len
+import {BehavioralExecutionTree} from "../../../../Components/BehavioralExecutionTree/BehavioralExecutionTree";
+import {BehavioralGraph} from "../../../../Components/BehavioralGraph/BehavioralGraph";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
 import "./BehavioralDebugContainer.scss";
