@@ -73,21 +73,6 @@ export function SideContainerGraph () {
 
     return (
         <div className="side-container d-flex flex-row">
-            <div className="menu d-flex flex-column" style={{width: SIDE_MENU_WIDTH+"px"}}>
-                <div className="d-flex flex-column align-items-center">
-                    <Diagram2 className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(1);}}
-                        style={{color: activeMenu == 1 ? "white": "grey"}}/>
-                </div>
-                <div className="mt-auto d-flex flex-column align-items-center">
-                    <Keyboard className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(2);}}
-                        style={{color: activeMenu == 2 ? "white": "grey"}}/>
-                    <Gear className="menu-icon" size={25}
-                        onClick={(e) => {setActiveMenu(3);}}
-                        style={{color: activeMenu == 3 ? "white": "grey"}}/>
-                </div>
-            </div>
             <div className="accordian" ref={accordian} style={{width: ACCORDIAN_WIDTH+"px"}}>
                 {getActiveMenuComponent()}
             </div>

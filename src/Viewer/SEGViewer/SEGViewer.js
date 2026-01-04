@@ -3,6 +3,7 @@ import React, {useContext, useRef} from "react";
 import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
 import {FileViewer} from "../../Components/FileViewer/FileViewer";
 import TimelineContainer from "../../Components/TimelineContainer/TimelineContainer";
+import {SideMenu} from "../BehavioralViewer/SideMenu/SideMenu";
 import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
 import {SideContainerGraph} from "./LeftContainer/SideContainerGraph";
 import {RightSideContainer} from "./RightContainer/RightSideContainer";
@@ -22,6 +23,10 @@ export function SEGViewer () {
         <div className="viewer-container-seg">
             <DebugToolKit />
             <div className="menu-container-seg"></div>
+            {/* Side menu */}
+            <div className="side-menu-container-behavioral">
+                <SideMenu />
+            </div>
             {/* Body */}
             <div ref={bodyContainerRef} className="body-container-seg d-flex flex-column">
                 <div ref={bodyContentContainerRef} className="flex-grow-1">
