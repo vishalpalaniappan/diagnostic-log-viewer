@@ -59,11 +59,11 @@ export function TimelineContainer () {
 
     return (
         <TimelineContainerContext.Provider value={{}}>
-            <div className="treeMenuContainer d-flex flex-row">
+            <div className="timelineContainer d-flex flex-row">
                 <div style={{width: ACCORDIAN_WIDTH+"px"}}
                     ref={accordian} className="accordian">
-                        <TimelineLabelsContainer />
-                    </div>
+                    <TimelineLabelsContainer />
+                </div>
                 <div className="handle" ref={handle} onMouseDown={handleMouseDown} />
                 <div className="flex-grow-1"></div>
             </div>
