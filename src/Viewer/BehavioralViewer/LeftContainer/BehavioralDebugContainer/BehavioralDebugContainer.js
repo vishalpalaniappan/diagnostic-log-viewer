@@ -5,7 +5,7 @@ import {AutomatedDebuggingContainer} from "../../../../Components/AutomatedDebug
 // eslint-disable-next-line max-len
 import {BehavioralExecutionTree} from "../../../../Components/BehavioralExecutionTree/BehavioralExecutionTree";
 import {BehavioralGraph} from "../../../../Components/BehavioralGraph/BehavioralGraph";
-import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
+import { VerticalHandle } from "../../../../Components/VerticalHandle/VerticalHandle";
 
 import "./BehavioralDebugContainer.scss";
 

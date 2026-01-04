@@ -4,7 +4,7 @@ import {BreakPointContainer} from "../../../../Components/BreakPointContainer/Br
 import {CallStackContainer} from "../../../../Components/CallStackContainer/CallStackContainer";
 // eslint-disable-next-line max-len
 import {VariableStackContainer} from "../../../../Components/VariableStackContainer/VariableStackContainer";
-import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
+import { VerticalHandle } from "../../../../Components/VerticalHandle/VerticalHandle";
 
 import "./DebugContainer.scss";
 

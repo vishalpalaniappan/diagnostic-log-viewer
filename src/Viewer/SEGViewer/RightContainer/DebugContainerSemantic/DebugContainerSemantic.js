@@ -1,8 +1,9 @@
 import React, {useEffect, useRef} from "react";
 
-import {BreakPointContainer} from "./BreakPointContainer/BreakPointContainer";
-import {VariableStackContainer} from "./VariableStackContainer/VariableStackContainer";
-import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
+import {BreakPointContainer} from "../../../../Components/BreakPointContainer/BreakPointContainer";
+// eslint-disable-next-line max-len
+import {VariableStackContainer} from "../../../../Components/VariableStackContainer/VariableStackContainer";
+import {VerticalHandle} from "../../../../Components/VerticalHandle/VerticalHandle";
 
 import "./DebugContainer.scss";
 

@@ -1,7 +1,7 @@
 import React, {useContext, useRef} from "react";
 
-import {CentralContainer} from "../../Components/CentralContainer/CentralContainer";
 import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
+import {FileViewer} from "../../Components/FileViewer/FileViewer";
 import {TimelineContainer} from "../../Components/TimelineContainer/TimelineContainer";
 import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
 // eslint-disable-next-line max-len
@@ -39,7 +39,7 @@ export function BehavioralViewer () {
                         </div>
                         {/* Central Container */}
                         <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                            <CentralContainer/>
+                            <FileViewer/>
                         </div>
                         {/* Right Side Container */}
                         <div className="d-flex h-100">

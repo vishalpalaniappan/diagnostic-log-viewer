@@ -1,7 +1,7 @@
 import React from "react";
 
 import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
-import {FileViewer} from "../FileViewer/FileViewer";
+import {FileViewer} from "../../Components/FileViewer/FileViewer";
 import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
 import {SideContainerStack} from "./LeftContainer/SideContainerStack";
 

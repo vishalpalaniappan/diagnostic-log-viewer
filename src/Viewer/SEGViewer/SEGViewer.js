@@ -1,10 +1,10 @@
 import React, {useContext} from "react";
 
 import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
-import {FileViewer} from "../FileViewer/FileViewer";
+import {FileViewer} from "../../Components/FileViewer/FileViewer";
 import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
-import {RightSideContainer} from "./RightContainer/RightSideContainer";
 import {SideContainerGraph} from "./LeftContainer/SideContainerGraph";
+import {RightSideContainer} from "./RightContainer/RightSideContainer";
 
 import "./SEGViewer.scss";
 
