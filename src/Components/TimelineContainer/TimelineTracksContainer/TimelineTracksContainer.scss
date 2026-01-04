@@ -19,3 +19,19 @@
 .timeline {
     flex: 1;
 }
+
+
+.needle {
+    position:relative;
+    width: 1px;
+    height: 100%;
+    background:red;
+    z-index: 999;
+}
+
+.needle-handle {
+    position:relative;
+    height:100%;
+    width:20px;
+    background-color: rgb(114, 114, 114);
+}
