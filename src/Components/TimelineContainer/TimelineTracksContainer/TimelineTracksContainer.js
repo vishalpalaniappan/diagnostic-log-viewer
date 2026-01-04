@@ -11,29 +11,31 @@ import "./TimelineTracksContainer.scss";
 export function TimelineTracksContainer () {
     const {durations} = useContext(TimelineContainerContext);
     const timelineContainerRef = useRef();
+    const timeTrackRef = useRef();
     const tracksContainerRef = useRef();
     const needleRef = useRef();
 
-    const PX_PER_SECOND = 200;
+    const PX_PER_SECOND = 400;
 
     useEffect(() => {
         if (durations) {
             timelineContainerRef.current.style.width = durations.max * PX_PER_SECOND + "px";
+            timeTrackRef.current.style.width = durations.max * PX_PER_SECOND + "px";
 
-            const width = durations.max * PX_PER_SECOND;
-            needleRef.current.style.left = width/2 + "px";
+            const width = 1 * PX_PER_SECOND;
+            needleRef.current.style.left = width + "px";
 
-            const fullHeight = tracksContainerRef.current.getBoundingClientRect().height;
+            const fullHeight = tracksContainerRef.current.getBoundingClientRect().height - 10;
             needleRef.current.style.height = fullHeight + "px";
         }
     }, [durations]);
 
     return (
-        <div ref={tracksContainerRef} className="timelineTracksContainer">
+        <div ref={tracksContainerRef} className="timelineTracksContainer d-flex flex-column">
+            <div className="track-time-row" ref={timeTrackRef}>
+                <div ref={needleRef} className="needle"></div>
+            </div>
             <div className="timeline" ref={timelineContainerRef}>
-                <div className="track-time-row">
-                    <div ref={needleRef} className="needle"></div>
-                </div>
             </div>
         </div>
     );

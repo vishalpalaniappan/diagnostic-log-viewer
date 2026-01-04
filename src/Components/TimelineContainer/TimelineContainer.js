@@ -21,9 +21,9 @@ export function TimelineContainer () {
 
     const redrawContainers = () => {
         const width = timelineRef.current.clientWidth;
-        const containerHeight = width - 150;
+        const containerWidth = width - 150 - 55;
         labelsRef.current.style.width = 150 + "px";
-        tracksRef.current.style.width = containerHeight + "px";
+        tracksRef.current.style.width = containerWidth + "px";
     };
 
     useEffect(() => {
@@ -59,6 +59,23 @@ export function TimelineContainer () {
             });
         }
     }, [seg]);
+
+
+    // Resize containers when window resizes
+    useEffect(() => {
+        if (!timelineRef.current) return;
+
+        const element = timelineRef.current;
+
+        const observer = new ResizeObserver(([entry]) => {
+            // const {width, height} = entry.contentRect;
+            redrawContainers();
+        });
+
+        observer.observe(element);
+
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <TimelineContainerContext.Provider value={{durations}}>
