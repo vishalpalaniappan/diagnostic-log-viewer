@@ -6,21 +6,33 @@
     scrollbar-color: #47474766 #252526;
     scrollbar-width: thin;
     background-color: #1e1e1e;
+    position: relative;
 }   
-
-.track-time-row {
-    height: 30px;
-    width: 100%;
-    border-bottom: solid 1px #414040;
-}
 
 .timeline {
     width: 100%;
 }
 
 
-.needle {
+.track-time-row {
     position:relative;
+    overflow-y: visible;
+    height: 30px;
+    width: 100%;
+    border-bottom: solid 1px #414040;
+}
+
+.trackLabel {
+    position:absolute;
+    display:flex;
+    justify-content: center;
+    width: 30px;
+    font-size: 11px;
+    color:white;
+}
+
+.needle {
+    position:absolute;
     width: 1px;
     height: 100%;
     background:red;
