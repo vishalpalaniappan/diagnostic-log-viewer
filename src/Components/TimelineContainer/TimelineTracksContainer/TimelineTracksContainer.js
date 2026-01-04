@@ -12,7 +12,7 @@ export function TimelineTracksContainer () {
     const {durations} = useContext(TimelineContainerContext);
     const timelineContainer = useRef();
 
-    const PX_PER_SECOND = 100;
+    const PX_PER_SECOND = 200;
 
     useEffect(() => {
         if (durations) {

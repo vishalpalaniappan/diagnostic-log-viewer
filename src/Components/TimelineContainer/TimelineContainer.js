@@ -1,10 +1,10 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 
 import SegContext from "../../Providers/SegContext";
+import {HorizontalHandle} from "../HorizontalHandle/HorizontalHandle";
 import TimelineContainerContext from "./TimelineContainerContext";
 import TimelineLabelsContainer from "./TimelineLabelsContainer/TimelineLabelsContainer";
 import TimelineTracksContainer from "./TimelineTracksContainer/TimelineTracksContainer";
-import { HorizontalHandle } from "../HorizontalHandle/HorizontalHandle";
 
 import "./TimelineContainer.scss";
 
@@ -18,6 +18,17 @@ export function TimelineContainer () {
     const tracksRef = useRef();
     const timelineRef = useRef();
     const [durations, setDurations] = useState();
+
+    const redrawContainers = () => {
+        const width = timelineRef.current.clientWidth;
+        const containerHeight = width - 150;
+        labelsRef.current.style.width = 150 + "px";
+        tracksRef.current.style.width = containerHeight + "px";
+    };
+
+    useEffect(() => {
+        redrawContainers();
+    }, []);
 
 
     useEffect(() => {
