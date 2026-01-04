@@ -1,6 +1,21 @@
 .treeMenuContainer {
     width:100%;
     height:100%;
-    display:flex;
-    flex-direction: column;
 }   
+
+.treeMenuContainer > .accordian {
+    height:100%;
+    width:300px;
+    background:#252526;
+}
+
+.treeMenuContainer > .handle {
+    height: 100%;
+    width: 3px;
+    background: #252526;
+    cursor: ew-resize;
+}
+
+.treeMenuContainer > .handle-active{
+    background-color:#007acc;
+}
