@@ -78,6 +78,8 @@ class SemanticTransformer {
                         // and restore the position in the previous thread that
                         // sent it the message.
                         behaviorStack.pop();
+                        console.log("End Behavioral fork");
+                        this.behavioralTree[this.behavioralTree.length -1].fork = "end";
                         const stackTop = behaviorStack[behaviorStack.length -1];
                         seg = stackTop.seg;
                         pos = stackTop.pos;
@@ -122,6 +124,8 @@ class SemanticTransformer {
 
             if (entry.meta?.output) {
                 const newState = this.trackOutput(entry);
+                console.log("Begin behavioral fork");
+                this.behavioralTree[this.behavioralTree.length -1].fork = "start";
                 // console.log("Output continues at:",
                 //     newState.seg[newState.pos]);
                 const stackTop = behaviorStack[behaviorStack.length - 1];
