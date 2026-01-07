@@ -107,8 +107,10 @@ class Debugger {
         this.sendExecutionTree();
 
         const designMap = this.header.getDesignMap();
-        this.transformer = new SemanticTransformer(designMap, this.debuggers);
-        this.sendBehavior();
+        if (designMap) {
+            this.transformer = new SemanticTransformer(designMap, this.debuggers);
+            this.sendBehavior();
+        }
     }
 
     /**
