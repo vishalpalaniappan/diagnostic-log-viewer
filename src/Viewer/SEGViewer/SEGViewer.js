@@ -46,9 +46,9 @@ export function SEGViewer () {
                     </div>
                 </div>
                 {/* Timeline Container */}
-                <div ref={timelineContainerRef} style={{height: "250px"}}>
+                {/* <div ref={timelineContainerRef} style={{height: "250px"}}>
                     <TimelineContainer />
-                </div>
+                </div> */}
             </div>
             {/* Status Bar */}
             <div className="status-bar-container-seg">
