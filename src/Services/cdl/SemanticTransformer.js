@@ -136,7 +136,12 @@ class SemanticTransformer {
 
             const latestBehavior = this.behavioralTree[this.behavioralTree.length - 1];
 
-            // Save the output to the behavior
+            /**
+             * Save the output to the behavior. I work backward from the entry
+             * position to the first output I find. Currently, I only have one
+             * output per abstraction.
+             * TODO: Extend this for multiple outputs per abstraction.
+             **/
             if (entry.meta?.output) {
                 const outputs = this.threadDebuggers[entry.abstraction.threadId].thread.outputs;
                 let position = entry.abstraction.position;
@@ -150,7 +155,12 @@ class SemanticTransformer {
                 } while (--position > 0);
             };
 
-            // Save the input to the behavior
+            /**
+             * Save the output to the behavior. I work backward from the entry
+             * position to the first input I find. Currently, I only have one
+             * input per abstraction.
+             * TODO: Extend this for multiple inputs per abstraction.
+             **/
             if (entry.meta?.input) {
                 const thread = this.threadDebuggers[entry.abstraction.threadId].thread;
                 let position = entry.abstraction.position;
