@@ -54,7 +54,8 @@ class SemanticTransformer {
             while (behaviorStack.length > 0) {
                 const stackTop = behaviorStack[behaviorStack.length - 1];
 
-                if (stackTop.entry.meta.behavioral_role === "selector" &&
+                // Temporarily disabling selectors to flatten tree.
+                if (false && stackTop.entry.meta.behavioral_role === "selector" &&
                     stackTop.entry.meta.targetBehaviors.includes(currentBehavior.id)) {
                     // Find the stack position which selected this behavior.
                     behaviorStack.push({
