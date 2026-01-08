@@ -110,21 +110,37 @@ class SemanticTransformer {
 
             this.printBehavioralStack(behaviorStack);
 
+            const latestBehavior = this.behavioralTree[this.behavioralTree.length - 1];
+
             // Save the output to the behavior
             if (entry.meta?.output) {
-                const currentBehavior = this.behavioralTree[this.behavioralTree.length - 1];
-                currentBehavior.outputs = [];
+                latestBehavior.outputs = [];
                 const outputs = this.threadDebuggers[entry.abstraction.threadId].thread.outputs;
                 let position = entry.abstraction.position;
                 outerLoop: do {
                     for (let i = 0; i < outputs.length; i++) {
                         if (outputs[i].position === position) {
-                            currentBehavior.outputs.push(outputs[i]);
+                            latestBehavior.outputs.push(outputs[i]);
                             break outerLoop;
                         }
                     }
                 } while (--position > 0);
             };
+
+            // Save the input to the behavior
+            if (entry.meta?.input) {
+                latestBehavior.inputs = [];
+                const thread = this.threadDebuggers[entry.abstraction.threadId].thread;
+                let position = entry.abstraction.position;
+                outerLoop: do {
+                    for (let i = 0; i < thread.inputs.length; i++) {
+                        if (thread.inputs[i].position === position) {
+                            latestBehavior.inputs.push(thread.inputs[i]);
+                            break outerLoop;
+                        }
+                    }
+                } while (++position < thread.execution.length);
+            }
         } while (++pos < seg.length);
 
         // Set the collapsible states of the tree nodes
