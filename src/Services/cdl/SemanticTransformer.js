@@ -10,25 +10,30 @@ class SemanticTransformer {
      */
     constructor (designMap, threadDebuggers) {
         this.behaviors = designMap.behavior;
+        console.log(this.behaviors);
         this.threadDebuggers = threadDebuggers;
 
         this.displayDebugInfo = false;
         this.behavioralTree = [];
 
         console.log("SemanticTransformer initialized", this.behaviors, this.threadDebuggers);
-        this.constructBehavior();
+        const behaviors = {};
+        const threadIds = Object.keys(this.threadDebuggers);
+        threadIds.forEach((id, index) => {
+            this.behavioralTree = [];
+            this.constructBehavior(id);
+            behaviors[id] = this.behavioralTree;
+        });
+        console.log(behaviors);
     }
 
     /**
-     * Given the behaviors and thread debuggers, this function
-     * extracts the behavior of the design. It follows
-     * the outputs to their new inputs and continues the
-     * trace to assemble the designs behavior.
+     * Given a thread, this function extracts the behavior of the thread.
+     * @param {String} id
      */
-    constructBehavior () {
-        const keys = Object.keys(this.threadDebuggers);
-        const thread = this.threadDebuggers[keys[0]].thread;
-        let seg = thread.seg;
+    constructBehavior (id) {
+        const thread = this.threadDebuggers[id].thread;
+        const seg = thread.seg;
         const behaviorStack = [];
 
         if (!seg || seg.length === 0) {
@@ -38,12 +43,9 @@ class SemanticTransformer {
 
         let pos = 0;
         do {
-            // TODO: If entry is an output, then track it to the next
-            // input using UID for building behaviors across boundaries.
-            let entry = seg[pos];
-
-            let functionalId = entry.meta.functionalId;
-            let currentBehavior = this.getBehavior(entry.meta.functionalId);
+            const entry = seg[pos];
+            const functionalId = entry.meta.functionalId;
+            const currentBehavior = this.getBehavior(entry.meta.functionalId);
 
             if (!currentBehavior) {
                 continue;
@@ -72,21 +74,6 @@ class SemanticTransformer {
                         stackTop.entry = entry;
                         stackTop.position = abstractions.indexOf(entry.meta.functionalId) + 1;
                         break;
-                    } else if (stackTop.behavior.type === "atomic" && newPosition == 1) {
-                        // Within the thread, if we have returned to the start
-                        // of the atomic behavior, then remove it from the stack
-                        // and restore the position in the previous thread that
-                        // sent it the message.
-                        behaviorStack.pop();
-                        console.log("End Behavioral fork");
-                        this.behavioralTree[this.behavioralTree.length -1].fork = "end";
-                        const stackTop = behaviorStack[behaviorStack.length -1];
-                        seg = stackTop.seg;
-                        pos = stackTop.pos;
-                        entry = seg[pos];
-                        functionalId = entry.meta.functionalId;
-                        currentBehavior = this.getBehavior(entry.meta.functionalId);
-                        continue;
                     }
                 }
 
@@ -121,23 +108,6 @@ class SemanticTransformer {
             }
 
             this.printBehavioralStack(behaviorStack);
-
-            if (entry.meta?.output) {
-                const newState = this.trackOutput(entry);
-                console.log("Begin behavioral fork");
-                this.behavioralTree[this.behavioralTree.length -1].fork = "start";
-                // console.log("Output continues at:",
-                //     newState.seg[newState.pos]);
-                const stackTop = behaviorStack[behaviorStack.length - 1];
-                if (!stackTop?.seg) {
-                    stackTop.seg = seg;
-                    stackTop.pos = pos + 1;
-                }
-
-                pos = newState.pos - 1;
-                seg = newState.seg;
-                continue;
-            }
         } while (++pos < seg.length);
 
         // Set the collapsible states of the tree nodes
@@ -152,30 +122,6 @@ class SemanticTransformer {
                 prevEntry.collapsed = false;
             }
         } while (++pos < this.behavioralTree.length);
-
-        // Identify boundary behaviors that happen between threads
-        // and shift the levels up one to prepare to remove boundaries.
-        pos = 0;
-        const boundaryBehavior = [];
-        do {
-            const entry = this.behavioralTree[pos];
-            if (entry.behavior.type == "atomic" && pos > 0) {
-                const prevEntry = this.behavioralTree[pos - 1];
-                prevEntry.execution = prevEntry.execution.concat(entry.execution);
-                while (++pos < this.behavioralTree.length) {
-                    if (this.behavioralTree[pos].level <= prevEntry.level) {
-                        break;
-                    }
-                    this.behavioralTree[pos].level = this.behavioralTree[pos].level - 1;
-                }
-                boundaryBehavior.push(entry);
-            }
-        } while (++pos < this.behavioralTree.length);
-
-        // Remove the boundary behaviors
-        this.behavioralTree = this.behavioralTree.filter((item) => {
-            return !boundaryBehavior.includes(item);
-        });
 
         console.log(this.behavioralTree);
     };
