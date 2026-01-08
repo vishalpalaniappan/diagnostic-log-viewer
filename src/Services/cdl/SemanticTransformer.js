@@ -17,14 +17,36 @@ class SemanticTransformer {
         this.behavioralTree = [];
 
         console.log("SemanticTransformer initialized", this.behaviors, this.threadDebuggers);
-        const behaviors = {};
+        this.threadBehaviors = {};
         const threadIds = Object.keys(this.threadDebuggers);
         threadIds.forEach((id, index) => {
             this.behavioralTree = [];
             this.constructBehavior(id);
-            behaviors[id] = this.behavioralTree;
+            this.threadBehaviors[id] = this.behavioralTree;
         });
-        console.log(behaviors);
+        console.log(this.threadBehaviors);
+        this.buildForks();
+    }
+
+    /**
+     * Build the forks.
+     */
+    buildForks () {
+        const threadIds = Object.keys(this.threadBehaviors);
+        threadIds.forEach((id, index) => {
+            const threadBehavior = this.threadBehaviors[id];
+            console.log("");
+            console.log("Thread:", id);
+            for (let i = 0; i < threadBehavior.length; i++) {
+                const entry = threadBehavior[i];
+                if (entry.outputs.length > 0) {
+                    console.log("Output:", entry.behavior.id, entry.outputs);
+                }
+                if (entry.inputs.length > 0) {
+                    console.log("Input:", entry.behavior.id, entry.inputs);
+                }
+            }
+        });
     }
 
     /**
@@ -100,6 +122,8 @@ class SemanticTransformer {
                     "index": this.behavioralTree.length,
                     "behavior": currentBehavior,
                     "intent": currentBehavior.intent,
+                    "outputs": [],
+                    "inputs": [],
                     "execution": [entry],
                 });
             } else {
@@ -114,7 +138,6 @@ class SemanticTransformer {
 
             // Save the output to the behavior
             if (entry.meta?.output) {
-                latestBehavior.outputs = [];
                 const outputs = this.threadDebuggers[entry.abstraction.threadId].thread.outputs;
                 let position = entry.abstraction.position;
                 outerLoop: do {
@@ -129,7 +152,6 @@ class SemanticTransformer {
 
             // Save the input to the behavior
             if (entry.meta?.input) {
-                latestBehavior.inputs = [];
                 const thread = this.threadDebuggers[entry.abstraction.threadId].thread;
                 let position = entry.abstraction.position;
                 outerLoop: do {
