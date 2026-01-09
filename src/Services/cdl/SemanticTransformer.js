@@ -54,7 +54,7 @@ class SemanticTransformer {
      */
     findConcurrentAbstraction (id) {
         this.concurrentAbstractions.forEach((abs, index) => {
-            if (abs.start === id) {
+            if (abs?.start.length > 0 && abs.start[0] === id) {
                 console.log("Found concurrent abstraction:", abs);
             }
         });
