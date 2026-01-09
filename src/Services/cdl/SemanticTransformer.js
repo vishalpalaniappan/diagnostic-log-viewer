@@ -86,7 +86,6 @@ class SemanticTransformer {
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry?.inputs.length > 0) {
-                    console.log(entry.inputs[0]);
                     const inputId = entry.inputs[0].value.adliExecutionId;
                     if (inputId === outputId) {
                         console.log("Found input at:", threadIds[j], i);
