@@ -21,6 +21,7 @@ class ConcurrentBehavior {
      * For example after the start behavior, it will
      * enter the concurrent behavior.
      * @param {String} behaviorId Id of the behavior.
+     * @return {Boolean} Inidicate if abstraction finished and we should return;
      */
     moveState (behaviorId) {
         for (let i = 0; i < this.concurrentAbstraction.behaviors.length; i++) {
@@ -29,16 +30,21 @@ class ConcurrentBehavior {
 
             if (entry.type === "concurrent") {
                 if (entryBehaviors[0] === behaviorId) {
-                    console.log("Entry:", entry.id, entry.type);
+                    console.log("Concurrent entry started", behaviorId);
+                    // console.log("Entry:", entry.id, entry.type);
+                } else if (entryBehaviors[entryBehaviors.length - 1] === behaviorId) {
+                    console.log("Concurrent entry finished, I should return");
+                    return true;
                 }
             } else if (entryBehaviors.includes(behaviorId)) {
                 if (entry.type === "start") {
-
+                    console.log("Entry:", entry.id, entry.type);
                 } else if (entry.type === "end") {
-
+                    console.log("Entry:", entry.id, entry.type);
                 }
             }
         }
+        return false;
     }
 };
 

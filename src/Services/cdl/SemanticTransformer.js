@@ -48,7 +48,6 @@ class SemanticTransformer {
                         // console.log("Starting thread:", threadIds[j]);
                         this.traceAndForkBehavior(threadIds[j], i);
                     }
-                    return;
                 }
             }
         };
@@ -65,12 +64,18 @@ class SemanticTransformer {
         const threadBehavior = this.threadBehaviors[threadId];
         for (let j = position; j < threadBehavior.length; j++) {
             const entry = threadBehavior[j];
-            this.currentConcurrentAbs.moveState(entry.behavior.id);
+            let done = this.currentConcurrentAbs.moveState(entry.behavior.id);
+            if (done) {
+                return done;
+            }
             if (entry?.outputs.length > 0) {
                 // console.log("Found output, will trace to next position");
                 const input = this.findInput(entry.outputs[0], entry.behavior.id);
                 if (input) {
-                    this.traceAndForkBehavior(input.threadId, input.position);
+                    done = this.traceAndForkBehavior(input.threadId, input.position);
+                    if (done) {
+                        return done;
+                    }
                 } else {
                     console.error("Couldn't find output, error in trace structure.");
                 }
