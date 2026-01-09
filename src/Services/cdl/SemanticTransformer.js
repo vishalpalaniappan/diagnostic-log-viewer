@@ -100,8 +100,7 @@ class SemanticTransformer {
                     const inputId = entry.inputs[0].value.adliExecutionId;
                     if (inputId === outputId) {
                         // console.log("Found input at:", entry.behavior.id, threadIds[j], i);
-                        console.log("");
-                        console.log("Tracked output from ", id);
+                        // console.log("Tracked output from ", id);
                         return {
                             threadId: threadIds[j],
                             position: i,

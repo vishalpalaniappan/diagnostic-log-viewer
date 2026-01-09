@@ -16,23 +16,6 @@ class ConcurrentBehavior {
     }
 
     /**
-     * Find the current fork using the behavioral id.
-     * @param {String} behaviorId
-     */
-    findCurrentFork(behaviorId) {
-        for (let i = 0; i < this.concurrentAbstraction.behaviors.length; i++) {
-            const entry = this.concurrentAbstraction.behaviors[i];
-            const entryBehaviors = entry.behaviors;
-
-            if (entry.type === "concurrent") {
-
-            } else if (entryBehaviors.includes(behaviorId)) {
-                console.log("Entry:", entry.id, entry.type);
-            }
-        }
-    }
-
-    /**
      * Given an abstraction id, this function will
      * move the state of the concurrent abstraction.
      * For example after the start behavior, it will
@@ -40,8 +23,22 @@ class ConcurrentBehavior {
      * @param {String} behaviorId Id of the behavior.
      */
     moveState (behaviorId) {
-        // console.log("Moving state:", behaviorId);
-        this.findCurrentFork(behaviorId);
+        for (let i = 0; i < this.concurrentAbstraction.behaviors.length; i++) {
+            const entry = this.concurrentAbstraction.behaviors[i];
+            const entryBehaviors = entry.behaviors;
+
+            if (entry.type === "concurrent") {
+                if (entryBehaviors[0] === behaviorId) {
+                    console.log("Entry:", entry.id, entry.type);
+                }
+            } else if (entryBehaviors.includes(behaviorId)) {
+                if (entry.type === "start") {
+
+                } else if (entry.type === "end") {
+
+                }
+            }
+        }
     }
 };
 
