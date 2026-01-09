@@ -44,8 +44,8 @@ class SemanticTransformer {
                     this.currentConcurrentAbs = this.getCurrConncurrentAbs(entry?.behavior?.id);
                     console.log(this.currentConcurrentAbs);
                     if (this.currentConcurrentAbs) {
-                        console.log("");
-                        console.log("Starting thread:", threadIds[j]);
+                        // console.log("");
+                        // console.log("Starting thread:", threadIds[j]);
                         this.traceAndForkBehavior(threadIds[j], i);
                     }
                     return;
@@ -60,15 +60,15 @@ class SemanticTransformer {
      * @param {Number} position The current position in the behavioral list.
      */
     traceAndForkBehavior (threadId, position) {
-        console.log("Tracing Position:", position, "in thread", threadId);
-        console.log("");
+        // console.log("Tracing Position:", position, "in thread", threadId);
+        // console.log("");
         const threadBehavior = this.threadBehaviors[threadId];
         for (let j = position; j < threadBehavior.length; j++) {
             const entry = threadBehavior[j];
             this.currentConcurrentAbs.moveState(entry.behavior.id);
             if (entry?.outputs.length > 0) {
-                console.log("Found output, will trace to next position");
-                const input = this.findInput(entry.outputs[0]);
+                // console.log("Found output, will trace to next position");
+                const input = this.findInput(entry.outputs[0], entry.behavior.id);
                 if (input) {
                     this.traceAndForkBehavior(input.threadId, input.position);
                 } else {
@@ -85,9 +85,10 @@ class SemanticTransformer {
      *
      * TODO: This is very inefficient, please improve it.
      * @param {Object} output
+     * @param {String} id
      * @return {Object}
      */
-    findInput(output) {
+    findInput(output, id) {
         const outputId = output.value.adliExecutionId;
         const threadIds = Object.keys(this.threadBehaviors);
 
@@ -98,7 +99,9 @@ class SemanticTransformer {
                 if (entry?.inputs.length > 0) {
                     const inputId = entry.inputs[0].value.adliExecutionId;
                     if (inputId === outputId) {
-                        console.log("Found input at:", entry.behavior.id, threadIds[j], i);
+                        // console.log("Found input at:", entry.behavior.id, threadIds[j], i);
+                        console.log("");
+                        console.log("Tracked output from ", id);
                         return {
                             threadId: threadIds[j],
                             position: i,
