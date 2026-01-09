@@ -8,10 +8,25 @@
 class ConcurrentBehavior {
     /**
      * Initializes the behavioral meta.
-     * @param {Object} behavior
+     * @param {Object} concurrentAbstraction
      */
-    constructor (behavior) {
-        this.behavior = behavior;
+    constructor (concurrentAbstraction) {
+        this.concurrentAbstraction = concurrentAbstraction;
+        console.log(this.concurrentAbstraction);
+    }
+
+    /**
+     * Find the current fork using the behavioral id.
+     * @param {String} behaviorId
+     */
+    findCurrentFork(behaviorId) {
+        // for (let i = 0; i < this.concurrentAbstraction.behaviors.length; i++) {
+        //     const entry = this.concurrentAbstraction.behaviors[i];
+        //     const entryBehaviors = entry.behaviors;
+        //     if (entryBehaviors.includes(behaviorId)) {
+        //         console.log("Entry:", entry.id, entry.type);
+        //     }
+        // }
     }
 
     /**
@@ -22,7 +37,8 @@ class ConcurrentBehavior {
      * @param {String} behaviorId Id of the behavior.
      */
     moveState (behaviorId) {
-        console.log("Moving state:", behaviorId);
+        // console.log("Moving state:", behaviorId);
+        // this.findCurrentFork(behaviorId);
     }
 };
 

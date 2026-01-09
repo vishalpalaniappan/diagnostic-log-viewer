@@ -42,10 +42,13 @@ class SemanticTransformer {
                 const entry = threadBehavior[i];
                 if (entry?.behavior?.atomic) {
                     this.currentConcurrentAbs = this.getCurrConncurrentAbs(entry?.behavior?.id);
+                    console.log(this.currentConcurrentAbs);
                     if (this.currentConcurrentAbs) {
+                        console.log("");
+                        console.log("Starting thread:", threadIds[j]);
                         this.traceAndForkBehavior(threadIds[j], i);
-                        return;
                     }
+                    return;
                 }
             }
         };
@@ -57,7 +60,8 @@ class SemanticTransformer {
      * @param {Number} position The current position in the behavioral list.
      */
     traceAndForkBehavior (threadId, position) {
-        console.log("Tracing Position:", position);
+        console.log("Tracing Position:", position, "in thread", threadId);
+        console.log("");
         const threadBehavior = this.threadBehaviors[threadId];
         for (let j = position; j < threadBehavior.length; j++) {
             const entry = threadBehavior[j];
@@ -70,7 +74,6 @@ class SemanticTransformer {
                 } else {
                     console.error("Couldn't find output, error in trace structure.");
                 }
-                return;
             }
         }
     }
@@ -115,10 +118,14 @@ class SemanticTransformer {
      */
     getCurrConncurrentAbs (id) {
         let behavior;
+        console.log(this.concurrentAbstractions);
         for (let i = 0; i < this.concurrentAbstractions.length; i++) {
             const abs = this.concurrentAbstractions[i];
-            if (abs?.start.length > 0 && abs.start[0] === id) {
-                behavior = new ConcurrentBehavior(abs);
+            for (let j = 0; j < abs.behaviors.length; j++) {
+                const entry = abs.behaviors[j];
+                if (entry.type == "start" && entry.behaviors[0] === id) {
+                    return new ConcurrentBehavior(abs);
+                }
             }
         };
         return behavior;
