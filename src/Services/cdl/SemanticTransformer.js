@@ -36,21 +36,20 @@ class SemanticTransformer {
      */
     findAtomic () {
         const threadIds = Object.keys(this.threadBehaviors);
-        threadIds.forEach((id, index) => {
-            const threadBehavior = this.threadBehaviors[id];
+        for (let j = 0; j < threadIds.length; j++) {
+            const threadBehavior = this.threadBehaviors[threadIds[j]];
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry?.behavior?.atomic) {
                     this.currentConcurrentAbs = this.getCurrConncurrentAbs(entry?.behavior?.id);
                     if (this.currentConcurrentAbs) {
                         this.traceAndForkBehavior(threadBehavior, i);
+                        return;
                     }
                 }
             }
-        });
+        };
     }
-
-
 
     /**
      * Given the thread behaviors, fork at output and recurse at inputs.
@@ -64,10 +63,39 @@ class SemanticTransformer {
             this.currentConcurrentAbs.moveState(entry.behavior.id);
             if (entry?.outputs.length > 0) {
                 console.log("Found output, will trace to next position");
+                this.findInput(entry.outputs[0]);
                 return;
             }
         }
     }
+
+
+    /**
+     * Given an output, it finds the corresponding input
+     * and returns the thread id and position.
+     *
+     * TODO: This is very inefficient, please improve it.
+     * @param {Object} output
+     */
+    findInput(output) {
+        const outputId = output.value.adliExecutionId;
+        const threadIds = Object.keys(this.threadBehaviors);
+
+        for (let j = 0; j < threadIds.length; j++) {
+            const threadBehavior = this.threadBehaviors[threadIds[j]];
+            for (let i = 0; i < threadBehavior.length; i++) {
+                const entry = threadBehavior[i];
+                if (entry?.inputs.length > 0) {
+                    console.log(entry.inputs[0]);
+                    const inputId = entry.inputs[0].value.adliExecutionId;
+                    if (inputId === outputId) {
+                        console.log("Found input at:", threadIds[j], i);
+                        return;
+                    }
+                }
+            }
+        };
+    };
 
 
     /**
