@@ -22,7 +22,7 @@ class ConcurrentBehavior {
      * @param {String} behaviorId Id of the behavior.
      */
     moveState (behaviorId) {
-
+        console.log("Moving state:", behaviorId);
     }
 };
 
