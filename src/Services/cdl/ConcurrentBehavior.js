@@ -5,7 +5,7 @@
  * hold the state of the concurrent behavior as we step
  * through the behavior of the program.
  */
-class ConcurrenBehavior {
+class ConcurrentBehavior {
     /**
      * Initializes the behavioral meta.
      */
@@ -14,4 +14,4 @@ class ConcurrenBehavior {
     }
 };
 
-export default ConcurrenBehavior;
+export default ConcurrentBehavior;
