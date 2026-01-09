@@ -10,6 +10,7 @@ class SemanticTransformer {
      */
     constructor (designMap, threadDebuggers) {
         this.behaviors = designMap.behavior;
+        this.concurrentAbstractions = designMap?.concurrent_abstractions;
         console.log(this.behaviors);
         this.threadDebuggers = threadDebuggers;
 
@@ -32,15 +33,29 @@ class SemanticTransformer {
      * Finds the atomic behaviors to begin the
      * concurrent behavior assembly.
      */
-    findAtomic() {
+    findAtomic () {
         const threadIds = Object.keys(this.threadBehaviors);
         threadIds.forEach((id, index) => {
             const threadBehavior = this.threadBehaviors[id];
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry?.behavior?.atomic) {
-                    console.log("Found atomic behavior", entry);
+                    this.findConcurrentAbstraction(entry?.behavior?.id);
                 }
+            }
+        });
+    }
+
+
+    /**
+     * Given the atomic abstraction, this finds the concurrent abstraction
+     * that it belongs to.
+     * @param {Number} id
+     */
+    findConcurrentAbstraction (id) {
+        this.concurrentAbstractions.forEach((abs, index) => {
+            if (abs.start === id) {
+                console.log("Found concurrent abstraction:", abs);
             }
         });
     }
