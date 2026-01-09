@@ -25,52 +25,27 @@ class SemanticTransformer {
             this.threadBehaviors[id] = this.behavioralTree;
         });
         console.log(this.threadBehaviors);
-        this.buildForks();
+        this.findAtomic();
     }
 
     /**
-     * Build the forks.
+     * Finds the atomic behaviors to begin the
+     * concurrent behavior assembly.
      */
-    buildForks () {
-        const threadIds = Object.keys(this.threadBehaviors);
-        threadIds.forEach((id, index) => {
-            const threadBehavior = this.threadBehaviors[id];
-            console.log("");
-            console.log("Thread:", id);
-            for (let i = 0; i < threadBehavior.length; i++) {
-                const entry = threadBehavior[i];
-                if (entry.outputs.length > 0) {
-                    const output = entry.outputs[0];
-                    console.log("Output:", entry.behavior.id, output);
-                    this.findFork(output);
-                }
-            }
-        });
-    }
-
-    /**
-     * Given an output, it finds the fork by tracing the
-     * output to an input using the UID.
-     * @param {Object} output
-     */
-    findFork (output) {
+    findAtomic() {
         const threadIds = Object.keys(this.threadBehaviors);
         threadIds.forEach((id, index) => {
             const threadBehavior = this.threadBehaviors[id];
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
-                if (entry.inputs.length > 0) {
-                    const input = entry.inputs[0];
-                    const outputId = output.value.adliExecutionId;
-                    const inputId = input.value.adliExecutionId;
-                    if (outputId === inputId) {
-                        console.log("Found input:", input);
-                        return input;
-                    }
+                if (entry?.behavior?.atomic) {
+                    console.log("Found atomic behavior", entry);
                 }
             }
         });
     }
+
+
 
     /**
      * Given a thread, this function extracts the behavior of the thread.
