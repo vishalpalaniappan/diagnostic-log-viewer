@@ -43,7 +43,7 @@ class SemanticTransformer {
                 if (entry?.behavior?.atomic) {
                     this.currentConcurrentAbs = this.getCurrConncurrentAbs(entry?.behavior?.id);
                     if (this.currentConcurrentAbs) {
-                        this.traceAndForkBehavior(threadBehavior, i);
+                        this.traceAndForkBehavior(threadIds[j], i);
                         return;
                     }
                 }
@@ -53,17 +53,23 @@ class SemanticTransformer {
 
     /**
      * Given the thread behaviors, fork at output and recurse at inputs.
-     * @param {Array} threadBehaviors The behaviors of the thread.
+     * @param {Array} threadId The id of the thread currently being traced.
      * @param {Number} position The current position in the behavioral list.
      */
-    traceAndForkBehavior (threadBehaviors, position) {
+    traceAndForkBehavior (threadId, position) {
         console.log("Tracing Position:", position);
-        for (let j = position; j < threadBehaviors.length; j++) {
-            const entry = threadBehaviors[j];
+        const threadBehavior = this.threadBehaviors[threadId];
+        for (let j = position; j < threadBehavior.length; j++) {
+            const entry = threadBehavior[j];
             this.currentConcurrentAbs.moveState(entry.behavior.id);
             if (entry?.outputs.length > 0) {
                 console.log("Found output, will trace to next position");
-                this.findInput(entry.outputs[0]);
+                const input = this.findInput(entry.outputs[0]);
+                if (input) {
+                    this.traceAndForkBehavior(input.threadId, input.position);
+                } else {
+                    console.error("Couldn't find output, error in trace structure.");
+                }
                 return;
             }
         }
@@ -76,6 +82,7 @@ class SemanticTransformer {
      *
      * TODO: This is very inefficient, please improve it.
      * @param {Object} output
+     * @return {Object}
      */
     findInput(output) {
         const outputId = output.value.adliExecutionId;
@@ -88,8 +95,11 @@ class SemanticTransformer {
                 if (entry?.inputs.length > 0) {
                     const inputId = entry.inputs[0].value.adliExecutionId;
                     if (inputId === outputId) {
-                        console.log("Found input at:", threadIds[j], i);
-                        return;
+                        console.log("Found input at:", entry.behavior.id, threadIds[j], i);
+                        return {
+                            threadId: threadIds[j],
+                            position: i,
+                        };
                     }
                 }
             }
