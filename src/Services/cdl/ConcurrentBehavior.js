@@ -8,8 +8,20 @@
 class ConcurrentBehavior {
     /**
      * Initializes the behavioral meta.
+     * @param {Object} behavior
      */
-    constructor () {
+    constructor (behavior) {
+        this.behavior = behavior;
+    }
+
+    /**
+     * Given an abstraction id, this function will
+     * move the state of the concurrent abstraction.
+     * For example after the start behavior, it will
+     * enter the concurrent behavior.
+     * @param {String} behaviorId Id of the behavior.
+     */
+    moveState (behaviorId) {
 
     }
 };

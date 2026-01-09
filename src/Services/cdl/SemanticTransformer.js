@@ -1,3 +1,4 @@
+import ConcurrentBehavior from "./ConcurrentBehavior";
 /**
  * This class is responsible for performing the semantic transformation
  * on the threads to observe the behavior of the design.
@@ -40,7 +41,7 @@ class SemanticTransformer {
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry?.behavior?.atomic) {
-                    this.findConcurrentAbstraction(entry?.behavior?.id);
+                    this.setCurrentConcurrentAbs(entry?.behavior?.id);
                 }
             }
         });
@@ -52,10 +53,11 @@ class SemanticTransformer {
      * that it belongs to.
      * @param {Number} id
      */
-    findConcurrentAbstraction (id) {
+    setCurrentConcurrentAbs (id) {
         this.concurrentAbstractions.forEach((abs, index) => {
             if (abs?.start.length > 0 && abs.start[0] === id) {
                 console.log("Found concurrent abstraction:", abs);
+                this.currentConcurrentAbs = new ConcurrentBehavior(abs);
             }
         });
     }
