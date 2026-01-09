@@ -40,10 +40,33 @@ class SemanticTransformer {
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry.outputs.length > 0) {
-                    console.log("Output:", entry.behavior.id, entry.outputs);
+                    const output = entry.outputs[0];
+                    console.log("Output:", entry.behavior.id, output);
+                    this.findFork(output);
                 }
+            }
+        });
+    }
+
+    /**
+     * Given an output, it finds the fork by tracing the
+     * output to an input using the UID.
+     * @param {Object} output
+     */
+    findFork (output) {
+        const threadIds = Object.keys(this.threadBehaviors);
+        threadIds.forEach((id, index) => {
+            const threadBehavior = this.threadBehaviors[id];
+            for (let i = 0; i < threadBehavior.length; i++) {
+                const entry = threadBehavior[i];
                 if (entry.inputs.length > 0) {
-                    console.log("Input:", entry.behavior.id, entry.inputs);
+                    const input = entry.inputs[0];
+                    const outputId = output.value.adliExecutionId;
+                    const inputId = input.value.adliExecutionId;
+                    if (outputId === inputId) {
+                        console.log("Found input:", input);
+                        return input;
+                    }
                 }
             }
         });
