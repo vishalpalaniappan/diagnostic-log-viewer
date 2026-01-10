@@ -45,12 +45,12 @@ class ConcurrentBehavior {
         do {
             const entry = threadBehavior[pos];
             const behavior = this.getBehavior(entry.behavior.id);
-            console.log(behavior.id, entry.behavior.id);
             if (entry?.outputs.length > 0) {
                 this.traceConcurrent(threadId, pos);
+            } else {
+                console.log(behavior.id, entry.behavior.id);
             }
             if (this.concurrentCount === this.numConcurrent) {
-                console.log("We are done");
                 break;
             }
         } while (++pos < threadBehavior.length);
@@ -72,6 +72,7 @@ class ConcurrentBehavior {
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
                     const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
                     if (behavior.id === "SelectEnd") {
+                        console.log(behavior.id, threadBehavior[pos + 1].behavior.id);
                         console.log("Reached end of concurrent behavior (finished last and cleaned up job)");
                     } else {
                         console.log("Reached end of concurrent behavior");
