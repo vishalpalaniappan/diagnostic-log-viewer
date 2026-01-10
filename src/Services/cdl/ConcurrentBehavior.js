@@ -16,10 +16,10 @@ class ConcurrentBehavior {
         this.numConcurrent = this.concurrentAbstraction.numConcurrent;
         this.concurrentCount = 0;
         this.threadBehaviors = threadBehaviors;
-        const behaviors = this.concurrentAbstraction.behaviors;
-        for (let i = 0; i < behaviors.length; i++) {
-            const entry = behaviors[i];
-            entry.execution = [];
+        this.behaviors = this.concurrentAbstraction.behaviors;
+        this.behavioralExecution = {};
+        for (let i = 0; i < this.behaviors.length; i++) {
+            this.behavioralExecution[this.behaviors[i].id] = [];
         }
     }
 
@@ -28,13 +28,14 @@ class ConcurrentBehavior {
      * @param {String} initialThread
      * @param {Number} initialPosition
      */
-    setInitialContext(initialThread, initialPosition) {
+    setInitialContext (initialThread, initialPosition) {
         this.initialThread = initialThread;
         this.initialPosition = initialPosition;
         console.log("");
         console.log(`Atomic behavior in thread ${initialThread} at position ${initialPosition}`);
 
         this.traceAndForkBehavior(initialThread, initialPosition);
+        console.log(this.behavioralExecution);
     }
 
 
@@ -53,6 +54,7 @@ class ConcurrentBehavior {
             if (entry?.outputs.length > 0) {
                 this.traceConcurrent(threadId, pos);
             } else {
+                this.appendExecution(behavior.id, entry);
                 console.log(behavior.id, entry.behavior.id);
             }
             if (this.concurrentCount === this.numConcurrent) {
@@ -66,19 +68,21 @@ class ConcurrentBehavior {
      * @param {String} threadId 
      * @param {Number} pos 
      */
-    traceConcurrent(threadId, pos) {
+    traceConcurrent (threadId, pos) {
         let threadBehavior = this.threadBehaviors[threadId];
         do {
             const entry = threadBehavior[pos];
+            if (this.currConn) {
+                this.appendExecution(this.currConn.id, entry);
 
-            if (this.currentCouncurrent) {
-                console.log(this.currentCouncurrent.id, entry.behavior.id);
-                const behaviors = this.currentCouncurrent.behaviors;
+                console.log(this.currConn.id, entry.behavior.id);
+                const behaviors = this.currConn.behaviors;
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
                     const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
                     if (behavior.id === "SelectEnd") {
+                        this.appendExecution(this.currConn.id, threadBehavior[pos + 1]);
                         console.log(behavior.id, threadBehavior[pos + 1].behavior.id);
-                        console.log("Reached end of concurrent behavior (finished last and cleaned up job)");
+                        console.log("Reached end of concurrent behavior (cleaned)");
                     } else {
                         console.log("Reached end of concurrent behavior");
                     }
@@ -96,6 +100,18 @@ class ConcurrentBehavior {
 
 
     /**
+     * Append the entry execution to the behavioral execution
+     * @param {Number} id Id of the behavior
+     * @param {Object} entry Contains the execution.
+     */
+    appendExecution(id, entry) {
+        for (let i = 0; i < entry.execution.length; i++) {
+            this.behavioralExecution[id].push(entry.execution[i]);
+        }
+    }
+
+
+    /**
      * Gets the behavior given the id.
      * @param {String} id
      * @return {Object} entry
@@ -105,7 +121,7 @@ class ConcurrentBehavior {
         for (let i = 0; i < behaviors.length; i++) {
             const entry = behaviors[i];
             if (entry.type === "concurrent" && entry.behaviors[0] === id) {
-                this.currentCouncurrent = entry;
+                this.currConn = entry;
                 this.concurrentCount++;
                 return entry;
             } else if (entry.behaviors.includes(id)) {
