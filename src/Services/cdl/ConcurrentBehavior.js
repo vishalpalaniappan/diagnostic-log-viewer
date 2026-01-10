@@ -13,6 +13,8 @@ class ConcurrentBehavior {
      */
     constructor (concurrentAbstraction, threadBehaviors) {
         this.concurrentAbstraction = concurrentAbstraction;
+        this.numConcurrent = this.concurrentAbstraction.numConcurrent;
+        this.concurrentCount = 0;
         this.threadBehaviors = threadBehaviors;
     }
 
@@ -38,11 +40,37 @@ class ConcurrentBehavior {
      */
     traceAndForkBehavior (threadId, position) {
         const threadBehavior = this.threadBehaviors[threadId];
-        for (let j = position; j < threadBehavior.length; j++) {
-            const entry = threadBehavior[j];
-            if (entry?.outputs.length > 0) {
-                console.log(entry.behavior.id);
-                console.log("Found output, will trace to next position");
+        let pos = position;
+        do {
+            const entry = threadBehavior[pos];
+            // console.log(entry);
+            this.getBehavior(entry.behavior.id);
+            // if (entry?.outputs.length > 0) {
+            //     this.getBehavior(entry.behavior.id);
+            //     console.log("Found output, will trace to next position");
+            // }
+            if (this.concurrentCount === this.numConcurrent) {
+                console.log("We are done");
+                break;
+            }
+        } while (++pos < threadBehavior.length);
+    }
+
+
+    /**
+     * Gets the behavior given the id.
+     * @param {String} id
+     */
+    getBehavior (id) {
+        const behaviors = this.concurrentAbstraction.behaviors;
+
+        for (let i = 0; i < behaviors.length; i++) {
+            const entry = behaviors[i];
+            if (entry.behaviors.includes(id)) {
+                console.log(id);
+                if (entry.type === "concurrent") {
+                    this.concurrentCount++;
+                }
             }
         }
     }
