@@ -26,6 +26,7 @@ class ConcurrentBehavior {
     setInitialContext(initialThread, initialPosition) {
         this.initialThread = initialThread;
         this.initialPosition = initialPosition;
+        console.log("");
         console.log(`Atomic behavior in thread ${initialThread} at position ${initialPosition}`);
 
         this.traceAndForkBehavior(initialThread, initialPosition);
@@ -43,12 +44,11 @@ class ConcurrentBehavior {
         let pos = position;
         do {
             const entry = threadBehavior[pos];
-            // console.log(entry);
-            this.getBehavior(entry.behavior.id);
-            // if (entry?.outputs.length > 0) {
-            //     this.getBehavior(entry.behavior.id);
-            //     console.log("Found output, will trace to next position");
-            // }
+            const behavior = this.getBehavior(entry.behavior.id);
+            console.log(behavior.id);
+            if (entry?.outputs.length > 0) {
+                console.log("Found output, will trace to next position");
+            }
             if (this.concurrentCount === this.numConcurrent) {
                 console.log("We are done");
                 break;
@@ -60,17 +60,17 @@ class ConcurrentBehavior {
     /**
      * Gets the behavior given the id.
      * @param {String} id
+     * @return {Object} entry
      */
     getBehavior (id) {
         const behaviors = this.concurrentAbstraction.behaviors;
-
         for (let i = 0; i < behaviors.length; i++) {
             const entry = behaviors[i];
-            if (entry.behaviors.includes(id)) {
-                console.log(id);
-                if (entry.type === "concurrent") {
-                    this.concurrentCount++;
-                }
+            if (entry.type === "concurrent" && entry.behaviors[0] === id) {
+                this.concurrentCount++;
+                return entry;
+            } else if (entry.behaviors.includes(id)) {
+                return entry;
             }
         }
     }
