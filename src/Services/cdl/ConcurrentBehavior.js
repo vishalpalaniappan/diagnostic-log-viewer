@@ -40,14 +40,17 @@ class ConcurrentBehavior {
      * @param {Number} count
      */
     traceAndForkBehavior (threadId, position) {
-        const threadBehavior = this.threadBehaviors[threadId];
         let pos = position;
+        let threadBehavior = this.threadBehaviors[threadId];
         do {
             const entry = threadBehavior[pos];
             const behavior = this.getBehavior(entry.behavior.id);
             console.log(behavior.id);
             if (entry?.outputs.length > 0) {
                 console.log("Found output, will trace to next position");
+                const input = this.findInput(entry.outputs[0]);
+                // pos = input.position;
+                // threadBehavior = this.threadBehaviors[input.threadId];
             }
             if (this.concurrentCount === this.numConcurrent) {
                 console.log("We are done");
@@ -74,6 +77,34 @@ class ConcurrentBehavior {
             }
         }
     }
+
+
+    /**
+     * 
+     * @param {Object} output
+     * @param {String} id
+     * @return {Object}
+     */
+    findInput(output) {
+        const outputId = output.value.adliExecutionId;
+        const threadIds = Object.keys(this.threadBehaviors);
+
+        for (let j = 0; j < threadIds.length; j++) {
+            const threadBehavior = this.threadBehaviors[threadIds[j]];
+            for (let i = 0; i < threadBehavior.length; i++) {
+                const entry = threadBehavior[i];
+                if (entry?.inputs.length > 0) {
+                    const inputId = entry.inputs[0].value.adliExecutionId;
+                    if (inputId === outputId) {
+                        return {
+                            threadId: threadIds[j],
+                            position: i,
+                        };
+                    }
+                }
+            }
+        };
+    };
 };
 
 export default ConcurrentBehavior;
