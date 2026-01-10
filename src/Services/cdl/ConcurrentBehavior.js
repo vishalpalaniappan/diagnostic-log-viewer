@@ -9,42 +9,42 @@ class ConcurrentBehavior {
     /**
      * Initializes the behavioral meta.
      * @param {Object} concurrentAbstraction
+     * @param {Array} threadBehaviors
      */
-    constructor (concurrentAbstraction) {
+    constructor (concurrentAbstraction, threadBehaviors) {
         this.concurrentAbstraction = concurrentAbstraction;
-        console.log(this.concurrentAbstraction);
+        this.threadBehaviors = threadBehaviors;
     }
 
     /**
-     * Given an abstraction id, this function will
-     * move the state of the concurrent abstraction.
-     * For example after the start behavior, it will
-     * enter the concurrent behavior.
-     * @param {String} behaviorId Id of the behavior.
-     * @return {Boolean} Inidicate if abstraction finished and we should return;
+     * Sets the initial context of the behavior
+     * @param {String} initialThread
+     * @param {Number} initialPosition
      */
-    moveState (behaviorId) {
-        for (let i = 0; i < this.concurrentAbstraction.behaviors.length; i++) {
-            const entry = this.concurrentAbstraction.behaviors[i];
-            const entryBehaviors = entry.behaviors;
+    setInitialContext(initialThread, initialPosition) {
+        this.initialThread = initialThread;
+        this.initialPosition = initialPosition;
+        console.log(`Atomic behavior in thread ${initialThread} at position ${initialPosition}`);
 
-            if (entry.type === "concurrent") {
-                if (entryBehaviors[0] === behaviorId) {
-                    console.log("Concurrent entry started", behaviorId);
-                    // console.log("Entry:", entry.id, entry.type);
-                } else if (entryBehaviors[entryBehaviors.length - 1] === behaviorId) {
-                    console.log("Concurrent entry finished, I should return");
-                    return true;
-                }
-            } else if (entryBehaviors.includes(behaviorId)) {
-                if (entry.type === "start") {
-                    console.log("Entry:", entry.id, entry.type);
-                } else if (entry.type === "end") {
-                    console.log("Entry:", entry.id, entry.type);
-                }
+        this.traceAndForkBehavior(initialThread, initialPosition);
+    }
+
+
+    /**
+     *
+     * @param {String} threadId
+     * @param {Number} position
+     * @param {Number} count
+     */
+    traceAndForkBehavior (threadId, position) {
+        const threadBehavior = this.threadBehaviors[threadId];
+        for (let j = position; j < threadBehavior.length; j++) {
+            const entry = threadBehavior[j];
+            if (entry?.outputs.length > 0) {
+                console.log(entry.behavior.id);
+                console.log("Found output, will trace to next position");
             }
         }
-        return false;
     }
 };
 

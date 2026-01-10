@@ -42,79 +42,11 @@ class SemanticTransformer {
                 const entry = threadBehavior[i];
                 if (entry?.behavior?.atomic) {
                     this.currentConcurrentAbs = this.getCurrConncurrentAbs(entry?.behavior?.id);
-                    console.log(this.currentConcurrentAbs);
-                    if (this.currentConcurrentAbs) {
-                        // console.log("");
-                        // console.log("Starting thread:", threadIds[j]);
-                        this.traceAndForkBehavior(threadIds[j], i);
-                    }
+                    this.currentConcurrentAbs.setInitialContext(threadIds[j], i);
                 }
             }
         };
     }
-
-    /**
-     * Given the thread behaviors, fork at output and recurse at inputs.
-     * @param {Array} threadId The id of the thread currently being traced.
-     * @param {Number} position The current position in the behavioral list.
-     */
-    traceAndForkBehavior (threadId, position) {
-        // console.log("Tracing Position:", position, "in thread", threadId);
-        // console.log("");
-        const threadBehavior = this.threadBehaviors[threadId];
-        for (let j = position; j < threadBehavior.length; j++) {
-            const entry = threadBehavior[j];
-            let done = this.currentConcurrentAbs.moveState(entry.behavior.id);
-            if (done) {
-                return done;
-            }
-            if (entry?.outputs.length > 0) {
-                // console.log("Found output, will trace to next position");
-                const input = this.findInput(entry.outputs[0], entry.behavior.id);
-                if (input) {
-                    done = this.traceAndForkBehavior(input.threadId, input.position);
-                    if (done) {
-                        return done;
-                    }
-                } else {
-                    console.error("Couldn't find output, error in trace structure.");
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Given an output, it finds the corresponding input
-     * and returns the thread id and position.
-     *
-     * TODO: This is very inefficient, please improve it.
-     * @param {Object} output
-     * @param {String} id
-     * @return {Object}
-     */
-    findInput(output, id) {
-        const outputId = output.value.adliExecutionId;
-        const threadIds = Object.keys(this.threadBehaviors);
-
-        for (let j = 0; j < threadIds.length; j++) {
-            const threadBehavior = this.threadBehaviors[threadIds[j]];
-            for (let i = 0; i < threadBehavior.length; i++) {
-                const entry = threadBehavior[i];
-                if (entry?.inputs.length > 0) {
-                    const inputId = entry.inputs[0].value.adliExecutionId;
-                    if (inputId === outputId) {
-                        // console.log("Found input at:", entry.behavior.id, threadIds[j], i);
-                        // console.log("Tracked output from ", id);
-                        return {
-                            threadId: threadIds[j],
-                            position: i,
-                        };
-                    }
-                }
-            }
-        };
-    };
 
 
     /**
@@ -125,20 +57,82 @@ class SemanticTransformer {
      */
     getCurrConncurrentAbs (id) {
         let behavior;
-        console.log(this.concurrentAbstractions);
         for (let i = 0; i < this.concurrentAbstractions.length; i++) {
             const abs = this.concurrentAbstractions[i];
             for (let j = 0; j < abs.behaviors.length; j++) {
                 const entry = abs.behaviors[j];
                 if (entry.type == "start" && entry.behaviors[0] === id) {
-                    return new ConcurrentBehavior(abs);
+                    return new ConcurrentBehavior(abs, this.threadBehaviors);
                 }
             }
         };
         return behavior;
     }
 
+    // /**
+    //  * Given the thread behaviors, fork at output and recurse at inputs.
+    //  * @param {Array} threadId The id of the thread currently being traced.
+    //  * @param {Number} position The current position in the behavioral list.
+    //  * @param {Number} count Depth of the forks
+    //  * @return {Boolean}
+    //  */
+    // traceAndForkBehavior (threadId, position, count) {
+    //     // console.log("Tracing Position:", position, "in thread", threadId);
+    //     // console.log("");
+    //     const threadBehavior = this.threadBehaviors[threadId];
+    //     for (let j = position; j < threadBehavior.length; j++) {
+    //         const entry = threadBehavior[j];
+    //         let status = this.currentConcurrentAbs.moveState(entry.behavior.id);
+    //         if (status && status?.concurrentDone) {
+    //             return status.concurrentDone;
+    //         }
+    //         if (entry?.outputs.length > 0) {
+    //             // console.log("Found output, will trace to next position");
+    //             const input = this.findInput(entry.outputs[0], entry.behavior.id);
+    //             if (input) {
+    //                 status = this.traceAndForkBehavior(input.threadId, input.position, count++);
+    //                 if (status && status?.abstractionDone) {
+    //                     return status.abstractionDone;
+    //                 }
+    //             } else {
+    //                 console.error("Couldn't find output, error in trace structure.");
+    //             }
+    //         }
+    //     }
+    // }
 
+
+    // /**
+    //  * Given an output, it finds the corresponding input
+    //  * and returns the thread id and position.
+    //  *
+    //  * TODO: This is very inefficient, please improve it.
+    //  * @param {Object} output
+    //  * @param {String} id
+    //  * @return {Object}
+    //  */
+    // findInput(output, id) {
+    //     const outputId = output.value.adliExecutionId;
+    //     const threadIds = Object.keys(this.threadBehaviors);
+
+    //     for (let j = 0; j < threadIds.length; j++) {
+    //         const threadBehavior = this.threadBehaviors[threadIds[j]];
+    //         for (let i = 0; i < threadBehavior.length; i++) {
+    //             const entry = threadBehavior[i];
+    //             if (entry?.inputs.length > 0) {
+    //                 const inputId = entry.inputs[0].value.adliExecutionId;
+    //                 if (inputId === outputId) {
+    //                     // console.log("Found input at:", entry.behavior.id, threadIds[j], i);
+    //                     // console.log("Tracked output from ", id);
+    //                     return {
+    //                         threadId: threadIds[j],
+    //                         position: i,
+    //                     };
+    //                 }
+    //             }
+    //         }
+    //     };
+    // };
 
     /**
      * Given a thread, this function extracts the behavior of the thread.
