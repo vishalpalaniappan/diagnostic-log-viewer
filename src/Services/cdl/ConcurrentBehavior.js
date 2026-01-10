@@ -16,6 +16,11 @@ class ConcurrentBehavior {
         this.numConcurrent = this.concurrentAbstraction.numConcurrent;
         this.concurrentCount = 0;
         this.threadBehaviors = threadBehaviors;
+        const behaviors = this.concurrentAbstraction.behaviors;
+        for (let i = 0; i < behaviors.length; i++) {
+            const entry = behaviors[i];
+            entry.execution = [];
+        }
     }
 
     /**
