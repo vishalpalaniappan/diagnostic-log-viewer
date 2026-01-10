@@ -41,20 +41,49 @@ class ConcurrentBehavior {
      */
     traceAndForkBehavior (threadId, position) {
         let pos = position;
-        let threadBehavior = this.threadBehaviors[threadId];
+        const threadBehavior = this.threadBehaviors[threadId];
         do {
             const entry = threadBehavior[pos];
             const behavior = this.getBehavior(entry.behavior.id);
-            console.log(behavior.id);
+            console.log(behavior.id, entry.behavior.id);
             if (entry?.outputs.length > 0) {
-                console.log("Found output, will trace to next position");
-                const input = this.findInput(entry.outputs[0]);
-                // pos = input.position;
-                // threadBehavior = this.threadBehaviors[input.threadId];
+                this.traceConcurrent(threadId, pos);
             }
             if (this.concurrentCount === this.numConcurrent) {
                 console.log("We are done");
                 break;
+            }
+        } while (++pos < threadBehavior.length);
+    }
+
+    /**
+     * Trace the concurrent function
+     * @param {String} threadId 
+     * @param {Number} pos 
+     */
+    traceConcurrent(threadId, pos) {
+        let threadBehavior = this.threadBehaviors[threadId];
+        do {
+            const entry = threadBehavior[pos];
+
+            if (this.currentCouncurrent) {
+                console.log(this.currentCouncurrent.id, entry.behavior.id);
+                const behaviors = this.currentCouncurrent.behaviors;
+                if (behaviors[behaviors.length - 1] === entry.behavior.id) {
+                    const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
+                    if (behavior.id === "SelectEnd") {
+                        console.log("Reached end of concurrent behavior (finished last and cleaned up job)");
+                    } else {
+                        console.log("Reached end of concurrent behavior");
+                    }
+                    return;
+                }
+            }
+
+            if (entry?.outputs.length > 0) {
+                const input = this.findInput(entry.outputs[0]);
+                pos = input.position;
+                threadBehavior = this.threadBehaviors[input.threadId];
             }
         } while (++pos < threadBehavior.length);
     }
@@ -70,6 +99,7 @@ class ConcurrentBehavior {
         for (let i = 0; i < behaviors.length; i++) {
             const entry = behaviors[i];
             if (entry.type === "concurrent" && entry.behaviors[0] === id) {
+                this.currentCouncurrent = entry;
                 this.concurrentCount++;
                 return entry;
             } else if (entry.behaviors.includes(id)) {
@@ -98,7 +128,7 @@ class ConcurrentBehavior {
                     if (inputId === outputId) {
                         return {
                             threadId: threadIds[j],
-                            position: i,
+                            position: i - 1,
                         };
                     }
                 }
