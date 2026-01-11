@@ -37,6 +37,7 @@ class ConcurrentBehavior {
 
         this.traceAndForkBehavior(initialThread, initialPosition);
         console.log(this.behavioralExecution);
+        console.log(this.behavioralTree);
     }
 
 
@@ -56,7 +57,7 @@ class ConcurrentBehavior {
                 this.traceConcurrent(threadId, pos);
             } else {
                 this.appendExecution(behavior.id, entry);
-                this.printBehavior(behavior.id, entry.behavior.id);
+                this.printBehavior(behavior, entry.behavior);
             }
             if (this.concurrentCount === this.numConcurrent) {
                 break;
@@ -76,13 +77,13 @@ class ConcurrentBehavior {
             if (this.currConn) {
                 this.appendExecution(this.currConn.id, entry);
 
-                this.printBehavior(this.currConn.id, entry.behavior.id);
+                this.printBehavior(this.currConn, entry.behavior);
                 const behaviors = this.currConn.behaviors;
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
                     const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
                     if (behavior.id === "SelectEnd") {
                         this.appendExecution(this.currConn.id, threadBehavior[pos + 1]);
-                        this.printBehavior(behavior.id, threadBehavior[pos + 1].behavior.id);
+                        this.printBehavior(behavior, threadBehavior[pos + 1].behavior);
                     }
                     return;
                 }
@@ -99,11 +100,25 @@ class ConcurrentBehavior {
     /**
      * Prints tracked behavior for easy debugging. This will
      * be extended to build the behavioral tree.
-     * @param {String} behaviorId ID of the behavior
-     * @param {String} entryBehaviorId ID of the behavior of the current entry
+     * @param {String} behavior Behavior of concurrent execution.
+     * @param {String} entryBehavior Behavior of current enrty.
      */
-    printBehavior (behaviorId, entryBehaviorId) {
-        console.log(behaviorId, entryBehaviorId);
+    printBehavior (behavior, entryBehavior) {
+        console.log(behavior.id, entryBehavior.id);
+        if (this.behavioralTree.length > 0) {
+            const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
+            if (lastEntry.id !== behavior.id) {
+                this.behavioralTree.push({
+                    "level": behavior.level,
+                    "id": behavior.id,
+                });
+            }
+        } else {
+            this.behavioralTree.push({
+                "level": behavior.level,
+                "id": behavior.id,
+            });
+        }
     }
 
 
