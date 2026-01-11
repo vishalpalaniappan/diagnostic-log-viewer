@@ -192,6 +192,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 // processAtomicBehaviors(event.data.args.behavior);
                 setMode(PROGRAM_STATE.BEHAVIORAL);
                 setBehavior(event.data.args.behavior);
+                setActiveBehavior(event.data.args.behavior.length - 1);
                 break;
             default:
                 break;

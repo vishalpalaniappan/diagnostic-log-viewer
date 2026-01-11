@@ -25,7 +25,7 @@ export function BehavioralNode ({node}) {
     // Set style if node is selected.
     useEffect(() => {
         if (node && activeBehavior) {
-            if (activeBehavior === node) {
+            if (activeBehavior === node.index) {
                 setSelectedStyle(
                     {
                         background: "#184b2c",

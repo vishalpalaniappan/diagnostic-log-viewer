@@ -196,6 +196,8 @@ class Debugger {
         for (let i = 0; i < fullBehavioralTree.length - 1; i++) {
             const entry = fullBehavioralTree[i];
             const nextEntry = fullBehavioralTree[i + 1];
+            entry.index = i;
+            nextEntry.index = i + 1;
             if (nextEntry.level > entry.level) {
                 entry.collapsed = false;
                 entry.collapsible = true;

@@ -79,7 +79,7 @@ export function BehavioralExecutionTree () {
                     );
                 }
             }
-            // setExecutionTreeNodes(nodes);
+            setExecutionTreeNodes(nodes);
         }
     };
 
@@ -92,8 +92,7 @@ export function BehavioralExecutionTree () {
     useEffect(() => {
         if (behavior && activeBehavior) {
             setTitle("Behavioral Execution Tree");
-            console.log(activeBehavior);
-            setExecutionTree(activeBehavior.execution);
+            setExecutionTree(behavior[activeBehavior].execution);
         }
     }, [behavior, activeBehavior]);
 

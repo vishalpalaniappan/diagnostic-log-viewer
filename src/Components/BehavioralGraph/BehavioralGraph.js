@@ -107,7 +107,7 @@ export function BehavioralGraph () {
      * @param {Object} node
      */
     const selectNode = (node) => {
-        setActiveBehavior(node);
+        setActiveBehavior(node.index);
     };
 
 
