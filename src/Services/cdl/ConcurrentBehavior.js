@@ -125,6 +125,10 @@ class ConcurrentBehavior {
 
             if (entry?.outputs.length > 0) {
                 const input = this.findInput(entry.outputs[0]);
+                if (!input) {
+                    console.error("Could not find input, error in trace structure");
+                    break;
+                }
                 pos = input.position;
                 threadBehavior = this.threadBehaviors[input.threadId];
             }
