@@ -63,7 +63,7 @@ class SemanticTransformer {
             for (let j = 0; j < abs.behaviors.length; j++) {
                 const entry = abs.behaviors[j];
                 if (entry.type == "start" && entry.behaviors[0] === id) {
-                    const behavior = new ConcurrentBehavior(abs, this.threadBehaviors);;
+                    const behavior = new ConcurrentBehavior(abs, this.threadBehaviors);
                     this.atomicBehaviors.push(behavior);
                     return behavior;
                 }

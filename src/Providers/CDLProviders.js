@@ -160,6 +160,25 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         }
     }, [mode]);
 
+
+    /**
+     * Process the atomic behaviors
+     * @param {Array} atomicBehaviors
+     */
+    const processAtomicBehaviors = (atomicBehaviors) => {
+        console.log(atomicBehaviors);
+        const fullTree = [];
+        for (let i = 0; i < atomicBehaviors.length; i++) {
+            const behavior = atomicBehaviors[i];
+            for (let j = 0; j < behavior.behavioralTree.length; j++) {
+                const entry = behavior.behavioralTree[j];
+                entry.execution = behavior.behavioralExecution[entry.id];
+                fullTree.push(entry);
+            }
+        }
+        setBehavior(fullTree);
+    };
+
     /**
      * Handles message from the worker.
      * @param {object} event
@@ -189,8 +208,9 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setSeg(event.data.args.seg);
                 break;
             case CDL_WORKER_PROTOCOL.GET_BEHAVIOR:
+                processAtomicBehaviors(event.data.args.behavior);
                 setMode(PROGRAM_STATE.BEHAVIORAL);
-                setBehavior(event.data.args.behavior);
+                // setBehavior(event.data.args.behavior);
                 break;
             default:
                 break;
