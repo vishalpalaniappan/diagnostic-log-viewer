@@ -18,6 +18,7 @@ class ConcurrentBehavior {
         this.threadBehaviors = threadBehaviors;
         this.behaviors = this.concurrentAbstraction.behaviors;
         this.behavioralExecution = {};
+        this.behavioralTree = [];
         for (let i = 0; i < this.behaviors.length; i++) {
             this.behavioralExecution[this.behaviors[i].id] = [];
         }
@@ -55,7 +56,7 @@ class ConcurrentBehavior {
                 this.traceConcurrent(threadId, pos);
             } else {
                 this.appendExecution(behavior.id, entry);
-                console.log(behavior.id, entry.behavior.id);
+                this.printBehavior(behavior.id, entry.behavior.id);
             }
             if (this.concurrentCount === this.numConcurrent) {
                 break;
@@ -75,16 +76,13 @@ class ConcurrentBehavior {
             if (this.currConn) {
                 this.appendExecution(this.currConn.id, entry);
 
-                console.log(this.currConn.id, entry.behavior.id);
+                this.printBehavior(this.currConn.id, entry.behavior.id);
                 const behaviors = this.currConn.behaviors;
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
                     const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
                     if (behavior.id === "SelectEnd") {
                         this.appendExecution(this.currConn.id, threadBehavior[pos + 1]);
-                        console.log(behavior.id, threadBehavior[pos + 1].behavior.id);
-                        console.log("Reached end of concurrent behavior (cleaned)");
-                    } else {
-                        console.log("Reached end of concurrent behavior");
+                        this.printBehavior(behavior.id, threadBehavior[pos + 1].behavior.id);
                     }
                     return;
                 }
@@ -96,6 +94,16 @@ class ConcurrentBehavior {
                 threadBehavior = this.threadBehaviors[input.threadId];
             }
         } while (++pos < threadBehavior.length);
+    }
+
+    /**
+     * Prints tracked behavior for easy debugging. This will
+     * be extended to build the behavioral tree.
+     * @param {String} behaviorId ID of the behavior
+     * @param {String} entryBehaviorId ID of the behavior of the current entry
+     */
+    printBehavior (behaviorId, entryBehaviorId) {
+        console.log(behaviorId, entryBehaviorId);
     }
 
 
@@ -132,7 +140,8 @@ class ConcurrentBehavior {
 
 
     /**
-     * 
+     * Given an output, this function finds its corresponding input
+     * in the other threads.
      * @param {Object} output
      * @param {String} id
      * @return {Object}
