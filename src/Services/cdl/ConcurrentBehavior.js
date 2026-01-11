@@ -109,13 +109,13 @@ class ConcurrentBehavior {
             const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
             if (lastEntry.id !== behavior.id) {
                 this.behavioralTree.push({
-                    "level": behavior.level,
+                    "level": behavior.level - 1,
                     "id": behavior.id,
                 });
             }
         } else {
             this.behavioralTree.push({
-                "level": behavior.level,
+                "level": behavior.level - 1,
                 "id": behavior.id,
             });
         }

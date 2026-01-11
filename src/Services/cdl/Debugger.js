@@ -183,10 +183,16 @@ class Debugger {
      */
     sendBehavior () {
         // this.debuggingMode = PROGRAM_STATE.BEHAVIORAL;
+        let behaviors = [];
+        for (let i = 0; i < this.transformer.atomicBehaviors.length; i++) {
+            behaviors = behaviors.concat(
+                this.transformer.atomicBehaviors[i].behavioralTree
+            );
+        }
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
             args: {
-                behavior: this.transformer.behavioralTree,
+                behavior: behaviors,
             },
         });
     }
