@@ -89,14 +89,6 @@ export function BehavioralGraph () {
     useEffect(() => {
         if (behavior) {
             setTitle("Behavioral Tree");
-            for (let i = 0; i < behavior.length - 1; i++) {
-                const entry = behavior[i];
-                const nextEntry = behavior[i + 1];
-                if (nextEntry.level > entry.level) {
-                    entry.collapsed = false;
-                    entry.collapsible = true;
-                }
-            }
             renderTree();
         }
     }, [behavior, activeBehavior]);

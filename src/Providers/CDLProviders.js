@@ -166,7 +166,6 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
      * @param {Array} atomicBehaviors
      */
     const processAtomicBehaviors = (atomicBehaviors) => {
-        console.log(atomicBehaviors);
         const fullTree = [];
         for (let i = 0; i < atomicBehaviors.length; i++) {
             const behavior = atomicBehaviors[i];
@@ -174,6 +173,14 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 const entry = behavior.behavioralTree[j];
                 entry.execution = behavior.behavioralExecution[entry.id];
                 fullTree.push(entry);
+            }
+        }
+        for (let i = 0; i < fullTree.length - 1; i++) {
+            const entry = fullTree[i];
+            const nextEntry = fullTree[i + 1];
+            if (nextEntry.level > entry.level) {
+                entry.collapsed = false;
+                entry.collapsible = true;
             }
         }
         setBehavior(fullTree);
