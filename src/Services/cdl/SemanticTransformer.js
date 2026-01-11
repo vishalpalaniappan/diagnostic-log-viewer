@@ -199,16 +199,18 @@ class SemanticTransformer {
 
         // Set the collapsible states of the tree nodes
         pos = 1;
-        do {
-            const prevEntry = this.behavioralTree[pos - 1];
-            if (this.behavioralTree[pos].level > prevEntry.level) {
-                prevEntry.collapsible = true;
-                prevEntry.collapsed = false;
-            } else {
-                prevEntry.collapsible = false;
-                prevEntry.collapsed = false;
-            }
-        } while (++pos < this.behavioralTree.length);
+        if (this.behavioralTree.length > 1) {
+            do {
+                const prevEntry = this.behavioralTree[pos - 1];
+                if (this.behavioralTree[pos].level > prevEntry.level) {
+                    prevEntry.collapsible = true;
+                    prevEntry.collapsed = false;
+                } else {
+                    prevEntry.collapsible = false;
+                    prevEntry.collapsed = false;
+                }
+            } while (++pos < this.behavioralTree.length);
+        }
     };
 
     /**

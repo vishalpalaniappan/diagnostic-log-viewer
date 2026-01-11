@@ -203,12 +203,14 @@ class Debugger {
                 entry.collapsible = true;
             }
         }
-        postMessage({
-            code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
-            args: {
-                behavior: fullBehavioralTree,
-            },
-        });
+        if (fullBehavioralTree.length > 0) {
+            postMessage({
+                code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
+                args: {
+                    behavior: fullBehavioralTree,
+                },
+            });
+        }
     }
 
     /**
