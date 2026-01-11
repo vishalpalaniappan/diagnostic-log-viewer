@@ -183,16 +183,28 @@ class Debugger {
      */
     sendBehavior () {
         // this.debuggingMode = PROGRAM_STATE.BEHAVIORAL;
-        // let behaviors = [];
-        // for (let i = 0; i < this.transformer.atomicBehaviors.length; i++) {
-        //     behaviors = behaviors.concat(
-        //         this.transformer.atomicBehaviors[i].behavioralTree
-        //     );
-        // }
+
+        const fullBehavioralTree = [];
+        for (let i = 0; i < this.transformer.atomicBehaviors.length; i++) {
+            const behavior = this.transformer.atomicBehaviors[i];
+            for (let j = 0; j < behavior.behavioralTree.length; j++) {
+                const entry = behavior.behavioralTree[j];
+                entry.execution = behavior.behavioralExecution[entry.id];
+                fullBehavioralTree.push(entry);
+            }
+        }
+        for (let i = 0; i < fullBehavioralTree.length - 1; i++) {
+            const entry = fullBehavioralTree[i];
+            const nextEntry = fullBehavioralTree[i + 1];
+            if (nextEntry.level > entry.level) {
+                entry.collapsed = false;
+                entry.collapsible = true;
+            }
+        }
         postMessage({
             code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
             args: {
-                behavior: this.transformer.atomicBehaviors,
+                behavior: fullBehavioralTree,
             },
         });
     }
