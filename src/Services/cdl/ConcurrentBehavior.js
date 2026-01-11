@@ -82,7 +82,7 @@ class ConcurrentBehavior {
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
                     const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
                     if (behavior.id === "SelectEnd") {
-                        this.appendExecution(this.currConn.id, threadBehavior[pos + 1]);
+                        this.appendExecution(behavior.id, threadBehavior[pos + 1]);
                         this.printBehavior(behavior, threadBehavior[pos + 1].behavior);
                     }
                     return;
