@@ -190,6 +190,7 @@ class Debugger {
             for (let j = 0; j < behavior.behavioralTree.length; j++) {
                 const entry = behavior.behavioralTree[j];
                 entry.execution = behavior.behavioralExecution[entry.id];
+                entry.exception = behavior.behavioralException[entry.id];
                 fullBehavioralTree.push(entry);
             }
         }
@@ -204,6 +205,7 @@ class Debugger {
             }
         }
         if (fullBehavioralTree.length > 0) {
+            console.log(fullBehavioralTree);
             postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
                 args: {

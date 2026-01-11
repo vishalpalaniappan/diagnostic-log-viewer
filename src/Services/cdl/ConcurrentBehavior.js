@@ -18,9 +18,11 @@ class ConcurrentBehavior {
         this.threadBehaviors = threadBehaviors;
         this.behaviors = this.concurrentAbstraction.behaviors;
         this.behavioralExecution = {};
+        this.behavioralException = {};
         this.behavioralTree = [];
         for (let i = 0; i < this.behaviors.length; i++) {
             this.behavioralExecution[this.behaviors[i].id] = [];
+            this.behavioralException[this.behaviors[i].id] = [];
         }
     }
 
@@ -167,7 +169,11 @@ class ConcurrentBehavior {
      */
     appendExecution(id, entry) {
         for (let i = 0; i < entry.execution.length; i++) {
+            const execution = entry.execution[i];
             this.behavioralExecution[id].push(entry.execution[i]);
+            if (execution.violations.length > 0) {
+                this.behavioralException[id].push(execution.violations);
+            }
         }
     }
 
