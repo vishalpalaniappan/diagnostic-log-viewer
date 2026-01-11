@@ -31,7 +31,7 @@ export function BehavioralViewer () {
             </div>
             {/* Body */}
             <div ref={bodyContainerRef} className="body-container-behavioral d-flex flex-column">
-                <div ref={bodyContentContainerRef} className="flex-grow-1">
+                {/* <div ref={bodyContentContainerRef} className="flex-grow-1"> */}
                     <div className="w-100 h-100 d-flex flex-row">
                         {/* Left Side Container */}
                         <div className="d-flex h-100">
@@ -46,7 +46,7 @@ export function BehavioralViewer () {
                             <RightSideContainerBehavioral/>
                         </div>
                     </div>
-                </div>
+                {/* </div> */}
                 {/* Timeline Container */}
                 {/* <div ref={timelineContainerRef} style={{height: "250px"}}>
                     <TimelineContainer />
