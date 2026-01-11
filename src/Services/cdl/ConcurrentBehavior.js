@@ -38,6 +38,40 @@ class ConcurrentBehavior {
         this.traceAndForkBehavior(initialThread, initialPosition);
         console.log(this.behavioralExecution);
         console.log(this.behavioralTree);
+        this.normalizeExecutionLevels();
+    }
+
+    /**
+     * Normalizes the execution levels of the behaviors. I'm doing this
+     * because I am using the levels in the original execution tree. Since
+     * I am only displaying a portion of it, I think it makes sense to
+     * normalize it. In the future, I can do this in a more intelligent way.
+     */
+    normalizeExecutionLevels () {
+        const minLevels = {};
+        const behavioralIds = Object.keys(this.behavioralExecution);
+
+        // Find the min levels for each abstraction
+        for (let i = 0; i < behavioralIds.length; i++) {
+            const id = behavioralIds[i];
+            for (let j = 0; j < this.behavioralExecution[id].length; j++) {
+                const entry = this.behavioralExecution[id][j];
+                if (!(behavioralIds[i] in minLevels)) {
+                    minLevels[behavioralIds[i]] = entry.level;
+                } else if (entry.level < minLevels[id]) {
+                    minLevels[behavioralIds[i]] = entry.level;
+                }
+            }
+        }
+
+        // Substract the min level from every entry to normalize it
+        for (let i = 0; i < behavioralIds.length; i++) {
+            const id = behavioralIds[i];
+            for (let j = 0; j < this.behavioralExecution[id].length; j++) {
+                const entry = this.behavioralExecution[id][j];
+                entry.level = entry.level - minLevels[id];
+            }
+        }
     }
 
 
