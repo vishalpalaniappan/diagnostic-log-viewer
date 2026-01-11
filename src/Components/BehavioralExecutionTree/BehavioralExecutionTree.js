@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
+import StackContext from "../../Providers/StackContext";
 import {BehavioralExecutionNode} from "./BehavioralExecutionNode/BehavioralExecutionNode";
 import BehavioralExecutionTreeContext from "./BehavioralExecutionTreeContext";
 
@@ -12,6 +13,7 @@ import "./BehavioralExecutionTree.scss";
  */
 export function BehavioralExecutionTree () {
     const {behavior, activeBehavior, setActiveBehavior} = useContext(BehaviorContext);
+    const {setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTree, setExecutionTree] = useState();
     const [executionTreeNodes, setExecutionTreeNodes] = useState();
@@ -80,6 +82,9 @@ export function BehavioralExecutionTree () {
                 }
             }
             setExecutionTreeNodes(nodes);
+            setActiveAbstraction({
+                node: executionTree[executionTree.length - 1],
+            });
         }
     };
 
@@ -110,7 +115,9 @@ export function BehavioralExecutionTree () {
      * @param {Object} node
      */
     const selectNode = (node) => {
-        setSelectedNode(node);
+        setActiveAbstraction({
+            node: node,
+        });
     };
 
 

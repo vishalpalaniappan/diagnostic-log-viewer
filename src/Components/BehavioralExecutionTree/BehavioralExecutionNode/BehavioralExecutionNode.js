@@ -5,6 +5,7 @@ import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstra
 
 import BehaviorContext from "../../../Providers/BehaviorContext";
 import BehavioralGraphContext from "../BehavioralExecutionTreeContext";
+import StackContext from "../../../Providers/StackContext";
 
 import "./BehavioralExecutionNode.scss";
 
@@ -19,13 +20,14 @@ BehavioralExecutionNode.propTypes = {
  */
 export function BehavioralExecutionNode ({node}) {
     const {activeBehavior} = useContext(BehaviorContext);
+    const {activeAbstraction} = useContext(StackContext);
     const {selectNode, toggleCollapse} = useContext(BehavioralGraphContext);
     const [selectedStyle, setSelectedStyle] = useState();
 
     // Set style if node is selected.
     useEffect(() => {
-        if (node && activeBehavior) {
-            if (activeBehavior === node) {
+        if (node && activeAbstraction) {
+            if (activeAbstraction?.node === node) {
                 setSelectedStyle(
                     {
                         background: "#184b2c",
@@ -37,7 +39,7 @@ export function BehavioralExecutionNode ({node}) {
                 setSelectedStyle({});
             }
         }
-    }, [activeBehavior, node]);
+    }, [activeAbstraction, node]);
 
     /**
      * Callback when a node is toggled.
