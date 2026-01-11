@@ -19,7 +19,7 @@ class SemanticTransformer {
         this.atomicBehaviors = [];
         this.behavioralTree = [];
 
-        console.log("SemanticTransformer initialized", this.behaviors, this.threadDebuggers);
+        console.log("SemanticTransformer initialized", this.behaviors);
         this.threadBehaviors = {};
         const threadIds = Object.keys(this.threadDebuggers);
         threadIds.forEach((id, index) => {
@@ -27,7 +27,6 @@ class SemanticTransformer {
             this.constructBehavior(id);
             this.threadBehaviors[id] = this.behavioralTree;
         });
-        console.log(this.threadBehaviors);
         this.findAtomic();
     }
 
@@ -210,8 +209,6 @@ class SemanticTransformer {
                 prevEntry.collapsed = false;
             }
         } while (++pos < this.behavioralTree.length);
-
-        console.log(this.behavioralTree);
     };
 
     /**

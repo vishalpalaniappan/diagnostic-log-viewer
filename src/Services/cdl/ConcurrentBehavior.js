@@ -32,12 +32,12 @@ class ConcurrentBehavior {
     setInitialContext (initialThread, initialPosition) {
         this.initialThread = initialThread;
         this.initialPosition = initialPosition;
-        console.log("");
-        console.log(`Atomic behavior in thread ${initialThread} at position ${initialPosition}`);
+        // Useful debug message, so I'm leaving this here
+        // console.log("");
+        // console.log(`Atomic behavior in thread ${initialThread}
+        // at position ${initialPosition}`);
 
         this.traceAndForkBehavior(initialThread, initialPosition);
-        console.log(this.behavioralExecution);
-        console.log(this.behavioralTree);
         this.normalizeExecutionLevels();
     }
 
@@ -91,7 +91,7 @@ class ConcurrentBehavior {
                 this.traceConcurrent(threadId, pos);
             } else {
                 this.appendExecution(behavior.id, entry);
-                this.printBehavior(behavior, entry.behavior);
+                this.buildBehavioralTree(behavior, entry.behavior);
             }
             if (this.concurrentCount === this.numConcurrent) {
                 break;
@@ -111,13 +111,13 @@ class ConcurrentBehavior {
             if (this.currConn) {
                 this.appendExecution(this.currConn.id, entry);
 
-                this.printBehavior(this.currConn, entry.behavior);
+                this.buildBehavioralTree(this.currConn, entry.behavior);
                 const behaviors = this.currConn.behaviors;
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
                     const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
                     if (behavior.id === "SelectEnd") {
                         this.appendExecution(behavior.id, threadBehavior[pos + 1]);
-                        this.printBehavior(behavior, threadBehavior[pos + 1].behavior);
+                        this.buildBehavioralTree(behavior, threadBehavior[pos + 1].behavior);
                     }
                     return;
                 }
@@ -141,8 +141,8 @@ class ConcurrentBehavior {
      * @param {String} behavior Behavior of concurrent execution.
      * @param {String} entryBehavior Behavior of current enrty.
      */
-    printBehavior (behavior, entryBehavior) {
-        console.log(behavior.id, entryBehavior.id);
+    buildBehavioralTree (behavior, entryBehavior) {
+        // console.log(behavior.id, entryBehavior.id);
         if (this.behavioralTree.length > 0) {
             const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
             if (lastEntry.id !== behavior.id) {
