@@ -30,7 +30,7 @@ export function BehavioralExecutionNode ({node}) {
             if (activeAbstraction?.node === node) {
                 setSelectedStyle(
                     {
-                        background: "#184b2c",
+                        background: "#4b4b18",
                         color: "#ffffff",
                         fontSize: "14px",
                     }

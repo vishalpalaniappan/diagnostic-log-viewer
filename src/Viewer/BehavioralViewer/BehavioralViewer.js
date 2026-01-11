@@ -32,20 +32,20 @@ export function BehavioralViewer () {
             {/* Body */}
             <div ref={bodyContainerRef} className="body-container-behavioral d-flex flex-column">
                 {/* <div ref={bodyContentContainerRef} className="flex-grow-1"> */}
-                    <div className="w-100 h-100 d-flex flex-row">
-                        {/* Left Side Container */}
-                        <div className="d-flex h-100">
-                            <LeftSideContainerBehavioral />
-                        </div>
-                        {/* Central Container */}
-                        <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                            <FileViewer/>
-                        </div>
-                        {/* Right Side Container */}
-                        <div className="d-flex h-100">
-                            <RightSideContainerBehavioral/>
-                        </div>
+                <div className="w-100 h-100 d-flex flex-row">
+                    {/* Left Side Container */}
+                    <div className="d-flex h-100">
+                        <LeftSideContainerBehavioral />
                     </div>
+                    {/* Central Container */}
+                    <div className="d-flex flex-grow-1 h-100 overflow-hidden">
+                        <FileViewer/>
+                    </div>
+                    {/* Right Side Container */}
+                    <div className="d-flex h-100">
+                        <RightSideContainerBehavioral/>
+                    </div>
+                </div>
                 {/* </div> */}
                 {/* Timeline Container */}
                 {/* <div ref={timelineContainerRef} style={{height: "250px"}}>
