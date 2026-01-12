@@ -23,7 +23,7 @@ export function BehavioralViewer () {
 
     return (
         <div className="viewer-container-behavioral">
-            <DebugToolKit />
+            {/* <DebugToolKit /> */}
             <div className="menu-container-behavioral"></div>
             {/* Side menu */}
             <div className="side-menu-container-behavioral">
