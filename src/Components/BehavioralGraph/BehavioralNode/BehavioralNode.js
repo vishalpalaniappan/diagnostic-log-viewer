@@ -111,61 +111,67 @@ export function BehavioralNode ({node}) {
     };
 
     return (
-        <div style={selectedStyle} id={"behavior-row-node-" + node.index}
-            className="abstractionRow">
+        <>
+            { (node?.level === 0 && node.index !== "0") &&
+                <div style={{width: "100%", height: "20px"}}></div>
+            }
+            <div style={selectedStyle} id={"behavior-row-node-" + node.index}
+                className="abstractionRow">
 
-            <div className="icon-container">
-                {getBreakPoint()}
-            </div>
+                <div className="icon-container">
+                    {getBreakPoint()}
+                </div>
 
-            <div className="icon-container">
-                <div className="icon">
-                    {getNodeIconType()}
+                <div className="icon-container">
+                    <div className="icon">
+                        {getNodeIconType()}
+                    </div>
+                </div>
+
+                <div className="flex-grow-1 d-flex flex-row w-100"
+                    onClick={(e) => clickSelectNode(e, node)}>
+
+                    <div className="d-flex flex-row">
+                        {getSpacers(node)}
+                    </div>
+
+                    <div onClick={(e) => clickToggle(e, node)} className="collapse-icon-container">
+                        {getCollapsed(node)}
+                    </div>
+
+                    <div className="text-container flex-grow-1">
+                        <span>{node.intent}</span>
+                    </div>
+
+                    {node?.exception?.length > 0 ?
+                        <div className="status-behavioral-node">
+                            <span className="message">
+                                exception
+                            </span>
+                        </div>:
+                        <></>
+                    }
+
+                    {node?.violation.length > 0 ?
+                        <div className="status-behavioral-node">
+                            <span className="message">
+                                violation
+                            </span>
+                        </div>:
+                        <></>
+                    }
+
+                    {node?.availablityViolation ?
+                        <div className="status-behavioral-node">
+                            <span className="message">
+                                {node?.availablityViolation}
+                            </span>
+                        </div>:
+                        <></>
+                    }
                 </div>
             </div>
-
-            <div className="flex-grow-1 d-flex flex-row w-100"
-                onClick={(e) => clickSelectNode(e, node)}>
-
-                <div className="d-flex flex-row">
-                    {getSpacers(node)}
-                </div>
-
-                <div onClick={(e) => clickToggle(e, node)} className="collapse-icon-container">
-                    {getCollapsed(node)}
-                </div>
-
-                <div className="text-container flex-grow-1">
-                    <span>{node.intent}</span>
-                </div>
-
-                {node?.exception?.length > 0 ?
-                    <div className="status-behavioral-node">
-                        <span className="message">
-                            exception
-                        </span>
-                    </div>:
-                    <></>
-                }
-
-                {node?.violation.length > 0 ?
-                    <div className="status-behavioral-node">
-                        <span className="message">
-                            violation
-                        </span>
-                    </div>:
-                    <></>
-                }
-
-                {node?.availablityViolation ?
-                    <div className="status-behavioral-node">
-                        <span className="message">
-                            {node?.availablityViolation}
-                        </span>
-                    </div>:
-                    <></>
-                }
-            </div>
-        </div>
+        
+        </>
     );
 }
