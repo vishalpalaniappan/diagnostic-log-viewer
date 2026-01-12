@@ -10,13 +10,15 @@ class ConcurrentBehavior {
      * Initializes the behavioral meta.
      * @param {Object} concurrentAbstraction
      * @param {Array} threadBehaviors
+     * @param {Array} allBehaviors
      */
-    constructor (concurrentAbstraction, threadBehaviors) {
+    constructor (concurrentAbstraction, threadBehaviors, allBehaviors) {
         this.concurrentAbstraction = concurrentAbstraction;
         this.numConcurrent = this.concurrentAbstraction.numConcurrent;
         this.concurrentCount = 0;
         this.threadBehaviors = threadBehaviors;
         this.behaviors = this.concurrentAbstraction.behaviors;
+        this.allBehaviors = allBehaviors;
         this.behavioralExecution = {};
         this.behavioralException = {};
         this.behavioralViolation = {};
@@ -131,7 +133,8 @@ class ConcurrentBehavior {
                 const input = this.findInput(entry.outputs[0]);
                 if (!input) {
                     const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
-                    lastEntry.availablityViolation = true;
+                    const target = this.findOutputTarget(entry.behavior.id);
+                    lastEntry.availablityViolation = "missing " + target;
                     console.error("Could not find input, error in trace structure");
                     break;
                 } else {
@@ -140,6 +143,23 @@ class ConcurrentBehavior {
                 }
             }
         } while (++pos < threadBehavior.length);
+    }
+
+    /**
+     * Given a behavior id, this function finds the behavior
+     * from the global list and reads the target information.
+     * This information could have easily been saved in the
+     * entry instead of doing this manual process again.
+     * @param {String} behaviorId ID of the behavior.
+     * @return {String}
+     */
+    findOutputTarget (behaviorId) {
+        for (let i = 0; i < this.allBehaviors.length; i++) {
+            const behavior = this.allBehaviors[i];
+            if (behavior.id === behaviorId) {
+                return behavior.target;
+            }
+        }
     }
 
     /**

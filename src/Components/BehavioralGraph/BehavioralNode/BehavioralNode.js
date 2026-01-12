@@ -160,7 +160,7 @@ export function BehavioralNode ({node}) {
                 {node?.availablityViolation ?
                     <div className="status-behavioral-node">
                         <span className="message">
-                            missing participant
+                            {node?.availablityViolation}
                         </span>
                     </div>:
                     <></>

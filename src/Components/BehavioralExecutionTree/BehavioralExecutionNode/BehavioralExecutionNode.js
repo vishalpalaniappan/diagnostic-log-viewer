@@ -69,7 +69,6 @@ export function BehavioralExecutionNode ({node}) {
      * @param {Object} node
      */
     const clickSelectNode = (e, node) => {
-        console.log(node);
         e.preventDefault();
         selectNode(node);
     };
