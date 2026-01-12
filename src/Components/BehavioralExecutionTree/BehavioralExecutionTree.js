@@ -125,6 +125,11 @@ export function BehavioralExecutionTree () {
         <BehavioralExecutionTreeContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
             <div className="treeMenuContainer">
+                <div className="topContainer">
+                    <div className="titleContainer">
+                        <span className="title">{title}</span>
+                    </div>
+                </div>
                 <div className="behavioralTreeContainer scrollbar flex-grow-1">
                     {executionTreeNodes}
                 </div>
