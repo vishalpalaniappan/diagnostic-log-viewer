@@ -139,7 +139,16 @@ export function BehavioralNode ({node}) {
                     <span>{node.id}</span>
                 </div>
 
-                {node?.exception.length > 0 ?
+                {node?.exception?.length > 0 ?
+                    <div className="analysis-status-container">
+                        <span className="message">
+                            exception
+                        </span>
+                    </div>:
+                    <></>
+                }
+
+                {node?.violation.length > 0 ?
                     <div className="analysis-status-container">
                         <span className="message">
                             violation

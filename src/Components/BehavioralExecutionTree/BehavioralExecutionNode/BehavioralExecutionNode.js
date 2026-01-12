@@ -28,13 +28,23 @@ export function BehavioralExecutionNode ({node}) {
     useEffect(() => {
         if (node && activeAbstraction) {
             if (activeAbstraction?.node === node) {
-                setSelectedStyle(
-                    {
-                        background: "#4b4b18",
-                        color: "#ffffff",
-                        fontSize: "14px",
-                    }
-                );
+                if (node.exception) {
+                    setSelectedStyle(
+                        {
+                            background: "#420b0e",
+                            color: "#ffffff",
+                            fontSize: "14px",
+                        }
+                    );
+                } else {
+                    setSelectedStyle(
+                        {
+                            background: "#4b4b18",
+                            color: "#ffffff",
+                            fontSize: "14px",
+                        }
+                    );
+                }
             } else {
                 setSelectedStyle({});
             }
@@ -59,6 +69,7 @@ export function BehavioralExecutionNode ({node}) {
      * @param {Object} node
      */
     const clickSelectNode = (e, node) => {
+        console.log(node);
         e.preventDefault();
         selectNode(node);
     };

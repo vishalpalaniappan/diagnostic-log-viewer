@@ -191,6 +191,7 @@ class Debugger {
                 const entry = behavior.behavioralTree[j];
                 entry.execution = behavior.behavioralExecution[entry.id];
                 entry.exception = behavior.behavioralException[entry.id];
+                entry.violation = behavior.behavioralViolation[entry.id];
                 fullBehavioralTree.push(entry);
             }
         }

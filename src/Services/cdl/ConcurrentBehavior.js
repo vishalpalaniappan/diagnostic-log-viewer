@@ -19,10 +19,12 @@ class ConcurrentBehavior {
         this.behaviors = this.concurrentAbstraction.behaviors;
         this.behavioralExecution = {};
         this.behavioralException = {};
+        this.behavioralViolation = {};
         this.behavioralTree = [];
         for (let i = 0; i < this.behaviors.length; i++) {
             this.behavioralExecution[this.behaviors[i].id] = [];
             this.behavioralException[this.behaviors[i].id] = [];
+            this.behavioralViolation[this.behaviors[i].id] = [];
         }
     }
 
@@ -39,6 +41,7 @@ class ConcurrentBehavior {
         // console.log(`Atomic behavior in thread ${initialThread}
         // at position ${initialPosition}`);
 
+        console.log("");
         this.traceAndForkBehavior(initialThread, initialPosition);
         this.normalizeExecutionLevels();
     }
@@ -130,9 +133,10 @@ class ConcurrentBehavior {
                 if (!input) {
                     console.error("Could not find input, error in trace structure");
                     break;
+                } else {
+                    pos = input.position;
+                    threadBehavior = this.threadBehaviors[input.threadId];
                 }
-                pos = input.position;
-                threadBehavior = this.threadBehaviors[input.threadId];
             }
         } while (++pos < threadBehavior.length);
     }
@@ -144,7 +148,7 @@ class ConcurrentBehavior {
      * @param {String} entryBehavior Behavior of current enrty.
      */
     buildBehavioralTree (behavior, entryBehavior) {
-        // console.log(behavior.id, entryBehavior.id);
+        console.log(behavior.id, entryBehavior.id);
         if (this.behavioralTree.length > 0) {
             const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
             if (lastEntry.id !== behavior.id) {
@@ -171,8 +175,13 @@ class ConcurrentBehavior {
         for (let i = 0; i < entry.execution.length; i++) {
             const execution = entry.execution[i];
             this.behavioralExecution[id].push(entry.execution[i]);
-            if (execution.violations.length > 0) {
+            if (execution?.exception) {
                 this.behavioralException[id] = this.behavioralException[id].concat(
+                    execution.exception
+                );
+            }
+            if (execution.violations.length > 0) {
+                this.behavioralViolation[id] = this.behavioralViolation[id].concat(
                     execution.violations
                 );
             }
