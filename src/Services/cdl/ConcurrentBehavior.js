@@ -175,13 +175,17 @@ class ConcurrentBehavior {
             if (lastEntry.id !== behavior.id) {
                 this.behavioralTree.push({
                     "level": behavior.level - 1,
+                    "intent": behavior.intention,
                     "id": behavior.id,
+                    "type": behavior.type,
                 });
             }
         } else {
             this.behavioralTree.push({
                 "level": behavior.level - 1,
+                "intent": behavior.intention,
                 "id": behavior.id,
+                "type": behavior.type,
             });
         }
     }
