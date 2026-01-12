@@ -27,24 +27,22 @@ export function BehavioralExecutionNode ({node}) {
     // Set style if node is selected.
     useEffect(() => {
         if (node && activeAbstraction) {
-            if (activeAbstraction?.node === node) {
-                if (node.exception) {
-                    setSelectedStyle(
-                        {
-                            background: "#420b0e",
-                            color: "#ffffff",
-                            fontSize: "14px",
-                        }
-                    );
-                } else {
-                    setSelectedStyle(
-                        {
-                            background: "#4b4b18",
-                            color: "#ffffff",
-                            fontSize: "14px",
-                        }
-                    );
-                }
+            if (node.exception) {
+                setSelectedStyle(
+                    {
+                        background: "#420b0e",
+                        color: "#ffffff",
+                        fontSize: "14px",
+                    }
+                );
+            } else if (activeAbstraction?.node === node) {
+                setSelectedStyle(
+                    {
+                        background: "#4b4b18",
+                        color: "#ffffff",
+                        fontSize: "14px",
+                    }
+                );
             } else {
                 setSelectedStyle({});
             }
@@ -157,10 +155,10 @@ export function BehavioralExecutionNode ({node}) {
                     <span>{node.intent}</span>
                 </div>
 
-                {node?.violations?.length > 0 ?
+                {node?.exception ?
                     <div className="analysis-status-container">
                         <span className="message">
-                            violation
+                            failure
                         </span>
                     </div>:
                     <></>
