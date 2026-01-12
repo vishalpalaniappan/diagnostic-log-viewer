@@ -41,7 +41,6 @@ class ConcurrentBehavior {
         // console.log(`Atomic behavior in thread ${initialThread}
         // at position ${initialPosition}`);
 
-        console.log("");
         this.traceAndForkBehavior(initialThread, initialPosition);
         this.normalizeExecutionLevels();
     }
@@ -106,8 +105,8 @@ class ConcurrentBehavior {
 
     /**
      * Trace the concurrent function
-     * @param {String} threadId 
-     * @param {Number} pos 
+     * @param {String} threadId
+     * @param {Number} pos
      */
     traceConcurrent (threadId, pos) {
         let threadBehavior = this.threadBehaviors[threadId];
@@ -131,6 +130,8 @@ class ConcurrentBehavior {
             if (entry?.outputs.length > 0) {
                 const input = this.findInput(entry.outputs[0]);
                 if (!input) {
+                    const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
+                    lastEntry.availablityViolation = true;
                     console.error("Could not find input, error in trace structure");
                     break;
                 } else {
@@ -148,7 +149,7 @@ class ConcurrentBehavior {
      * @param {String} entryBehavior Behavior of current enrty.
      */
     buildBehavioralTree (behavior, entryBehavior) {
-        console.log(behavior.id, entryBehavior.id);
+        // console.log(behavior.id, entryBehavior.id);
         if (this.behavioralTree.length > 0) {
             const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
             if (lastEntry.id !== behavior.id) {
