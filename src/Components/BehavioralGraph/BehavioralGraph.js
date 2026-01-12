@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
+import StackContext from "../../Providers/StackContext";
 import BehavioralGraphContext from "./BehavioralGraphContext";
 import {BehavioralNode} from "./BehavioralNode/BehavioralNode";
 
@@ -12,6 +13,7 @@ import "./BehavioralGraph.scss";
  */
 export function BehavioralGraph () {
     const {behavior, activeBehavior, setActiveBehavior} = useContext(BehaviorContext);
+    const {activeAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [behavioralInstance, setBehavioralInstance] = useState();
     const [title, setTitle] = useState();
@@ -38,6 +40,25 @@ export function BehavioralGraph () {
             scrollToNode(activeBehavior);
         }
     }, [activeBehavior]);
+
+
+    /**
+     * Go to the relevant behavior when the active
+     * abstraction changes.
+     */
+    useEffect(() => {
+        if (activeAbstraction && behavior) {
+            for (let i = 0; i < behavior.length; i++) {
+                for (let j = 0; j < behavior[i].execution.length; j++) {
+                    const exec = behavior[i].execution[j];
+                    const node = activeAbstraction.node;
+                    if (node.index === exec.index && node.module === exec.module) {
+                        setActiveBehavior(behavior[i].index);
+                    }
+                }
+            }
+        }
+    }, [activeAbstraction, behavior]);
 
     /**
      * Renders the behavioral tree.
