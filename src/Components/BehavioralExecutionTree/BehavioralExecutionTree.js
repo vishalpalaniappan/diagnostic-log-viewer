@@ -13,7 +13,7 @@ import "./BehavioralExecutionTree.scss";
  */
 export function BehavioralExecutionTree () {
     const {behavior, activeBehavior, setActiveBehavior} = useContext(BehaviorContext);
-    const {setActiveAbstraction} = useContext(StackContext);
+    const {activeAbstraction, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTree, setExecutionTree] = useState();
     const [executionTreeNodes, setExecutionTreeNodes] = useState();
@@ -24,7 +24,7 @@ export function BehavioralExecutionTree () {
      * @param {Object} node
      */
     const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("behavior-execution-row" + node.index);
+        const nodeElement = document.getElementById("behavior-execution-row-" + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -37,10 +37,10 @@ export function BehavioralExecutionTree () {
      * Scroll to node when selected node changes.
      */
     useEffect(() => {
-        if (selectedNode) {
-            scrollToNode(selectedNode);
+        if (activeAbstraction) {
+            scrollToNode(activeAbstraction.node);
         }
-    }, [selectedNode]);
+    }, [activeAbstraction]);
 
     /**
      * Renders the behavioral tree.
