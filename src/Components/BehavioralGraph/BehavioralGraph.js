@@ -80,7 +80,7 @@ export function BehavioralGraph () {
             }
             setBehavioralInstance(nodes);
 
-            if (!activeBehavior) {
+            if (activeBehavior === undefined || activeBehavior === null ) {
                 setActiveBehavior(behavior[behavior.length - 1]);
             }
         }

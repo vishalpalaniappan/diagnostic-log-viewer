@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
 import BehaviorContext from "../../../Providers/BehaviorContext";
-import BehavioralGraphContext from "../BehavioralExecutionTreeContext";
 import StackContext from "../../../Providers/StackContext";
+import BehavioralGraphContext from "../BehavioralExecutionTreeContext";
 
 import "./BehavioralExecutionNode.scss";
 
@@ -146,6 +146,15 @@ export function BehavioralExecutionNode ({node}) {
                 <div className="text-container flex-grow-1">
                     <span>{node.intent}</span>
                 </div>
+
+                {node?.violations?.length > 0 ?
+                    <div className="analysis-status-container">
+                        <span className="message">
+                            violation
+                        </span>
+                    </div>:
+                    <></>
+                }
             </div>
         </div>
     );

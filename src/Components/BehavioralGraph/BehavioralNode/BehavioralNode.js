@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
-import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
+import {CaretDownFill, CaretRightFill, SignIntersection} from "react-bootstrap-icons";
 
 import BehaviorContext from "../../../Providers/BehaviorContext";
 import BehavioralGraphContext from "../BehavioralGraphContext";
@@ -100,14 +100,8 @@ export function BehavioralNode ({node}) {
      * @return {JSX}
      */
     const getNodeIconType = () => {
-        if (node.abstractionType === "function_call") {
-            return <Stack
-                title="Function Call"
-                style={{color: "orange"}}/>;
-        } else if (node.abstractionType === "conditional_branch") {
-            return <SignpostFill
-                title="Conditional Branch"
-                style={{color: "#3794ff"}}/>;
+        if (node.level === 0) {
+            return <SignIntersection style={{color: "orange"}}/>;
         }
     };
 
@@ -144,6 +138,15 @@ export function BehavioralNode ({node}) {
                 <div className="text-container flex-grow-1">
                     <span>{node.id}</span>
                 </div>
+
+                {node?.exception.length > 0 ?
+                    <div className="analysis-status-container">
+                        <span className="message">
+                            violation
+                        </span>
+                    </div>:
+                    <></>
+                }
             </div>
         </div>
     );
