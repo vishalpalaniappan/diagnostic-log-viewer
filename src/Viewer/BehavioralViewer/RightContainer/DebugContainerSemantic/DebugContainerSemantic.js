@@ -14,14 +14,12 @@ import "./DebugContainer.scss";
 export function DebugContainerSemantic () {
     const debugContainerRef = useRef();
     const variableStackRef = useRef();
-    const breakPointRef = useRef();
 
     const TITLE_HEIGHT = 20;
 
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
-        const containerHeight = height - 150;
-        breakPointRef.current.style.height = 150 - TITLE_HEIGHT + "px";
+        const containerHeight = height;
         variableStackRef.current.style.height = containerHeight - TITLE_HEIGHT + "px";
     };
 
@@ -34,11 +32,6 @@ export function DebugContainerSemantic () {
             <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Variables</div>
             <div className="section" ref={variableStackRef}>
                 <VariableStackContainer />
-            </div>
-            <VerticalHandle topDiv={variableStackRef} bottomDiv={breakPointRef}/>
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Breakpoints</div>
-            <div className="section" ref={breakPointRef}>
-                <BreakPointContainer />
             </div>
         </div>
     );

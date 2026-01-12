@@ -16,9 +16,9 @@ export function RightSideContainerBehavioral () {
     const downValueX = useRef();
 
     const SIDE_MENU_WIDTH = 50;
-    const ACCORDIAN_WIDTH = 300;
-    const MIN_EDITOR_WIDTH = 400;
-    const MIN_ACCORDIAN_WIDTH = 200;
+    const ACCORDIAN_WIDTH = 500;
+    const MIN_EDITOR_WIDTH = 550;
+    const MIN_ACCORDIAN_WIDTH = 150;
 
     const handleMouseDown = (e) => {
         e.preventDefault();
