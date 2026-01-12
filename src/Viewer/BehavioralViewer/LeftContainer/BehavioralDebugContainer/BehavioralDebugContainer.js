@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
 // eslint-disable-next-line max-len
-import {AutomatedDebuggingContainer} from "../../../../Components/AutomatedDebuggingContainer/AutomatedDebuggingContainer";
+import {AutomatedDebuggingContainerBehavioral} from "../../../../Components/AutomatedDebuggingContainer/AutomatedDebuggingContainerBehavioral";
 // eslint-disable-next-line max-len
 import {BehavioralExecutionTree} from "../../../../Components/BehavioralExecutionTree/BehavioralExecutionTree";
 import {BehavioralGraph} from "../../../../Components/BehavioralGraph/BehavioralGraph";
@@ -48,7 +48,7 @@ export function BehavioralDebugContainer () {
                 Semantic Violations
             </div>
             <div className="section" ref={violationsRef}>
-                <AutomatedDebuggingContainer />
+                <AutomatedDebuggingContainerBehavioral />
             </div>
         </div>
     );
