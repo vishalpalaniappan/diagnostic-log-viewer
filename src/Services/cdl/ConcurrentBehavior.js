@@ -172,7 +172,9 @@ class ConcurrentBehavior {
             const execution = entry.execution[i];
             this.behavioralExecution[id].push(entry.execution[i]);
             if (execution.violations.length > 0) {
-                this.behavioralException[id].push(execution.violations);
+                this.behavioralException[id] = this.behavioralException[id].concat(
+                    execution.violations
+                );
             }
         }
     }

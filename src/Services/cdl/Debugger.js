@@ -205,7 +205,6 @@ class Debugger {
             }
         }
         if (fullBehavioralTree.length > 0) {
-            console.log(fullBehavioralTree);
             postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
                 args: {

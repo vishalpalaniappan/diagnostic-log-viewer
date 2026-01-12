@@ -189,6 +189,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setSeg(event.data.args.seg);
                 break;
             case CDL_WORKER_PROTOCOL.GET_BEHAVIOR:
+                console.log(event.data.args.behavior);
                 setMode(PROGRAM_STATE.BEHAVIORAL);
                 setBehavior(event.data.args.behavior);
                 setActiveBehavior(event.data.args.behavior.length - 1);
