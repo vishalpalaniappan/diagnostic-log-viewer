@@ -18,10 +18,11 @@ export function BehavioralGraph () {
 
     /**
      * Scroll to the selected node.
-     * @param {Object} node
+     * @param {String} activeBehavior
      */
-    const scrollToNode = (node) => {
-        const nodeElement = document.getElementById("behavior-row" + node.index);
+    const scrollToNode = (activeBehavior) => {
+        const node = behavior[activeBehavior];
+        const nodeElement = document.getElementById("behavior-row-node-" + node.index);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -81,7 +82,7 @@ export function BehavioralGraph () {
             setBehavioralInstance(nodes);
 
             if (activeBehavior === undefined || activeBehavior === null ) {
-                setActiveBehavior(behavior[behavior.length - 1]);
+                setActiveBehavior(behavior[behavior.length - 1].index);
             }
         }
     };

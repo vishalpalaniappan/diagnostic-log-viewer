@@ -111,7 +111,7 @@ export function BehavioralNode ({node}) {
     };
 
     return (
-        <div style={selectedStyle} id={"behavior-row" + node.index}
+        <div style={selectedStyle} id={"behavior-row-node-" + node.index}
             className="abstractionRow">
 
             <div className="icon-container">
@@ -136,7 +136,7 @@ export function BehavioralNode ({node}) {
                 </div>
 
                 <div className="text-container flex-grow-1">
-                    <span>{node.id}</span>
+                    <span>{node.intent}</span>
                 </div>
 
                 {node?.exception?.length > 0 ?
