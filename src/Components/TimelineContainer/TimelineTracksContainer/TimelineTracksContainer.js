@@ -15,7 +15,7 @@ export function TimelineTracksContainer () {
     const tracksContainerRef = useRef();
     const needleRef = useRef();
 
-    const PX_PER_SECOND = 400;
+    const PX_PER_SECOND = 120;
 
     useEffect(() => {
         if (durations) {
@@ -56,21 +56,28 @@ export function TimelineTracksContainer () {
         document.addEventListener("mouseup", handleMouseUp);
         downValueX.current = e.clientX;
         startX.current = needleRef.current.getBoundingClientRect().left;
+        console.log(timeTrackRef.current.getBoundingClientRect());
     };
 
     const handleMouseMove = useCallback((e) => {
         const delta = e.clientX - downValueX.current;
         const newX = startX.current + delta - timeTrackRef.current.getBoundingClientRect().left;
+        console.log(timeTrackRef.current.getBoundingClientRect());
+        console.log(newX);
+        // 15 half size of handle bar and label, make it a constant
         if (newX < 0) {
             needleRef.current.style.left = "15px";
-        } else if (newX >= 15) {
-            // 15 half size of handle bar and label, make it a constant
+        } else if (newX >= 15 && newX <= timeTrackRef.current.getBoundingClientRect().width - 15) {
             needleRef.current.style.left = newX + "px";
+        } else if (newX >= timeTrackRef.current.getBoundingClientRect().width - 15) {
+            const right = timeTrackRef.current.getBoundingClientRect().width - 15;
+            needleRef.current.style.left = right + "px";
         }
     }, []);
 
     const handleMouseUp = useCallback((e) => {
         console.log("Mouse Up");
+        console.log(timeTrackRef.current.getBoundingClientRect());
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
     }, []);
