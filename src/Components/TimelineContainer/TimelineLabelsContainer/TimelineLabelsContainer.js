@@ -2,8 +2,6 @@ import React, {useContext, useEffect, useState} from "react";
 
 import {Eye} from "react-bootstrap-icons";
 
-import SegContext from "../../../Providers/SegContext";
-
 import "./TimelineLabelsContainer.scss";
 
 /**
@@ -11,16 +9,13 @@ import "./TimelineLabelsContainer.scss";
  * @return {JSX.Element}
  */
 export function TimelineLabelsContainer () {
-    const {seg} = useContext(SegContext);
-    const [threads, setThreads] = useState();
-
-    useEffect(() => {
-        console.log(seg);
-        if (seg) {
-            const threadsList = Object.keys(seg);
-            setThreads(threadsList);
-        }
-    }, [seg]);
+    const [threads, setThreads] = useState([
+        "Producer",
+        "Worker A",
+        "Worker B",
+        "Worker C",
+        "Consumer",
+    ]);
 
 
     const getThreads = () => {

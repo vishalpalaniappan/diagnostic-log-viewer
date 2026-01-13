@@ -55,6 +55,18 @@ export function TimelineTracksContainer () {
                 {getTimeTracks()}
             </div>
             <div className="timeline" ref={timelineContainerRef}>
+                <div className="track-time-row">
+                    <div className="track-actor" style={{left: "15px", width: "100px"}}></div>
+                </div>
+                <div className="track-time-row">
+                    <div className="track-actor" style={{left: "115px", width: "80px"}}></div>
+                </div>
+                <div className="track-time-row">
+                    <div className="track-actor" style={{left: "115px", width: "80px"}}></div>
+                </div>
+                <div className="track-time-row">
+                    <div className="track-actor" style={{left: "115px", width: "80px"}}></div>
+                </div>
             </div>
         </div>
     );
