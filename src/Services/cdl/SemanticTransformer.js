@@ -1,4 +1,5 @@
-import ConcurrentBehavior from "./ConcurrentDesignAbstraction";
+import ConcurrentDesignAbstraction from "./ConcurrentDesignAbstraction";
+import SequentialDesignAbstraction from "./SequentialDesignAbstraction";
 /**
  * This class is responsible for performing the semantic transformation
  * on the threads to observe the behavior of the design.
@@ -67,6 +68,10 @@ class SemanticTransformer {
                             abstraction, this.threadBehaviors, this.behaviors
                         );
                     }
+                } else if (abstraction.abstraction_type === "sequential") {
+                    behavior = new SequentialDesignAbstraction(
+                        abstraction, this.threadBehaviors, this.behaviors
+                    );
                 }
                 if (behavior) {
                     this.atomicBehaviors.push(behavior);

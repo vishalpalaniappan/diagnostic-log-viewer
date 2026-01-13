@@ -7,10 +7,32 @@
 class SequentialDesignAbstraction {
     /**
      * Initializes the sequential design abstraction.
+     * @param {Object} sequentialAbstraction
+     * @param {Array} threadExecutionBehaviors
+     * @param {Array} allBehaviors
      */
-    constructor () {
-
+    constructor (sequentialAbstraction, threadExecutionBehaviors, allBehaviors) {
+        this.sequentialAbstraction = sequentialAbstraction;
+        this.threadExecutionBehaviors = threadExecutionBehaviors;
+        this.allBehaviors = allBehaviors;
+        this.behavioralExecution = {};
+        this.behavioralException = {};
+        this.behavioralViolation = {};
+        this.behavioralTree = [];
     }
+
+    /**
+     * Sets the initial context of the behavior
+     * @param {String} initialThread
+     * @param {Number} initialPosition
+     */
+    setInitialContext (initialThread, initialPosition) {
+        this.initialThread = initialThread;
+        this.initialPosition = initialPosition;
+        // Useful debug message, so I'm leaving this here
+        console.log("");
+        console.log(`Atomic behavior in thread ${initialThread} at position ${initialPosition}`);
+    };
 }
 
 export default SequentialDesignAbstraction;
