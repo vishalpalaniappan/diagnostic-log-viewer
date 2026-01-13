@@ -3,7 +3,6 @@ import React, {useContext, useEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {CaretDownFill, CaretRightFill, SignpostFill, Stack} from "react-bootstrap-icons";
 
-import BehaviorContext from "../../../Providers/BehaviorContext";
 import StackContext from "../../../Providers/StackContext";
 import BehavioralGraphContext from "../BehavioralExecutionTreeContext";
 
@@ -19,7 +18,6 @@ BehavioralExecutionNode.propTypes = {
  * @return {JSX.Element}
  */
 export function BehavioralExecutionNode ({node}) {
-    const {activeBehavior} = useContext(BehaviorContext);
     const {activeAbstraction} = useContext(StackContext);
     const {selectNode, toggleCollapse} = useContext(BehavioralGraphContext);
     const [selectedStyle, setSelectedStyle] = useState();
