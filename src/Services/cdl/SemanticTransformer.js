@@ -50,7 +50,7 @@ class SemanticTransformer {
 
 
     /**
-     * Given the atomic abstraction, this finds the concurrent abstraction
+     * Given the atomic behavior, this finds abstraction
      * that it belongs to.
      * @param {Number} id
      * @return {ConcurrentBehavior|null}
