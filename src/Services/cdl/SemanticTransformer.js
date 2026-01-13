@@ -11,7 +11,7 @@ class SemanticTransformer {
      */
     constructor (designMap, threadDebuggers) {
         this.behaviors = designMap.behavior;
-        this.concurrentAbstractions = designMap?.concurrent_abstractions;
+        this.abstractions = designMap?.abstractions;
         console.log(this.behaviors);
         this.threadDebuggers = threadDebuggers;
 
@@ -41,7 +41,7 @@ class SemanticTransformer {
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry?.behavior?.atomic) {
-                    this.currentConcurrentAbs = this.getCurrConncurrentAbs(entry?.behavior?.id);
+                    this.currentConcurrentAbs = this.getCurrentAbs(entry?.behavior?.id);
                     this.currentConcurrentAbs.setInitialContext(threadIds[j], i);
                 }
             }
@@ -55,17 +55,21 @@ class SemanticTransformer {
      * @param {Number} id
      * @return {ConcurrentBehavior|null}
      */
-    getCurrConncurrentAbs (id) {
+    getCurrentAbs (id) {
         let behavior;
-        for (let i = 0; i < this.concurrentAbstractions.length; i++) {
-            const abs = this.concurrentAbstractions[i];
-            for (let j = 0; j < abs.behaviors.length; j++) {
-                const entry = abs.behaviors[j];
-                if (entry.type == "start" && entry.behaviors[0] === id) {
-                    const behavior = new ConcurrentBehavior(abs, this.threadBehaviors, this.behaviors);
-                    this.atomicBehaviors.push(behavior);
-                    return behavior;
+        for (let i = 0; i < this.abstractions.length; i++) {
+            const abs = this.abstractions[i];
+            if (abs.entry === id) {
+                let behavior;
+                if (abs.abstraction_type === "concurrent") {
+                    if (abs.type === "SplitJobTypeA") {
+                        behavior = new ConcurrentBehavior(
+                            abs, this.threadBehaviors, this.behaviors
+                        );
+                    }
                 }
+                this.atomicBehaviors.push(behavior);
+                return behavior;
             }
         };
         return behavior;
