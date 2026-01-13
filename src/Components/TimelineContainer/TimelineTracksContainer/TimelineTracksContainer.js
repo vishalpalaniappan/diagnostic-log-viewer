@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, {useCallback, useContext, useEffect, useRef, useState} from "react";
 
 import TimelineContainerContext from "../TimelineContainerContext";
 
@@ -31,6 +31,7 @@ export function TimelineTracksContainer () {
         }
     }, [durations]);
 
+    // Renders the time tracks
     const getTimeTracks = () => {
         if (durations) {
             const ticks = [];
@@ -48,9 +49,39 @@ export function TimelineTracksContainer () {
         }
     };
 
+    const downValueX = useRef();
+    const handleMouseDown = (e) => {
+        console.log("Mouse Down");
+        e.preventDefault();
+        e.stopPropagation();
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+        downValueX.current = e.clientX;
+    };
+
+    const handleMouseMove = useCallback((e) => {
+        const delta = e.clientX - downValueX.current;
+        console.log("Mouse Move", delta);
+    }, []);
+
+    const handleMouseUp = useCallback((e) => {
+        console.log("Mouse Up");
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [handleMouseMove, handleMouseUp]);
+
     return (
         <div ref={tracksContainerRef} className="timelineTracksContainer d-flex flex-column">
-            <div ref={needleRef} className="needle"></div>
+            <div ref={needleRef} onMouseDown={handleMouseDown} className="needle">
+                <div className="needle-handle"></div>
+            </div>
             <div className="track-time-row" ref={timeTrackRef}>
                 {getTimeTracks()}
             </div>
