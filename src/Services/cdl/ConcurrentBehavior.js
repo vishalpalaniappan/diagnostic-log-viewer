@@ -9,14 +9,14 @@ class ConcurrentBehavior {
     /**
      * Initializes the behavioral meta.
      * @param {Object} concurrentAbstraction
-     * @param {Array} threadBehaviors
+     * @param {Array} threadExecutionBehaviors
      * @param {Array} allBehaviors
      */
-    constructor (concurrentAbstraction, threadBehaviors, allBehaviors) {
+    constructor (concurrentAbstraction, threadExecutionBehaviors, allBehaviors) {
         this.concurrentAbstraction = concurrentAbstraction;
         this.numConcurrent = this.concurrentAbstraction.numConcurrent;
         this.concurrentCount = 0;
-        this.threadBehaviors = threadBehaviors;
+        this.threadExecutionBehaviors = threadExecutionBehaviors;
         this.behaviors = this.concurrentAbstraction.behaviors;
         this.allBehaviors = allBehaviors;
         this.behavioralExecution = {};
@@ -89,7 +89,7 @@ class ConcurrentBehavior {
      */
     traceAndForkBehavior (threadId, position) {
         let pos = position;
-        const threadBehavior = this.threadBehaviors[threadId];
+        const threadBehavior = this.threadExecutionBehaviors[threadId];
         do {
             const entry = threadBehavior[pos];
             const behavior = this.getBehavior(entry.behavior.id);
@@ -111,7 +111,7 @@ class ConcurrentBehavior {
      * @param {Number} pos
      */
     traceConcurrent (threadId, pos) {
-        let threadBehavior = this.threadBehaviors[threadId];
+        let threadBehavior = this.threadExecutionBehaviors[threadId];
         do {
             const entry = threadBehavior[pos];
             if (this.currConn) {
@@ -139,7 +139,7 @@ class ConcurrentBehavior {
                     break;
                 } else {
                     pos = input.position;
-                    threadBehavior = this.threadBehaviors[input.threadId];
+                    threadBehavior = this.threadExecutionBehaviors[input.threadId];
                 }
             }
         } while (++pos < threadBehavior.length);
@@ -243,10 +243,10 @@ class ConcurrentBehavior {
      */
     findInput(output) {
         const outputId = output.value.adliExecutionId;
-        const threadIds = Object.keys(this.threadBehaviors);
+        const threadIds = Object.keys(this.threadExecutionBehaviors);
 
         for (let j = 0; j < threadIds.length; j++) {
-            const threadBehavior = this.threadBehaviors[threadIds[j]];
+            const threadBehavior = this.threadExecutionBehaviors[threadIds[j]];
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry?.inputs.length > 0) {

@@ -41,8 +41,8 @@ class SemanticTransformer {
             for (let i = 0; i < threadBehavior.length; i++) {
                 const entry = threadBehavior[i];
                 if (entry?.behavior?.atomic) {
-                    this.currentConcurrentAbs = this.getCurrentAbs(entry?.behavior?.id);
-                    this.currentConcurrentAbs.setInitialContext(threadIds[j], i);
+                    this.currentAbs = this.getCurrentAbs(entry?.behavior?.id);
+                    this.currentAbs.setInitialContext(threadIds[j], i);
                 }
             }
         };
@@ -50,26 +50,28 @@ class SemanticTransformer {
 
 
     /**
-     * Given the atomic behavior, this finds abstraction
-     * that it belongs to.
+     * Given the atomic behavior, this find the atomic
+     * abstraction that it belongs to.
      * @param {Number} id
-     * @return {ConcurrentBehavior|null}
+     * @return {Object|null}
      */
     getCurrentAbs (id) {
         let behavior;
         for (let i = 0; i < this.abstractions.length; i++) {
-            const abs = this.abstractions[i];
-            if (abs.entry === id) {
+            const abstraction = this.abstractions[i];
+            if (abstraction.entry === id) {
                 let behavior;
-                if (abs.abstraction_type === "concurrent") {
-                    if (abs.type === "SplitJobTypeA") {
+                if (abstraction.abstraction_type === "concurrent") {
+                    if (abstraction.type === "SplitJobTypeA") {
                         behavior = new ConcurrentBehavior(
-                            abs, this.threadBehaviors, this.behaviors
+                            abstraction, this.threadBehaviors, this.behaviors
                         );
                     }
                 }
-                this.atomicBehaviors.push(behavior);
-                return behavior;
+                if (behavior) {
+                    this.atomicBehaviors.push(behavior);
+                    return behavior;
+                }
             }
         };
         return behavior;
