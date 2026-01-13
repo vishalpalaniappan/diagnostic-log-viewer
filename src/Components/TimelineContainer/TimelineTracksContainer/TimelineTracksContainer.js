@@ -38,9 +38,7 @@ export function TimelineTracksContainer () {
             for (let i = 0; i < Math.ceil(durations.max); i++) {
                 const left = (PX_PER_SECOND * i) + "px";
                 ticks.push(
-                    <span className="trackLabel"
-                        key={i}
-                        style={{"left": left}}>
+                    <span className="trackLabel" key={i} style={{"left": left}}>
                         {i}
                     </span>
                 );
@@ -50,18 +48,25 @@ export function TimelineTracksContainer () {
     };
 
     const downValueX = useRef();
+    const startX = useRef();
     const handleMouseDown = (e) => {
-        console.log("Mouse Down");
         e.preventDefault();
         e.stopPropagation();
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
         downValueX.current = e.clientX;
+        startX.current = needleRef.current.getBoundingClientRect().left;
     };
 
     const handleMouseMove = useCallback((e) => {
         const delta = e.clientX - downValueX.current;
-        console.log("Mouse Move", delta);
+        const newX = startX.current + delta - timeTrackRef.current.getBoundingClientRect().left;
+        if (newX < 0) {
+            needleRef.current.style.left = "15px";
+        } else if (newX >= 15) {
+            // 15 half size of handle bar and label, make it a constant
+            needleRef.current.style.left = newX + "px";
+        }
     }, []);
 
     const handleMouseUp = useCallback((e) => {
