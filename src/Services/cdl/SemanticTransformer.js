@@ -1,4 +1,4 @@
-import ConcurrentBehavior from "./ConcurrentBehavior";
+import ConcurrentBehavior from "./ConcurrentDesignAbstraction";
 /**
  * This class is responsible for performing the semantic transformation
  * on the threads to observe the behavior of the design.
@@ -63,7 +63,7 @@ class SemanticTransformer {
                 let behavior;
                 if (abstraction.abstraction_type === "concurrent") {
                     if (abstraction.type === "SplitJobTypeA") {
-                        behavior = new ConcurrentBehavior(
+                        behavior = new ConcurrentDesignAbstraction(
                             abstraction, this.threadBehaviors, this.behaviors
                         );
                     }

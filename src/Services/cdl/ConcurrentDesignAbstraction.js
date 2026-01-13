@@ -5,7 +5,7 @@
  * hold the state of the concurrent behavior as we step
  * through the behavior of the program.
  */
-class ConcurrentBehavior {
+class ConcurrentDesignAbstraction {
     /**
      * Initializes the behavioral meta.
      * @param {Object} concurrentAbstraction
@@ -263,4 +263,4 @@ class ConcurrentBehavior {
     };
 };
 
-export default ConcurrentBehavior;
+export default ConcurrentDesignAbstraction;
