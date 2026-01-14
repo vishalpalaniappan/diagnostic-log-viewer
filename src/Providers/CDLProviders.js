@@ -101,6 +101,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveThread(undefined);
         setActiveFile(undefined);
         setBreakPoints(undefined);
+        setActiveBehavior(undefined);
         setSeg(undefined);
         setMode(PROGRAM_STATE.STACK);
     };
