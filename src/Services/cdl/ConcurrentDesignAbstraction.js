@@ -19,15 +19,7 @@ class ConcurrentDesignAbstraction {
         this.threadExecutionBehaviors = threadExecutionBehaviors;
         this.behaviors = this.concurrentAbstraction.behaviors;
         this.allBehaviors = allBehaviors;
-        this.behavioralExecution = {};
-        this.behavioralException = {};
-        this.behavioralViolation = {};
         this.behavioralTree = [];
-        for (let i = 0; i < this.behaviors.length; i++) {
-            this.behavioralExecution[this.behaviors[i].id] = [];
-            this.behavioralException[this.behaviors[i].id] = [];
-            this.behavioralViolation[this.behaviors[i].id] = [];
-        }
     }
 
     /**
