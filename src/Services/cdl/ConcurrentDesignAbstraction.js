@@ -196,7 +196,7 @@ class ConcurrentDesignAbstraction {
 
         // Add the entry to the behavioral tree
         this.behavioralTree.push(entryBehavior);
-        console.log(behavior.id);
+        console.log(behavior.id, entryBehavior.id);
     }
 
 
