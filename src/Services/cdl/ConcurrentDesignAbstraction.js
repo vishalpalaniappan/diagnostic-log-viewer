@@ -172,6 +172,12 @@ class ConcurrentDesignAbstraction {
             const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
             if (lastEntry.section !== behavior.id && behavior.type === "concurrent") {
                 console.log("Concurrent Section");
+                /**
+                 * This is the start of a concurrent section in the design,
+                 * I need to mark the behavior with the section id and I need
+                 * to add an entry the behavioral tree to visually group the
+                 * behavior of the concurrent section.
+                 */
             }
         }
 
