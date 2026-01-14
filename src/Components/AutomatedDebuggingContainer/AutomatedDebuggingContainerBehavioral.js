@@ -19,16 +19,18 @@ export function AutomatedDebuggingContainerBehavioral ({}) {
             const violationsFound = [];
             for (let i = 0; i < behavior.length; i++) {
                 const entry = behavior[i];
-                for (let j = 0; j < entry.violation.length; j++) {
-                    const violation = entry.violation[j];
-                    violationsFound.push(
-                        <SemanticViolationRowBehavioral
-                            key={violation.module + "-" + violation.index}
-                            violationIndex = {violation.index}
-                            violation = {violation}
-                            node = {entry}
-                        />
-                    );
+                if (entry?.violation) {
+                    for (let j = 0; j < entry.violation.length; j++) {
+                        const violation = entry.violation[j];
+                        violationsFound.push(
+                            <SemanticViolationRowBehavioral
+                                key={violation.module + "-" + violation.index}
+                                violationIndex = {violation.index}
+                                violation = {violation}
+                                node = {entry}
+                            />
+                        );
+                    }
                 }
             }
             setViolations(violationsFound);
