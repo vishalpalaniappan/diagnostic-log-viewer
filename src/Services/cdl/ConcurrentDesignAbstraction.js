@@ -175,11 +175,30 @@ class ConcurrentDesignAbstraction {
             }
         }
 
+        console.log(entry);
+
         // Save the level and the section to the entry
         const entryBehavior = {...entry.behavior};
-        entryBehavior.level = behavior.level - 1;
+        entryBehavior.level = behavior.level;
         entryBehavior.section = behavior.id;
         entryBehavior.execution = entry.execution;
+        entryBehavior.exception = [];
+        entryBehavior.violation = [];
+
+        // Save the exceptions and violations
+        for (let i = 0; i < entry.execution.length; i++) {
+            const exec = entry.execution[i];
+            if (exec.exception) {
+                entryBehavior.exception.push(exec.exception);
+            }
+            for (let j = 0; j < exec.violations.length; j++) {
+                if (exec.violations[j]) {
+                    entryBehavior.violation.push(exec.violations[j]);
+                }
+            }
+        }
+
+        console.log(entryBehavior);
         // Add the entry to the behavioral tree
         this.behavioralTree.push(entryBehavior);
         console.log(behavior.id);
