@@ -32,7 +32,39 @@ class SequentialDesignAbstraction {
         // Useful debug message, so I'm leaving this here
         console.log("");
         console.log(`Atomic behavior in thread ${initialThread} at position ${initialPosition}`);
+
+        this.traceBehavior();
     };
+
+    /**
+     * Trace the behavior from the starting position.
+     */
+    traceBehavior () {
+        const threadBehavior = this.threadExecutionBehaviors[this.initialThread];
+        let position = this.initialPosition;
+        do {
+            const entry = threadBehavior[position];
+            console.log(entry.behavior.id);
+            const isAtomic = this.isAtomic(entry.behavior.id);
+            if (isAtomic && position !== this.initialPosition) {
+                break;
+            }
+        } while (++position < threadBehavior.length);
+    }
+
+    /**
+     * This function indicates if the behavior is atomic.
+     * @param {String} id Id of behavior.
+     * @return {Boolean}
+     */
+    isAtomic (id) {
+        for (let i = 0; i < this.allBehaviors.length; i++) {
+            const behavior = this.allBehaviors[i];
+            if (behavior.id === id) {
+                return behavior?.atomic;
+            }
+        }
+    }
 }
 
 export default SequentialDesignAbstraction;
