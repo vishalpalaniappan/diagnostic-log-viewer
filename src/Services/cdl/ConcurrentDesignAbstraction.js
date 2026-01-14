@@ -163,14 +163,14 @@ class ConcurrentDesignAbstraction {
     }
 
     /**
-     * Prints tracked behavior for easy debugging. This will
-     * be extended to build the behavioral tree.
+     * Builds the behavioral tree of the concurrent abstraction.
+     * Prints tracked behavior for easy debugging.
      * @param {String} behavior Behavior of concurrent execution.
      * @param {String} entryBehavior Behavior of current enrty.
      */
     buildBehavioralTree (behavior, entryBehavior) {
         // Check if we are starting the concurrent section of the
-        // designs abstractions.
+        // designs abstractions to create a section in the UI.
         if (this.behavioralTree.length > 0) {
             const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
             if (lastEntry.section !== behavior.id && behavior.type === "concurrent") {
