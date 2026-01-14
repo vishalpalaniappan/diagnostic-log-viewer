@@ -97,7 +97,7 @@ class ConcurrentDesignAbstraction {
                 this.traceConcurrent(threadId, pos);
             } else {
                 this.appendExecution(behavior.id, entry);
-                this.buildBehavioralTree(behavior, entry.behavior);
+                this.buildBehavioralTree(behavior, entry);
             }
             if (this.concurrentCount === this.numConcurrent) {
                 break;
@@ -117,13 +117,14 @@ class ConcurrentDesignAbstraction {
             if (this.currConn) {
                 this.appendExecution(this.currConn.id, entry);
 
-                this.buildBehavioralTree(this.currConn, entry.behavior);
+                this.buildBehavioralTree(this.currConn, entry);
                 const behaviors = this.currConn.behaviors;
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
-                    const behavior = this.getBehavior(threadBehavior[pos + 1].behavior.id);
-                    if (behavior.id === "SelectEnd") {
-                        this.appendExecution(behavior.id, threadBehavior[pos + 1]);
-                        this.buildBehavioralTree(behavior, threadBehavior[pos + 1].behavior);
+                    const nextEntry = threadBehavior[pos + 1];
+                    const nextBehavior = this.getBehavior(nextEntry.behavior.id);
+                    if (nextBehavior.id === "SelectEnd") {
+                        this.appendExecution(nextBehavior.id, nextEntry);
+                        this.buildBehavioralTree(nextBehavior, nextEntry);
                     }
                     return;
                 }
@@ -166,9 +167,9 @@ class ConcurrentDesignAbstraction {
      * Builds the behavioral tree of the concurrent abstraction.
      * Prints tracked behavior for easy debugging.
      * @param {String} behavior Behavior of concurrent execution.
-     * @param {String} entryBehavior Behavior of current enrty.
+     * @param {String} entry The entry that is being processed.
      */
-    buildBehavioralTree (behavior, entryBehavior) {
+    buildBehavioralTree (behavior, entry) {
         // Check if we are starting the concurrent section of the
         // designs abstractions to create a section in the UI.
         if (this.behavioralTree.length > 0) {
@@ -178,36 +179,14 @@ class ConcurrentDesignAbstraction {
             }
         }
 
+        const entryBehavior = {...entry.behavior};
         // Save the level and the section to the entry
-        entryBehavior.level = behavior.level;
+        entryBehavior.level = behavior.level - 1;
         entryBehavior.section = behavior.id;
-
+        entryBehavior.execution = entry.execution;
         // Add the entry to the behavioral tree
         this.behavioralTree.push(entryBehavior);
         console.log(behavior.id);
-    }
-
-
-    /**
-     * Append the entry execution to the behavioral execution
-     * @param {Number} id Id of the behavior
-     * @param {Object} entry Contains the execution.
-     */
-    appendExecution(id, entry) {
-        // for (let i = 0; i < entry.execution.length; i++) {
-        //     const execution = entry.execution[i];
-        //     this.behavioralExecution[id].push(entry.execution[i]);
-        //     if (execution?.exception) {
-        //         this.behavioralException[id] = this.behavioralException[id].concat(
-        //             execution.exception
-        //         );
-        //     }
-        //     if (execution.violations.length > 0) {
-        //         this.behavioralViolation[id] = this.behavioralViolation[id].concat(
-        //             execution.violations
-        //         );
-        //     }
-        // }
     }
 
 
