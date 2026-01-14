@@ -44,7 +44,7 @@ class ConcurrentDesignAbstraction {
         // at position ${initialPosition}`);
 
         this.traceAndForkBehavior(initialThread, initialPosition);
-        this.normalizeExecutionLevels();
+        // this.normalizeExecutionLevels();
     }
 
     /**
@@ -169,25 +169,22 @@ class ConcurrentDesignAbstraction {
      * @param {String} entryBehavior Behavior of current enrty.
      */
     buildBehavioralTree (behavior, entryBehavior) {
-        // console.log(behavior.id, entryBehavior.id);
+        // Check if we are starting the concurrent section of the
+        // designs abstractions.
         if (this.behavioralTree.length > 0) {
             const lastEntry = this.behavioralTree[this.behavioralTree.length - 1];
-            if (lastEntry.id !== behavior.id) {
-                this.behavioralTree.push({
-                    "level": behavior.level - 1,
-                    "intent": behavior.intention,
-                    "id": behavior.id,
-                    "type": behavior.type,
-                });
+            if (lastEntry.section !== behavior.id && behavior.type === "concurrent") {
+                console.log("Concurrent Section");
             }
-        } else {
-            this.behavioralTree.push({
-                "level": behavior.level - 1,
-                "intent": behavior.intention,
-                "id": behavior.id,
-                "type": behavior.type,
-            });
         }
+
+        // Save the level and the section to the entry
+        entryBehavior.level = behavior.level;
+        entryBehavior.section = behavior.id;
+
+        // Add the entry to the behavioral tree
+        this.behavioralTree.push(entryBehavior);
+        console.log(behavior.id);
     }
 
 
@@ -197,20 +194,20 @@ class ConcurrentDesignAbstraction {
      * @param {Object} entry Contains the execution.
      */
     appendExecution(id, entry) {
-        for (let i = 0; i < entry.execution.length; i++) {
-            const execution = entry.execution[i];
-            this.behavioralExecution[id].push(entry.execution[i]);
-            if (execution?.exception) {
-                this.behavioralException[id] = this.behavioralException[id].concat(
-                    execution.exception
-                );
-            }
-            if (execution.violations.length > 0) {
-                this.behavioralViolation[id] = this.behavioralViolation[id].concat(
-                    execution.violations
-                );
-            }
-        }
+        // for (let i = 0; i < entry.execution.length; i++) {
+        //     const execution = entry.execution[i];
+        //     this.behavioralExecution[id].push(entry.execution[i]);
+        //     if (execution?.exception) {
+        //         this.behavioralException[id] = this.behavioralException[id].concat(
+        //             execution.exception
+        //         );
+        //     }
+        //     if (execution.violations.length > 0) {
+        //         this.behavioralViolation[id] = this.behavioralViolation[id].concat(
+        //             execution.violations
+        //         );
+        //     }
+        // }
     }
 
 
