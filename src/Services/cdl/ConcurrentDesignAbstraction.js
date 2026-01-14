@@ -173,8 +173,6 @@ class ConcurrentDesignAbstraction {
             }
         }
 
-        console.log(entry);
-
         // Save the level and the section to the entry
         const entryBehavior = {...entry.behavior};
         entryBehavior.level = behavior.level;
@@ -196,7 +194,6 @@ class ConcurrentDesignAbstraction {
             }
         }
 
-        console.log(entryBehavior);
         // Add the entry to the behavioral tree
         this.behavioralTree.push(entryBehavior);
         console.log(behavior.id);
