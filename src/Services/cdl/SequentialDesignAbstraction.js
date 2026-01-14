@@ -44,11 +44,11 @@ class SequentialDesignAbstraction {
         let position = this.initialPosition;
         do {
             const entry = threadBehavior[position];
-            console.log(entry.behavior.id);
             const isAtomic = this.isAtomic(entry.behavior.id);
             if (isAtomic && position !== this.initialPosition) {
                 break;
             }
+            console.log(entry.behavior.id);
         } while (++position < threadBehavior.length);
     }
 
