@@ -96,7 +96,6 @@ class ConcurrentDesignAbstraction {
             if (entry?.outputs.length > 0) {
                 this.traceConcurrent(threadId, pos);
             } else {
-                this.appendExecution(behavior.id, entry);
                 this.buildBehavioralTree(behavior, entry);
             }
             if (this.concurrentCount === this.numConcurrent) {
@@ -115,15 +114,12 @@ class ConcurrentDesignAbstraction {
         do {
             const entry = threadBehavior[pos];
             if (this.currConn) {
-                this.appendExecution(this.currConn.id, entry);
-
                 this.buildBehavioralTree(this.currConn, entry);
                 const behaviors = this.currConn.behaviors;
                 if (behaviors[behaviors.length - 1] === entry.behavior.id) {
                     const nextEntry = threadBehavior[pos + 1];
                     const nextBehavior = this.getBehavior(nextEntry.behavior.id);
                     if (nextBehavior.id === "SelectEnd") {
-                        this.appendExecution(nextBehavior.id, nextEntry);
                         this.buildBehavioralTree(nextBehavior, nextEntry);
                     }
                     return;
@@ -179,8 +175,8 @@ class ConcurrentDesignAbstraction {
             }
         }
 
-        const entryBehavior = {...entry.behavior};
         // Save the level and the section to the entry
+        const entryBehavior = {...entry.behavior};
         entryBehavior.level = behavior.level - 1;
         entryBehavior.section = behavior.id;
         entryBehavior.execution = entry.execution;
