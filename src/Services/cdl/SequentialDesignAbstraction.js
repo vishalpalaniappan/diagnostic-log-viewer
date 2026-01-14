@@ -15,9 +15,6 @@ class SequentialDesignAbstraction {
         this.sequentialAbstraction = sequentialAbstraction;
         this.threadExecutionBehaviors = threadExecutionBehaviors;
         this.allBehaviors = allBehaviors;
-        this.behavioralExecution = {};
-        this.behavioralException = {};
-        this.behavioralViolation = {};
         this.behavioralTree = [];
     }
 
@@ -29,9 +26,6 @@ class SequentialDesignAbstraction {
     setInitialContext (initialThread, initialPosition) {
         this.initialThread = initialThread;
         this.initialPosition = initialPosition;
-        this.behavioralExecution[initialThread] = [];
-        this.behavioralException[initialThread] = [];
-        this.behavioralViolation[initialThread] = [];
 
         // Useful debug message, so I'm leaving this here
         console.log("");
@@ -45,7 +39,7 @@ class SequentialDesignAbstraction {
      */
     traceBehavior () {
         const threadBehavior = this.threadExecutionBehaviors[this.initialThread];
-        this.behavioralTree.push(threadBehavior[this.initialPosition]);
+        this.buildBehavioralTree(threadBehavior[this.initialPosition]);
         console.log(threadBehavior[this.initialPosition]);
         let position = this.initialPosition + 1;
         do {
@@ -55,34 +49,41 @@ class SequentialDesignAbstraction {
             if (isAtomic && position !== this.initialPosition) {
                 break;
             }
-            this.behavioralTree.push(entry);
-            this.appendExecution(entry.behavior.id, entry);
+            this.buildBehavioralTree(entry);
             console.log(entry.behavior.id);
         } while (++position < threadBehavior.length);
     }
 
 
     /**
-     * Append the entry execution to the behavioral execution
-     * @param {Number} id Id of the behavior
-     * @param {Object} entry Contains the execution.
+     * Builds the behavioral tree of the sequential abstraction.
+     * Prints tracked behavior for easy debugging.
+     * @param {String} entry The entry that is being processed.
      */
-    appendExecution (id, entry) {
+    buildBehavioralTree (entry) {
+        // Save the level and the section to the entry
+        const entryBehavior = {...entry.behavior};
+        entryBehavior.level = entry.level;
+        entryBehavior.execution = entry.execution;
+        entryBehavior.exception = [];
+        entryBehavior.violation = [];
+
+        // Save the exceptions and violations
         for (let i = 0; i < entry.execution.length; i++) {
-            const execution = entry.execution[i];
-            console.log(execution);
-            this.behavioralExecution[id].push(entry.execution[i]);
-            if (execution?.exception) {
-                this.behavioralException[id] = this.behavioralException[id].concat(
-                    execution.exception
-                );
+            const exec = entry.execution[i];
+            if (exec.exception) {
+                entryBehavior.exception.push(exec.exception);
             }
-            if (execution.violations.length > 0) {
-                this.behavioralViolation[id] = this.behavioralViolation[id].concat(
-                    execution.violations
-                );
+            for (let j = 0; j < exec.violations.length; j++) {
+                if (exec.violations[j]) {
+                    entryBehavior.violation.push(exec.violations[j]);
+                }
             }
         }
+
+        // Add the entry to the behavioral tree
+        this.behavioralTree.push(entryBehavior);
+        console.log(entry.behavior.id);
     }
 
     /**
