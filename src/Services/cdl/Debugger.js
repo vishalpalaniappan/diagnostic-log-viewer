@@ -189,9 +189,6 @@ class Debugger {
             const behavior = this.transformer.atomicBehaviors[i];
             for (let j = 0; j < behavior.behavioralTree.length; j++) {
                 const entry = behavior.behavioralTree[j];
-                entry.execution = behavior.behavioralExecution[entry.id];
-                entry.exception = behavior.behavioralException[entry.id];
-                entry.violation = behavior.behavioralViolation[entry.id];
                 fullBehavioralTree.push(entry);
             }
         }
@@ -205,6 +202,8 @@ class Debugger {
                 entry.collapsible = true;
             }
         }
+
+        console.log(fullBehavioralTree);
         if (fullBehavioralTree.length > 0) {
             postMessage({
                 code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
