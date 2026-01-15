@@ -1,13 +1,14 @@
 /**
- * Design Abstraction Language class to
- * work with an instrumented design abstraction.
+ * Design Abstraction Language (DAL) class to work
+ * with an instrumented DAL Specification (DALSpec).
  */
 class DAL {
     /**
      * Initialize the DAL Interpretter
+     * @param {Object} DALSpec
      */
-    constructor () {
-
+    constructor (DALSpec) {
+        this.DALSpec = DALSpec;
     }
 
     /**
@@ -24,6 +25,21 @@ class DAL {
      * the next move through the designs structure.
      */
     moveCursor () {
+
+    }
+
+    /**
+     * Lists the design abstractions specified in DALSpec.
+     */
+    listAbstractions () {
+
+    }
+
+    /**
+     * Describes the specified DALSpec.
+     * @param {String} id ID of the abstraction.
+     */
+    describeAbstraction (id) {
 
     }
 }
