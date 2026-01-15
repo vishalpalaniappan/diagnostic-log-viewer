@@ -30,7 +30,10 @@ class ExecutionWalker {
             console.log(thread);
             for (let j = 0; j < thread.execution.length; j++ ) {
                 const execution = thread.execution[j];
-                thread.header.getBehaviorFromExecution(execution);
+                const behavior = thread.header.getBehaviorFromExecution(execution);
+                if (behavior) {
+                    console.log(behavior.id);
+                }
             }
         }
     }

@@ -160,7 +160,15 @@ class CdlHeader {
         if (exec.type === "adli_execution") {
             const absId = this.header.ltMap[exec.value].abstractionId;
             const absInfo = this.header.sdg_meta.abstractions[absId];
-            console.log(absInfo.functionalId);
+            if (!absInfo) {
+                return;
+            }
+            const behaviorMap = this.header.design_map.behavior;
+            for (let i = 0; i < behaviorMap.length; i++) {
+                if (behaviorMap[i].abstractions.includes(absInfo.functionalId)) {
+                    return behaviorMap[i];
+                }
+            }
         }
     }
 }
