@@ -8,7 +8,7 @@ class DAL {
      * @param {Object} DALSpec Instrumented Specification
      */
     constructor (DALSpec) {
-        this.DALSpec = DALSpec;
+        this.design = DALSpec.design;
         console.log("Initialized DAL instance with spec:", this.DALSpec);
     }
 
@@ -42,6 +42,22 @@ class DAL {
      */
     describeAbstraction (id) {
 
+    }
+
+    /**
+     * Returns the atomic behaviors as specified by the design.
+     * @return {Array} atomicBehaviors
+     */
+    getAtomicBehaviors () {
+        const atomicBehaviors = [];
+        for (let i = 0; i < this.design.length; i++) {
+            if (this.design[i]?.entry?.type === "atomic") {
+                atomicBehaviors.push(
+                    this.design[i]?.entry?.behavior
+                );
+            }
+        }
+        return atomicBehaviors;
     }
 }
 

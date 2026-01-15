@@ -14,6 +14,17 @@ class ExecutionWalker {
         this.threads = threads;
         this.DALSpec = new DAL(design);
         console.log("Initialized execution walker with threads:", threads);
+        this.atomicPositions = [];
+        this.getAllAtomic();
+    }
+
+
+    /**
+     * Get all the atomic behaviors.
+     */
+    getAllAtomic () {
+        const atomicBehaviors = this.DALSpec.getAtomicBehaviors();
+        console.log(atomicBehaviors);
     }
 
     /**
