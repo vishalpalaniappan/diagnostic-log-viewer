@@ -1,3 +1,4 @@
+import {normalizeExecutionLevels} from "./helper.js";
 /**
  * This class is a representation of the concurrent behavioral
  * metadata. It will be used to move forward in the concurrent
@@ -36,42 +37,12 @@ class ConcurrentDesignAbstraction {
         // at position ${initialPosition}`);
 
         this.traceAndForkBehavior(initialThread, initialPosition);
-        // this.normalizeExecutionLevels();
-    }
 
-    /**
-     * Normalizes the execution levels of the behaviors. I'm doing this
-     * because I am using the levels in the original execution tree. Since
-     * I am only displaying a portion of it, I think it makes sense to
-     * normalize it. In the future, I can do this in a more intelligent way.
-     */
-    normalizeExecutionLevels () {
-        const minLevels = {};
-        const behavioralIds = Object.keys(this.behavioralExecution);
-
-        // Find the min levels for each abstraction
-        for (let i = 0; i < behavioralIds.length; i++) {
-            const id = behavioralIds[i];
-            for (let j = 0; j < this.behavioralExecution[id].length; j++) {
-                const entry = this.behavioralExecution[id][j];
-                if (!(behavioralIds[i] in minLevels)) {
-                    minLevels[behavioralIds[i]] = entry.level;
-                } else if (entry.level < minLevels[id]) {
-                    minLevels[behavioralIds[i]] = entry.level;
-                }
-            }
-        }
-
-        // Substract the min level from every entry to normalize it
-        for (let i = 0; i < behavioralIds.length; i++) {
-            const id = behavioralIds[i];
-            for (let j = 0; j < this.behavioralExecution[id].length; j++) {
-                const entry = this.behavioralExecution[id][j];
-                entry.level = entry.level - minLevels[id];
-            }
+        for (let i = 0; i < this.behavioralTree.length; i++) {
+            const entry = this.behavioralTree[i];
+            normalizeExecutionLevels(entry.execution);
         }
     }
-
 
     /**
      *

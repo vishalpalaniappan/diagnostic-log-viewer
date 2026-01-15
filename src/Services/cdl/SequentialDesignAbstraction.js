@@ -1,3 +1,4 @@
+import {normalizeExecutionLevels} from "./helper.js";
 /**
  * This class holds the sequential design abstraction
  * and processes it using the metadata. It represents
@@ -32,6 +33,11 @@ class SequentialDesignAbstraction {
         console.log(`Atomic behavior in thread ${initialThread} at position ${initialPosition}`);
 
         this.traceBehavior();
+
+        for (let i = 0; i < this.behavioralTree.length; i++) {
+            const entry = this.behavioralTree[i];
+            normalizeExecutionLevels(entry.execution);
+        }
     };
 
     /**

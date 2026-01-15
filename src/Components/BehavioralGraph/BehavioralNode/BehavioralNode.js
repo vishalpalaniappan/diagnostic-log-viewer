@@ -140,7 +140,7 @@ export function BehavioralNode ({node}) {
                     </div>
 
                     <div className="text-container flex-grow-1">
-                        <span>{node.id}</span>
+                        <span>{node.intent}</span>
                     </div>
 
                     {node?.exception?.length > 0 ?
@@ -161,14 +161,14 @@ export function BehavioralNode ({node}) {
                         <></>
                     }
 
-                    {/* {node?.availablityViolation ?
+                    {node?.availablityViolation ?
                         <div className="status-behavioral-node availability-label">
                             <span className="message">
                                 {node?.availablityViolation}
                             </span>
                         </div>:
                         <></>
-                    } */}
+                    }
                 </div>
             </div>
         </>
