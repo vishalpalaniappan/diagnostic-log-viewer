@@ -66,12 +66,13 @@ class ExecutionWalker {
 
         do {
             const entry = thread.execution[position];
-            if (!entry?.behavior) {
+            if (entry?.behavior === undefined) {
                 continue;
             }
+            this.DALSpec.moveCursor(entry.behavior.id);
 
-            // console.log(entry.behavior.id);
-        } while (++position < thread.execution.length);
+            //Temporarily limit number of positions so I can work through logic.
+        } while (++position < thread.execution.length && position < atomic.position + 10);
     }
 
     /**

@@ -12,6 +12,7 @@ class DAL {
         console.log("Initialized DAL instance with spec:", this.DALSpec);
         this.currentAbstraction = null;
         this.currentBehavior = null;
+        this.currentStep = null;
     }
 
     /**
@@ -27,6 +28,7 @@ class DAL {
                 if (abs.entry.behavior === behavior) {
                     this.currentAbstraction = abs;
                     this.currentBehavior = behavior;
+                    this.currentStep = 0;
                 }
             }
         }
@@ -36,9 +38,30 @@ class DAL {
      * Move the cursor by passing the next abstraction that
      * was read from the execution. This function will validate
      * the next move through the designs structure.
+     * @param {Object} behavior
      */
-    moveCursor () {
+    moveCursor (behavior) {
+        let currStep = this.currentAbstraction.steps[this.currentStep];
+        if (!currStep.behavior.includes(behavior)) {
+            this.currentStep++;
+        }
 
+        currStep = this.currentAbstraction.steps[this.currentStep];
+        console.log(behavior, currStep.type);
+
+        switch (currStep.type) {
+            case "sequential":
+                if (currStep.behavior.includes(behavior)) {
+                    console.log("Still in step");
+                } else {
+                    this.currentStep++;
+                }
+                break;
+            case "selector":
+                break;
+            default:
+                break;
+        }
     }
 
     /**
