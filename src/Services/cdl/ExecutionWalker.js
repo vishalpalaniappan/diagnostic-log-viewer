@@ -24,7 +24,15 @@ class ExecutionWalker {
      */
     getAllAtomic () {
         const atomicBehaviors = this.DALSpec.getAtomicBehaviors();
-        console.log(atomicBehaviors);
+        const keys = Object.keys(this.threads);
+        for (let i = 0; i < keys.length; i++) {
+            const thread = this.threads[keys[i]].thread;
+            console.log(thread);
+            for (let j = 0; j < thread.execution.length; j++ ) {
+                const execution = thread.execution[j];
+                thread.header.getBehaviorFromExecution(execution);
+            }
+        }
     }
 
     /**

@@ -150,6 +150,19 @@ class CdlHeader {
             return null;
         }
     }
+
+    /**
+     * Given the lt, return the abstraction.
+     * @param {Object} exec
+     * @return {String}
+     */
+    getBehaviorFromExecution (exec) {
+        if (exec.type === "adli_execution") {
+            const absId = this.header.ltMap[exec.value].abstractionId;
+            const absInfo = this.header.sdg_meta.abstractions[absId];
+            console.log(absInfo.functionalId);
+        }
+    }
 }
 
 export default CdlHeader;
