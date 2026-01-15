@@ -27,15 +27,19 @@ class ExecutionWalker {
         const keys = Object.keys(this.threads);
         for (let i = 0; i < keys.length; i++) {
             const thread = this.threads[keys[i]].thread;
-            console.log(thread);
+            let currBehavior;
             for (let j = 0; j < thread.execution.length; j++ ) {
-                const execution = thread.execution[j];
-                const behavior = thread.header.getBehaviorFromExecution(execution);
+                const behavior = thread.header.getBehaviorFromExecution(thread.execution[j]);
                 if (behavior) {
-                    console.log(behavior.id);
+                    thread.execution[j].behavior = behavior;
+                    if (currBehavior !== behavior.id && atomicBehaviors.includes(behavior.id)) {
+                        this.atomicPositions.push(thread.execution[j]);
+                    }
+                    currBehavior = behavior.id;
                 }
             }
         }
+        console.log(this.atomicPositions);
     }
 
     /**
