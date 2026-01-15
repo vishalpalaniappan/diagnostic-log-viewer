@@ -16,6 +16,7 @@ class ExecutionWalker {
         console.log("Initialized execution walker with threads:", threads);
         this.atomicPositions = [];
         this.getAllAtomic();
+        this.processAtomic();
     }
 
 
@@ -30,25 +31,31 @@ class ExecutionWalker {
             let currBehavior;
             for (let j = 0; j < thread.execution.length; j++ ) {
                 const behavior = thread.header.getBehaviorFromExecution(thread.execution[j]);
-                if (behavior) {
-                    thread.execution[j].behavior = behavior;
-                    if (currBehavior !== behavior.id && atomicBehaviors.includes(behavior.id)) {
-                        this.atomicPositions.push(thread.execution[j]);
-                    }
-                    currBehavior = behavior.id;
+                if (behavior === undefined) {
+                    continue;
                 }
+                thread.execution[j].behavior = behavior;
+                // If we enter new behavior and its atomic, add it to list.
+                if (currBehavior !== behavior.id && atomicBehaviors.includes(behavior.id)) {
+                    this.atomicPositions.push({
+                        "position": j,
+                        "execution": thread.execution[j],
+                    });
+                }
+                currBehavior = behavior.id;
             }
         }
         console.log(this.atomicPositions);
     }
 
     /**
-     * Moves to the next execution in the execution when requested
-     * by the DAL. It does not set the state until DAL verifies
+     * Moves to the next execution as instructured by
+     * the DAL. It does not set the state until DAL verifies
      * that the design expects this move.
      */
-    getNext () {
-
+    processAtomic () {
+        const atomic = this.atomicPositions[0];
+        console.log(atomic);
     }
 
     /**
