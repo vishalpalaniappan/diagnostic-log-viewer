@@ -5,10 +5,11 @@
 class DAL {
     /**
      * Initialize the DAL Interpretter
-     * @param {Object} DALSpec
+     * @param {Object} DALSpec Instrumented Specification
      */
     constructor (DALSpec) {
         this.DALSpec = DALSpec;
+        console.log("Initialized DAL instance with spec:", this.DALSpec);
     }
 
     /**

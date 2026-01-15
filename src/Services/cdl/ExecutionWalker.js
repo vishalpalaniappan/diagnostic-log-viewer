@@ -1,3 +1,4 @@
+import DAL from "./DAL";
 /**
  * Walks the execution given all the thread files. It is used
  * by the DAL object to move through the execution using the
@@ -7,9 +8,12 @@ class ExecutionWalker {
     /**
      * Initialize the execution walker with the threads.
      * @param {Object} threads
+     * @param {Object} design
      */
-    constructor (threads) {
-
+    constructor (threads, design) {
+        this.threads = threads;
+        this.DALSpec = new DAL(design);
+        console.log("Initialized execution walker with threads:", threads);
     }
 
     /**
