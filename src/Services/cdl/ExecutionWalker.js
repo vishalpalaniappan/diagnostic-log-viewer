@@ -55,7 +55,16 @@ class ExecutionWalker {
      */
     processAtomic () {
         const atomic = this.atomicPositions[0];
-        console.log(atomic);
+        let position = atomic.position;
+        const thread = this.threads[atomic.execution.thread].thread;
+        do {
+            const entry = thread.execution[position];
+            if (!entry?.behavior) {
+                continue;
+            }
+
+            console.log(entry.behavior.id);
+        } while (++position < thread.execution.length);
     }
 
     /**
