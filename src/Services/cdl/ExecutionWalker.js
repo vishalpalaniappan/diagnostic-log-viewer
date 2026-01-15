@@ -55,15 +55,22 @@ class ExecutionWalker {
      */
     processAtomic () {
         const atomic = this.atomicPositions[0];
-        let position = atomic.position;
         const thread = this.threads[atomic.execution.thread].thread;
+        this.DALSpec.setCursor(atomic.execution.behavior.id);
+        let position = atomic.position + 1;
+
+        if (position >= thread.execution.length) {
+            console.log("Reached end of file.");
+            return;
+        }
+
         do {
             const entry = thread.execution[position];
             if (!entry?.behavior) {
                 continue;
             }
 
-            console.log(entry.behavior.id);
+            // console.log(entry.behavior.id);
         } while (++position < thread.execution.length);
     }
 

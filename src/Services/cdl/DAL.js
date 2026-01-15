@@ -15,9 +15,10 @@ class DAL {
     /**
      * Set the cursor of the DAL execution walker by passing
      * it the atomic design abstraction.
+     * @param {Object} behavior
      */
-    setCursor () {
-
+    setCursor (behavior) {
+        console.log("Setting cursor:", behavior);
     }
 
     /**
