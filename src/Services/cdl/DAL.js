@@ -53,8 +53,6 @@ class DAL {
             case "sequential":
                 if (currStep.behavior.includes(behavior)) {
                     console.log("Still in step");
-                } else {
-                    this.currentStep++;
                 }
                 break;
             case "selector":

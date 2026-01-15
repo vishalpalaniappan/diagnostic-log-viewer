@@ -72,7 +72,7 @@ class ExecutionWalker {
             this.DALSpec.moveCursor(entry.behavior.id);
 
             //Temporarily limit number of positions so I can work through logic.
-        } while (++position < thread.execution.length && position < atomic.position + 10);
+        } while (++position < thread.execution.length && position < atomic.position + 5);
     }
 
     /**
