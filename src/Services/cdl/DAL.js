@@ -41,25 +41,28 @@ class DAL {
      * @param {Object} behavior
      */
     moveCursor (behavior) {
-        let currStep = this.currentAbstraction.steps[this.currentStep];
+        console.log(behavior);
+        const isNewStep = this.checkCurrentStep(behavior);
+        if (isNewStep) {
+            console.log("Moved onto new step: ", this.currentStep);
+        } else {
+            console.log("In step: ", this.currentStep);
+        }
+    }
+
+
+    /**
+     * Checks if the provided behavior has moved onto the next step.
+     * @param {Object} behavior
+     * @return {Boolean}
+     */
+    checkCurrentStep (behavior) {
+        const currStep = this.currentAbstraction.steps[this.currentStep];
         if (!currStep.behavior.includes(behavior)) {
             this.currentStep++;
+            return true;
         }
-
-        currStep = this.currentAbstraction.steps[this.currentStep];
-        console.log(behavior, currStep.type);
-
-        switch (currStep.type) {
-            case "sequential":
-                if (currStep.behavior.includes(behavior)) {
-                    console.log("Still in step");
-                }
-                break;
-            case "selector":
-                break;
-            default:
-                break;
-        }
+        return false;
     }
 
     /**
