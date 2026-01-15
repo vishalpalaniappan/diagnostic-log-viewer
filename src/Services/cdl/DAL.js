@@ -10,6 +10,8 @@ class DAL {
     constructor (DALSpec) {
         this.design = DALSpec.design;
         console.log("Initialized DAL instance with spec:", this.DALSpec);
+        this.currentAbstraction = null;
+        this.currentBehavior = null;
     }
 
     /**
@@ -19,6 +21,15 @@ class DAL {
      */
     setCursor (behavior) {
         console.log("Setting cursor:", behavior);
+        for (let i = 0; i < this.design.length; i++) {
+            const abs = this.design[i];
+            if (abs?.entry) {
+                if (abs.entry.behavior === behavior) {
+                    this.currentAbstraction = abs;
+                    this.currentBehavior = behavior;
+                }
+            }
+        }
     }
 
     /**
