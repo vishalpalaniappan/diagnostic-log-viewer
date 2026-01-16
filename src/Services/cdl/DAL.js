@@ -1,4 +1,3 @@
-import { TelephoneMinus } from "react-bootstrap-icons";
 
 /**
  * Design Abstraction Language (DAL) class to work
@@ -74,18 +73,6 @@ class DAL {
     }
 
     /**
-     * Pretty prints the current state.
-     * @param {String} behavior
-     * @param {String} functionalId
-     */
-    printEntry (behavior, functionalId) {
-        const spaces = 4;
-        const spacer = " ".repeat(spaces);
-        const space = spacer.repeat(this.abstractionStack.length);
-        console.log(space + behavior+"-"+functionalId);
-    }
-
-    /**
      * Move to the next step.
      * @param {Object} behavior
      */
@@ -137,14 +124,16 @@ class DAL {
         });
     }
 
-
     /**
-     * Checks if the provided behavior has moved onto the next step.
-     * @param {Object} behavior
-     * @return {Boolean}
+     * Pretty prints the current state.
+     * @param {String} behavior
+     * @param {String} functionalId
      */
-    checkCurrentStep (behavior) {
-        return false;
+    printEntry (behavior, functionalId) {
+        const spaces = 4;
+        const spacer = " ".repeat(spaces);
+        const space = spacer.repeat(this.abstractionStack.length);
+        console.log(space + behavior+"-"+functionalId);
     }
 
     /**
