@@ -1,3 +1,5 @@
+import { TelephoneMinus } from "react-bootstrap-icons";
+
 /**
  * Design Abstraction Language (DAL) class to work
  * with an instrumented DAL Specification (DALSpec).
@@ -13,6 +15,7 @@ class DAL {
         this.currentAbstraction = null;
         this.currentBehavior = null;
         this.currentStep = null;
+        this.abstractionStack = [];
     }
 
     /**
@@ -29,6 +32,11 @@ class DAL {
                     this.currentAbstraction = abs;
                     this.currentBehavior = behavior;
                     this.currentStep = 0;
+
+                    this.abstractionStack.push({
+                        abstraction: this.currentAbstraction,
+                        step: this.currentStep,
+                    });
                 }
             }
         }
@@ -39,15 +47,66 @@ class DAL {
      * was read from the execution. This function will validate
      * the next move through the designs structure.
      * @param {Object} behavior
+     * @param {Object} functionalId
+     * @return {null} 
      */
-    moveCursor (behavior) {
-        console.log(behavior);
-        const isNewStep = this.checkCurrentStep(behavior);
-        if (isNewStep) {
-            console.log("Moved onto new step: ", this.currentStep);
-        } else {
-            console.log("In step: ", this.currentStep);
+    moveCursor (behavior, functionalId) {
+        const currStep = this.currentAbstraction.steps[this.currentStep];
+        if (currStep.behavior.includes(behavior)) {
+            console.log(behavior, functionalId);
+            return;
         }
+
+        const done = this.moveStep(behavior);
+        if (!done) {
+            console.log(behavior, functionalId);
+        }
+        return done;
+    }
+
+    /**
+     * Move to the next step.
+     * @param {Object} behavior
+     * @return {Boolean}
+     */
+    moveStep (behavior) {
+        if (this.currentStep + 1 >= this.currentAbstraction.steps.length) {
+            console.log("Reached end of behavior");
+            return true;
+        } else {
+            this.currentStep++;
+            const currStep = this.currentAbstraction.steps[this.currentStep];
+            if (currStep.type === "selector") {
+                this.setCursor(behavior);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Adds the current abstraciton and step to the stack.
+     */
+    addToStack () {
+        const absStack = this.abstractionStack;
+
+        if (absStack.length === 0) {
+            absStack.push({
+                abstraction: this.currentAbstraction,
+                step: this.currentStep,
+            });
+            return;
+        }
+
+        const stackTop = absStack[absStack.length - 1];
+        if (stackTop.abstraction === this.currentAbstraction) {
+            stackTop.step = this.currentStep;
+            return;
+        }
+
+        this.abstractionStack.push({
+            abstraction: this.currentAbstraction,
+            step: this.currentStep,
+        });
     }
 
 
@@ -57,11 +116,6 @@ class DAL {
      * @return {Boolean}
      */
     checkCurrentStep (behavior) {
-        const currStep = this.currentAbstraction.steps[this.currentStep];
-        if (!currStep.behavior.includes(behavior)) {
-            this.currentStep++;
-            return true;
-        }
         return false;
     }
 
