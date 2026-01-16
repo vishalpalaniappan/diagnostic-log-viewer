@@ -1,4 +1,5 @@
 import DesignAbstraction from "./DesignAbstraction";
+import AbstractionStack from "./AbstractionStack";
 /**
  * Design Abstraction Language (DAL) class to work
  * with an instrumented DAL Specification (DALSpec).
@@ -14,7 +15,7 @@ class DAL {
         this.currentAbstraction = null;
         this.currentBehavior = null;
         this.currentStep = null;
-        this.abstractionStack = [];
+        this.abstractionStack = new AbstractionStack();
     }
 
     /**
@@ -23,22 +24,11 @@ class DAL {
      * @param {Object} behavior
      */
     setCursor (behavior) {
-        // console.log("");
-        // console.log("Setting cursor:", behavior);
         for (let i = 0; i < this.design.length; i++) {
             const abs = this.design[i];
             if (abs?.entry) {
                 if (abs.entry.behavior === behavior) {
-                    this.currentAbstraction = abs;
-                    this.currentBehavior = behavior;
-                    this.currentStep = 0;
-
-                    this.abstractionStack.push(
-                        new DesignAbstraction(
-                            this.currentAbstraction,
-                            this.currentStep
-                        )
-                    );
+                    this.abstractionStack.addToStack(abs);
                 }
             }
         }
@@ -53,14 +43,14 @@ class DAL {
      * @return {null}
      */
     moveCursor (behavior, functionalId) {
-        if (this.abstractionStack.length === 0) {
+        if (this.abstractionStack.isEmpty()) {
             console.log("We are already done");
             return true;
         }
 
         this.moveStep(behavior);
 
-        if (this.abstractionStack.length > 0) {
+        if (!this.abstractionStack.isEmpty()) {
             this.printEntry(behavior, functionalId);
         }
     }
@@ -70,8 +60,7 @@ class DAL {
      * @param {Object} behavior
      */
     moveStep (behavior) {
-        const as = this.abstractionStack;
-        const entry = as[as.length - 1];
+        const entry = this.abstractionStack.getTopOfStack();
         const currStep = entry.abstraction.steps[entry.step];
 
         // The behavior is the same as what is being exhibted
@@ -80,11 +69,11 @@ class DAL {
         }
 
         do {
-            const entry = as[as.length - 1];
+            const entry = this.abstractionStack.getTopOfStack();
             if (entry.step + 1 >= entry.abstraction.steps.length) {
-                this.abstractionStack.pop();
+                this.abstractionStack.popStack();
             } else {
-                const entry = as[as.length - 1];
+                const entry = this.abstractionStack.getTopOfStack();
                 entry.step++;
 
                 const currStep = entry.abstraction.steps[entry.step];
@@ -95,33 +84,7 @@ class DAL {
                 }
                 break;
             }
-        } while (this.abstractionStack.length > 0);
-    }
-
-    /**
-     * Adds the current abstraciton and step to the stack.
-     */
-    addToStack () {
-        const absStack = this.abstractionStack;
-
-        if (absStack.length === 0) {
-            absStack.push({
-                abstraction: this.currentAbstraction,
-                step: this.currentStep,
-            });
-            return;
-        }
-
-        const stackTop = absStack[absStack.length - 1];
-        if (stackTop.abstraction === this.currentAbstraction) {
-            stackTop.step = this.currentStep;
-            return;
-        }
-
-        this.abstractionStack.push({
-            abstraction: this.currentAbstraction,
-            step: this.currentStep,
-        });
+        } while (!this.abstractionStack.isEmpty());
     }
 
     /**
@@ -132,7 +95,7 @@ class DAL {
     printEntry (behavior, functionalId) {
         const spaces = 4;
         const spacer = " ".repeat(spaces);
-        const space = spacer.repeat(this.abstractionStack.length);
+        const space = spacer.repeat(this.abstractionStack.getStackSize());
         console.log(space + behavior+"-"+functionalId);
     }
 

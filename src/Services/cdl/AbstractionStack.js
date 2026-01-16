@@ -12,14 +12,48 @@ class AbstractionStack {
     }
     /**
      * Add behavior to abstraction stack.
+     * @param {Object} abs
      */
-    addToStack () {
+    addToStack (abs) {
+        this.stack.push(
+            new DesignAbstraction(abs, 0)
+        );
+    }
+
+    /**
+     * Returns a boolean value indicating if
+     * the stack is empty.
+     * @return {Boolean}
+     */
+    isEmpty () {
+        return this.stack.length === 0;
+    }
+
+    /**
+     * Returns the entry at the top of the stack.
+     * @return {DesignAbstraction}
+     */
+    getTopOfStack () {
+        if (!this.isEmpty()) {
+            return this.stack[this.stack.length - 1];
+        }
+    }
+
+    /**
+     * Returns the size of the stack.
+     * @return {Number}
+     */
+    getStackSize () {
+        return this.stack.length;
     }
 
     /**
      * Removes the top of the stack.
      */
     popStack () {
+        if (!this.isEmpty()) {
+            this.stack.pop();
+        }
     }
 
     /**
