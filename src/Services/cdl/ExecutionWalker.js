@@ -56,7 +56,7 @@ class ExecutionWalker {
      * that the design expects this move.
      */
     processAtomic () {
-        const atomic = this.atomicPositions[8];
+        const atomic = this.atomicPositions[4];
         const thread = this.threads[atomic.execution.thread].thread;
         this.DALSpec.setCursor(atomic.execution.behavior.id);
         let position = atomic.position + 1;

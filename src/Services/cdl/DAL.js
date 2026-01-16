@@ -24,8 +24,8 @@ class DAL {
      * @param {Object} behavior
      */
     setCursor (behavior) {
-        console.log("");
-        console.log("Setting cursor:", behavior);
+        // console.log("");
+        // console.log("Setting cursor:", behavior);
         for (let i = 0; i < this.design.length; i++) {
             const abs = this.design[i];
             if (abs?.entry) {
@@ -61,17 +61,28 @@ class DAL {
         const currStep = entry.abstraction.steps[entry.step];
 
         if (currStep.behavior.includes(behavior)) {
-            console.log("    Same:", behavior, functionalId);
+            this.printEntry(behavior, functionalId);
             return;
         }
 
         const done = this.moveStep(behavior);
-        if (!done) {
-            console.log(behavior, functionalId);
-        } else {
-            console.log("DONE");
+
+        if (this.abstractionStack.length > 0) {
+            this.printEntry(behavior, functionalId);
         }
         return done;
+    }
+
+    /**
+     * Pretty prints the current state.
+     * @param {String} behavior
+     * @param {String} functionalId
+     */
+    printEntry (behavior, functionalId) {
+        const spaces = 4;
+        const spacer = " ".repeat(spaces);
+        const space = spacer.repeat(this.abstractionStack.length);
+        console.log(space + behavior+"-"+functionalId);
     }
 
     /**
@@ -86,7 +97,6 @@ class DAL {
         do {
             const entry = as[as.length - 1];
             if (entry.step + 1 >= entry.abstraction.steps.length) {
-                console.log("Moving down level");
                 this.abstractionStack.pop();
             } else {
                 const entry = as[as.length - 1];
