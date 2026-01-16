@@ -55,14 +55,6 @@ class DAL {
             console.log("We are already done");
             return true;
         }
-        const as = this.abstractionStack;
-        const entry = as[as.length - 1];
-        const currStep = entry.abstraction.steps[entry.step];
-
-        if (currStep.behavior.includes(behavior)) {
-            this.printEntry(behavior, functionalId);
-            return;
-        }
 
         const done = this.moveStep(behavior);
 
@@ -77,9 +69,14 @@ class DAL {
      * @param {Object} behavior
      */
     moveStep (behavior) {
-        // When moving step, check if we reached end of stack position
-        // so keep moving down until we get to the next position
         const as = this.abstractionStack;
+        const entry = as[as.length - 1];
+        const currStep = entry.abstraction.steps[entry.step];
+
+        // The behavior is the same as what is being exhibted
+        if (currStep.behavior.includes(behavior)) {
+            return;
+        }
 
         do {
             const entry = as[as.length - 1];
@@ -91,6 +88,8 @@ class DAL {
 
                 const currStep = entry.abstraction.steps[entry.step];
                 if (currStep.type === "selector") {
+                    // TODO: Validate that the selected behavior
+                    // is a valid option
                     this.setCursor(behavior);
                 }
                 break;
