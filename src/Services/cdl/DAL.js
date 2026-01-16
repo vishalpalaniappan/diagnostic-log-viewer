@@ -24,6 +24,7 @@ class DAL {
      * @param {Object} behavior
      */
     setCursor (behavior) {
+        console.log("");
         console.log("Setting cursor:", behavior);
         for (let i = 0; i < this.design.length; i++) {
             const abs = this.design[i];
@@ -48,18 +49,27 @@ class DAL {
      * the next move through the designs structure.
      * @param {Object} behavior
      * @param {Object} functionalId
-     * @return {null} 
+     * @return {null}
      */
     moveCursor (behavior, functionalId) {
-        const currStep = this.currentAbstraction.steps[this.currentStep];
+        if (this.abstractionStack.length === 0) {
+            console.log("We are already done");
+            return true;
+        }
+        const as = this.abstractionStack;
+        const entry = as[as.length - 1];
+        const currStep = entry.abstraction.steps[entry.step];
+
         if (currStep.behavior.includes(behavior)) {
-            console.log(behavior, functionalId);
+            console.log("    Same:", behavior, functionalId);
             return;
         }
 
         const done = this.moveStep(behavior);
         if (!done) {
             console.log(behavior, functionalId);
+        } else {
+            console.log("DONE");
         }
         return done;
     }
@@ -67,20 +77,28 @@ class DAL {
     /**
      * Move to the next step.
      * @param {Object} behavior
-     * @return {Boolean}
      */
     moveStep (behavior) {
-        if (this.currentStep + 1 >= this.currentAbstraction.steps.length) {
-            console.log("Reached end of behavior");
-            return true;
-        } else {
-            this.currentStep++;
-            const currStep = this.currentAbstraction.steps[this.currentStep];
-            if (currStep.type === "selector") {
-                this.setCursor(behavior);
+        // When moving step, check if we reached end of stack position
+        // so keep moving down until we get to the next position
+        const as = this.abstractionStack;
+
+        do {
+            const entry = as[as.length - 1];
+            if (entry.step + 1 >= entry.abstraction.steps.length) {
+                console.log("Moving down level");
+                this.abstractionStack.pop();
+            } else {
+                const entry = as[as.length - 1];
+                entry.step++;
+
+                const currStep = entry.abstraction.steps[entry.step];
+                if (currStep.type === "selector") {
+                    this.setCursor(behavior);
+                }
+                break;
             }
-        }
-        return false;
+        } while (this.abstractionStack.length > 0);
     }
 
     /**
