@@ -1,7 +1,7 @@
 import DesignAbstraction from "./DesignAbstraction";
 /**
- * Represents an instance of an abstraction object
- * loaded into the abstraction stack.
+ * Represents the abstraction stack with entries that
+ * are represented with Design Abstraction object.
  */
 class AbstractionStack {
     /**

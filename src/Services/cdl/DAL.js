@@ -1,4 +1,4 @@
-import DesignAbstraction from "./Abstraction";
+import DesignAbstraction from "./DesignAbstraction";
 /**
  * Design Abstraction Language (DAL) class to work
  * with an instrumented DAL Specification (DALSpec).
