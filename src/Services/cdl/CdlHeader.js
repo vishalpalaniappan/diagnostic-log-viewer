@@ -166,7 +166,10 @@ class CdlHeader {
             const behaviorMap = this.header.design_map.behavior;
             for (let i = 0; i < behaviorMap.length; i++) {
                 if (behaviorMap[i].abstractions.includes(absInfo.functionalId)) {
-                    return behaviorMap[i];
+                    return {
+                        behavior: behaviorMap[i],
+                        functionalId: absInfo.functionalId,
+                    };
                 }
             }
         }

@@ -30,11 +30,13 @@ class ExecutionWalker {
             const thread = this.threads[keys[i]].thread;
             let currBehavior;
             for (let j = 0; j < thread.execution.length; j++ ) {
-                const behavior = thread.header.getBehaviorFromExecution(thread.execution[j]);
-                if (behavior === undefined) {
+                const info = thread.header.getBehaviorFromExecution(thread.execution[j]);
+                if (info === undefined) {
                     continue;
                 }
+                const behavior = info.behavior;
                 thread.execution[j].behavior = behavior;
+                thread.execution[j].functionalId = info.functionalId;
                 // If we enter new behavior and its atomic, add it to list.
                 if (currBehavior !== behavior.id && atomicBehaviors.includes(behavior.id)) {
                     this.atomicPositions.push({
@@ -69,10 +71,11 @@ class ExecutionWalker {
             if (entry?.behavior === undefined) {
                 continue;
             }
+            console.log(entry.behavior.id, entry.functionalId);
             this.DALSpec.moveCursor(entry.behavior.id);
 
             //Temporarily limit number of positions so I can work through logic.
-        } while (++position < thread.execution.length && position < atomic.position + 5);
+        } while (++position < thread.execution.length && position < atomic.position + 20);
     }
 
     /**
