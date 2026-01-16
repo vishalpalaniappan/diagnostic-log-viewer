@@ -1,4 +1,4 @@
-
+import DesignAbstraction from "./Abstraction";
 /**
  * Design Abstraction Language (DAL) class to work
  * with an instrumented DAL Specification (DALSpec).
@@ -33,10 +33,12 @@ class DAL {
                     this.currentBehavior = behavior;
                     this.currentStep = 0;
 
-                    this.abstractionStack.push({
-                        abstraction: this.currentAbstraction,
-                        step: this.currentStep,
-                    });
+                    this.abstractionStack.push(
+                        new DesignAbstraction(
+                            this.currentAbstraction,
+                            this.currentStep
+                        )
+                    );
                 }
             }
         }

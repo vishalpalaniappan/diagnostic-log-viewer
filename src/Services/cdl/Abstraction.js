@@ -11,7 +11,7 @@ class DesignAbstraction {
      */
     constructor(abstraction, step) {
         this.abstraction = abstraction;
-        this.currentStep = step;
+        this.step = step;
     }
     /**
      * Given an ID, if the next step
