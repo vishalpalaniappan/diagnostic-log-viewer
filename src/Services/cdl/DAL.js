@@ -56,12 +56,11 @@ class DAL {
             return true;
         }
 
-        const done = this.moveStep(behavior);
+        this.moveStep(behavior);
 
         if (this.abstractionStack.length > 0) {
             this.printEntry(behavior, functionalId);
         }
-        return done;
     }
 
     /**
