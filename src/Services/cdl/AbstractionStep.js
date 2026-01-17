@@ -11,8 +11,8 @@ class AbstractionStep {
         this.type = step.type;
         this.behaviorIndex = 0;
 
-        if (this.type !== "selector") {
-            this.currentBehavior = step.behavior[this.behaviorIndex];
+        if (this.type === "sequential") {
+            this.currentBehavior = this.step.behavior[this.behaviorIndex];
         }
     }
 
@@ -22,9 +22,20 @@ class AbstractionStep {
      * @param {Object} behavior
      */
     evaluateBehavior (behavior) {
-        if (behavior === this.currentBehavior) {
-            console.log("Same behavior in step: ", behavior);
-            return;
+        if (this.type === "sequential") {
+            const index = this.step.behavior.indexOf(behavior);
+
+            if (index === -1) {
+                console.log("Behavior isn't in this current sequential step");
+            } else {
+                if (index === this.behaviorIndex) {
+                    console.log("Same behavior in step: ", behavior);
+                } else if (index === this.behaviorIndex + 1) {
+                    console.log("Moved onto next behavior in step", behavior);
+                } else if (index > this.behaviorIndex + 1) {
+                    console.warn("Moved over behavior in step");
+                }
+            }
         }
     }
 }
