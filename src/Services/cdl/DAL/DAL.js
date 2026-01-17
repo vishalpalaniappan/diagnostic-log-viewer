@@ -21,13 +21,15 @@ class DAL {
      * Set the cursor of the DAL execution walker by passing
      * it the atomic design abstraction.
      * @param {Object} behavior
+     * @param {Object} functionalId
      */
-    setCursor (behavior) {
+    setCursor (behavior, functionalId) {
         for (let i = 0; i < this.design.length; i++) {
             const abs = this.design[i];
             if (abs?.entry) {
                 if (abs.entry === behavior) {
                     this.abstractionStack.addToStack(abs);
+                    this.abstractionStack.printState(behavior, functionalId);
                 }
             }
         }
@@ -45,7 +47,6 @@ class DAL {
         this.abstractionStack.evaluateBehavior(behavior, functionalId);
 
         if (this.abstractionStack.isEmpty()) {
-            console.log("Atomic behvior has finished.");
             return true;
         }
     }

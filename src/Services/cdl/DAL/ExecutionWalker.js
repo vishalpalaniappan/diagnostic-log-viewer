@@ -56,30 +56,31 @@ class ExecutionWalker {
      * that the design expects this move.
      */
     processAtomic () {
-        const atomic = this.atomicPositions[4];
-        const thread = this.threads[atomic.execution.thread].thread;
-        this.DALSpec.setCursor(atomic.execution.behavior.id);
-        let position = atomic.position + 1;
+        for (let i = 0; i < this.atomicPositions.length; i++) {
+            console.log("");
+            const atomic = this.atomicPositions[i];
+            const thread = this.threads[atomic.execution.thread].thread;
+            this.DALSpec.setCursor(atomic.execution.behavior.id, atomic.execution.functionalId);
+            let position = atomic.position + 1;
 
-        if (position >= thread.execution.length) {
-            console.log("Reached end of file.");
-            return;
+            if (position >= thread.execution.length) {
+                console.log("Reached end of file.");
+                return;
+            }
+
+            do {
+                const entry = thread.execution[position];
+                if (entry?.behavior === undefined) {
+                    continue;
+                }
+
+                const done = this.DALSpec.moveCursor(entry.behavior.id, entry.functionalId);
+
+                if (done) {
+                    break;
+                }
+            } while (++position < thread.execution.length);
         }
-
-        do {
-            const entry = thread.execution[position];
-            if (entry?.behavior === undefined) {
-                continue;
-            }
-
-            const done = this.DALSpec.moveCursor(entry.behavior.id, entry.functionalId);
-
-            if (done) {
-                break;
-            }
-
-            // Temporarily limit num of positions so I can work through logic.
-        } while (++position < thread.execution.length);
     }
 
     /**
