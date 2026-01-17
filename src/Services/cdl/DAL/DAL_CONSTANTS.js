@@ -6,7 +6,7 @@ export const STEP = Object.freeze({
     GOTO_MODULE: 5,
 });
 
-export const STACK = Object.freeze({
+export const DESIGN = Object.freeze({
     GOTO_MODULE: 1,
     BEHAVIOR_NOT_FOUND: 2,
     DESIGN_ABS_DONE: 3,

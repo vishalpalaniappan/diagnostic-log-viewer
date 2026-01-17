@@ -1,4 +1,4 @@
-import {STACK} from "./DAL_CONSTANTS.js";
+import {DESIGN} from "./DAL_CONSTANTS.js";
 import DesignAbstraction from "./DesignAbstraction";
 
 /**
@@ -99,10 +99,10 @@ class AbstractionStack {
         const result = top.testNext(id, functionalId);
 
         if (result) {
-            if (result.id === STACK.GOTO_MODULE) {
+            if (result.id === DESIGN.GOTO_MODULE) {
                 // console.log("Going to module:", result.args);
                 this.goToModule(result.args.module);
-            } else if (result.id === STACK.DESIGN_ABS_DONE) {
+            } else if (result.id === DESIGN.DESIGN_ABS_DONE) {
                 // console.log("DESIGN ABS DONE");
                 this.popStack();
             }

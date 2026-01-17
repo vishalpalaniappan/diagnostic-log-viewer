@@ -1,5 +1,5 @@
 import AbstractionStep from "./AbstractionStep";
-import {STACK, STEP} from "./DAL_CONSTANTS";
+import {DESIGN, STEP} from "./DAL_CONSTANTS";
 /**
  * Represents an instance of an abstraction object
  * loaded intot he abstraction stack.
@@ -51,7 +51,7 @@ class DesignAbstraction {
             } else if (result.id === STEP.GOTO_MODULE) {
                 // console.log("Going to abstraction:", result.args);
                 this.step++;
-                return this.getResponse(STACK.GOTO_MODULE, result.args);
+                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
             } else {
                 console.warn("Unknown response from step object");
                 break;
@@ -59,7 +59,7 @@ class DesignAbstraction {
         };
 
         if (this.step >= this.abstraction.steps.length) {
-            return this.getResponse(STACK.DESIGN_ABS_DONE, null);
+            return this.getResponse(DESIGN.DESIGN_ABS_DONE, null);
         }
     }
 
