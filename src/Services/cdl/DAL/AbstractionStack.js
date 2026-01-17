@@ -96,7 +96,7 @@ class AbstractionStack {
      */
     evaluateBehavior (id, functionalId) {
         const top = this.getTopOfStack();
-        const result = top.testNext(id, functionalId);
+        const result = top.testNext(id);
 
         if (result) {
             if (result.id === DESIGN.GOTO_MODULE) {
