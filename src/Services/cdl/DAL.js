@@ -26,7 +26,7 @@ class DAL {
         for (let i = 0; i < this.design.length; i++) {
             const abs = this.design[i];
             if (abs?.entry) {
-                if (abs.entry.behavior === behavior) {
+                if (abs.entry === behavior) {
                     this.abstractionStack.addToStack(abs);
                 }
             }
@@ -121,9 +121,9 @@ class DAL {
     getAtomicBehaviors () {
         const atomicBehaviors = [];
         for (let i = 0; i < this.design.length; i++) {
-            if (this.design[i]?.entry?.type === "atomic") {
+            if (this.design[i]?.type === "atomic") {
                 atomicBehaviors.push(
-                    this.design[i]?.entry?.behavior
+                    this.design[i]?.entry
                 );
             }
         }
