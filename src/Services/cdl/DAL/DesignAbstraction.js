@@ -32,13 +32,11 @@ class DesignAbstraction {
      * Given an ID, if the next step
      * can be taken given the current state.
      * @param {String} id
-     * @param {String} functionalId
      * @return {Object|null}
      */
-    testNext (id, functionalId) {
+    testNext (id) {
         while (this.step < this.abstraction.steps.length) {
             const currentStep = this.getCurrentStep();
-            console.log("Step:", currentStep.getBehavior(), functionalId);
             const result = currentStep.evaluateBehavior(id);
 
             if (result.id === STEP.BEHAVIOR_NOT_FOUND) {
@@ -59,6 +57,10 @@ class DesignAbstraction {
                 break;
             }
         };
+
+        if (this.step >= this.abstraction.steps.length) {
+            return this.getResponse(STACK.DESIGN_ABS_DONE, null);
+        }
     }
 
 

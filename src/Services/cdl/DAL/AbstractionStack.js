@@ -76,6 +76,18 @@ class AbstractionStack {
         }
     }
 
+
+    /**
+     * Print the debug information.
+     * @param {String} behavioralId
+     * @param {String} functionalId
+     */
+    printState (behavioralId, functionalId) {
+        const space = "    ";
+        const spacer = space.repeat(this.stack.length - 1);
+        console.log(spacer + behavioralId + "," + functionalId);
+    }
+
     /**
      * Evaluate the transition to the provided
      * behavioral id given the stack position.
@@ -88,10 +100,15 @@ class AbstractionStack {
 
         if (result) {
             if (result.id === STACK.GOTO_MODULE) {
-                console.log("Going to module:", result.args);
+                // console.log("Going to module:", result.args);
                 this.goToModule(result.args.module);
+            } else if (result.id === STACK.DESIGN_ABS_DONE) {
+                // console.log("DESIGN ABS DONE");
+                this.popStack();
             }
         }
+        const currentStep = this.getTopOfStack().getCurrentStep();
+        this.printState(currentStep.getBehavior(), functionalId);
     }
 }
 

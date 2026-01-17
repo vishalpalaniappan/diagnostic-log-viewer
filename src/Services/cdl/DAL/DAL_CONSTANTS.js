@@ -9,4 +9,5 @@ export const STEP = Object.freeze({
 export const STACK = Object.freeze({
     GOTO_MODULE: 1,
     BEHAVIOR_NOT_FOUND: 2,
+    DESIGN_ABS_DONE: 3,
 });
