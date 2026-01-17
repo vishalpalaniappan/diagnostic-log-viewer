@@ -47,11 +47,12 @@ class DAL {
             return true;
         }
 
-        this.moveStep(behavior);
+        this.abstractionStack.evaluateBehavior(behavior);
+        // this.moveStep(behavior);
 
-        if (!this.abstractionStack.isEmpty()) {
-            this.printEntry(behavior, functionalId);
-        }
+        // if (!this.abstractionStack.isEmpty()) {
+        //     this.printEntry(behavior, functionalId);
+        // }
     }
 
     /**

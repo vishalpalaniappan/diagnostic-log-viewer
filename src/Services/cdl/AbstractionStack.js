@@ -7,7 +7,7 @@ class AbstractionStack {
     /**
      * Initializes the abstraction stack.
      */
-    constructor() {
+    constructor () {
         this.stack = [];
     }
     /**
@@ -62,6 +62,9 @@ class AbstractionStack {
      * @param {String} id
      */
     evaluateBehavior (id) {
+        const top = this.getTopOfStack();
+
+        top.testNext(id);
     }
 }
 
