@@ -19,6 +19,7 @@ class AbstractionStep {
 
     /**
      * Returns the behavior being exhibited in the step.
+     * @return {String|null}
      */
     getBehavior () {
         if (this.type === "sequential") {

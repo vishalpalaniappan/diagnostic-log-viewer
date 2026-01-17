@@ -42,7 +42,7 @@ class DesignAbstraction {
             const result = currentStep.evaluateBehavior(id);
 
             if (result.id === STEP.BEHAVIOR_NOT_FOUND) {
-                // console.log("Behavior not found in step, moving onto next one.");
+                // console.log("Behavior not found in step, moving onto next.");
                 this.step++;
             } else if (result.id === STEP.SAME_BEHAVIOR) {
                 // console.log("Same behavior, nothing to do.");

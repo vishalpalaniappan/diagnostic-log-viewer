@@ -77,7 +77,7 @@ class ExecutionWalker {
                 break;
             }
 
-            //Temporarily limit number of positions so I can work through logic.
+            // Temporarily limit num of positions so I can work through logic.
         } while (++position < thread.execution.length && position < atomic.position + 25);
     }
 
