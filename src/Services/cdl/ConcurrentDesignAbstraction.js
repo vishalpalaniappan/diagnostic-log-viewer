@@ -198,7 +198,7 @@ class ConcurrentDesignAbstraction {
      * @param {String} id
      * @return {Object}
      */
-    findInput(output) {
+    findInput (output) {
         const outputId = output.value.adliExecutionId;
         const threadIds = Object.keys(this.threadExecutionBehaviors);
 
