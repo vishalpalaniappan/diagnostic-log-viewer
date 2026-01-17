@@ -48,55 +48,6 @@ class DAL {
         }
 
         this.abstractionStack.evaluateBehavior(behavior, functionalId);
-        // this.moveStep(behavior);
-
-        // if (!this.abstractionStack.isEmpty()) {
-        //     this.printEntry(behavior, functionalId);
-        // }
-    }
-
-    /**
-     * Move to the next step.
-     * @param {Object} behavior
-     */
-    moveStep (behavior) {
-        const entry = this.abstractionStack.getTopOfStack();
-        const currStep = entry.abstraction.steps[entry.step];
-
-        // The behavior is the same as what is being exhibted
-        if (currStep.behavior.includes(behavior)) {
-            return;
-        }
-
-        do {
-            const entry = this.abstractionStack.getTopOfStack();
-            if (entry.step + 1 >= entry.abstraction.steps.length) {
-                this.abstractionStack.popStack();
-            } else {
-                const entry = this.abstractionStack.getTopOfStack();
-                entry.step++;
-
-                const currStep = entry.abstraction.steps[entry.step];
-                if (currStep.type === "selector") {
-                    // TODO: Validate that the selected behavior
-                    // is a valid option
-                    this.setCursor(behavior);
-                }
-                break;
-            }
-        } while (!this.abstractionStack.isEmpty());
-    }
-
-    /**
-     * Pretty prints the current state.
-     * @param {String} behavior
-     * @param {String} functionalId
-     */
-    printEntry (behavior, functionalId) {
-        const spaces = 4;
-        const spacer = " ".repeat(spaces);
-        const space = spacer.repeat(this.abstractionStack.getStackSize());
-        console.log(space + behavior+"-"+functionalId);
     }
 
     /**
