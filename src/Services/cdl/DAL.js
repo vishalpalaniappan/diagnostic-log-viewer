@@ -14,7 +14,7 @@ class DAL {
         this.currentAbstraction = null;
         this.currentBehavior = null;
         this.currentStep = null;
-        this.abstractionStack = new AbstractionStack();
+        this.abstractionStack = new AbstractionStack(DALSpec);
     }
 
     /**
@@ -47,7 +47,7 @@ class DAL {
             return true;
         }
 
-        this.abstractionStack.evaluateBehavior(behavior);
+        this.abstractionStack.evaluateBehavior(behavior, functionalId);
         // this.moveStep(behavior);
 
         // if (!this.abstractionStack.isEmpty()) {

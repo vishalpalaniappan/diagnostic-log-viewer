@@ -18,6 +18,18 @@ class AbstractionStep {
     }
 
     /**
+     * Returns the behavior being exhibited in the step.
+     */
+    getBehavior () {
+        if (this.type === "sequential") {
+            this.currentBehavior = this.step.behavior[this.behaviorIndex];
+            return this.currentBehavior;
+        } else if (this.type === "selector") {
+            return "In Selector";
+        }
+    }
+
+    /**
      * Evaluates the behavior being exhibited in the step.
      * @param {Object} behavior
      * @return {Object}

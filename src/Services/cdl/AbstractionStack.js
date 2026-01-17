@@ -8,8 +8,10 @@ import DesignAbstraction from "./DesignAbstraction";
 class AbstractionStack {
     /**
      * Initializes the abstraction stack.
+     * @param {Object} DALSpec
      */
-    constructor () {
+    constructor (DALSpec) {
+        this.design = DALSpec.design;
         this.stack = [];
     }
     /**
@@ -59,17 +61,35 @@ class AbstractionStack {
     }
 
     /**
+     * Given a target module, this function looks through
+     * the design and goes to the provided module.
+     * @param {String} targetModule Module to go to.
+     */
+    goToModule (targetModule) {
+        for (let i = 0; i < this.design.length; i++) {
+            const module = this.design[i];
+            if (module.entry === targetModule) {
+                this.stack.push(
+                    new DesignAbstraction(module, 0)
+                );
+            }
+        }
+    }
+
+    /**
      * Evaluate the transition to the provided
      * behavioral id given the stack position.
      * @param {String} id
+     * @param {String} functionalId
      */
-    evaluateBehavior (id) {
+    evaluateBehavior (id, functionalId) {
         const top = this.getTopOfStack();
-        const result = top.testNext(id);
+        const result = top.testNext(id, functionalId);
 
         if (result) {
             if (result.id === STACK.GOTO_MODULE) {
                 console.log("Going to module:", result.args);
+                this.goToModule(result.args.module);
             }
         }
     }

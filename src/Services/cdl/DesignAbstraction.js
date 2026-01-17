@@ -32,24 +32,26 @@ class DesignAbstraction {
      * Given an ID, if the next step
      * can be taken given the current state.
      * @param {String} id
+     * @param {String} functionalId
      * @return {Object|null}
      */
-    testNext (id) {
+    testNext (id, functionalId) {
         while (this.step < this.abstraction.steps.length) {
             const currentStep = this.getCurrentStep();
+            console.log("Step:", currentStep.getBehavior(), functionalId);
             const result = currentStep.evaluateBehavior(id);
 
             if (result.id === STEP.BEHAVIOR_NOT_FOUND) {
-                console.log("Behavior not found in step, moving onto next one.");
+                // console.log("Behavior not found in step, moving onto next one.");
                 this.step++;
             } else if (result.id === STEP.SAME_BEHAVIOR) {
-                console.log("Same behavior, nothing to do.");
+                // console.log("Same behavior, nothing to do.");
                 break;
             } else if (result.id === STEP.STEP_INVALID) {
                 console.log("Invalid step, major error");
                 break;
             } else if (result.id === STEP.GOTO_MODULE) {
-                console.log("Going to abstraction:", result.args);
+                // console.log("Going to abstraction:", result.args);
                 this.step++;
                 return this.getResponse(STACK.GOTO_MODULE, result.args);
             } else {
