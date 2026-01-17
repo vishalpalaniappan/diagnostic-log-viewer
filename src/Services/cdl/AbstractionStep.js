@@ -1,4 +1,4 @@
-import STEP_CONSTANTS from "./STEP_CONSTANTS";
+import {STEP} from "./DAL_CONSTANTS";
 /**
  * Represents a step in the design abstraction.
  */
@@ -28,18 +28,18 @@ class AbstractionStep {
 
             if (index === -1) {
                 // console.log("Behavior isn't in this curr sequential step");
-                return this.getResponse(STEP_CONSTANTS.BEHAVIOR_NOT_FOUND, null);
+                return this.getResponse(STEP.BEHAVIOR_NOT_FOUND, null);
             } else {
                 if (index === this.behaviorIndex) {
                     // console.log("Same behavior in step: ", behavior);
-                    return this.getResponse(STEP_CONSTANTS.SAME_BEHAVIOR, null);
+                    return this.getResponse(STEP.SAME_BEHAVIOR, null);
                 } else if (index === this.behaviorIndex + 1) {
                     // console.log("Move onto next behavior in step", behavior);
                     this.behaviorIndex = index;
-                    return this.getResponse(STEP_CONSTANTS.STEP_SUCCESS, null);
+                    return this.getResponse(STEP.STEP_SUCCESS, null);
                 } else if (index > this.behaviorIndex + 1) {
                     // console.warn("Moved over behavior in step");
-                    return this.getResponse(STEP_CONSTANTS.STEP_INVALID, null);
+                    return this.getResponse(STEP.STEP_INVALID, null);
                 }
             }
         } else if (this.type === "selector") {
@@ -47,7 +47,7 @@ class AbstractionStep {
             for (let i = 0; i < this.step.options.length; i++) {
                 if (this.step.options[i].module === behavior) {
                     return this.getResponse(
-                        STEP_CONSTANTS.SELECT_ABSTRACTION,
+                        STEP.GOTO_MODULE,
                         {module: this.step.options[i].module}
                     );
                 }

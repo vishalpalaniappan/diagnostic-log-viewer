@@ -1,4 +1,6 @@
+import {STACK} from "./DAL_CONSTANTS.js";
 import DesignAbstraction from "./DesignAbstraction";
+
 /**
  * Represents the abstraction stack with entries that
  * are represented with Design Abstraction object.
@@ -63,8 +65,13 @@ class AbstractionStack {
      */
     evaluateBehavior (id) {
         const top = this.getTopOfStack();
+        const result = top.testNext(id);
 
-        top.testNext(id);
+        if (result) {
+            if (result.id === STACK.GOTO_MODULE) {
+                console.log("Going to module:", result.args);
+            }
+        }
     }
 }
 

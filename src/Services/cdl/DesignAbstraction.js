@@ -1,5 +1,5 @@
 import AbstractionStep from "./AbstractionStep";
-import STEP_CONSTANTS from "./STEP_CONSTANTS";
+import {STACK, STEP} from "./DAL_CONSTANTS";
 /**
  * Represents an instance of an abstraction object
  * loaded intot he abstraction stack.
@@ -32,29 +32,45 @@ class DesignAbstraction {
      * Given an ID, if the next step
      * can be taken given the current state.
      * @param {String} id
+     * @return {Object|null}
      */
     testNext (id) {
-        do {
+        while (this.step < this.abstraction.steps.length) {
             const currentStep = this.getCurrentStep();
             const result = currentStep.evaluateBehavior(id);
 
-            if (result.id === STEP_CONSTANTS.BEHAVIOR_NOT_FOUND) {
+            if (result.id === STEP.BEHAVIOR_NOT_FOUND) {
                 console.log("Behavior not found in step, moving onto next one.");
                 this.step++;
-            } else if (result.id === STEP_CONSTANTS.SAME_BEHAVIOR) {
+            } else if (result.id === STEP.SAME_BEHAVIOR) {
                 console.log("Same behavior, nothing to do.");
                 break;
-            } else if (result.id === STEP_CONSTANTS.STEP_INVALID) {
+            } else if (result.id === STEP.STEP_INVALID) {
                 console.log("Invalid step, major error");
                 break;
-            } else if (result.id === STEP_CONSTANTS.SELECT_ABSTRACTION) {
+            } else if (result.id === STEP.GOTO_MODULE) {
                 console.log("Going to abstraction:", result.args);
-                break;
+                this.step++;
+                return this.getResponse(STACK.GOTO_MODULE, result.args);
             } else {
                 console.warn("Unknown response from step object");
                 break;
             }
-        } while (this.step < this.abstraction.steps.length);
+        };
+    }
+
+
+    /**
+     * Generates response to the behavior stack object.
+     * @param {String} id
+     * @param {Object} args
+     * @return {Object}
+     */
+    getResponse (id, args) {
+        return {
+            "id": id,
+            "args": args,
+        };
     }
 }
 
