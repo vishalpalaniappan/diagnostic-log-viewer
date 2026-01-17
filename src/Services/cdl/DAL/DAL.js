@@ -39,15 +39,15 @@ class DAL {
      * the next move through the designs structure.
      * @param {Object} behavior
      * @param {Object} functionalId
-     * @return {null}
+     * @return {Boolean|null}
      */
     moveCursor (behavior, functionalId) {
+        this.abstractionStack.evaluateBehavior(behavior, functionalId);
+
         if (this.abstractionStack.isEmpty()) {
-            console.log("We are already done");
+            console.log("Atomic behvior has finished.");
             return true;
         }
-
-        this.abstractionStack.evaluateBehavior(behavior, functionalId);
     }
 
     /**

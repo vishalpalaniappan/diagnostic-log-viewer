@@ -27,6 +27,26 @@ class DesignAbstraction {
     }
 
     /**
+     * Tests if the abstraction is done.
+     * @return {Boolean}
+     */
+    testDone () {
+        if (this.step >= this.steps.length) {
+            return true;
+        }
+
+        if (this.step === this.steps.length - 1) {
+            const currentStep = this.getCurrentStep();
+            if (currentStep && currentStep.step.repeat) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Given an ID, if the next step
      * can be taken given the current state.
      * @param {String} id
@@ -46,10 +66,7 @@ class DesignAbstraction {
             } else if (result.id === STEP.STEP_INVALID) {
                 console.log("Invalid step, major error");
                 break;
-            } else if (result.id === STEP.GOTO_MODULE_AND_REPEAT) {
-                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
-            } else if (result.id === STEP.GOTO_MODULE_AND_STEP) {
-                this.step++;
+            } else if (result.id === STEP.GOTO_MODULE) {
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
             } else {
                 console.warn("Unknown response from step object");

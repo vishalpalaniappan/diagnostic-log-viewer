@@ -59,11 +59,8 @@ class AbstractionStep {
             // Find the option that was selected.
             for (let i = 0; i < this.step.options.length; i++) {
                 if (this.step.options[i].module === behavior) {
-                    const CODE = (this.step.repeat)?
-                        STEP.GOTO_MODULE_AND_REPEAT:
-                        STEP.GOTO_MODULE_AND_STEP;
                     return this.getResponse(
-                        CODE,
+                        STEP.GOTO_MODULE,
                         {module: this.step.options[i].module}
                     );
                 }

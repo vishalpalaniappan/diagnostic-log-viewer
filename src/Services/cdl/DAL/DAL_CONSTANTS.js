@@ -3,8 +3,7 @@ export const STEP = Object.freeze({
     BEHAVIOR_NOT_FOUND: 2,
     STEP_SUCCESS: 3,
     STEP_INVALID: 4,
-    GOTO_MODULE_AND_STEP: 5,
-    GOTO_MODULE_AND_REPEAT: 6,
+    GOTO_MODULE: 5,
 });
 
 export const DESIGN = Object.freeze({

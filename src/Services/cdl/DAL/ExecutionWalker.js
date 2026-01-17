@@ -71,6 +71,7 @@ class ExecutionWalker {
             if (entry?.behavior === undefined) {
                 continue;
             }
+
             const done = this.DALSpec.moveCursor(entry.behavior.id, entry.functionalId);
 
             if (done) {

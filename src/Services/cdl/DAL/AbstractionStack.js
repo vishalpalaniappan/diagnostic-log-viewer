@@ -90,11 +90,25 @@ class AbstractionStack {
     }
 
     /**
+     * Removes the stack positions that are done.
+     * @param {*} id
+     */
+    moveDownStack (id) {
+        while (this.stack.length > 0) {
+            const top = this.getTopOfStack();
+            if (top.testDone()) {
+                this.popStack();
+                continue;
+            }
+            return;
+        }
+    }
+
+    /**
      * Evaluate the transition to the provided
      * behavioral id given the stack position.
      * @param {String} id
      * @param {String} functionalId
-     * @return {Boolean}
      */
     evaluateBehavior (id, functionalId) {
         const top = this.getTopOfStack();
@@ -102,13 +116,13 @@ class AbstractionStack {
 
         if (result) {
             if (result.id === DESIGN.GOTO_MODULE) {
-                // console.log("Going to module:", result.args);
                 this.goToModule(result.args.module);
             } else if (result.id === DESIGN.DESIGN_ABS_DONE) {
-                // console.log("DESIGN ABS DONE");
                 this.popStack();
+                this.moveDownStack(id);
             }
         }
+
         this.printState(id, functionalId);
     }
 }
