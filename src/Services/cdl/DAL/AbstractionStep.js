@@ -13,7 +13,7 @@ class AbstractionStep {
         this.behaviorIndex = 0;
 
         if (this.type === "sequential") {
-            this.currentBehavior = this.step.behavior[this.behaviorIndex];
+            this.currentBehavior = step.behavior[this.behaviorIndex];
         }
     }
 
@@ -59,13 +59,17 @@ class AbstractionStep {
             // Find the option that was selected.
             for (let i = 0; i < this.step.options.length; i++) {
                 if (this.step.options[i].module === behavior) {
+                    const CODE = (this.step.repeat)?
+                        STEP.GOTO_MODULE_AND_REPEAT:
+                        STEP.GOTO_MODULE_AND_STEP;
                     return this.getResponse(
-                        STEP.GOTO_MODULE,
+                        CODE,
                         {module: this.step.options[i].module}
                     );
                 }
             }
-            console.warn("The selector didn't select a valid option");
+            // console.warn("The selector didn't select a valid option");
+            return this.getResponse(STEP.BEHAVIOR_NOT_FOUND, null);
         }
     }
 

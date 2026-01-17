@@ -20,7 +20,7 @@ class AbstractionStack {
      */
     addToStack (abs) {
         this.stack.push(
-            new DesignAbstraction(abs, 0)
+            new DesignAbstraction(abs)
         );
     }
 
@@ -69,9 +69,7 @@ class AbstractionStack {
         for (let i = 0; i < this.design.length; i++) {
             const module = this.design[i];
             if (module.entry === targetModule) {
-                this.stack.push(
-                    new DesignAbstraction(module, 0)
-                );
+                this.addToStack(module);
             }
         }
     }
@@ -83,6 +81,9 @@ class AbstractionStack {
      * @param {String} functionalId
      */
     printState (behavioralId, functionalId) {
+        if (this.stack.length === 0) {
+            return;
+        }
         const space = "    ";
         const spacer = space.repeat(this.stack.length - 1);
         console.log(spacer + behavioralId + "," + functionalId);
@@ -93,6 +94,7 @@ class AbstractionStack {
      * behavioral id given the stack position.
      * @param {String} id
      * @param {String} functionalId
+     * @return {Boolean}
      */
     evaluateBehavior (id, functionalId) {
         const top = this.getTopOfStack();
@@ -107,8 +109,7 @@ class AbstractionStack {
                 this.popStack();
             }
         }
-        const currentStep = this.getTopOfStack().getCurrentStep();
-        this.printState(currentStep.getBehavior(), functionalId);
+        this.printState(id, functionalId);
     }
 }
 

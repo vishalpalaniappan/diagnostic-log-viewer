@@ -8,14 +8,12 @@ class DesignAbstraction {
     /**
      * Initializes the abstraction.
      * @param {Object} abstraction
-     * @param {Number} step
      */
-    constructor (abstraction, step) {
-        this.abstraction = abstraction;
+    constructor (abstraction) {
+        this.abstraction = {...abstraction};
+        this.steps = [];
         for (let i = 0; i < this.abstraction.steps.length; i++) {
-            this.abstraction.steps[i] = new AbstractionStep(
-                this.abstraction.steps[i]
-            );
+            this.steps.push(new AbstractionStep(this.abstraction.steps[i]));
         }
         this.step = 0;
     }
@@ -25,7 +23,7 @@ class DesignAbstraction {
      * @return {Object}
      */
     getCurrentStep () {
-        return this.abstraction.steps[this.step];
+        return this.steps[this.step];
     }
 
     /**
@@ -35,7 +33,7 @@ class DesignAbstraction {
      * @return {Object|null}
      */
     testNext (id) {
-        while (this.step < this.abstraction.steps.length) {
+        while (this.step < this.steps.length) {
             const currentStep = this.getCurrentStep();
             const result = currentStep.evaluateBehavior(id);
 
@@ -48,8 +46,9 @@ class DesignAbstraction {
             } else if (result.id === STEP.STEP_INVALID) {
                 console.log("Invalid step, major error");
                 break;
-            } else if (result.id === STEP.GOTO_MODULE) {
-                // console.log("Going to abstraction:", result.args);
+            } else if (result.id === STEP.GOTO_MODULE_AND_REPEAT) {
+                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
+            } else if (result.id === STEP.GOTO_MODULE_AND_STEP) {
                 this.step++;
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
             } else {
@@ -58,7 +57,7 @@ class DesignAbstraction {
             }
         };
 
-        if (this.step >= this.abstraction.steps.length) {
+        if (this.step >= this.steps.length) {
             return this.getResponse(DESIGN.DESIGN_ABS_DONE, null);
         }
     }
