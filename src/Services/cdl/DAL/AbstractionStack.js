@@ -22,15 +22,15 @@ class AbstractionStack {
      * Initializes the abstraction stack.
      * @param {Object} design
      * @param {Array} threadDebuggers
-     * @param {Object} atomicPosition
+     * @param {Object} initialPosition
      */
-    constructor (design, threadDebuggers, atomicPosition) {
+    constructor (design, threadDebuggers, initialPosition) {
         this.design = design;
         this.threadDebuggers = threadDebuggers;
-        this.atomicPosition = atomicPosition;
+        this.initialPosition = initialPosition;
         this.stack = [];
         console.log("");
-        console.log("Initialized stack for position:", atomicPosition);
+        console.log("Initialized stack for position:", initialPosition);
         this.walkAbstraction();
     }
 
@@ -39,17 +39,17 @@ class AbstractionStack {
      * Walk the abstraction from the atomic position.
      */
     walkAbstraction () {
-        const thread = this.threadDebuggers[this.atomicPosition.execution.thread].thread;
+        const thread = this.threadDebuggers[this.initialPosition.execution.thread].thread;
 
-        const abs = this.getDesignAbsFromExecution(this.atomicPosition.execution.behavior.id);
+        const abs = this.getDesignAbsFromExecution(this.initialPosition.execution.behavior.id);
         this.addToStack(abs);
 
         this.printState(
-            this.atomicPosition.execution.behavior,
-            this.atomicPosition.execution.functionalId
+            this.initialPosition.execution.behavior,
+            this.initialPosition.execution.functionalId
         );
 
-        let position = this.atomicPosition.position + 1;
+        let position = this.initialPosition.position + 1;
 
         if (position >= thread.execution.length) {
             console.log("Reached end of file.");
