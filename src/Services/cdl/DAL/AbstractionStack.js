@@ -13,9 +13,10 @@ import DesignAbstraction from "./DesignAbstraction";
  *
  * For concurrent abstractions, everytime the design reaches
  * a step which produces a concurrent abstraction, it will
- * create a new stack object that will walk the concurrent abstraction
- * and return it to the current stack. In this way, every fork from
- * a design abstraction is contained within a stack object.
+ * create a new stack object that will walk the concurrent
+ * abstraction and return it to the current stack. In this
+ * way, every fork from a design abstraction is contained
+ * within a stack object.
  */
 class AbstractionStack {
     /**
