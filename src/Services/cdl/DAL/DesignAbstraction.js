@@ -68,6 +68,12 @@ class DesignAbstraction {
                 break;
             } else if (result.id === STEP.GOTO_MODULE) {
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
+            } else if (result.id === STEP.FORK) {
+                this.step++;
+                return this.getResponse(DESIGN.FORK, result.args);
+            } else if (result.id === STEP.JOIN) {
+                this.step++;
+                return this.getResponse(DESIGN.JOIN, result.args);
             } else {
                 console.warn("Unknown response from step object");
                 break;

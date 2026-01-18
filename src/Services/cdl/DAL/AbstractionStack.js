@@ -193,6 +193,8 @@ class AbstractionStack {
             } else if (result.id === DESIGN.DESIGN_ABS_DONE) {
                 this.popStack();
                 this.moveDownStack(id);
+            } else if (result.id === DESIGN.FORK) {
+                // Create new stack and fork from position
             }
         }
 
