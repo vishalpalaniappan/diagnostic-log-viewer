@@ -4,6 +4,18 @@ import DesignAbstraction from "./DesignAbstraction";
 /**
  * Represents the abstraction stack with entries that
  * are represented with Design Abstraction object.
+ *
+ * Each stack is initialized with a starting position
+ * in the execution, this position is used to get the
+ * design abstraction that is being executed. Then the
+ * design is walked through until the abstraction is
+ * complete.
+ *
+ * For concurrent abstractions, everytime the design reaches
+ * a step which produces a concurrent abstraction, it will
+ * create a new stack object that will walk the concurrent abstraction
+ * and return it to the current stack. In this way, every fork from
+ * a design abstraction is contained within a stack object.
  */
 class AbstractionStack {
     /**
