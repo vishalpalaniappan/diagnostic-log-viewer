@@ -58,10 +58,9 @@ class AbstractionStack {
             const input = this.trackOutput(this.initialPosition.execution);
             if (input) {
                 thread = this.threadDebuggers[input.thread].thread;
-                position = input.position - 1;
+                position = input.position;
             }
         }
-
 
         if (position >= thread.execution.length) {
             console.log("Reached end of file.");
@@ -84,6 +83,7 @@ class AbstractionStack {
 
             this.evaluateBehavior(entry.behavior.id, entry.functionalId, executionInfo);
 
+            // If we are in a fork and its an output, then track.
             if (this.isFork && entry.output) {
                 const input = this.trackOutput(entry);
                 if (input) {
