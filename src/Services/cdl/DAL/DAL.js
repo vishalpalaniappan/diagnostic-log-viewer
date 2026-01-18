@@ -28,7 +28,14 @@ class DAL {
         for (let i = 0; i < keys.length; i++) {
             const thread = this.threadDebuggers[keys[i]].thread;
             let currBehavior;
+            let output;
             for (let j = 0; j < thread.execution.length; j++ ) {
+                // If output, save it so apply it to next execution
+                if (thread.execution[j].type === "adli_output") {
+                    output = thread.execution[j];
+                    continue;
+                }
+
                 // Get the behavior of the execution
                 const info = thread.header.getBehaviorFromExecution(thread.execution[j]);
                 if (info === undefined) {
@@ -39,6 +46,10 @@ class DAL {
                 const behavior = info.behavior;
                 thread.execution[j].behavior = behavior;
                 thread.execution[j].functionalId = info.functionalId;
+                if (output) {
+                    thread.execution[j].output = output;
+                    output = null;
+                }
 
                 // If we enter new behavior and its atomic, add it to list.
                 if (currBehavior !== behavior.id && this.atomicBehaviors.includes(behavior.id)) {
