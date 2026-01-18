@@ -40,20 +40,14 @@ class AbstractionStep {
             const index = this.step.behavior.indexOf(behavior);
 
             if (index === -1) {
-                // console.log("Behavior isn't in this curr sequential step");
+                this.behaviorIndex = index;
                 return this.getResponse(STEP.BEHAVIOR_NOT_FOUND, null);
+            } else if (index < this.behaviorIndex) {
+                this.behaviorIndex = index;
+                return this.getResponse(STEP.BEHAVIOR_DONE, null);
             } else {
-                if (index === this.behaviorIndex) {
-                    // console.log("Same behavior in step: ", behavior);
-                    return this.getResponse(STEP.SAME_BEHAVIOR, null);
-                } else if (index === this.behaviorIndex + 1) {
-                    // console.log("Move onto next behavior in step", behavior);
-                    this.behaviorIndex = index;
-                    return this.getResponse(STEP.STEP_SUCCESS, null);
-                } else if (index > this.behaviorIndex + 1) {
-                    // console.warn("Moved over behavior in step");
-                    return this.getResponse(STEP.STEP_INVALID, null);
-                }
+                this.behaviorIndex = index;
+                return this.getResponse(STEP.SAME_BEHAVIOR, null);
             }
         } else if (this.type === "selector") {
             // Find the option that was selected.

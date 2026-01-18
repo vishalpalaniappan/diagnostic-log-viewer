@@ -54,7 +54,7 @@ class DAL {
 
         // Walk each atomic position
         for (let i = 0; i < this.atomicPositions.length; i++) {
-            new AbstractionStack(this.design, this.threadDebuggers, this.atomicPositions[i]);
+            new AbstractionStack(this.design, this.threadDebuggers, this.atomicPositions[i], false);
         }
     }
 

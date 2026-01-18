@@ -24,12 +24,14 @@ class AbstractionStack {
      * @param {Object} design
      * @param {Array} threadDebuggers
      * @param {Object} initialPosition
+     * @param {Boolean} isFork
      */
-    constructor (design, threadDebuggers, initialPosition) {
+    constructor (design, threadDebuggers, initialPosition, isFork) {
         this.design = design;
         this.threadDebuggers = threadDebuggers;
         this.initialPosition = initialPosition;
         this.stack = [];
+        this.isFork = isFork;
         console.log("");
         console.log("Initialized stack for position:", initialPosition);
         this.walkAbstraction();
@@ -40,17 +42,26 @@ class AbstractionStack {
      * Walk the abstraction from the atomic position.
      */
     walkAbstraction () {
-        const thread = this.threadDebuggers[this.initialPosition.execution.thread].thread;
+        let thread = this.threadDebuggers[this.initialPosition.execution.thread].thread;
 
         const abs = this.getDesignAbsFromExecution(this.initialPosition.execution.behavior.id);
         this.addToStack(abs);
 
         this.printState(
-            this.initialPosition.execution.behavior,
+            this.initialPosition.execution.behavior.id,
             this.initialPosition.execution.functionalId
         );
-
         let position = this.initialPosition.position + 1;
+
+        // If the stack is a fork, then track the output before starting.
+        if (this.isFork) {
+            const input = this.trackOutput(this.initialPosition.execution);
+            if (input) {
+                thread = this.threadDebuggers[input.thread].thread;
+                position = input.position - 1;
+            }
+        }
+
 
         if (position >= thread.execution.length) {
             console.log("Reached end of file.");
@@ -66,8 +77,50 @@ class AbstractionStack {
                 break;
             }
 
-            this.evaluateBehavior(entry.behavior.id, entry.functionalId);
+            const executionInfo = {
+                "position": position,
+                "execution": entry,
+            };
+
+            this.evaluateBehavior(entry.behavior.id, entry.functionalId, executionInfo);
+
+            if (this.isFork && entry.output) {
+                const input = this.trackOutput(entry);
+                if (input) {
+                    thread = this.threadDebuggers[input.thread].thread;
+                    position = input.position;
+                }
+            }
         } while (++position < thread.execution.length);
+    }
+
+    /**
+     * Tracks the output to the input.
+     * @param {Object} execution
+     * @return {Object}
+     */
+    trackOutput (execution) {
+        if (!execution.output) {
+            return;
+        }
+
+        const outputId = execution.output.adliExecutionId;
+        const keys = Object.keys(this.threadDebuggers);
+        for (let i = 0; i < keys.length; i++) {
+            const thread = this.threadDebuggers[keys[i]].thread;
+            for (let j = 0; j < thread.execution.length; j++ ) {
+                const execution = thread.execution[j];
+                if (execution.input) {
+                    const inputId = execution.input.adliExecutionId;
+                    if (inputId === outputId) {
+                        return {
+                            thread: keys[i],
+                            position: j,
+                        };
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -182,8 +235,9 @@ class AbstractionStack {
      * behavioral id given the stack position.
      * @param {String} id
      * @param {String} functionalId
+     * @param {Object} execution
      */
-    evaluateBehavior (id, functionalId) {
+    evaluateBehavior (id, functionalId, execution) {
         const top = this.getTopOfStack();
         const result = top.testNext(id);
 
@@ -195,6 +249,7 @@ class AbstractionStack {
                 this.moveDownStack(id);
             } else if (result.id === DESIGN.FORK) {
                 // Create new stack and fork from position
+                new AbstractionStack(this.design, this.threadDebuggers, execution, true);
             }
         }
 

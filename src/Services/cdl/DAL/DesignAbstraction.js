@@ -57,21 +57,21 @@ class DesignAbstraction {
             const currentStep = this.getCurrentStep();
             const result = currentStep.evaluateBehavior(id);
 
-            if (result.id === STEP.BEHAVIOR_NOT_FOUND) {
+            if (result?.id === STEP.BEHAVIOR_NOT_FOUND) {
                 // console.log("Behavior not found in step, moving onto next.");
                 this.step++;
-            } else if (result.id === STEP.SAME_BEHAVIOR) {
+            } else if (result?.id === STEP.SAME_BEHAVIOR) {
                 // console.log("Same behavior, nothing to do.");
                 break;
-            } else if (result.id === STEP.STEP_INVALID) {
-                console.log("Invalid step, major error");
+            } else if (result?.id === STEP.BEHAVIOR_DONE) {
+                this.step++;
                 break;
-            } else if (result.id === STEP.GOTO_MODULE) {
+            } else if (result?.id === STEP.GOTO_MODULE) {
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
-            } else if (result.id === STEP.FORK) {
+            } else if (result?.id === STEP.FORK) {
                 this.step++;
                 return this.getResponse(DESIGN.FORK, result.args);
-            } else if (result.id === STEP.JOIN) {
+            } else if (result?.id === STEP.JOIN) {
                 this.step++;
                 return this.getResponse(DESIGN.JOIN, result.args);
             } else {

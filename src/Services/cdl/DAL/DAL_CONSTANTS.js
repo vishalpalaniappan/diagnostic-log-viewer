@@ -1,11 +1,10 @@
 export const STEP = Object.freeze({
     SAME_BEHAVIOR: 1,
     BEHAVIOR_NOT_FOUND: 2,
-    STEP_SUCCESS: 3,
-    STEP_INVALID: 4,
-    GOTO_MODULE: 5,
-    FORK: 6,
-    JOIN: 7,
+    BEHAVIOR_DONE: 3,
+    GOTO_MODULE: 4,
+    FORK: 5,
+    JOIN: 6,
 });
 
 export const DESIGN = Object.freeze({
