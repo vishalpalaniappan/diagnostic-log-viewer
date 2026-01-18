@@ -7,63 +7,55 @@ class DAL {
     /**
      * Initialize the DAL Interpretter
      * @param {Object} DALSpec Instrumented Specification
+     * @param {Object} debuggers
      */
-    constructor (DALSpec) {
+    constructor (DALSpec, debuggers) {
+        console.log(DALSpec, debuggers);
         this.design = DALSpec.design;
-        console.log("Initialized DAL instance with spec:", this.DALSpec);
-        this.currentAbstraction = null;
-        this.currentBehavior = null;
-        this.currentStep = null;
-        this.abstractionStack = new AbstractionStack(DALSpec);
+        this.threadDebuggers = debuggers;
+        console.log("Initialized DAL instance with spec:", this.design);
+        this.atomicBehaviors = this.getAtomicBehaviors();
+        this.atomicPositions = [];
+        this.walkExecution();
     }
 
     /**
-     * Set the cursor of the DAL execution walker by passing
-     * it the atomic design abstraction.
-     * @param {Object} behavior
-     * @param {Object} functionalId
+     * Walks the execution of the provided threads.
      */
-    setCursor (behavior, functionalId) {
-        for (let i = 0; i < this.design.length; i++) {
-            const abs = this.design[i];
-            if (abs?.entry) {
-                if (abs.entry === behavior) {
-                    this.abstractionStack.addToStack(abs);
-                    this.abstractionStack.printState(behavior, functionalId);
+    walkExecution () {
+        // Get all the atomic positions
+        const keys = Object.keys(this.threadDebuggers);
+        for (let i = 0; i < keys.length; i++) {
+            const thread = this.threadDebuggers[keys[i]].thread;
+            let currBehavior;
+            for (let j = 0; j < thread.execution.length; j++ ) {
+                // Get the behavior of the execution
+                const info = thread.header.getBehaviorFromExecution(thread.execution[j]);
+                if (info === undefined) {
+                    continue;
                 }
+
+                // Save the behavior to the execution for easy access
+                const behavior = info.behavior;
+                thread.execution[j].behavior = behavior;
+                thread.execution[j].functionalId = info.functionalId;
+
+                // If we enter new behavior and its atomic, add it to list.
+                if (currBehavior !== behavior.id && this.atomicBehaviors.includes(behavior.id)) {
+                    this.atomicPositions.push({
+                        "position": j,
+                        "execution": thread.execution[j],
+                    });
+                }
+                currBehavior = behavior.id;
             }
         }
-    }
+        console.log(this.atomicPositions);
 
-    /**
-     * Move the cursor by passing the next abstraction that
-     * was read from the execution. This function will validate
-     * the next move through the designs structure.
-     * @param {Object} behavior
-     * @param {Object} functionalId
-     * @return {Boolean|null}
-     */
-    moveCursor (behavior, functionalId) {
-        this.abstractionStack.evaluateBehavior(behavior, functionalId);
-
-        if (this.abstractionStack.isEmpty()) {
-            return true;
+        // Walk each atomic position
+        for (let i = 0; i < this.atomicPositions.length; i++) {
+            new AbstractionStack(this.design, this.threadDebuggers, this.atomicPositions[i]);
         }
-    }
-
-    /**
-     * Lists the design abstractions specified in DALSpec.
-     */
-    listAbstractions () {
-
-    }
-
-    /**
-     * Describes the specified DALSpec.
-     * @param {String} id ID of the abstraction.
-     */
-    describeAbstraction (id) {
-
     }
 
     /**

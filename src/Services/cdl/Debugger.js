@@ -4,8 +4,7 @@ import PROGRAM_STATE from "../../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../CDL_WORKER_PROTOCOL";
 import {readFile} from "../helper/ReadFile";
 import CdlHeader from "./CdlHeader";
-import ExecutionWalker from "./DAL/ExecutionWalker";
-import SemanticTransformer from "./SemanticTransformer";
+import DAL from "./DAL/DAL";
 import ThreadDebugger from "./ThreadDebugger";
 
 /**
@@ -108,11 +107,7 @@ class Debugger {
         this.sendExecutionTree();
 
         const designMap = this.header.getDesignMap();
-        this.walker = new ExecutionWalker(this.debuggers, designMap);
-        // if (designMap) {
-        //     this.transformer = new SemanticTransformer(designMap, this.debuggers);
-        //     this.sendBehavior();
-        // }
+        new DAL(designMap, this.debuggers);
     }
 
     /**

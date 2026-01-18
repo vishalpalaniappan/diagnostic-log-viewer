@@ -8,12 +8,72 @@ import DesignAbstraction from "./DesignAbstraction";
 class AbstractionStack {
     /**
      * Initializes the abstraction stack.
-     * @param {Object} DALSpec
+     * @param {Object} design
+     * @param {Array} threadDebuggers
+     * @param {Object} atomicPosition
      */
-    constructor (DALSpec) {
-        this.design = DALSpec.design;
+    constructor (design, threadDebuggers, atomicPosition) {
+        this.design = design;
+        this.threadDebuggers = threadDebuggers;
+        this.atomicPosition = atomicPosition;
         this.stack = [];
+        console.log("");
+        console.log("Initialized stack for position:", atomicPosition);
+        this.walkAbstraction();
     }
+
+
+    /**
+     * Walk the abstraction from the atomic position.
+     */
+    walkAbstraction () {
+        const thread = this.threadDebuggers[this.atomicPosition.execution.thread].thread;
+
+        const abs = this.getDesignAbsFromExecution(this.atomicPosition.execution.behavior.id);
+        this.addToStack(abs);
+
+        this.printState(
+            this.atomicPosition.execution.behavior,
+            this.atomicPosition.execution.functionalId
+        );
+
+        let position = this.atomicPosition.position + 1;
+
+        if (position >= thread.execution.length) {
+            console.log("Reached end of file.");
+            return;
+        }
+        do {
+            const entry = thread.execution[position];
+            if (entry?.behavior === undefined) {
+                continue;
+            }
+
+            if (this.stack.length === 0) {
+                break;
+            }
+
+            this.evaluateBehavior(entry.behavior.id, entry.functionalId);
+        } while (++position < thread.execution.length);
+    }
+
+    /**
+     * Gets the design abstraction from the executed abstraction.
+     * @param {String} behaviorId
+     * @return {Object}
+     */
+    getDesignAbsFromExecution (behaviorId) {
+        console.log(this.design);
+        for (let i = 0; i < this.design.length; i++) {
+            const abs = this.design[i];
+            if (abs?.entry) {
+                if (abs.entry === behaviorId) {
+                    return abs;
+                }
+            }
+        }
+    }
+
     /**
      * Add behavior to abstraction stack.
      * @param {Object} abs
