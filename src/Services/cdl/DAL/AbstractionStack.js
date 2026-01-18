@@ -129,7 +129,6 @@ class AbstractionStack {
      * @return {Object}
      */
     getDesignAbsFromExecution (behaviorId) {
-        console.log(this.design);
         for (let i = 0; i < this.design.length; i++) {
             const abs = this.design[i];
             if (abs?.entry) {
@@ -145,6 +144,9 @@ class AbstractionStack {
      * @param {Object} abs
      */
     addToStack (abs) {
+        // const space = "    ";
+        // const spacer = space.repeat(this.stack.length);
+        // console.log(spacer + "-------" + abs.description + "-------");
         this.stack.push(
             new DesignAbstraction(abs)
         );
@@ -250,6 +252,7 @@ class AbstractionStack {
             } else if (result.id === DESIGN.FORK) {
                 // Create new stack and fork from position
                 new AbstractionStack(this.design, this.threadDebuggers, execution, true);
+                console.log("----Returning to main-----");
             }
         }
 

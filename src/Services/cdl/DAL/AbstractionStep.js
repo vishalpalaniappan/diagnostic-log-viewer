@@ -63,8 +63,6 @@ class AbstractionStep {
             return this.getResponse(STEP.BEHAVIOR_NOT_FOUND, null);
         } else if (this.type === "fanout") {
             return this.getResponse(STEP.FORK, null);
-        } else if (this.type === "join") {
-            return this.getResponse(STEP.JOIN, null);
         }
     }
 
