@@ -75,8 +75,30 @@ class Thread {
                     break;
             }
         } while (++position < logFile.length);
+        this._assignInputsOutputs();
     }
 
+    /**
+     * Assign the inputs and outputs to the execution.
+     */
+    _assignInputsOutputs () {
+        for (let i = 0; i < this.outputs.length; i++) {
+            const output = this.outputs[i];
+            const nextPosition = this._getNextPosition(output.position);
+            if (nextPosition) {
+                const entry = this.execution[nextPosition];
+                entry.output = output.value;
+            }
+        }
+        for (let i = 0; i < this.inputs.length; i++) {
+            const input = this.inputs[i];
+            const prevPosition = this._getPreviousPosition(input.position);
+            if (prevPosition) {
+                const entry = this.execution[prevPosition];
+                entry.input = input.value;
+            }
+        }
+    }
 
     /**
      * Convert the logged stack to a list of positions
