@@ -44,13 +44,23 @@ class AbstractionStack {
     walkAbstraction () {
         let thread = this.threadDebuggers[this.initialPosition.execution.thread].thread;
 
+        // Initialize the stack with the initial design abstraction
         const abs = this.getDesignAbsFromExecution(this.initialPosition.execution.behavior.id);
         this.addToStack(abs);
 
-        this.printState(
-            this.initialPosition.execution.behavior.id,
-            this.initialPosition.execution.functionalId
+        // Evaluate the behavior of the initial position
+        const status = this.evaluateBehavior(
+            {
+                behavioralId: this.initialPosition.execution.behavior.id,
+                functionalId: this.initialPosition.execution.functionalId,
+            },
+            thread.execution[this.initialPosition.position]
         );
+        if (status === false) {
+            console.warn("Error in evaluating behavior of atomic position, terminating");
+        }
+
+
         let position = this.initialPosition.position + 1;
 
         // If the stack is a fork, then track the output before starting.
@@ -66,6 +76,7 @@ class AbstractionStack {
             console.log("Reached end of file.");
             return;
         }
+
         do {
             const entry = thread.execution[position];
             if (entry?.behavior === undefined) {
