@@ -54,7 +54,6 @@ class SequentialStep {
             return this.getResponse(STEP.STEP_DONE, null);
         } else {
             const expectedBehavior = this.step.behavior[this.behaviorCount];
-            console.log(expectedBehavior, behavior);
             if (expectedBehavior !== behavior) {
                 console.warn("The expected behavior was not found.");
                 return this.getResponse(STEP.ERROR, null);
