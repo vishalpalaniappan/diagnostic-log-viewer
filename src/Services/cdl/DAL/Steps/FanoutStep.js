@@ -1,6 +1,6 @@
 import {STEP} from "../DAL_CONSTANTS";
 /**
- * Represents a selector step.
+ * Represents a fanout step in a design abstraction.
  */
 class FanoutStep {
     /**
