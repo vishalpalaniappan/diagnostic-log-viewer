@@ -140,13 +140,10 @@ class AbstractionStack {
     }
 
     /**
-     * Add behavior to abstraction stack.
+     * Add the design abstraction to the stack.
      * @param {Object} abs
      */
     addToStack (abs) {
-        // const space = "    ";
-        // const spacer = space.repeat(this.stack.length);
-        // console.log(spacer + "-------" + abs.description + "-------");
         this.stack.push(
             new DesignAbstraction(abs)
         );
@@ -252,7 +249,6 @@ class AbstractionStack {
             } else if (result.id === DESIGN.FORK) {
                 // Create new stack and fork from position
                 new AbstractionStack(this.design, this.threadDebuggers, execution, true);
-                console.log("----Returning to main-----");
             }
         }
 
