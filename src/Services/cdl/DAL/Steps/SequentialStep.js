@@ -53,6 +53,13 @@ class SequentialStep {
             this.done = true;
             return this.getResponse(STEP.STEP_DONE, null);
         } else {
+            const expectedBehavior = this.step.behavior[this.behaviorCount];
+            console.log(expectedBehavior, behavior);
+            if (expectedBehavior !== behavior) {
+                console.warn("The expected behavior was not found.");
+                return this.getResponse(STEP.ERROR, null);
+            }
+
             console.log("Exhibiting new behavior in step:", behavior, functional);
             // If we are in a new behavior in this sequential list, then we are
             // still in the same step.
