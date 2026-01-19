@@ -6,9 +6,11 @@ class SelectorRepeatStep {
     /**
      * Initializes the abstraction.
      * @param {Object} step
+     * @param {Object} index
      */
-    constructor (step) {
+    constructor (step, index) {
         this.step = step;
+        this.index = index;
         this.type = "selector_repeat";
 
         this.optionTotal = step.options.length;
@@ -25,6 +27,9 @@ class SelectorRepeatStep {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
 
+        console.log(this);
+        console.log(`     MOVING REPEAT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
             if (step.module === behavior) {
@@ -32,19 +37,7 @@ class SelectorRepeatStep {
                 return this.getResponse(STEP.GOTO_MODULE, {module: behavior});
             }
         }
-
-        // Inc count to indicate that we visited an option that didn't resolve.
-        this.optionCount++;
-
-        if (this.optionCount >= this.optionTotal) {
-            // If we have visited all the options and it didn't resolve, then
-            // this indicates an error.
-            this.done = true;
-            return this.getResponse(STEP.STEP_DONE, null);
-        } else {
-            // We still have more options to visit, so we should continue.
-            return this.getResponse(STEP.SAME_STEP);
-        }
+        return this.getResponse(STEP.STEP_DONE, null);
     }
 
     /**

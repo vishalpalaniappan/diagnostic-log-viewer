@@ -7,6 +7,7 @@ export const STEP = Object.freeze({
     JOIN: 6,
     ERROR: 7,
     GOTO_MODULE_AND_STEP: 8,
+    STEP_DONE_RETRY: 9,
 });
 
 export const DESIGN = Object.freeze({
@@ -17,4 +18,6 @@ export const DESIGN = Object.freeze({
     JOIN: 5,
     CONTINUE: 6,
     ERROR: 7,
+    MOVE_DOWN_STACK_AND_RETURN: 8,
+    MOVE_DOWN_STACK_AND_TRY_AGAIN: 9,
 });

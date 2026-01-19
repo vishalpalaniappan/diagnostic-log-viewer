@@ -27,13 +27,13 @@ class DesignAbstraction {
         for (let i = 0; i < this.abstraction.steps.length; i++) {
             const step = this.abstraction.steps[i];
             if (step.type === "sequential") {
-                this.steps.push(new SequentialStep(step));
+                this.steps.push(new SequentialStep(step, i));
             } else if (step.type === "selector") {
-                this.steps.push(new SelectorStep(step));
+                this.steps.push(new SelectorStep(step, i));
             } else if (step.type === "selector_repeat") {
-                this.steps.push(new SelectorRepeatStep(step));
+                this.steps.push(new SelectorRepeatStep(step, i));
             } else if (step.type === "fanout") {
-                this.steps.push(new FanoutStep(step));
+                this.steps.push(new FanoutStep(step, i));
             }
         }
     }
@@ -59,7 +59,11 @@ class DesignAbstraction {
         }
 
         if (this.step === this.steps.length - 1) {
-            return this.getCurrentStep().done;
+            if (this.getCurrentStep().type === "selector_repeat") {
+                return false;
+            } else {
+                return true;
+            }
         }
         return false;
     }
@@ -81,11 +85,16 @@ class DesignAbstraction {
             }
 
             // Step is done, if it was the last step, finish the abstraction.
+            if (result?.id === STEP.STEP_DONE_RETRY) {
+                this.step++;
+                return this.getResponse(DESIGN.MOVE_DOWN_STACK_AND_TRY_AGAIN, result.args);
+            }
+
+            // Step is done, if it was the last step, finish the abstraction.
             if (result?.id === STEP.STEP_DONE) {
                 this.step++;
                 if (this.step >= this.steps.length) {
-                    // console.log("Step done:", this.step, this.steps.length);
-                    return this.getResponse(DESIGN.DESIGN_ABS_DONE, null);
+                    return this.getResponse(DESIGN.MOVE_DOWN_STACK_AND_RETURN, result.args);
                 }
                 continue;
             }
@@ -116,6 +125,10 @@ class DesignAbstraction {
 
             break;
         };
+        if (this.step >= this.steps.length) {
+            // console.log("Step done:", this.step, this.steps.length);
+            return this.getResponse(DESIGN.DESIGN_ABS_DONE_2, null);
+        }
     }
 
 

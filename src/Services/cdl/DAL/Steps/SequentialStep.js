@@ -6,9 +6,11 @@ class SequentialStep {
     /**
      * Initializes the abstraction.
      * @param {Object} step
+     * @param {Object} index
      */
-    constructor (step) {
+    constructor (step, index) {
         this.step = step;
+        this.index = index;
         this.name = step.name;
         this.type = "sequential";
         this.behaviorCount = 0;
@@ -33,10 +35,13 @@ class SequentialStep {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
 
+        console.log(`     EVALUATING ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+
         // Check if we are still exhibiting the same behavior in the step.
         const currBehavior = this.step.behavior[this.behaviorCount];
         if (behavior === currBehavior) {
-            console.log(`Exhibiting behavior ${this.behaviorCount} in step: ${behavior}, ${functional}`);
+            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+            // console.log(`${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
             return this.getResponse(STEP.SAME_STEP, null);
         }
 
@@ -44,7 +49,8 @@ class SequentialStep {
         this.behaviorCount++;
 
         if (this.behaviorCount < this.step.behavior.length) {
-            console.log(`Exhibiting behavior ${this.behaviorCount} in step: ${behavior}, ${functional}`);
+            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+            // console.log(`${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
             const expectedBehavior = this.step.behavior[this.behaviorCount];
             if (expectedBehavior !== behavior) {
                 console.warn("The expected behavior was not found.");

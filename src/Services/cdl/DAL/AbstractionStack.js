@@ -261,44 +261,60 @@ class AbstractionStack {
      * @return {Boolean}
      */
     evaluateBehavior (info, execution) {
-        const top = this.getTopOfStack();
-        const result = top.testNext(info);
-
-        if (result) {
-            // Go to module
-            if (result.id === DESIGN.GOTO_MODULE) {
-                this.goToModule(result.args.module);
-                this.printState(info);
-                return true;
+        while (true) {
+            if (this.stack.length === 0) {
+                return;
             }
 
-            // Check if design abstraction is done
-            if (result.id === DESIGN.DESIGN_ABS_DONE) {
-                this.popStack();
-                this.moveDownStack();
-                return true;
-            }
+            const top = this.getTopOfStack();
+            const result = top.testNext(info);
 
-            // Create new stack and fork from position
-            if (result.id === DESIGN.FORK) {
-                this.printState(info);
-                new AbstractionStack(this.design, this.threadDebuggers, execution, true);
-                return true;
-            }
+            if (result) {
+                // Go to module
+                if (result.id === DESIGN.GOTO_MODULE) {
+                    this.goToModule(result.args.module);
+                    this.printState(info);
+                    continue;
+                }
 
-            // Continue the design
-            if (result.id === DESIGN.CONTINUE) {
-                this.printState(info);
-                return true;
-            }
+                if (result.id === DESIGN.MOVE_DOWN_STACK_AND_TRY_AGAIN) {
+                    console.log("MOVING DOWN STACK AND TRYING AGAIN");
+                    this.popStack();
+                    continue;
+                }
 
-            // Error in design
-            if (result.id === DESIGN.ERROR) {
-                this.printState(info);
-                return false;
-            }
+                if (result.id === DESIGN.MOVE_DOWN_STACK_AND_RETURN) {
+                    console.log("MOVING DOWN STACK TO SOLVE");
+                    this.popStack();
+                    return;
+                }
 
-            return false;
+                // Check if design abstraction is done
+                if (result.id === DESIGN.DESIGN_ABS_DONE) {
+                    this.popStack();
+                    return;
+                }
+
+                // Create new stack and fork from position
+                if (result.id === DESIGN.FORK) {
+                    this.printState(info);
+                    new AbstractionStack(this.design, this.threadDebuggers, execution, true);
+                    return;
+                }
+
+                // Continue the design
+                if (result.id === DESIGN.CONTINUE) {
+                    this.printState(info);
+                    return;
+                }
+
+                // Error in design
+                if (result.id === DESIGN.ERROR) {
+                    this.printState(info);
+                    return false;
+                }
+            }
+            break;
         }
     }
 }

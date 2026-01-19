@@ -6,9 +6,11 @@ class FanoutStep {
     /**
      * Initializes the abstraction.
      * @param {Object} step
+     * @param {Object} index
      */
-    constructor (step) {
+    constructor (step, index) {
         this.step = step;
+        this.index = index;
         this.type = "selector";
         this.done = false;
     }

@@ -6,9 +6,11 @@ class SelectorStep {
     /**
      * Initializes the abstraction.
      * @param {Object} step
+     * @param {Object} index
      */
-    constructor (step) {
+    constructor (step, index) {
         this.step = step;
+        this.index = index;
         this.type = "selector";
 
         this.optionTotal = step.options.length;
@@ -24,6 +26,12 @@ class SelectorStep {
     evaluateBehavior (info) {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
+
+        console.log(`     MOVING ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+
+        if (this.done) {
+            return this.getResponse(STEP.STEP_DONE, null);
+        }
 
         // Check if the provided module was selected and go to the module.
         for (let i = 0; i < this.step.options.length; i++) {
