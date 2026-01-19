@@ -40,14 +40,21 @@ class AbstractionStep {
             const index = this.step.behavior.indexOf(behavior);
 
             if (index === -1) {
+                // The behavior doesn't exist in this step, so we indicate
+                // that it is not found. This means that we should move onto
+                // the next step in the design abstraction and check.
                 this.behaviorIndex = index;
-                return this.getResponse(STEP.BEHAVIOR_NOT_FOUND, null);
+                return this.getResponse(STEP.BEHAVIOR_NOT_FOUND_IN_STEP, null);
             } else if (index < this.behaviorIndex) {
+                // We've moved back to an earlier behavior in this
+                // step, so we are done the behavior.
                 this.behaviorIndex = index;
-                return this.getResponse(STEP.BEHAVIOR_DONE, null);
+                return this.getResponse(STEP.STEP_DONE, null);
             } else {
+                // The behavior is in this step, so we are still exhibting
+                // the same step in the design abstraction.
                 this.behaviorIndex = index;
-                return this.getResponse(STEP.SAME_BEHAVIOR, null);
+                return this.getResponse(STEP.SAME_STEP, null);
             }
         } else if (this.type === "selector") {
             // Find the option that was selected.
@@ -60,7 +67,7 @@ class AbstractionStep {
                 }
             }
             // console.warn("The selector didn't select a valid option");
-            return this.getResponse(STEP.BEHAVIOR_NOT_FOUND, null);
+            return this.getResponse(STEP.BEHAVIOR_NOT_FOUND_IN_STEP, null);
         } else if (this.type === "fanout") {
             return this.getResponse(STEP.FORK, null);
         } else if (this.type === "join") {

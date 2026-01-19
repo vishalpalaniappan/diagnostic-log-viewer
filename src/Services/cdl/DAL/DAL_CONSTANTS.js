@@ -1,7 +1,7 @@
 export const STEP = Object.freeze({
-    SAME_BEHAVIOR: 1,
-    BEHAVIOR_NOT_FOUND: 2,
-    BEHAVIOR_DONE: 3,
+    SAME_STEP: 1,
+    BEHAVIOR_NOT_FOUND_IN_STEP: 2,
+    STEP_DONE: 3,
     GOTO_MODULE: 4,
     FORK: 5,
     JOIN: 6,

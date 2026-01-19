@@ -57,21 +57,31 @@ class DesignAbstraction {
             const currentStep = this.getCurrentStep();
             const result = currentStep.evaluateBehavior(id);
 
-            if (result?.id === STEP.BEHAVIOR_NOT_FOUND) {
-                // console.log("Behavior not found in step, moving onto next.");
+            if (result?.id === STEP.BEHAVIOR_NOT_FOUND_IN_STEP) {
+                // Step said that it didn't exhibit the behavior. So we move
+                // onto the next step and check if it exhibits this behavior.
                 this.step++;
-            } else if (result?.id === STEP.SAME_BEHAVIOR) {
-                // console.log("Same behavior, nothing to do.");
+            } else if (result?.id === STEP.SAME_STEP) {
+                // Step said that the  the behavior is part of the same
+                // step in the design abstraction, so we don't do anything
+                // and break.
                 break;
-            } else if (result?.id === STEP.BEHAVIOR_DONE) {
+            } else if (result?.id === STEP.STEP_DONE) {
+                // Step said that based on the exhibted behavior, the current
+                // step is done. So we need to actually move onto the next
+                // step and check.
                 this.step++;
-                break;
             } else if (result?.id === STEP.GOTO_MODULE) {
+                // Step said to go to this module based on the behavior
+                // that was exhibited.
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
             } else if (result?.id === STEP.FORK) {
+                // The current step is of fanout type, so we need to fork
+                // at the current step.
                 this.step++;
                 return this.getResponse(DESIGN.FORK, result.args);
             } else if (result?.id === STEP.JOIN) {
+                // Not implemented yet.
                 this.step++;
                 return this.getResponse(DESIGN.JOIN, result.args);
             } else {
