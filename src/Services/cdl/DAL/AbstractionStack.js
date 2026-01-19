@@ -250,16 +250,19 @@ class AbstractionStack {
         if (result) {
             if (result.id === DESIGN.GOTO_MODULE) {
                 this.goToModule(result.args.module);
+                this.printState(id, functionalId);
             } else if (result.id === DESIGN.DESIGN_ABS_DONE) {
                 this.popStack();
                 this.moveDownStack(id);
+                this.printState(id, functionalId);
             } else if (result.id === DESIGN.FORK) {
                 // Create new stack and fork from position
                 this.printState(id, functionalId);
                 new AbstractionStack(this.design, this.threadDebuggers, execution, true);
                 return;
+            } else if (result.id === DESIGN.CONTINUE) {
+                this.printState(id, functionalId);
             }
-            this.printState(id, functionalId);
         } else {
             console.warn("Received unknown result from design abstraction");
         }
