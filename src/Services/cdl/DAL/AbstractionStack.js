@@ -211,7 +211,12 @@ class AbstractionStack {
         }
         const space = "    ";
         const spacer = space.repeat(this.stack.length - 1);
-        console.log(spacer + behavioralId + "," + functionalId);
+        // console.log(spacer + behavioralId + "," + functionalId);
+
+        const top = this.getTopOfStack();
+        const name = top.name;
+        const step = top.getCurrentStep();
+        console.log(spacer + name + "," + top.step + "," + step.behaviorIndex + "," + functionalId);
     }
 
     /**
@@ -248,11 +253,14 @@ class AbstractionStack {
                 this.moveDownStack(id);
             } else if (result.id === DESIGN.FORK) {
                 // Create new stack and fork from position
+                this.printState(id, functionalId);
                 new AbstractionStack(this.design, this.threadDebuggers, execution, true);
+                return;
             }
+            this.printState(id, functionalId);
+        } else {
+            console.warn("Received unknown result from design abstraction");
         }
-
-        this.printState(id, functionalId);
     }
 }
 

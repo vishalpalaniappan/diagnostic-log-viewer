@@ -43,12 +43,10 @@ class AbstractionStep {
                 // The behavior doesn't exist in this step, so we indicate
                 // that it is not found. This means that we should move onto
                 // the next step in the design abstraction and check.
-                this.behaviorIndex = index;
                 return this.getResponse(STEP.BEHAVIOR_NOT_FOUND_IN_STEP, null);
             } else if (index < this.behaviorIndex) {
                 // We've moved back to an earlier behavior in this
                 // step, so we are done the behavior.
-                this.behaviorIndex = index;
                 return this.getResponse(STEP.STEP_DONE, null);
             } else {
                 // The behavior is in this step, so we are still exhibting

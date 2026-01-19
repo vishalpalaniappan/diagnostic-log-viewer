@@ -12,6 +12,7 @@ class DesignAbstraction {
     constructor (abstraction) {
         this.abstraction = {...abstraction};
         this.steps = [];
+        this.name = this.abstraction.name;
         for (let i = 0; i < this.abstraction.steps.length; i++) {
             this.steps.push(new AbstractionStep(this.abstraction.steps[i]));
         }
@@ -68,7 +69,7 @@ class DesignAbstraction {
                 // Step said that the  the behavior is part of the same
                 // step in the design abstraction, so we don't do anything
                 // and break.
-                break;
+                return this.getResponse(DESIGN.CONTINUE, null);
             } else if (result?.id === STEP.STEP_DONE) {
                 // Step said that based on the exhibted behavior, the current
                 // step is done. So we need to actually move onto the next
