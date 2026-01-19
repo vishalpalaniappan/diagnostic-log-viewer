@@ -1,5 +1,8 @@
-import AbstractionStep from "./AbstractionStep";
 import {DESIGN, STEP} from "./DAL_CONSTANTS";
+import FanoutStep from "./Steps/FanoutStep";
+import SelectorRepeatStep from "./Steps/SelectorRepeatStep";
+import SelectorStep from "./Steps/SelectorStep";
+import SequentialStep from "./Steps/SequentialStep";
 /**
  * Represents an instance of an abstraction object
  * loaded intot he abstraction stack.
@@ -13,10 +16,26 @@ class DesignAbstraction {
         this.abstraction = {...abstraction};
         this.steps = [];
         this.name = this.abstraction.name;
-        for (let i = 0; i < this.abstraction.steps.length; i++) {
-            this.steps.push(new AbstractionStep(this.abstraction.steps[i]));
-        }
+        this.initializeSteps();
         this.step = 0;
+    }
+
+    /**
+     * Initializes the steps with the relevant object.
+     */
+    initializeSteps () {
+        for (let i = 0; i < this.abstraction.steps.length; i++) {
+            const step = this.abstraction.steps[i];
+            if (step.type === "sequential") {
+                this.steps.push(new SequentialStep(step));
+            } else if (step.type === "selector") {
+                this.steps.push(new SelectorStep(step));
+            } else if (step.type === "selector_repeat") {
+                this.steps.push(new SelectorRepeatStep(step));
+            } else if (step.type === "fanout") {
+                this.steps.push(new FanoutStep(step));
+            }
+        }
     }
 
     /**
@@ -40,12 +59,7 @@ class DesignAbstraction {
         }
 
         if (this.step === this.steps.length - 1) {
-            const currentStep = this.getCurrentStep();
-            if (currentStep && currentStep.step.repeat) {
-                return false;
-            } else {
-                return true;
-            }
+            return this.getCurrentStep().done;
         }
         return false;
     }
@@ -53,50 +67,55 @@ class DesignAbstraction {
     /**
      * Given an ID, if the next step
      * can be taken given the current state.
-     * @param {String} id
+     * @param {String} info
      * @return {Object|null}
      */
-    testNext (id) {
+    testNext (info) {
         while (this.step < this.steps.length) {
             const currentStep = this.getCurrentStep();
-            const result = currentStep.evaluateBehavior(id);
+            const result = currentStep.evaluateBehavior(info);
 
-            if (result?.id === STEP.BEHAVIOR_NOT_FOUND_IN_STEP) {
-                // Step said that it didn't exhibit the behavior. So we move
-                // onto the next step and check if it exhibits this behavior.
-                this.step++;
-            } else if (result?.id === STEP.SAME_STEP) {
-                // Step said that the the behavior is part of the same
-                // step in the design abstraction, so we don't do anything
-                // and return.
-                return this.getResponse(DESIGN.CONTINUE, null);
-            } else if (result?.id === STEP.STEP_DONE) {
-                // Step said that based on the exhibted behavior, the current
-                // step is done. So we need to actually move onto the next
-                // step and check.
-                this.step++;
-            } else if (result?.id === STEP.GOTO_MODULE) {
-                // Step said to go to this module based on the behavior
-                // that was exhibited.
-                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
-            } else if (result?.id === STEP.FORK) {
-                // The current step is of fanout type, so we need to fork
-                // at the current step.
-                this.step++;
-                return this.getResponse(DESIGN.FORK, result.args);
-            } else if (result?.id === STEP.JOIN) {
-                // Not implemented yet.
-                this.step++;
-                return this.getResponse(DESIGN.JOIN, result.args);
-            } else {
-                console.warn("Unknown response from step object");
-                break;
+            // We are still in the same step, continue the design.
+            if (result?.id === STEP.SAME_STEP) {
+                return this.getResponse(DESIGN.CONTINUE, result.args);
             }
-        };
 
-        if (this.step >= this.steps.length) {
-            return this.getResponse(DESIGN.DESIGN_ABS_DONE, null);
-        }
+            // Step is done, if it was the last step, finish the abstraction.
+            if (result?.id === STEP.STEP_DONE) {
+                this.step++;
+                if (this.step >= this.steps.length) {
+                    console.log("Step done:", this.step, this.steps.length);
+                    return this.getResponse(DESIGN.DESIGN_ABS_DONE, null);
+                }
+                continue;
+            }
+
+            // Go to module without moving to next step
+            if (result?.id === STEP.GOTO_MODULE) {
+                console.log("Going to module:", result.args.module);
+                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
+            }
+
+            // Go to module and increment the step
+            if (result?.id === STEP.GOTO_MODULE_AND_STEP) {
+                this.step++;
+                console.log("Stepping and Going to module:", result.args.module);
+                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
+            }
+
+            // Fork the design
+            if (result?.id === STEP.FORK) {
+                return this.getResponse(DESIGN.FORK, result.args);
+            }
+
+            // Error in the design
+            if (result?.id === STEP.ERROR) {
+                console.log("ERROR");
+                return this.getResponse(DESIGN.ERROR, result.args);
+            }
+
+            break;
+        };
     }
 
 

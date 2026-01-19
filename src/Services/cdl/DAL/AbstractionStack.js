@@ -81,7 +81,18 @@ class AbstractionStack {
                 "execution": entry,
             };
 
-            this.evaluateBehavior(entry.behavior.id, entry.functionalId, executionInfo);
+            const status = this.evaluateBehavior(
+                {
+                    behavioralId: entry.behavior.id,
+                    functionalId: entry.functionalId,
+                },
+                executionInfo
+            );
+
+            if (status === false) {
+                console.log("Errored when evaluating behavior");
+                return;
+            }
 
             // If we are in a fork and its an output, then track.
             if (this.isFork && entry.output) {
@@ -204,24 +215,22 @@ class AbstractionStack {
 
     /**
      * Print the debug information.
-     * @param {String} behavioralId
-     * @param {String} functionalId
+     * @param {Object} info Contains the behavioral id and the functional id.
      */
-    printState (behavioralId, functionalId) {
+    printState (info) {
         if (this.stack.length === 0) {
             return;
         }
         const space = "    ";
         const spacer = space.repeat(this.stack.length - 1);
-        const name = this.getTopOfStack().name;
-        console.log(spacer + name + "," + behavioralId + "," + functionalId);
+        // const name = this.getTopOfStack().name;
+        // console.log(spacer + name + "," + info.behavioralId + "," + info.functionalId);
     }
 
     /**
      * Removes the stack positions that are done.
-     * @param {*} id
      */
-    moveDownStack (id) {
+    moveDownStack () {
         while (this.stack.length > 0) {
             const top = this.getTopOfStack();
             if (top.testDone()) {
@@ -235,32 +244,49 @@ class AbstractionStack {
     /**
      * Evaluate the transition to the provided
      * behavioral id given the stack position.
-     * @param {String} id
-     * @param {String} functionalId
+     * @param {String} info
      * @param {Object} execution
+     * @return {Boolean}
      */
-    evaluateBehavior (id, functionalId, execution) {
+    evaluateBehavior (info, execution) {
         const top = this.getTopOfStack();
-        const result = top.testNext(id);
+        const result = top.testNext(info);
 
         if (result) {
+            // Go to module
             if (result.id === DESIGN.GOTO_MODULE) {
                 this.goToModule(result.args.module);
-                this.printState(id, functionalId);
-            } else if (result.id === DESIGN.DESIGN_ABS_DONE) {
-                this.popStack();
-                this.moveDownStack(id);
-                this.printState(id, functionalId);
-            } else if (result.id === DESIGN.FORK) {
-                // Create new stack and fork from position
-                this.printState(id, functionalId);
-                new AbstractionStack(this.design, this.threadDebuggers, execution, true);
-                return;
-            } else if (result.id === DESIGN.CONTINUE) {
-                this.printState(id, functionalId);
+                this.printState(info);
+                return true;
             }
-        } else {
-            console.warn("Received unknown result from design abstraction");
+
+            // Check if design abstraction is done
+            if (result.id === DESIGN.DESIGN_ABS_DONE) {
+                this.popStack();
+                this.moveDownStack();
+                return true;
+            }
+
+            // Create new stack and fork from position
+            if (result.id === DESIGN.FORK) {
+                this.printState(info);
+                new AbstractionStack(this.design, this.threadDebuggers, execution, true);
+                return true;
+            }
+
+            // Continue the design
+            if (result.id === DESIGN.CONTINUE) {
+                this.printState(info);
+                return true;
+            }
+
+            // Error in design
+            if (result.id === DESIGN.ERROR) {
+                this.printState(info);
+                return false;
+            }
+
+            return false;
         }
     }
 }

@@ -5,6 +5,8 @@ export const STEP = Object.freeze({
     GOTO_MODULE: 4,
     FORK: 5,
     JOIN: 6,
+    ERROR: 7,
+    GOTO_MODULE_AND_STEP: 8,
 });
 
 export const DESIGN = Object.freeze({
@@ -14,4 +16,5 @@ export const DESIGN = Object.freeze({
     FORK: 4,
     JOIN: 5,
     CONTINUE: 6,
+    ERROR: 7,
 });
