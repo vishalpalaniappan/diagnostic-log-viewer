@@ -67,7 +67,15 @@ class AbstractionStep {
             // console.warn("The selector didn't select a valid option");
             return this.getResponse(STEP.BEHAVIOR_NOT_FOUND_IN_STEP, null);
         } else if (this.type === "fanout") {
-            return this.getResponse(STEP.FORK, null);
+            if (this.step.module === behavior) {
+                // If the provided behavior is what we are fanning
+                // out to, then FORK.
+                return this.getResponse(STEP.FORK, null);
+            } else {
+                // If the provided behavior is not what we are fanning
+                // out to, then this step is done.
+                return this.getResponse(STEP.STEP_DONE, null);
+            }
         } else if (this.type === "join") {
             return this.getResponse(STEP.JOIN, null);
         }
