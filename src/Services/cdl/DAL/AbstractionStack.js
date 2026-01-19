@@ -88,7 +88,9 @@ class AbstractionStack {
                 const input = this.trackOutput(entry);
                 if (input) {
                     thread = this.threadDebuggers[input.thread].thread;
-                    position = input.position;
+                    // Subtracting one from position because it gets incremented
+                    // in the do while condition evaluation below.
+                    position = input.position - 1;
                 }
             }
         } while (++position < thread.execution.length);
