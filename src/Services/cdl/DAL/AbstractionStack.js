@@ -213,12 +213,8 @@ class AbstractionStack {
         }
         const space = "    ";
         const spacer = space.repeat(this.stack.length - 1);
-        // console.log(spacer + behavioralId + "," + functionalId);
-
-        const top = this.getTopOfStack();
-        const name = top.name;
-        const step = top.getCurrentStep();
-        console.log(spacer + name + "," + top.step + "," + step.behaviorIndex + "," + functionalId);
+        const name = this.getTopOfStack().name;
+        console.log(spacer + name + "," + behavioralId + "," + functionalId);
     }
 
     /**
