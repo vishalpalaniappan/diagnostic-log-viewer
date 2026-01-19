@@ -29,7 +29,6 @@ class SelectorStep {
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
             if (step.module === behavior) {
-                console.log("Found selected behavior:", behavior);
                 this.done = true;
                 return this.getResponse(STEP.GOTO_MODULE_AND_STEP, {module: step.module});
             }

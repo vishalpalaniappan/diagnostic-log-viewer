@@ -36,33 +36,26 @@ class SequentialStep {
         // Check if we are still exhibiting the same behavior in the step.
         const currBehavior = this.step.behavior[this.behaviorCount];
         if (behavior === currBehavior) {
-            if (this.behaviorCount === 0) {
-                console.log("Exhibiting first behavior in step:", behavior, functional);
-            } else {
-                console.log("Exhibiting the same behavior in step:", behavior, functional);
-            }
+            console.log(`Exhibiting behavior ${this.behaviorCount} in step: ${behavior}, ${functional}`);
             return this.getResponse(STEP.SAME_STEP, null);
         }
 
         // Increment behavior count because we have moved on to the next one
         this.behaviorCount++;
 
-        if (this.behaviorCount >= this.step.behavior.length) {
-            // If we have moved past the last behavior in the sequential list
-            // then we are done.
-            this.done = true;
-            return this.getResponse(STEP.STEP_DONE, null);
-        } else {
+        if (this.behaviorCount < this.step.behavior.length) {
+            console.log(`Exhibiting behavior ${this.behaviorCount} in step: ${behavior}, ${functional}`);
             const expectedBehavior = this.step.behavior[this.behaviorCount];
             if (expectedBehavior !== behavior) {
                 console.warn("The expected behavior was not found.");
                 return this.getResponse(STEP.ERROR, null);
             }
-
-            console.log("Exhibiting new behavior in step:", behavior, functional);
-            // If we are in a new behavior in this sequential list, then we are
-            // still in the same step.
             return this.getResponse(STEP.SAME_STEP, null);
+        } else {
+            // If we have moved past the last behavior in the sequential list
+            // then we are done.
+            this.done = true;
+            return this.getResponse(STEP.STEP_DONE, null);
         }
     }
 
