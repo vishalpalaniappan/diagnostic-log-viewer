@@ -73,6 +73,7 @@ class AbstractionStack {
             }
 
             if (this.stack.length === 0) {
+                console.log("Atomic design abstraction done");
                 break;
             }
 

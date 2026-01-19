@@ -84,7 +84,7 @@ class DesignAbstraction {
             if (result?.id === STEP.STEP_DONE) {
                 this.step++;
                 if (this.step >= this.steps.length) {
-                    console.log("Step done:", this.step, this.steps.length);
+                    // console.log("Step done:", this.step, this.steps.length);
                     return this.getResponse(DESIGN.DESIGN_ABS_DONE, null);
                 }
                 continue;
