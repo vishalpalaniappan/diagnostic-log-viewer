@@ -27,7 +27,10 @@ class DesignAbstraction {
     }
 
     /**
-     * Tests if the abstraction is done.
+     * Tests if the abstraction is done. If the final
+     * step is a repeated selector, then the abstraction
+     * isn't done until an invalid module is selected
+     * for the selector module.
      * @return {Boolean}
      */
     testDone () {
