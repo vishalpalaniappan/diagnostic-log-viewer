@@ -46,7 +46,7 @@ class AbstractionStep {
                 return this.getResponse(STEP.BEHAVIOR_NOT_FOUND_IN_STEP, null);
             } else if (index < this.behaviorIndex) {
                 // We've moved back to an earlier behavior in this
-                // step, so we are done the behavior.
+                // step, so we are done the step.
                 return this.getResponse(STEP.STEP_DONE, null);
             } else {
                 // The behavior is in this step, so we are still exhibting

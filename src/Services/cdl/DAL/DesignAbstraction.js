@@ -66,9 +66,9 @@ class DesignAbstraction {
                 // onto the next step and check if it exhibits this behavior.
                 this.step++;
             } else if (result?.id === STEP.SAME_STEP) {
-                // Step said that the  the behavior is part of the same
+                // Step said that the the behavior is part of the same
                 // step in the design abstraction, so we don't do anything
-                // and break.
+                // and return.
                 return this.getResponse(DESIGN.CONTINUE, null);
             } else if (result?.id === STEP.STEP_DONE) {
                 // Step said that based on the exhibted behavior, the current
