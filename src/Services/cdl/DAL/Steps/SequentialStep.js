@@ -35,13 +35,10 @@ class SequentialStep {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
 
-        // console.log(`     EVALUATING ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
-
         // Check if we are still exhibiting the same behavior in the step.
         const currBehavior = this.step.behavior[this.behaviorCount];
         if (behavior === currBehavior) {
-            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
-            // console.log(`${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: [${behavior},${functional}]`);
             return this.getResponse(STEP.SOLVED, null);
         }
 
@@ -49,13 +46,12 @@ class SequentialStep {
         this.behaviorCount++;
 
         if (this.behaviorCount < this.step.behavior.length) {
-            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
-            // console.log(`${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
             const expectedBehavior = this.step.behavior[this.behaviorCount];
             if (expectedBehavior !== behavior) {
                 console.warn("The expected behavior was not found.");
                 return this.getResponse(STEP.ERROR, null);
             }
+            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: [${behavior},${functional}]`);
             return this.getResponse(STEP.SOLVED, null);
         } else {
             // If we have moved past the last behavior in the sequential list
