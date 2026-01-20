@@ -1,4 +1,5 @@
 import AbstractionStack from "./AbstractionStack";
+import {DesignTrace} from "./DesignTrace.js";
 /**
  * Design Abstraction Language (DAL) class to work
  * with an instrumented DAL Specification (DALSpec).
@@ -16,6 +17,7 @@ class DAL {
         console.log("Initialized DAL instance with spec:", this.design);
         this.atomicBehaviors = this.getAtomicBehaviors();
         this.atomicPositions = [];
+        DesignTrace.setDesign(DALSpec.design);
         this.walkExecution();
     }
 
