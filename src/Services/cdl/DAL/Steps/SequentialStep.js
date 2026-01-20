@@ -42,7 +42,7 @@ class SequentialStep {
         if (behavior === currBehavior) {
             console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
             // console.log(`${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
-            return this.getResponse(STEP.SAME_STEP, null);
+            return this.getResponse(STEP.SOLVED, null);
         }
 
         // Increment behavior count because we have moved on to the next one
@@ -56,7 +56,7 @@ class SequentialStep {
                 console.warn("The expected behavior was not found.");
                 return this.getResponse(STEP.ERROR, null);
             }
-            return this.getResponse(STEP.SAME_STEP, null);
+            return this.getResponse(STEP.SOLVED, null);
         } else {
             // If we have moved past the last behavior in the sequential list
             // then we are done.

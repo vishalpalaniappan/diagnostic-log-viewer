@@ -80,27 +80,34 @@ class DesignAbstraction {
             const result = currentStep.evaluateBehavior(info);
 
             // We are still in the same step, continue the design.
-            if (result?.id === STEP.SAME_STEP) {
+            if (result?.id === STEP.SOLVED) {
                 return this.getResponse(DESIGN.CONTINUE, result.args);
             }
 
+            // We are still in the same step, continue the design.
+            if (result?.id === STEP.SAME_STEP) {
+                return this.getResponse(DESIGN.CONTINUE, result.args);
+            }
             // Step is done, if it was the last step, finish the abstraction.
             if (result?.id === STEP.STEP_DONE_RETRY) {
                 this.step++;
-                return this.getResponse(DESIGN.MOVE_DOWN_STACK_AND_TRY_AGAIN, result.args);
+                return this.getResponse(DESIGN.STEP_DONE, result.args);
             }
 
             // Step is done, if it was the last step, finish the abstraction.
             if (result?.id === STEP.STEP_DONE) {
                 this.step++;
-                if (this.step >= this.steps.length) {
-                    return this.getResponse(DESIGN.MOVE_DOWN_STACK_AND_RETURN, result.args);
-                }
-                continue;
+                return this.getResponse(DESIGN.STEP_DONE, result.args);
             }
 
             // Go to module without moving to next step
             if (result?.id === STEP.GOTO_MODULE) {
+                // Selector module picked this behavior and it repeats
+                // So we need to go back to the sequential abstraction
+                // which picks the selector module until it finishes
+                // by not selecting a valid behavior.
+                this.step--;
+                this.getCurrentStep().behaviorCount = 0;
                 console.log("Going to module:", result.args.module);
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
             }
@@ -125,10 +132,6 @@ class DesignAbstraction {
 
             break;
         };
-        if (this.step >= this.steps.length) {
-            // console.log("Step done:", this.step, this.steps.length);
-            return this.getResponse(DESIGN.DESIGN_ABS_DONE_2, null);
-        }
     }
 
 

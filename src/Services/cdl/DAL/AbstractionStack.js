@@ -267,6 +267,12 @@ class AbstractionStack {
             }
 
             const top = this.getTopOfStack();
+            if (top && top.step >= top.steps.length) {
+                console.log("POPPING STACK");
+                this.popStack();
+                continue;
+            }
+
             const result = top.testNext(info);
 
             if (result) {
@@ -277,16 +283,9 @@ class AbstractionStack {
                     continue;
                 }
 
-                if (result.id === DESIGN.MOVE_DOWN_STACK_AND_TRY_AGAIN) {
-                    console.log("MOVING DOWN STACK AND TRYING AGAIN");
-                    this.popStack();
+                if (result.id === DESIGN.STEP_DONE) {
+                    this.printState(info);
                     continue;
-                }
-
-                if (result.id === DESIGN.MOVE_DOWN_STACK_AND_RETURN) {
-                    console.log("MOVING DOWN STACK TO SOLVE");
-                    this.popStack();
-                    return;
                 }
 
                 // Check if design abstraction is done

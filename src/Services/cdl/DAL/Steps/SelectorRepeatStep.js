@@ -27,7 +27,6 @@ class SelectorRepeatStep {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
 
-        console.log(this);
         console.log(`     SELECTOR REPEAT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
 
         for (let i = 0; i < this.step.options.length; i++) {
