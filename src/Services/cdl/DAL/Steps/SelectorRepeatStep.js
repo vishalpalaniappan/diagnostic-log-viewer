@@ -39,7 +39,21 @@ class SelectorRepeatStep {
             }
         }
 
-        return this.getResponse(STEP.STEP_DONE, null);
+        if (this.step.mutex) {
+            /**
+             * The selector had to pick from one of the options but
+             * but the execution didn't, this indicates an error in
+             * the instrumentation.The design cannot solve the
+             * execution that it is observing.
+             **/
+            return this.getResponse(STEP.ERROR, null);
+        } else {
+            /**
+             * The selector didn't pick from one of the options, so
+             * we move onto the next step and evaluate the position.
+             **/
+            return this.getResponse(STEP.STEP_DONE, null);
+        }
     }
 
     /**
