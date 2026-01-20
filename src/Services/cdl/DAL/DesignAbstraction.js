@@ -27,14 +27,15 @@ class DesignAbstraction {
     initializeSteps () {
         for (let i = 0; i < this.abstraction.steps.length; i++) {
             const step = this.abstraction.steps[i];
+            const totalSteps = this.abstraction.steps.length;
             if (step.type === "sequential") {
-                this.steps.push(new SequentialStep(step, i));
+                this.steps.push(new SequentialStep(step, i, totalSteps, this.name));
             } else if (step.type === "selector") {
-                this.steps.push(new SelectorStep(step, i));
+                this.steps.push(new SelectorStep(step, i, totalSteps, this.name));
             } else if (step.type === "selector_repeat") {
-                this.steps.push(new SelectorRepeatStep(step, i));
+                this.steps.push(new SelectorRepeatStep(step, i, totalSteps, this.name));
             } else if (step.type === "fanout") {
-                this.steps.push(new FanoutStep(step, i));
+                this.steps.push(new FanoutStep(step, i, totalSteps, this.name));
             }
         }
     }

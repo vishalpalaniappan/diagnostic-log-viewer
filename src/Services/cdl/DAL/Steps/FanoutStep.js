@@ -8,9 +8,13 @@ class FanoutStep {
      * Initializes the abstraction.
      * @param {Object} step
      * @param {Object} index
+     * @param {Object} totalSteps
+     * @param {Object} designAbsName
      */
-    constructor (step, index) {
+    constructor (step, index, totalSteps, designAbsName) {
+        this.designAbsName = designAbsName;
         this.step = step;
+        this.totalSteps = totalSteps;
         this.index = index;
         this.type = "selector";
         this.done = false;
@@ -23,13 +27,12 @@ class FanoutStep {
      */
     evaluateBehavior (info) {
         const behavior = info.behavioralId;
-        const functional = info.functionalId;
 
         if (this.step.module === behavior) {
             // If the provided behavior is what we are fanning
             // out to, then FORK.
             this.done = true;
-            console.log(`     FANOUT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+            this.buildState(info);
             return buildResponse(STEP.FORK, null);
         } else {
             // If the provided behavior is not what we are fanning
@@ -37,6 +40,25 @@ class FanoutStep {
             this.done = true;
             return buildResponse(STEP.STEP_DONE, null);
         }
+    }
+
+    /**
+     * Builds the current state of the step.
+     * @param {Object} info
+     */
+    buildState (info) {
+        const behavior = info.behavioralId;
+        const functional = info.functionalId;
+
+        const behaviorCount = this.behaviorCount + 1;
+        const totalBehavior = this.step.behavior.length;
+        const behaviorLength = `(${behaviorCount}/${totalBehavior})`;
+
+        const id = this.step.id;
+        const infoStr = `[${behavior},${functional}]`;
+        const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
+        const state = `FANOUT ${id} in step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
+        console.log(state);
     }
 }
 

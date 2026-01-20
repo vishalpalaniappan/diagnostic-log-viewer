@@ -8,9 +8,13 @@ class SelectorStep {
      * Initializes the abstraction.
      * @param {Object} step
      * @param {Object} index
+     * @param {Object} totalSteps
+     * @param {Object} designAbsName
      */
-    constructor (step, index) {
+    constructor (step, index, totalSteps, designAbsName) {
+        this.designAbsName = designAbsName;
         this.step = step;
+        this.totalSteps = totalSteps;
         this.index = index;
         this.type = "selector";
         this.done = false;
@@ -23,14 +27,13 @@ class SelectorStep {
      */
     evaluateBehavior (info) {
         const behavior = info.behavioralId;
-        const functional = info.functionalId;
 
         // Check if the provided module was selected and go to the module.
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
             if (step.module === behavior) {
                 this.done = true;
-                console.log(`     > MOVING to module ${behavior} in step ${this.index}: ${behavior}, ${functional}`);
+                this.buildState(info);
                 return buildResponse(STEP.GOTO_MODULE_AND_STEP, {module: step.module});
             }
         }
@@ -50,6 +53,20 @@ class SelectorStep {
              **/
             return buildResponse(STEP.STEP_DONE, null);
         }
+    }
+
+    /**
+     * Builds the current state of the step.
+     * @param {Object} info
+     */
+    buildState (info) {
+        const behavior = info.behavioralId;
+        const functional = info.functionalId;
+        const infoStr = `[${behavior},${functional}]`;
+        const typeStr = "\x1b[36mSELECTED\x1b[0m";
+        const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
+        const state = `${typeStr} module ${behavior} in step ${stepString}: ${infoStr}`;
+        console.log(state);
     }
 }
 

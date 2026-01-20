@@ -8,9 +8,13 @@ class SequentialStep {
      * Initializes the abstraction.
      * @param {Object} step
      * @param {Object} index
+     * @param {Object} totalSteps
+     * @param {Object} designAbsName
      */
-    constructor (step, index) {
+    constructor (step, index, totalSteps, designAbsName) {
+        this.designAbsName = designAbsName;
         this.step = step;
+        this.totalSteps = totalSteps;
         this.index = index;
         this.name = step.name;
         this.type = "sequential";
@@ -34,12 +38,11 @@ class SequentialStep {
      */
     evaluateBehavior (info) {
         const behavior = info.behavioralId;
-        const functional = info.functionalId;
 
         // Check if we are still exhibiting the same behavior in the step.
         const currBehavior = this.step.behavior[this.behaviorCount];
         if (behavior === currBehavior) {
-            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: [${behavior},${functional}]`);
+            this.buildState(info);
             return buildResponse(STEP.SOLVED, null);
         }
 
@@ -53,7 +56,7 @@ class SequentialStep {
                 console.warn(expectedBehavior, behavior);
                 return buildResponse(STEP.ERROR, null);
             }
-            console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: [${behavior},${functional}]`);
+            this.buildState(info);
             return buildResponse(STEP.SOLVED, null);
         } else {
             // If we have moved past the last behavior in the sequential list
@@ -61,6 +64,25 @@ class SequentialStep {
             this.done = true;
             return buildResponse(STEP.STEP_DONE, null);
         }
+    }
+
+    /**
+     * Builds the current state of the step.
+     * @param {Object} info
+     */
+    buildState (info) {
+        const behavior = info.behavioralId;
+        const functional = info.functionalId;
+
+        const behaviorCount = this.behaviorCount + 1;
+        const totalBehavior = this.step.behavior.length;
+        const behaviorLength = `(${behaviorCount}/${totalBehavior})`;
+
+        const id = this.step.id;
+        const infoStr = `[${behavior},${functional}]`;
+        const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
+        const state = `SOLVED ${id} in step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
+        console.log(state);
     }
 }
 

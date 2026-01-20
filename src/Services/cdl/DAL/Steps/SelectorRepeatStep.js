@@ -8,9 +8,13 @@ class SelectorRepeatStep {
      * Initializes the abstraction.
      * @param {Object} step
      * @param {Object} index
+     * @param {Object} totalSteps
+     * @param {Object} designAbsName
      */
-    constructor (step, index) {
+    constructor (step, index, totalSteps, designAbsName) {
+        this.designAbsName = designAbsName;
         this.step = step;
+        this.totalSteps = totalSteps;
         this.index = index;
         this.type = "selector_repeat";
 
@@ -26,13 +30,11 @@ class SelectorRepeatStep {
      */
     evaluateBehavior (info) {
         const behavior = info.behavioralId;
-        const functional = info.functionalId;
-
 
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
             if (step.module === behavior) {
-                console.log(`     > MOVING (REPEAT) to module ${behavior} in step ${this.index}: ${behavior}, ${functional}`);
+                this.buildState(info);
                 this.done = false;
                 return buildResponse(
                     STEP.GOTO_MODULE_FROM_REPEATED_SELECTOR, {module: behavior}
@@ -55,6 +57,20 @@ class SelectorRepeatStep {
              **/
             return buildResponse(STEP.STEP_DONE, null);
         }
+    }
+
+    /**
+     * Builds the current state of the step.
+     * @param {Object} info
+     */
+    buildState (info) {
+        const behavior = info.behavioralId;
+        const functional = info.functionalId;
+        const infoStr = `[${behavior},${functional}]`;
+        const typeStr = "\x1b[36mSELECTED (REPEAT)\x1b[0m";
+        const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
+        const state = `${typeStr} module ${behavior} in step ${stepString}: ${infoStr}`;
+        console.log(state);
     }
 }
 

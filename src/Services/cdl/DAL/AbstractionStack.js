@@ -279,7 +279,8 @@ class AbstractionStack {
                     return;
                 } else {
                     const top = this.getTopOfStack();
-                    console.log(`     > RETURN to ${top.name}`);
+                    const typeStr = "\x1b[31mRETURN\x1b[0m";
+                    console.log(`${typeStr} to ${top.name}`);
                 }
                 continue;
             }
