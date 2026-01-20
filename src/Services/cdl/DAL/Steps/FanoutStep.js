@@ -28,6 +28,7 @@ class FanoutStep {
      * @return {Object|null}
      */
     evaluateBehavior (execution) {
+        this.execution = execution;
         const behavior = execution.behavior.id;
 
         if (this.step.module === behavior) {
