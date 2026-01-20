@@ -47,8 +47,25 @@ class DesignAbstraction {
     }
 
     /**
-     * Given an ID, if the next step
+     * Given the behavioral ID, check if the next step
      * can be taken given the current state.
+     *
+     * The info argument contains the behavioral id but it
+     * also includes the functional id in the behvior and the
+     * variable stack of the position (will be used to build
+     * behavioral sentences).
+     *
+     * If it can't, then move to the next step
+     * in the design abstraction. If the next
+     * step can't resolve it, then move down the
+     * abstraction stack until you find the abstraction
+     * that can solve it.
+     *
+     * The design provides a defined path forward.
+     * If the observed execution position is not what
+     * the design expected given the current state,
+     * then we have run into an error in the instrumentation
+     * and the user is notified precisely where this gap is.
      * @param {String} info
      * @return {Object|null}
      */
@@ -77,8 +94,9 @@ class DesignAbstraction {
             // Go to module without moving to next step
             if (result?.id === STEP.GOTO_MODULE_FROM_REPEATED_SELECTOR) {
                 // Selector module picked this behavior and it repeats
+                // until the it picks different behavior.
                 // So we need to go back to the sequential abstraction
-                // which picks the selector module until it finishes
+                // which defines the selector module until it finishes
                 // by not selecting a valid behavior.
                 this.step--;
                 this.getCurrentStep().behaviorCount = 0;
@@ -96,7 +114,7 @@ class DesignAbstraction {
                 return this.getResponse(DESIGN.FORK, result.args);
             }
 
-            // Error in the design
+            // Error in the instrumentation
             if (result?.id === STEP.ERROR) {
                 return this.getResponse(DESIGN.ERROR, result.args);
             }
