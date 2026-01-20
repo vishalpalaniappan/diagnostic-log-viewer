@@ -28,6 +28,15 @@ class SemanticModel {
      */
     addAtomicAbstraction (uid) {
         this.atomicAbstractions[uid] = new SemanticAbstraction();
+        this.activeAbstraction = this.atomicAbstractions[uid];
+    }
+
+    /**
+     * Records the trace into the active abstraction.
+     * @param {String} entry
+     */
+    recordTrace (entry) {
+        this.activeAbstraction.addToTrace(entry);
     }
 }
 
