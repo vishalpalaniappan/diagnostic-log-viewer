@@ -1,5 +1,5 @@
 import AbstractionStack from "./AbstractionStack";
-import {DesignTrace} from "./DesignTrace.js";
+import {DesignTrace} from "./DesignTrace/DesignTrace.js";
 /**
  * Design Abstraction Language (DAL) class to work
  * with an instrumented DAL Specification (DALSpec).
