@@ -244,8 +244,22 @@ class AbstractionStack {
     }
 
     /**
-     * Evaluate the transition to the provided
-     * behavioral id given the stack position.
+     * Evaluate the executed behavior by solving it with the design.
+     *
+     * This function performs the semantic transform by projecting
+     * the design abstraction onto the execution. It does this by
+     * walking the design abstraction as the execution. It asks the
+     * current design abstraction to test the next execution position
+     * and solve the path the design took to reach it.
+     *
+     * At any given point in the design, there is a defined path forward
+     * for the execution. By providing the execution, the design is able
+     * to identify the path that the execution took through the design. If it is
+     * unable to do this, then the instrumentation is incomplete. This must be
+     * true because the design is what produced the execution, so if you are
+     * unable to project the design back onto the execution, then the design's
+     * instrumentation is insufficient.
+     *
      * @param {String} info
      * @param {Object} execution
      * @return {Boolean}
@@ -280,7 +294,7 @@ class AbstractionStack {
                 }
 
                 // If design step is done, continue with the same
-                // execution position.
+                // execution position until it is solved.
                 if (result.id === DESIGN.STEP_DONE) {
                     continue;
                 }
@@ -291,12 +305,12 @@ class AbstractionStack {
                     return;
                 }
 
-                // Continue to next execution.
+                // Return to main and continue processing execution.
                 if (result.id === DESIGN.CONTINUE) {
                     return;
                 }
 
-                // Error in design
+                // Error in instrumentation
                 if (result.id === DESIGN.ERROR) {
                     return false;
                 }
