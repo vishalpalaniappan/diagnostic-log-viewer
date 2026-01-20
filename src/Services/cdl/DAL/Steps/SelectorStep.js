@@ -62,7 +62,7 @@ class SelectorStep {
     buildState (info) {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
-        const infoStr = `[${behavior},${functional}]`;
+        const infoStr = `[${behavior}]`;
         const typeStr = "\x1b[36m[SELECTED]\x1b[0m";
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
         const state = `${typeStr} step ${stepString}, selected module ${behavior}: ${infoStr}`;
