@@ -54,7 +54,7 @@ class FanoutStep {
         const infoStr = `[${behavior},${functional}]`;
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
         const typeStr = "\x1b[33mFANOUT\x1b[0m";
-        const state = `${typeStr} ${id} in step ${stepString}: ${infoStr}`;
+        const state = `${typeStr} step ${stepString}: ${infoStr}`;
         console.log(state);
     }
 }

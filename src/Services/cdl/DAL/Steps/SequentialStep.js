@@ -78,10 +78,9 @@ class SequentialStep {
         const totalBehavior = this.step.behavior.length;
         const behaviorLength = `(${behaviorCount}/${totalBehavior})`;
 
-        const id = this.step.id;
         const infoStr = `[${behavior},${functional}]`;
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
-        const state = `SOLVED ${id} in step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
+        const state = `SOLVED step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
         console.log(state);
     }
 }

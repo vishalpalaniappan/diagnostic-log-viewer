@@ -67,9 +67,9 @@ class SelectorRepeatStep {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
         const infoStr = `[${behavior},${functional}]`;
-        const typeStr = "\x1b[36mSELECTED (REPEAT)\x1b[0m";
+        const typeStr = "\x1b[36m[SELECTED (REPEAT)]\x1b[0m";
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
-        const state = `${typeStr} module ${behavior} in step ${stepString}: ${infoStr}`;
+        const state = `${typeStr} step ${stepString}, selected module ${behavior}: ${infoStr}`;
         console.log(state);
     }
 }
