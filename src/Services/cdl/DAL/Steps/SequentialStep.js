@@ -1,4 +1,5 @@
 import {STEP} from "../DAL_CONSTANTS";
+import {buildResponse} from "../helper";
 /**
  * Represents a sequential step.
  */
@@ -39,7 +40,7 @@ class SequentialStep {
         const currBehavior = this.step.behavior[this.behaviorCount];
         if (behavior === currBehavior) {
             console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: [${behavior},${functional}]`);
-            return this.getResponse(STEP.SOLVED, null);
+            return buildResponse(STEP.SOLVED, null);
         }
 
         // Increment behavior count because we have moved on to the next one
@@ -50,29 +51,16 @@ class SequentialStep {
             if (expectedBehavior !== behavior) {
                 console.warn("The expected behavior was not found.");
                 console.warn(expectedBehavior, behavior);
-                return this.getResponse(STEP.ERROR, null);
+                return buildResponse(STEP.ERROR, null);
             }
             console.log(`     SOLVED ${this.step.id} ${this.behaviorCount} in step ${this.index}: [${behavior},${functional}]`);
-            return this.getResponse(STEP.SOLVED, null);
+            return buildResponse(STEP.SOLVED, null);
         } else {
             // If we have moved past the last behavior in the sequential list
             // then we are done.
             this.done = true;
-            return this.getResponse(STEP.STEP_DONE, null);
+            return buildResponse(STEP.STEP_DONE, null);
         }
-    }
-
-    /**
-     * Generates response to the design abstraction.
-     * @param {String} id
-     * @param {Object} args
-     * @return {Object}
-     */
-    getResponse (id, args) {
-        return {
-            "id": id,
-            "args": args,
-        };
     }
 }
 

@@ -1,4 +1,5 @@
 import {DESIGN, STEP} from "./DAL_CONSTANTS";
+import {buildResponse} from "./helper";
 import FanoutStep from "./Steps/FanoutStep";
 import SelectorRepeatStep from "./Steps/SelectorRepeatStep";
 import SelectorStep from "./Steps/SelectorStep";
@@ -76,19 +77,19 @@ class DesignAbstraction {
 
             // Step was solved, move onto the next execution.
             if (result?.id === STEP.SOLVED) {
-                return this.getResponse(DESIGN.CONTINUE, result.args);
+                return buildResponse(DESIGN.CONTINUE, result.args);
             }
 
             // We are still in the same step, move onto the next execution.
             if (result?.id === STEP.SAME_STEP) {
-                return this.getResponse(DESIGN.CONTINUE, result.args);
+                return buildResponse(DESIGN.CONTINUE, result.args);
             }
 
             // Step is done, let the stack know so that it can remove it
             // from the stack if it is done and continue.
             if (result?.id === STEP.STEP_DONE) {
                 this.step++;
-                return this.getResponse(DESIGN.STEP_DONE, result.args);
+                return buildResponse(DESIGN.STEP_DONE, result.args);
             }
 
             // Go to module without moving to next step
@@ -100,40 +101,26 @@ class DesignAbstraction {
                 // by not selecting a valid behavior.
                 this.step--;
                 this.getCurrentStep().behaviorCount = 0;
-                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
+                return buildResponse(DESIGN.GOTO_MODULE, result.args);
             }
 
             // Go to module and increment the step
             if (result?.id === STEP.GOTO_MODULE_AND_STEP) {
                 this.step++;
-                return this.getResponse(DESIGN.GOTO_MODULE, result.args);
+                return buildResponse(DESIGN.GOTO_MODULE, result.args);
             }
 
             // Fork the design
             if (result?.id === STEP.FORK) {
-                return this.getResponse(DESIGN.FORK, result.args);
+                return buildResponse(DESIGN.FORK, result.args);
             }
 
             // Error in the instrumentation
             if (result?.id === STEP.ERROR) {
-                return this.getResponse(DESIGN.ERROR, result.args);
+                return buildResponse(DESIGN.ERROR, result.args);
             }
 
             break;
-        };
-    }
-
-
-    /**
-     * Generates response to the behavior stack object.
-     * @param {String} id
-     * @param {Object} args
-     * @return {Object}
-     */
-    getResponse (id, args) {
-        return {
-            "id": id,
-            "args": args,
         };
     }
 }

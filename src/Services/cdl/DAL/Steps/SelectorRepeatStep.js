@@ -1,4 +1,5 @@
 import {STEP} from "../DAL_CONSTANTS";
+import {buildResponse} from "../helper";
 /**
  * Represents a selector repeat step.
  */
@@ -33,7 +34,7 @@ class SelectorRepeatStep {
             if (step.module === behavior) {
                 console.log(`     > MOVING (REPEAT) to module ${behavior} in step ${this.index}: ${behavior}, ${functional}`);
                 this.done = false;
-                return this.getResponse(
+                return buildResponse(
                     STEP.GOTO_MODULE_FROM_REPEATED_SELECTOR, {module: behavior}
                 );
             }
@@ -46,27 +47,14 @@ class SelectorRepeatStep {
              * the instrumentation.The design cannot solve the
              * execution that it is observing.
              **/
-            return this.getResponse(STEP.ERROR, null);
+            return buildResponse(STEP.ERROR, null);
         } else {
             /**
              * The selector didn't pick from one of the options, so
              * we move onto the next step and evaluate the position.
              **/
-            return this.getResponse(STEP.STEP_DONE, null);
+            return buildResponse(STEP.STEP_DONE, null);
         }
-    }
-
-    /**
-     * Generates response to the design abstraction.
-     * @param {String} id
-     * @param {Object} args
-     * @return {Object}
-     */
-    getResponse (id, args) {
-        return {
-            "id": id,
-            "args": args,
-        };
     }
 }
 

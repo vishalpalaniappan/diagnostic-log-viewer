@@ -1,4 +1,5 @@
 import {STEP} from "../DAL_CONSTANTS";
+import {buildResponse} from "../helper";
 /**
  * Represents a selector step.
  */
@@ -30,7 +31,7 @@ class SelectorStep {
             if (step.module === behavior) {
                 this.done = true;
                 console.log(`     > MOVING to module ${behavior} in step ${this.index}: ${behavior}, ${functional}`);
-                return this.getResponse(STEP.GOTO_MODULE_AND_STEP, {module: step.module});
+                return buildResponse(STEP.GOTO_MODULE_AND_STEP, {module: step.module});
             }
         }
 
@@ -41,27 +42,14 @@ class SelectorStep {
              * the instrumentation. The design cannot solve the
              * execution that it is observing.
              **/
-            return this.getResponse(STEP.ERROR, null);
+            return buildResponse(STEP.ERROR, null);
         } else {
             /**
              * The selector didn't pick from one of the options, so
              * we move onto the next step and evaluate the position.
              **/
-            return this.getResponse(STEP.STEP_DONE, null);
+            return buildResponse(STEP.STEP_DONE, null);
         }
-    }
-
-    /**
-     * Generates response to the design abstraction.
-     * @param {String} id
-     * @param {Object} args
-     * @return {Object}
-     */
-    getResponse (id, args) {
-        return {
-            "id": id,
-            "args": args,
-        };
     }
 }
 

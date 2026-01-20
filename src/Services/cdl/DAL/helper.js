@@ -1,0 +1,13 @@
+/**
+ * Builds a response object with the provided
+ * id and arguments.
+ * @param {String} id
+ * @param {Object} args
+ * @return {Object}
+ */
+export const buildResponse = (id, args) => {
+    return {
+        "id": id,
+        "args": args,
+    };
+};

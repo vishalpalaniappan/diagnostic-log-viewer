@@ -1,4 +1,5 @@
 import {STEP} from "../DAL_CONSTANTS";
+import {buildResponse} from "../helper";
 /**
  * Represents a fanout step in a design abstraction.
  */
@@ -29,26 +30,13 @@ class FanoutStep {
             // out to, then FORK.
             this.done = true;
             console.log(`     FANOUT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
-            return this.getResponse(STEP.FORK, null);
+            return buildResponse(STEP.FORK, null);
         } else {
             // If the provided behavior is not what we are fanning
             // out to, then this step is done.
             this.done = true;
-            return this.getResponse(STEP.STEP_DONE, null);
+            return buildResponse(STEP.STEP_DONE, null);
         }
-    }
-
-    /**
-     * Generates response to the design abstraction.
-     * @param {String} id
-     * @param {Object} args
-     * @return {Object}
-     */
-    getResponse (id, args) {
-        return {
-            "id": id,
-            "args": args,
-        };
     }
 }
 
