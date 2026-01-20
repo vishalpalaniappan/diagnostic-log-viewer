@@ -67,6 +67,7 @@ class AbstractionStack {
          */
         const executionEntry = {...this.initialPosition.execution};
         executionEntry.varStack = thread.getVariablesAtPosition(this.initialPosition.position);
+        executionEntry.header = thread.header.logTypeMap[executionEntry.value];
 
         const status = this.evaluateBehavior(
             executionEntry,
@@ -110,6 +111,7 @@ class AbstractionStack {
 
             const executionEntry = {...entry};
             executionEntry.varStack = thread.getVariablesAtPosition(position);
+            executionEntry.header = thread.header.logTypeMap[executionEntry.value];
 
             // Evaluate the execution position using the design.
             const status = this.evaluateBehavior(
