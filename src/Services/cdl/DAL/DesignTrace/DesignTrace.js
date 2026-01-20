@@ -7,6 +7,8 @@ class SemanticTrace {
      */
     constructor() {
         this.type = "semantic";
+        this.atomicAbstractions = [];
+        this.activeAbstraction = null;
     }
 
     /**
@@ -16,6 +18,14 @@ class SemanticTrace {
      */
     setDesign (design) {
         this.design = design;
+    }
+
+    /**
+     * Adds an atomic abstraction to the
+     * list and sets its as the active abstraction.
+     */
+    addAtomicAbstraction () {
+
     }
 }
 
