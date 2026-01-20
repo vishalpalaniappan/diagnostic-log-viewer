@@ -65,12 +65,11 @@ class AbstractionStack {
          * - if I am in a forked stack, I track the output to an input
          *   before i walk the design (if we are starting at an output).
          */
+        const executionEntry = {...this.initialPosition.execution};
+        executionEntry.varStack = thread.getVariablesAtPosition(this.initialPosition.position);
+
         const status = this.evaluateBehavior(
-            {
-                behavioralId: this.initialPosition.execution.behavior.id,
-                functionalId: this.initialPosition.execution.functionalId,
-                variableStack: thread.getVariablesAtPosition(this.initialPosition.position),
-            },
+            executionEntry,
             thread.execution[this.initialPosition.position]
         );
         if (status === false) {
@@ -109,14 +108,12 @@ class AbstractionStack {
                 break;
             }
 
+            const executionEntry = {...entry};
+            executionEntry.varStack = thread.getVariablesAtPosition(position);
 
             // Evaluate the execution position using the design.
             const status = this.evaluateBehavior(
-                {
-                    behavioralId: entry.behavior.id,
-                    functionalId: entry.functionalId,
-                    variableStack: thread.getVariablesAtPosition(position),
-                },
+                executionEntry,
                 {
                     "position": position,
                     "execution": entry,

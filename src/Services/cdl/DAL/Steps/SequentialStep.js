@@ -35,16 +35,17 @@ class SequentialStep {
 
     /**
      * Evaluates the step given the behavior.
-     * @param {Object} info Behavior being evaluated
+     * @param {Object} execution Behavior being evaluated
      * @return {Object|null}
      */
-    evaluateBehavior (info) {
-        const behavior = info.behavioralId;
+    evaluateBehavior (execution) {
+        console.log(execution);
+        const behavior = execution.behavior.id;
 
         // Check if we are still exhibiting the same behavior in the step.
         const currBehavior = this.step.behavior[this.behaviorCount];
         if (behavior === currBehavior) {
-            this.buildState(info);
+            this.buildState(execution);
             return buildResponse(STEP.SOLVED, null);
         }
 
@@ -58,7 +59,7 @@ class SequentialStep {
                 console.warn(expectedBehavior, behavior);
                 return buildResponse(STEP.ERROR, null);
             }
-            this.buildState(info);
+            this.buildState(execution);
             return buildResponse(STEP.SOLVED, null);
         } else {
             // If we have moved past the last behavior in the sequential list
@@ -70,11 +71,10 @@ class SequentialStep {
 
     /**
      * Builds the current state of the step.
-     * @param {Object} info
+     * @param {Object} execution
      */
-    buildState (info) {
-        const behavior = info.behavioralId;
-        const functional = info.functionalId;
+    buildState (execution) {
+        const behavior = execution.behavior.id;
 
         const behaviorCount = this.behaviorCount + 1;
         const totalBehavior = this.step.behavior.length;

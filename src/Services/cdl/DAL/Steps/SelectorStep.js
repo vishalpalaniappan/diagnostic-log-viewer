@@ -24,18 +24,18 @@ class SelectorStep {
 
     /**
      * Evaluates the step given the behavior.
-     * @param {Object} info
+     * @param {Object} execution
      * @return {Object|null}
      */
-    evaluateBehavior (info) {
-        const behavior = info.behavioralId;
+    evaluateBehavior (execution) {
+        const behavior = execution.behavior.id;
 
         // Check if the provided module was selected and go to the module.
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
             if (step.module === behavior) {
                 this.done = true;
-                this.buildState(info);
+                this.buildState(execution);
                 return buildResponse(STEP.GOTO_MODULE_AND_STEP, {module: step.module});
             }
         }
@@ -59,11 +59,10 @@ class SelectorStep {
 
     /**
      * Builds the current state of the step.
-     * @param {Object} info
+     * @param {Object} execution
      */
-    buildState (info) {
-        const behavior = info.behavioralId;
-        const functional = info.functionalId;
+    buildState (execution) {
+        const behavior = execution.behavior.id;
         const infoStr = `[${behavior}]`;
         const typeStr = "\x1b[36m[SELECTED]\x1b[0m";
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;

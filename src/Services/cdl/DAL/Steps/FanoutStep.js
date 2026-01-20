@@ -24,17 +24,17 @@ class FanoutStep {
 
     /**
      * Evaluates the step given the behavior.
-     * @param {Object} info
+     * @param {Object} execution
      * @return {Object|null}
      */
-    evaluateBehavior (info) {
-        const behavior = info.behavioralId;
+    evaluateBehavior (execution) {
+        const behavior = execution.behavior.id;
 
         if (this.step.module === behavior) {
             // If the provided behavior is what we are fanning
             // out to, then FORK.
             this.done = true;
-            this.buildState(info);
+            this.buildState(execution);
             return buildResponse(STEP.FORK, null);
         } else {
             // If the provided behavior is not what we are fanning
@@ -46,12 +46,10 @@ class FanoutStep {
 
     /**
      * Builds the current state of the step.
-     * @param {Object} info
+     * @param {Object} execution
      */
-    buildState (info) {
-        const behavior = info.behavioralId;
-        const functional = info.functionalId;
-
+    buildState (execution) {
+        const behavior = execution.behavior.id;
         const id = this.step.id;
         const infoStr = `[${behavior}]`;
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
