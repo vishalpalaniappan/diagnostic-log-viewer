@@ -28,7 +28,7 @@ class SelectorRepeatStep {
         const functional = info.functionalId;
 
         console.log(this);
-        console.log(`     MOVING REPEAT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+        console.log(`     SELECTOR REPEAT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
 
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
