@@ -68,13 +68,13 @@ class DesignAbstraction {
      * the design expected given the current state,
      * then we have run into an error in the instrumentation
      * and the user is notified precisely where this gap is.
-     * @param {String} info
+     * @param {String} execution
      * @return {Object|null}
      */
-    testNext (info) {
+    testNext (execution) {
         while (this.step < this.steps.length) {
             const currentStep = this.getCurrentStep();
-            const result = currentStep.evaluateBehavior(info);
+            const result = currentStep.evaluateBehavior(execution);
 
             // Step was solved, move onto the next execution.
             if (result?.id === STEP.SOLVED) {
