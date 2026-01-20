@@ -38,6 +38,18 @@ class SelectorRepeatStep {
                 );
             }
         }
+
+        /**
+         * Here I am assuming that the repeated selector can only select one
+         * behavior. Which is true for while loops and then when it stops
+         * selecting that behavior, this step is done. The previous for
+         * loop will never have evaluated to go to module.
+         *
+         * I can't think of repeated loops where multiple behaviors can be
+         * selected right now. However, if this changes, I will return to this
+         * part and verify that both selections were evaluated before indicating
+         * that the step is done.
+         **/
         return this.getResponse(STEP.STEP_DONE, null);
     }
 

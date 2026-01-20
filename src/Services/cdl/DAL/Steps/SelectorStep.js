@@ -41,6 +41,16 @@ class SelectorStep {
             }
         }
 
+        /**
+         * In the section below, I am incrementing option count to indicate
+         * that I have visited an option in this selector step. Until all the
+         * options have been visited (if they didn't already resolve), then
+         * we are still in this step. More importantly, if we visit a behavior
+         * that isn't a valid option for this selector, then we have to indicate
+         * that there is a mistake in the instrumentation because we expected
+         * the selectors but the execution didn't reflect that.
+         */
+
         // Inc count to indicate that we visited an option that didn't resolve.
         this.optionCount++;
 
