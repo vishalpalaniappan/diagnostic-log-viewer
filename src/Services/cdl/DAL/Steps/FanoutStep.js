@@ -28,6 +28,7 @@ class FanoutStep {
             // If the provided behavior is what we are fanning
             // out to, then FORK.
             this.done = true;
+            console.log(`     FANOUT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
             return this.getResponse(STEP.FORK, null);
         } else {
             // If the provided behavior is not what we are fanning

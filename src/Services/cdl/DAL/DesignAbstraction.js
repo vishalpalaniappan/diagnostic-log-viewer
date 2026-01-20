@@ -47,28 +47,6 @@ class DesignAbstraction {
     }
 
     /**
-     * Tests if the abstraction is done. If the final
-     * step is a repeated selector, then the abstraction
-     * isn't done until an invalid module is selected
-     * for the selector module.
-     * @return {Boolean}
-     */
-    testDone () {
-        if (this.step >= this.steps.length) {
-            return true;
-        }
-
-        if (this.step === this.steps.length - 1) {
-            if (this.getCurrentStep().type === "selector_repeat") {
-                return false;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Given an ID, if the next step
      * can be taken given the current state.
      * @param {String} info
@@ -79,43 +57,36 @@ class DesignAbstraction {
             const currentStep = this.getCurrentStep();
             const result = currentStep.evaluateBehavior(info);
 
-            // We are still in the same step, continue the design.
+            // Step was solved, move onto the next execution.
             if (result?.id === STEP.SOLVED) {
                 return this.getResponse(DESIGN.CONTINUE, result.args);
             }
 
-            // We are still in the same step, continue the design.
+            // We are still in the same step, move onto the next execution.
             if (result?.id === STEP.SAME_STEP) {
                 return this.getResponse(DESIGN.CONTINUE, result.args);
             }
-            // Step is done, if it was the last step, finish the abstraction.
-            if (result?.id === STEP.STEP_DONE_RETRY) {
-                this.step++;
-                return this.getResponse(DESIGN.STEP_DONE, result.args);
-            }
-
-            // Step is done, if it was the last step, finish the abstraction.
+            // Step is done, let the design know so that it can remove it
+            // from the stack if it is done.
             if (result?.id === STEP.STEP_DONE) {
                 this.step++;
                 return this.getResponse(DESIGN.STEP_DONE, result.args);
             }
 
             // Go to module without moving to next step
-            if (result?.id === STEP.GOTO_MODULE) {
+            if (result?.id === STEP.GOTO_MODULE_FROM_REPEATED_SELECTOR) {
                 // Selector module picked this behavior and it repeats
                 // So we need to go back to the sequential abstraction
                 // which picks the selector module until it finishes
                 // by not selecting a valid behavior.
                 this.step--;
                 this.getCurrentStep().behaviorCount = 0;
-                console.log("Going to module:", result.args.module);
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
             }
 
             // Go to module and increment the step
             if (result?.id === STEP.GOTO_MODULE_AND_STEP) {
                 this.step++;
-                console.log("Stepping and Going to module:", result.args.module);
                 return this.getResponse(DESIGN.GOTO_MODULE, result.args);
             }
 

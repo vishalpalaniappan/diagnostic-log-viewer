@@ -35,7 +35,7 @@ class SequentialStep {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
 
-        console.log(`     EVALUATING ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+        // console.log(`     EVALUATING ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
 
         // Check if we are still exhibiting the same behavior in the step.
         const currBehavior = this.step.behavior[this.behaviorCount];

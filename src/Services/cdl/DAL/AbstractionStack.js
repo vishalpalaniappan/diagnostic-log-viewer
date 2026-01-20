@@ -224,35 +224,6 @@ class AbstractionStack {
         }
     }
 
-
-    /**
-     * Print the debug information.
-     * @param {Object} info Contains the behavioral id and the functional id.
-     */
-    printState (info) {
-        if (this.stack.length === 0) {
-            return;
-        }
-        const space = "    ";
-        const spacer = space.repeat(this.stack.length - 1);
-        // const name = this.getTopOfStack().name;
-        // console.log(spacer + name + "," + info.behavioralId + "," + info.functionalId);
-    }
-
-    /**
-     * Removes the stack positions that are done.
-     */
-    moveDownStack () {
-        while (this.stack.length > 0) {
-            const top = this.getTopOfStack();
-            if (top.testDone()) {
-                this.popStack();
-                continue;
-            }
-            return;
-        }
-    }
-
     /**
      * Evaluate the transition to the provided
      * behavioral id given the stack position.
@@ -267,49 +238,48 @@ class AbstractionStack {
             }
 
             const top = this.getTopOfStack();
+
+            // Check if the top of the stack is done and remove it.
             if (top && top.step >= top.steps.length) {
-                console.log("POPPING STACK");
                 this.popStack();
+                if (this.stack.length === 0) {
+                    console.log("     CONCLUDE ATOMIC ABSTRACTION");
+                    return;
+                } else {
+                    const top = this.getTopOfStack();
+                    console.log(`     > RETURN to ${top.name}`);
+                }
                 continue;
             }
 
             const result = top.testNext(info);
 
             if (result) {
-                // Go to module
+                // Go to module and continue with same execution.
                 if (result.id === DESIGN.GOTO_MODULE) {
                     this.goToModule(result.args.module);
-                    this.printState(info);
                     continue;
                 }
 
+                // If design step is done, continue with the same
+                // execution position.
                 if (result.id === DESIGN.STEP_DONE) {
-                    this.printState(info);
                     continue;
-                }
-
-                // Check if design abstraction is done
-                if (result.id === DESIGN.DESIGN_ABS_DONE) {
-                    this.popStack();
-                    return;
                 }
 
                 // Create new stack and fork from position
                 if (result.id === DESIGN.FORK) {
-                    this.printState(info);
                     new AbstractionStack(this.design, this.threadDebuggers, execution, true);
                     return;
                 }
 
-                // Continue the design
+                // Continue to next execution.
                 if (result.id === DESIGN.CONTINUE) {
-                    this.printState(info);
                     return;
                 }
 
                 // Error in design
                 if (result.id === DESIGN.ERROR) {
-                    this.printState(info);
                     return false;
                 }
             }

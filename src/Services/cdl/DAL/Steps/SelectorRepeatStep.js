@@ -27,13 +27,15 @@ class SelectorRepeatStep {
         const behavior = info.behavioralId;
         const functional = info.functionalId;
 
-        console.log(`     SELECTOR REPEAT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
 
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
             if (step.module === behavior) {
+                console.log(`     > SELECTOR REPEAT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
                 this.done = false;
-                return this.getResponse(STEP.GOTO_MODULE, {module: behavior});
+                return this.getResponse(
+                    STEP.GOTO_MODULE_FROM_REPEATED_SELECTOR, {module: behavior}
+                );
             }
         }
         return this.getResponse(STEP.STEP_DONE, null);
