@@ -1,5 +1,6 @@
 import {DESIGN} from "./DAL_CONSTANTS.js";
 import DesignAbstraction from "./DesignAbstraction";
+import {SemanticTrace} from "./SemanticOutput/SemanticTrace.js";
 
 /**
  * Represents the abstraction stack with entries that
@@ -34,6 +35,8 @@ class AbstractionStack {
         this.isFork = isFork;
         console.log("");
         console.log("Initialized stack for position:", initialPosition);
+        const uid = initialPosition.execution.thread + "-" + initialPosition.position;
+        SemanticTrace.addAtomicAbstraction(uid);
         this.walkAbstraction();
     }
 
