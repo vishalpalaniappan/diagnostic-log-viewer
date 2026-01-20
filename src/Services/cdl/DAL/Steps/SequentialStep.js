@@ -39,7 +39,6 @@ class SequentialStep {
      * @return {Object|null}
      */
     evaluateBehavior (execution) {
-        console.log(execution);
         const behavior = execution.behavior.id;
 
         // Check if we are still exhibiting the same behavior in the step.
@@ -83,8 +82,9 @@ class SequentialStep {
         const infoStr = `[${behavior}]`;
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
         const state = `SOLVED step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
+        this.debugLog = state;
+        SemanticTrace.recordTrace({...this});
         console.log(state);
-        SemanticTrace.recordTrace(state);
     }
 }
 
