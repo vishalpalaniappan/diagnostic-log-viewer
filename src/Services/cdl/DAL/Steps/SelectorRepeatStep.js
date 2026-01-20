@@ -31,7 +31,7 @@ class SelectorRepeatStep {
         for (let i = 0; i < this.step.options.length; i++) {
             const step = this.step.options[i];
             if (step.module === behavior) {
-                console.log(`     > SELECTOR REPEAT ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+                console.log(`     > MOVING (REPEAT) to module ${behavior} in step ${this.index}: ${behavior}, ${functional}`);
                 this.done = false;
                 return this.getResponse(
                     STEP.GOTO_MODULE_FROM_REPEATED_SELECTOR, {module: behavior}

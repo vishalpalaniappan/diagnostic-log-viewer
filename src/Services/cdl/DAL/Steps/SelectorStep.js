@@ -36,7 +36,7 @@ class SelectorStep {
             const step = this.step.options[i];
             if (step.module === behavior) {
                 this.done = true;
-                console.log(`     > MOVING ${this.step.id} ${this.behaviorCount} in step ${this.index}: ${behavior}, ${functional}`);
+                console.log(`     > MOVING to module ${behavior} in step ${this.index}: ${behavior}, ${functional}`);
                 return this.getResponse(STEP.GOTO_MODULE_AND_STEP, {module: step.module});
             }
         }
