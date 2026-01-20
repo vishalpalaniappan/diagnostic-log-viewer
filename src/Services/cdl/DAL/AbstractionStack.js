@@ -48,62 +48,81 @@ class AbstractionStack {
         const abs = this.getDesignAbsFromExecution(this.initialPosition.execution.behavior.id);
         this.addToStack(abs);
 
-        // Evaluate the behavior of the initial position
+        /**
+         * Evaluate the behavior of the initial position.
+         *
+         * I manually add the initial position to the stack to start the
+         * atomic abstraction (or forked abstraction). There is a more efficient
+         * way to do this, but its ok for now.
+         *
+         * The way I see it is that I am  setting the stage before I walk
+         * the design abstraction, so I am:
+         * - initializing the stack with the atomic abstraction
+         * - evaluating the first behavior to set the correct initial state
+         * - if I am in a forked stack, I track the output to an input
+         *   before i walk the design (if we are starting at an output).
+         */
         const status = this.evaluateBehavior(
             {
                 behavioralId: this.initialPosition.execution.behavior.id,
                 functionalId: this.initialPosition.execution.functionalId,
+                variableStack: thread.getVariablesAtPosition(this.initialPosition.position),
             },
             thread.execution[this.initialPosition.position]
         );
         if (status === false) {
             console.warn("Error in evaluating behavior of atomic position, terminating");
-        }
-
-
-        let position = this.initialPosition.position + 1;
-
-        // If the stack is a fork, then track the output before starting.
-        if (this.isFork) {
-            const input = this.trackOutput(this.initialPosition.execution);
-            if (input) {
-                thread = this.threadDebuggers[input.thread].thread;
-                position = input.position;
-            }
-        }
-
-        if (position >= thread.execution.length) {
-            console.log("Reached end of file.");
             return;
         }
 
-        do {
+        let position = this.initialPosition.position;
+
+        // If the stack is a fork, then track the output before starting
+        if (this.isFork && this.initialPosition.execution?.output) {
+            const input = this.trackOutput(this.initialPosition.execution);
+            if (input) {
+                thread = this.threadDebuggers[input.thread].thread;
+                // Subtract one from position because it gets inc by while loop
+                position = input.position - 1;
+            }
+        }
+
+        // Walk the execution until the design abstraction finishes.
+        while (++position < thread.execution.length) {
             const entry = thread.execution[position];
             if (entry?.behavior === undefined) {
+                // Execution has variable logs, inputs, outputs etc.
+                // We can ignore those.
                 continue;
             }
 
+            // Design abstraction is done because abstraction stack is empty.
             if (this.stack.length === 0) {
-                console.log("Atomic design abstraction done");
+                if (this.isFork) {
+                    console.log("Forked Design Abstraction Done.");
+                } else {
+                    console.log("Atomic Design abstraction done.");
+                }
                 break;
             }
 
-            const executionInfo = {
-                "position": position,
-                "execution": entry,
-            };
 
+            // Evaluate the execution position using the design.
             const status = this.evaluateBehavior(
                 {
                     behavioralId: entry.behavior.id,
                     functionalId: entry.functionalId,
                     variableStack: thread.getVariablesAtPosition(position),
                 },
-                executionInfo
+                {
+                    "position": position,
+                    "execution": entry,
+                }
             );
 
+            // The design was unable to solve the executed position.
             if (status === false) {
-                console.log("Errored when evaluating behavior");
+                console.log("The design was unable to solve the execution position.");
                 return;
             }
 
@@ -112,12 +131,11 @@ class AbstractionStack {
                 const input = this.trackOutput(entry);
                 if (input) {
                     thread = this.threadDebuggers[input.thread].thread;
-                    // Subtracting one from position because it gets incremented
-                    // in the do while condition evaluation below.
+                    // Subtract one from pos because it gets inc by while loop
                     position = input.position - 1;
                 }
             }
-        } while (++position < thread.execution.length);
+        }
     }
 
     /**
@@ -244,7 +262,6 @@ class AbstractionStack {
             if (top && top.step >= top.steps.length) {
                 this.popStack();
                 if (this.stack.length === 0) {
-                    console.log("     CONCLUDE ATOMIC ABSTRACTION");
                     return;
                 } else {
                     const top = this.getTopOfStack();
