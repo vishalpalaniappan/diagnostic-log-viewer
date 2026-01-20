@@ -97,6 +97,7 @@ class AbstractionStack {
                 {
                     behavioralId: entry.behavior.id,
                     functionalId: entry.functionalId,
+                    variableStack: thread.getVariablesAtPosition(position),
                 },
                 executionInfo
             );
