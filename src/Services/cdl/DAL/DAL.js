@@ -19,6 +19,7 @@ class DAL {
         this.atomicPositions = [];
         SemanticTrace.setDesign(DALSpec.design);
         this.walkExecution();
+        console.log(SemanticTrace);
     }
 
     /**

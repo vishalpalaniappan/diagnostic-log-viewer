@@ -1,5 +1,7 @@
 import {STEP} from "../DAL_CONSTANTS";
 import {buildResponse} from "../helper";
+import {SemanticTrace} from "../SemanticOutput/SemanticTrace";
+
 /**
  * Represents a fanout step in a design abstraction.
  */
@@ -56,6 +58,7 @@ class FanoutStep {
         const typeStr = "\x1b[33mFANOUT\x1b[0m";
         const state = `${typeStr} step ${stepString}: ${infoStr}`;
         console.log(state);
+        SemanticTrace.recordTrace(state);
     }
 }
 

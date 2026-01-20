@@ -1,5 +1,7 @@
 import {STEP} from "../DAL_CONSTANTS";
 import {buildResponse} from "../helper";
+import {SemanticTrace} from "../SemanticOutput/SemanticTrace";
+
 /**
  * Represents a selector repeat step.
  */
@@ -71,6 +73,7 @@ class SelectorRepeatStep {
         const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
         const state = `${typeStr} step ${stepString}, selected module ${behavior}: ${infoStr}`;
         console.log(state);
+        SemanticTrace.recordTrace(state);
     }
 }
 
