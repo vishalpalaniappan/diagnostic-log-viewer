@@ -66,8 +66,9 @@ class DesignAbstraction {
             if (result?.id === STEP.SAME_STEP) {
                 return this.getResponse(DESIGN.CONTINUE, result.args);
             }
-            // Step is done, let the design know so that it can remove it
-            // from the stack if it is done.
+
+            // Step is done, let the stack know so that it can remove it
+            // from the stack if it is done and continue.
             if (result?.id === STEP.STEP_DONE) {
                 this.step++;
                 return this.getResponse(DESIGN.STEP_DONE, result.args);
@@ -97,7 +98,6 @@ class DesignAbstraction {
 
             // Error in the design
             if (result?.id === STEP.ERROR) {
-                console.log("ERROR");
                 return this.getResponse(DESIGN.ERROR, result.args);
             }
 
