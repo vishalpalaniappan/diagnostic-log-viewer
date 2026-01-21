@@ -105,9 +105,7 @@ class Debugger {
         });
 
         this.sendExecutionTree();
-
-        const designMap = this.header.getDesignMap();
-        new DAL(designMap, this.debuggers);
+        new DAL(this.header.getDesignMap(), this.debuggers);
     }
 
     /**

@@ -1,4 +1,7 @@
+
+import CDL_WORKER_PROTOCOL from "../../../CDL_WORKER_PROTOCOL";
 import SemanticAbstraction from "./SemanticAbstraction";
+
 /**
  * This class contains the output of the semantic transform.
  */
@@ -66,6 +69,18 @@ class SemanticModel {
      */
     recordTrace (entry) {
         this.activeAbstraction.addToTrace(entry);
+    }
+
+    /**
+     * Sends the model to the UI thread.
+     */
+    sendModel () {
+        postMessage({
+            code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
+            args: {
+                semanticModel: this,
+            },
+        });
     }
 }
 
