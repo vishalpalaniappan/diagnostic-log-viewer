@@ -75,6 +75,15 @@ class AbstractionStack {
         executionEntry.header = thread.header.logTypeMap[executionEntry.value];
         executionEntry.position = this.initialPosition.position;
 
+        // Find the SEG entry and add it to the entry
+        // This is a bit convluted but I'll improve it later.
+        for (let j = 0; j < thread.seg.length; j++) {
+            if (this.initialPosition.position === thread.seg[j].abstraction.position) {
+                executionEntry.seg = thread.seg[j];
+                break;
+            }
+        }
+
         const status = this.evaluateBehavior(
             executionEntry,
             thread.execution[this.initialPosition.position]
@@ -119,6 +128,14 @@ class AbstractionStack {
             executionEntry.varStack = thread.getVariablesAtPosition(position);
             executionEntry.header = thread.header.logTypeMap[executionEntry.value];
             executionEntry.position = position;
+
+            // Find the SEG entry and add it to the entry
+            for (let j = 0; j < thread.seg.length; j++) {
+                if (position === thread.seg[j].abstraction.position) {
+                    executionEntry.seg = thread.seg[j];
+                    break;
+                }
+            }
 
             // Evaluate the execution position using the design.
             const status = this.evaluateBehavior(

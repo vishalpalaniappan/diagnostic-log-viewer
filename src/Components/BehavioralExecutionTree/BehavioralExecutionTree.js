@@ -12,7 +12,7 @@ import "./BehavioralExecutionTree.scss";
  * @return {JSX.Element}
  */
 export function BehavioralExecutionTree () {
-    const {behavior, activeBehavior, setActiveBehavior} = useContext(BehaviorContext);
+    const {activeStepExecution} = useContext(BehaviorContext);
     const {activeAbstraction, setActiveAbstraction} = useContext(StackContext);
     const [selectedNode, setSelectedNode] = useState();
     const [executionTree, setExecutionTree] = useState();
@@ -95,11 +95,17 @@ export function BehavioralExecutionTree () {
     }, [executionTree]);
 
     useEffect(() => {
-        if (behavior && activeBehavior) {
+        if (activeStepExecution) {
             setTitle("Behavioral Execution Tree");
-            // setExecutionTree(behavior[activeBehavior].execution);
+            const segTree = [];
+            // Extract the SEG from the active step's execution array
+            for (let i = 0; i < activeStepExecution.length; i++) {
+                const entry = activeStepExecution[i];
+                segTree.push(entry.seg);
+            }
+            setExecutionTree(segTree);
         }
-    }, [behavior, activeBehavior]);
+    }, [activeStepExecution]);
 
     /**
      * Collapse the given node
@@ -115,6 +121,7 @@ export function BehavioralExecutionTree () {
      * @param {Object} node
      */
     const selectNode = (node) => {
+        console.log("selecting node");
         setActiveAbstraction({
             node: node,
         });

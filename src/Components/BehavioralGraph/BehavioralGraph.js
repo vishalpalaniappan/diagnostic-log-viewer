@@ -11,7 +11,8 @@ import "./BehavioralGraph.scss";
  * @return {JSX.Element}
  */
 export function BehavioralGraph () {
-    const {behavior, activeBehavior, setActiveBehavior} = useContext(BehaviorContext);
+    // eslint-disable-next-line max-len
+    const {behavior, activeBehavior, setActiveStepExecution, setActiveBehavior} = useContext(BehaviorContext);
     const [selectedNode, setSelectedNode] = useState();
     const [behavioralInstance, setBehavioralInstance] = useState();
     const [title, setTitle] = useState();
@@ -98,10 +99,13 @@ export function BehavioralGraph () {
             }
 
             if (activeBehavior === undefined || activeBehavior === null ) {
+                const node = behavior.atomicAbstractions[keys[keys.length -1]];
+                const step = node.trace[node.trace.length - 1];
                 setActiveBehavior({
-                    uid: behavior.atomicAbstractions[keys[0]].atomicUid,
-                    position: 0,
+                    uid: node.atomicUid,
+                    position: node.trace.length-1,
                 });
+                setActiveStepExecution(step.execution);
             }
         }
     };
@@ -131,6 +135,7 @@ export function BehavioralGraph () {
             uid: node.atomicUid,
             position: node.position,
         });
+        setActiveStepExecution(node.execution);
     };
 
 

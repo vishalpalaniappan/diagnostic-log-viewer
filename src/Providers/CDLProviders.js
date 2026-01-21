@@ -43,6 +43,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [seg, setSeg] = useState();
     const [behavior, setBehavior] = useState();
     const [activeBehavior, setActiveBehavior] = useState();
+    const [activeStepExecution, setActiveStepExecution] = useState();
     const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
 
@@ -102,6 +103,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveFile(undefined);
         setBreakPoints(undefined);
         setActiveBehavior(undefined);
+        setActiveStepExecution(undefined);
         setSeg(undefined);
         setMode(PROGRAM_STATE.STACK);
     };
@@ -212,6 +214,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                     <ActiveFileContext.Provider
                                         value={{activeFile, setActiveFile}}>
                                         <BehaviorContext.Provider value={{behavior,
+                                            activeStepExecution, setActiveStepExecution,
                                             activeBehavior, setActiveBehavior}}>
                                             <SegContext.Provider value={{seg}}>
                                                 <ActionsContext.Provider
