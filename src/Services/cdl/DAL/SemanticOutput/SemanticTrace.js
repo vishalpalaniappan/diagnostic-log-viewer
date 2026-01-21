@@ -32,7 +32,7 @@ class SemanticModel {
      */
     startAtomicAbstraction (uid, abs) {
         console.log("Started atomic abstraction");
-        this.atomicAbstractions[uid] = new SemanticAbstraction(uid);
+        this.atomicAbstractions[uid] = new SemanticAbstraction(uid, this.design);
         this.atomicAbstractions[uid].complete = false;
         this.atomicAbstractions[uid].abs = abs;
         this.activeAbstraction = this.atomicAbstractions[uid];
