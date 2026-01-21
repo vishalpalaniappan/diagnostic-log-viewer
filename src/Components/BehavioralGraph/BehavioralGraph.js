@@ -178,7 +178,7 @@ export function BehavioralGraph () {
     };
 
     const selectViewMode = (e) => {
-        setViewMode(e.target.value);
+        setViewMode(Number(e.target.value));
     };
 
     return (

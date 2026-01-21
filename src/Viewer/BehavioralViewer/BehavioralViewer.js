@@ -1,8 +1,11 @@
-import React, {useContext, useRef} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 
 import {DebugToolKit} from "../../Components/DebugToolKit/DebugToolKit";
+import {DesignDiagram} from "../../Components/DesignDiagram/DesignDiagram";
 import {FileViewer} from "../../Components/FileViewer/FileViewer";
 import {TimelineContainer} from "../../Components/TimelineContainer/TimelineContainer";
+import ActionsContext from "../../Providers/ActionsContext";
+import VIEW_MODE from "../../VIEW_MODE";
 import {StatusBarContainer} from "../StatusBarContainer/StatusBarContainer";
 // eslint-disable-next-line max-len
 import {LeftSideContainerBehavioral} from "./LeftContainer/LeftSideContainerBehavioral";
@@ -17,9 +20,19 @@ import "./BehavioralViewer.scss";
  * @return {JSX.Element}
  */
 export function BehavioralViewer () {
+    const {viewMode} = useContext(ActionsContext);
+    const [viewContainer, setViewContainer] = useState();
     const bodyContainerRef = useRef();
     const bodyContentContainerRef = useRef();
     const timelineContainerRef = useRef();
+
+    const getViewModeContainer = () => {
+        if (viewMode === VIEW_MODE.CODE) {
+            return <FileViewer/>;
+        } else if (viewMode === VIEW_MODE.DIAGRAM) {
+            return <DesignDiagram />;
+        }
+    };
 
     return (
         <div className="viewer-container-behavioral">
@@ -39,7 +52,7 @@ export function BehavioralViewer () {
                     </div>
                     {/* Central Container */}
                     <div className="d-flex flex-grow-1 h-100 overflow-hidden">
-                        <FileViewer/>
+                        {getViewModeContainer()}
                     </div>
                     {/* Right Side Container */}
                     <div className="d-flex h-100">
