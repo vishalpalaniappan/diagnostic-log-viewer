@@ -1,5 +1,3 @@
-import { eventNames } from "process";
-
 /**
  * This class contains an semantic abstraction.
  */
@@ -65,7 +63,7 @@ class SemanticAbstraction {
      * Prints the debug log given the entry with the indentation.
      * @param {Object} entry
      */
-    displayDebugLog(entry) {
+    displayDebugLog (entry) {
         if (this.printDebugLog) {
             const spacer = "     ";
             const spacerStr = spacer.repeat(entry.level - 1);
@@ -98,7 +96,7 @@ class SemanticAbstraction {
      * This means that the fork will be contained in the
      * fanout step of the design abstraction (which is what
      * resulted in the fork in the first place).
-     * 
+     *
      * TODO: This needs to be extended so that if a single
      * fanout step forks to multiple positions, then I need
      * to be able to add multiple forks to a single step.
