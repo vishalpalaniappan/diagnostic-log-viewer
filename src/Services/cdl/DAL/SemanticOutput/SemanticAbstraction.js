@@ -59,7 +59,52 @@ class SemanticAbstraction {
         do {
             const entry = this.trace[pos];
             this.displayDebugLog(entry);
+            this.normalizeExecutionLevel(entry);
         } while (++pos < this.trace.length);
+    }
+
+    /**
+     * Normalizes the execution level and updates the collapsible state.
+     * This is because I build the SEG for the entire execution and then
+     * it gets loaded with its level in that tree.
+     *
+     * TODO: There will be issues with traces that span multiple threads,
+     * I need to revisit this and think about how this case would work.
+     * It also implies that you can collapse the execution across threads,
+     * this is not accurate. I think I might have to indicate that there is
+     * a break in the execution to avoid all these issues but this needs to
+     * be revisited.
+     * @param {Object} entry
+     */
+    normalizeExecutionLevel (entry) {
+        // Find the min level
+        let minLevel;
+        for (let i = 0; i < entry.execution.length; i++) {
+            if (minLevel && minLevel > entry.execution[i].seg.level) {
+                minLevel = entry.execution[i].seg.level;
+            } else {
+                minLevel = entry.execution[i].seg.level;
+            }
+        }
+        // Offset the levels by the min level
+        for (let i = 0; i < entry.execution.length; i++) {
+            const seg = entry.execution[i].seg;
+            seg.level = seg.level - minLevel;
+        }
+        // Set/update the collapsed state
+        for (let i = 1; i < entry.execution.length; i++) {
+            const prevNode = entry.execution[i-1].seg;
+            const currNode = entry.execution[i].seg;
+            if (currNode.level > prevNode.level) {
+                prevNode.collapsible = true;
+                prevNode.collapsed = false;
+            }
+            // The last entry should not be collapsible
+            if (i === entry.execution.length - 1) {
+                currNode.collapsible = true;
+                currNode.collapsed = false;
+            }
+        }
     }
 
     /**
