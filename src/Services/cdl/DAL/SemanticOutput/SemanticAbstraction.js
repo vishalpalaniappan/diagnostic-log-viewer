@@ -33,7 +33,7 @@ class SemanticAbstraction {
             const lastStep = this.trace[this.trace.length - 1];
             if (step.type === "sequential" && lastStep.type === "sequential") {
                 if (lastStep.designAbsName === step.designAbsName &&
-                    lastStep.index === step.index) {
+                    lastStep.currStep === step.currStep) {
                     // In same step, append execution to prev step.
                     lastStep.execution.push(step.execution[0]);
                 } else {

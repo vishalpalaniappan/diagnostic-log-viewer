@@ -17,7 +17,7 @@ class SequentialStep {
         this.designAbsName = designAbsName;
         this.step = step;
         this.totalSteps = totalSteps;
-        this.index = index;
+        this.currStep = index + 1;
         this.name = step.name;
         this.type = "sequential";
         this.behaviorCount = 0;
@@ -81,7 +81,7 @@ class SequentialStep {
         const behaviorLength = `(${behaviorCount}/${totalBehavior})`;
 
         const infoStr = `[${behavior}]`;
-        const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
+        const stepString = `(${this.currStep}/${this.totalSteps}) of ${this.designAbsName}`;
         const state = `SOLVED step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
         this.debugLog = state;
         SemanticTrace.recordTrace({...this});

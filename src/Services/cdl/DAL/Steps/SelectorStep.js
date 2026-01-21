@@ -17,7 +17,7 @@ class SelectorStep {
         this.designAbsName = designAbsName;
         this.step = step;
         this.totalSteps = totalSteps;
-        this.index = index;
+        this.currStep = index + 1;
         this.type = "selector";
         this.done = false;
     }
@@ -66,7 +66,7 @@ class SelectorStep {
         const behavior = execution.behavior.id;
         const infoStr = `[${behavior}]`;
         const typeStr = "\x1b[36m[SELECTED]\x1b[0m";
-        const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
+        const stepString = `(${this.currStep}/${this.totalSteps}) of ${this.designAbsName}`;
         const state = `${typeStr} step ${stepString}, selected module ${behavior}: ${infoStr}`;
         this.debugLog = state;
         SemanticTrace.recordTrace({...this});

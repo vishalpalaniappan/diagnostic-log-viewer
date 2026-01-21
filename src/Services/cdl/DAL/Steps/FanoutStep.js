@@ -17,7 +17,7 @@ class FanoutStep {
         this.designAbsName = designAbsName;
         this.step = step;
         this.totalSteps = totalSteps;
-        this.index = index;
+        this.currStep = index + 1;
         this.type = "fanout";
         this.done = false;
     }
@@ -52,7 +52,7 @@ class FanoutStep {
     buildState (execution) {
         const behavior = execution.behavior.id;
         const infoStr = `[${behavior}]`;
-        const stepString = `(${this.index + 1}/${this.totalSteps}) of ${this.designAbsName}`;
+        const stepString = `(${this.currStep}/${this.totalSteps}) of ${this.designAbsName}`;
         const typeStr = "\x1b[33mFANOUT\x1b[0m";
         const state = `${typeStr} step ${stepString}: ${infoStr}`;
         this.debugLog = state;
