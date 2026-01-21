@@ -1,3 +1,29 @@
+
+/**
+ * Laysout the instrumented design.
+ * @param {Object} design
+ * @return {Object}
+ */
+export const layoutDesign = (atomicAbstraction) => {
+    const nodes = [];
+    const edges = [];
+
+    const design = atomicAbstraction.design;
+
+    console.log("Laying out design:", design);
+
+    return {
+        nodes: nodes,
+        edges: edges,
+    };
+};
+
+/**
+ * This function creates nodes and edges for the provided
+ * atomic abstraction.
+ * @param {Object} atomicAbstraction
+ * @return {Object}
+ */
 export const layoutTrace = (atomicAbstraction) => {
     const trace = atomicAbstraction.trace;
     console.log("Laying out trace:", trace);
