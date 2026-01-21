@@ -40,49 +40,68 @@ export function BehavioralGraph () {
         }
     }, [activeBehavior]);
 
+
+    const getAtomicHeaderRow = (node) => {
+        node.level = 0;
+        return <BehavioralNode
+            key={node.uid}
+            node={node}
+        />;
+    };
+
     /**
      * Renders the behavioral tree.
      */
     const renderTree = () => {
         if (behavior) {
+            const keys = Object.keys(behavior.atomicAbstractions);
             const nodes = [];
-            let collapsedLevel;
-            let collapsing = false;
+            for (let i = 0; i < keys.length; i++) {
+                nodes.push(
+                    getAtomicHeaderRow(behavior.atomicAbstractions[keys[i]])
+                );
+                const atomic = behavior.atomicAbstractions[keys[i]].rootTrace;
+                let collapsedLevel;
+                let collapsing = false;
 
-            for (let index = 0; index < behavior.length; index++) {
-                const node = behavior[index];
+                for (let index = 0; index < atomic.length; index++) {
+                    const node = atomic[index];
 
-                // If we are collapsing and we reached the same
-                // level or below, then stop collapsing.
-                if (collapsing && node.level <= collapsedLevel) {
-                    collapsing = false;
-                }
+                    // If we are collapsing and we reached the same
+                    // level or below, then stop collapsing.
+                    if (collapsing && node.level <= collapsedLevel) {
+                        collapsing = false;
+                    }
 
-                // If the node is collapsed and we aren't collapsing
-                // then start collapsing
-                if (node.collapsed && !collapsing) {
-                    collapsedLevel = node.level;
-                    collapsing = true;
-                    nodes.push(
-                        <BehavioralNode
-                            key={index}
+                    // If the node is collapsed and we aren't collapsing
+                    // then start collapsing
+                    if (node.collapsed && !collapsing) {
+                        collapsedLevel = node.level;
+                        collapsing = true;
+                        nodes.push(
+                            <BehavioralNode
+                                key={i + "-" + index}
+                                node={node}/>
+                        );
+                        continue;
+                    }
+
+                    // If we aren't collapsing this node, then add the node.
+                    if (!collapsing) {
+                        nodes.push(<BehavioralNode
+                            key={i + "-" + index}
                             node={node}/>
-                    );
-                    continue;
+                        );
+                    }
                 }
+                setBehavioralInstance(nodes);
 
-                // If we aren't collapsing this node, then add the node.
-                if (!collapsing) {
-                    nodes.push(<BehavioralNode
-                        key={index}
-                        node={node}/>
-                    );
-                }
-            }
-            setBehavioralInstance(nodes);
-
-            if (activeBehavior === undefined || activeBehavior === null ) {
-                setActiveBehavior(behavior[behavior.length - 1].index);
+                // if (activeBehavior === undefined || activeBehavior === null ) {
+                //     setActiveBehavior({
+                //         uid: behavior.atomicAbstractions[keys[i]].uid,
+                //         index: i,
+                //     });
+                // }
             }
         }
     };

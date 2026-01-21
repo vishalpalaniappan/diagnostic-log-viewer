@@ -191,8 +191,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 break;
             case CDL_WORKER_PROTOCOL.GET_BEHAVIOR:
                 console.log("Semantic model:", event.data.args.semanticModel);
-                // setMode(PROGRAM_STATE.BEHAVIORAL);
-                // setBehavior(event.data.args.behavior);
+                setMode(PROGRAM_STATE.BEHAVIORAL);
+                setBehavior(event.data.args.semanticModel);
                 break;
             default:
                 break;

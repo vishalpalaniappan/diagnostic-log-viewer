@@ -110,6 +110,14 @@ export function BehavioralNode ({node}) {
 
     };
 
+    const getNode = (node) => {
+        if (node.type === "atomic") {
+            return `${node.abs.id}`;
+        } else {
+            return `${node.designAbsName}(${node.currStep}/${node.totalSteps})${node.type}`;
+        };
+    };
+
     return (
         <>
             { (node?.level === 0 && node.index !== "0") &&
@@ -140,10 +148,10 @@ export function BehavioralNode ({node}) {
                     </div>
 
                     <div className="text-container flex-grow-1">
-                        <span>{node.intent}</span>
+                        <span>{getNode(node)}</span>
                     </div>
 
-                    {node?.exception?.length > 0 ?
+                    {/* {node?.exception?.length > 0 ?
                         <div className="status-behavioral-node exception-label">
                             <span className="message">
                                 exception
@@ -168,7 +176,7 @@ export function BehavioralNode ({node}) {
                             </span>
                         </div>:
                         <></>
-                    }
+                    } */}
                 </div>
             </div>
         </>
