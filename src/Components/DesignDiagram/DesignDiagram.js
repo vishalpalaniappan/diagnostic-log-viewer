@@ -1,14 +1,16 @@
 import React, {useCallback, useRef, useState} from "react";
 
-import ReactFlow, {
-    Background,
+import {
     Controls,
-    MiniMap,
+    Background,
+    ReactFlow,
+    ReactFlowProvider,
     useEdgesState,
-    useNodesState
-} from "reactflow";
+    useNodesState,
+    useReactFlow
+} from "@xyflow/react";
 
-import "reactflow/dist/style.css";
+import "@xyflow/react/dist/style.css";
 
 const initialNodes = [
     {id: "1", position: {x: 0, y: 0}, data: {label: "1"}},
@@ -32,10 +34,10 @@ export function DesignDiagram ({}) {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            colorMode={"dark"}
+            fitView
         >
-            <MiniMap />
             <Controls />
-            <Background />
         </ReactFlow>
     );
 }

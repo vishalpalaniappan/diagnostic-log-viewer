@@ -42,7 +42,7 @@
     "react-dom": "^18.2.0",
     "react-monaco-editor": "^0.50.1",
     "react-router-dom": "^6.4.3",
-    "reactflow": "^11.11.4",
+    "@xyflow/react": "^12.6.0",
     "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
