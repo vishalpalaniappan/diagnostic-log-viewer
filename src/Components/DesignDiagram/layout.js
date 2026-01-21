@@ -1,7 +1,7 @@
 
 /**
  * Laysout the instrumented design.
- * @param {Object} design
+ * @param {Object} atomicAbstraction
  * @return {Object}
  */
 export const layoutDesign = (atomicAbstraction) => {
@@ -9,13 +9,47 @@ export const layoutDesign = (atomicAbstraction) => {
     const edges = [];
 
     const design = atomicAbstraction.design;
+    const abstraction = atomicAbstraction.abs;
 
     console.log("Laying out design:", design);
+
+    processModule(abstraction, design);
 
     return {
         nodes: nodes,
         edges: edges,
     };
+};
+
+
+const processModule = (node, design) => {
+    for (let i = 0; i < node.steps.length; i++) {
+        const step = node.steps[i];
+        if (step.type === "selector") {
+            console.log("Selector", step.id);
+            for (let i = 0; i < step.options.length; i++) {
+                const option = step.options[i];
+                console.log("Selector Option:", option.id);
+                const abs = getDesignAbsFromId(option.id, design);
+                processModule(abs, design);
+            }
+        } else if (step.type === "selector_repeat") {
+            console.log("Selector Repeat:", step.id);
+            const abs = getDesignAbsFromId(step.options[0].id, design);
+            processModule(abs, design);
+        } else {
+            console.log("Sequential:", step.id);
+        }
+    }
+};
+
+const getDesignAbsFromId = (id, design) => {
+    for (let i = 0; i < design.length; i++) {
+        const entry = design[i];
+        if (entry.id === id) {
+            return entry;
+        }
+    }
 };
 
 /**
