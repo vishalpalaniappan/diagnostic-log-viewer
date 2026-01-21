@@ -1,11 +1,12 @@
 import {STEP} from "../DAL_CONSTANTS";
 import {buildResponse} from "../helper";
 import {SemanticTrace} from "../SemanticOutput/SemanticTrace";
+import Step from "./Step";
 
 /**
  * Represents a sequential step.
  */
-class SequentialStep {
+class SequentialStep extends Step {
     /**
      * Initializes the abstraction.
      * @param {Object} step
@@ -14,6 +15,7 @@ class SequentialStep {
      * @param {Object} designAbsName
      */
     constructor (step, index, totalSteps, designAbsName) {
+        super();
         this.designAbsName = designAbsName;
         this.step = step;
         this.totalSteps = totalSteps;
