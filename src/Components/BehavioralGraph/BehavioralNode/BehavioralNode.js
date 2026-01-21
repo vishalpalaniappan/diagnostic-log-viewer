@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
-import {CaretDownFill, CaretRightFill, SignIntersection} from "react-bootstrap-icons";
+// eslint-disable-next-line max-len
+import {ArrowRepeat, CaretDownFill, CaretRightFill, Check2Square, SignIntersection, SignpostSplit} from "react-bootstrap-icons";
 
 import BehaviorContext from "../../../Providers/BehaviorContext";
 import BehavioralGraphContext from "../BehavioralGraphContext";
@@ -9,7 +10,7 @@ import BehavioralGraphContext from "../BehavioralGraphContext";
 import "./BehavioralNode.scss";
 
 BehavioralNode.propTypes = {
-    node: PropTypes.object
+    node: PropTypes.object,
 };
 
 /**
@@ -104,6 +105,12 @@ export function BehavioralNode ({node}) {
     const getNodeIconType = () => {
         if (node.level === 0) {
             return <SignIntersection style={{color: "orange"}}/>;
+        } else if (node.type === "selector") {
+            return <Check2Square title="Select Behavior" style={{color: "grey"}}/>;
+        } else if (node.type === "selector_repeat") {
+            return <ArrowRepeat title="Repeated Select Behavior" style={{color: "grey"}}/>;
+        } else if (node.type === "fanout") {
+            return <SignpostSplit title="Fork Execution" style={{color: "cyan"}}/>;
         }
     };
 
