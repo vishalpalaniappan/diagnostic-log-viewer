@@ -19,7 +19,7 @@ class SemanticAbstraction {
             trace: this.trace,
             level: this.level,
         });
-        this.printDebugLog = true;
+        this.printDebugLog = false;
     }
 
     /**
