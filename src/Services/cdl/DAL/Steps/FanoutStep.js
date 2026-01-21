@@ -57,7 +57,6 @@ class FanoutStep {
         const state = `${typeStr} step ${stepString}: ${infoStr}`;
         this.debugLog = state;
         SemanticTrace.recordTrace({...this});
-        console.log(state);
     }
 }
 

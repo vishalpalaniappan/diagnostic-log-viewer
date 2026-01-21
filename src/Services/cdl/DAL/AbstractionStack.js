@@ -108,10 +108,8 @@ class AbstractionStack {
             // Design abstraction is done because abstraction stack is empty.
             if (this.stack.length === 0) {
                 if (this.isFork) {
-                    console.log("Forked Design Abstraction Done.");
                     SemanticTrace.endForkActiveAbstraction();
                 } else {
-                    console.log("Atomic Design abstraction done.");
                     SemanticTrace.endActiveAtomicAbstraction();
                 }
                 break;
@@ -289,9 +287,9 @@ class AbstractionStack {
                 if (this.stack.length === 0) {
                     return;
                 } else {
-                    const top = this.getTopOfStack();
-                    const typeStr = "\x1b[31mRETURN\x1b[0m";
-                    console.log(`${typeStr} to ${top.name}`);
+                    // const top = this.getTopOfStack();
+                    // const typeStr = "\x1b[31mRETURN\x1b[0m";
+                    // console.log(`${typeStr} to ${top.name}`);
                     SemanticTrace.activeAbstraction.decrementLevel();
                 }
                 continue;

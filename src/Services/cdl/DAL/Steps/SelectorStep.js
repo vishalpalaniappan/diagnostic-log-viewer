@@ -70,7 +70,6 @@ class SelectorStep {
         const state = `${typeStr} step ${stepString}, selected module ${behavior}: ${infoStr}`;
         this.debugLog = state;
         SemanticTrace.recordTrace({...this});
-        console.log(state);
     }
 }
 

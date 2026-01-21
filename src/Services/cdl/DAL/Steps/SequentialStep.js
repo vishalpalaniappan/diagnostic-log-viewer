@@ -85,7 +85,6 @@ class SequentialStep {
         const state = `SOLVED step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
         this.debugLog = state;
         SemanticTrace.recordTrace({...this});
-        console.log(state);
     }
 }
 
