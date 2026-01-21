@@ -86,7 +86,7 @@ export function BehavioralGraph () {
             }
 
             if (node.type === "fanout") {
-                rows = rows.concat(renderRows(node.fork, 1));
+                rows = rows.concat(renderRows(node.fork, node.level));
             }
         }
         return rows;
