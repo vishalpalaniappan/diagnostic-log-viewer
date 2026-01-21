@@ -30,14 +30,15 @@ import "./DesignDiagram.scss";
  */
 export function DesignDiagram ({}) {
     const {activeBehavior, behavior} = useContext(BehaviorContext);
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [nodes, setNodes, onNodesChange] = useNodesState();
+    const [edges, setEdges, onEdgesChange] = useEdgesState();
 
     useEffect(() => {
         if (behavior && activeBehavior) {
             const entry = behavior.atomicAbstractions[activeBehavior.atomicUid];
             console.log("Selected Atomic Abstraction:", entry);
-            layoutTrace(entry);
+            const layout = layoutTrace(entry);
+            setNodes(layout.nodes);
         }
     }, [behavior, activeBehavior]);
 
