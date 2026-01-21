@@ -15,6 +15,7 @@ export function BehavioralGraph () {
     const {behavior, activeBehavior, setActiveStepExecution, setActiveBehavior} = useContext(BehaviorContext);
     const [selectedNode, setSelectedNode] = useState();
     const [behavioralInstance, setBehavioralInstance] = useState();
+    const [behavioralTree, setBehavioralTree] = useState();
     const [title, setTitle] = useState();
 
     /**
@@ -50,66 +51,48 @@ export function BehavioralGraph () {
         />;
     };
 
-    const renderRows = (nodes, level) => {
-        let rows = [];
-        let collapsedLevel;
-        let collapsing = false;
-        for (let index = 0; index < nodes.length; index++) {
-            const node = {...nodes[index]};
-            node.level = node.level + level;
-
-            // If we are collapsing and we reached the same
-            // level or below, then stop collapsing.
-            if (collapsing && node.level <= collapsedLevel) {
-                collapsing = false;
-            }
-
-            // If the node is collapsed and we aren't collapsing
-            // then start collapsing
-            if (node.collapsed && !collapsing) {
-                collapsedLevel = node.level;
-                collapsing = true;
-                rows.push(
-                    <BehavioralNode
-                        key={node.uid}
-                        node={node}/>
-                );
-                continue;
-            }
-
-            // If we aren't collapsing this node, then add the node.
-            if (!collapsing) {
-                rows.push(<BehavioralNode
-                    key={node.uid}
-                    node={node}/>
-                );
-            }
-
-            if (node.type === "fanout") {
-                rows = rows.concat(renderRows(node.fork, node.level));
-            }
-        }
-        return rows;
-    };
-
     /**
      * Renders the behavioral tree.
      */
     const renderTree = () => {
         if (behavior) {
-            const keys = Object.keys(behavior.atomicAbstractions);
-            let nodes = [];
-            for (let i = 0; i < keys.length; i++) {
-                nodes.push(
-                    getAtomicHeaderRow(behavior.atomicAbstractions[keys[i]])
-                );
-                const atomic = behavior.atomicAbstractions[keys[i]].rootTrace;
+            const rows = [];
+            let collapsedLevel;
+            let collapsing = false;
+            for (let index = 0; index < behavioralTree.length; index++) {
+                const node = behavioralTree[index];
 
-                nodes = nodes.concat(renderRows(atomic, 0));
-                setBehavioralInstance(nodes);
+                // If we are collapsing and we reached the same
+                // level or below, then stop collapsing.
+                if (collapsing && node.level <= collapsedLevel) {
+                    collapsing = false;
+                }
+
+                // If the node is collapsed and we aren't collapsing
+                // then start collapsing
+                if (node.collapsed && !collapsing) {
+                    collapsedLevel = node.level;
+                    collapsing = true;
+                    rows.push(
+                        <BehavioralNode
+                            key={node.uid}
+                            node={node}/>
+                    );
+                    continue;
+                }
+
+                // If we aren't collapsing this node, then add the node.
+                if (!collapsing) {
+                    rows.push(<BehavioralNode
+                        key={node.uid}
+                        node={node}/>
+                    );
+                }
             }
+            setBehavioralInstance(rows);
 
             if (activeBehavior === undefined || activeBehavior === null ) {
+                const keys = Object.keys(behavior.atomicAbstractions);
                 const node = behavior.atomicAbstractions[keys[keys.length -1]];
                 const step = node.trace[node.trace.length - 1];
                 setActiveBehavior({
@@ -120,12 +103,62 @@ export function BehavioralGraph () {
         }
     };
 
+
+    /**
+     * Create the behavioral tree from the atomic abstractions.
+     */
+    const createTree = () => {
+        const keys = Object.keys(behavior.atomicAbstractions);
+        let nodes = [];
+        for (let i = 0; i < keys.length; i++) {
+            const node = behavior.atomicAbstractions[keys[i]];
+            nodes.push(node);
+            nodes = nodes.concat(
+                createNodes(node.rootTrace, 0)
+            );
+        }
+        for (let i = 1; i < nodes.length; i++) {
+            const prevNode = nodes[i-1];
+            const currNode = nodes[i];
+            if (currNode.level > prevNode.level) {
+                prevNode.collapsible = true;
+                prevNode.collapsed = false;
+            }
+        }
+        setBehavioralTree(nodes);
+    };
+
+    /**
+     * Create the nodes. Recurse for fanout node types.
+     * @param {Object} nodes
+     * @param {Number} level
+     * @return {Array}
+     */
+    const createNodes = (nodes, level) => {
+        let rows = [];
+        for (let index = 0; index < nodes.length; index++) {
+            const node = {...nodes[index]};
+            node.level = node.level + level;
+            rows.push(node);
+            if (node.type === "fanout") {
+                rows = rows.concat(createNodes(node.fork, node.level));
+            }
+        }
+        return rows;
+    };
+
+    useEffect(() => {
+        if (behavioralTree) {
+            renderTree();
+        }
+    }, [behavioralTree]);
+
     useEffect(() => {
         if (behavior) {
             setTitle("Behavioral Tree");
-            renderTree();
+            createTree();
         }
-    }, [behavior, activeBehavior]);
+    }, [behavior]);
 
     /**
      * Collapse the given node

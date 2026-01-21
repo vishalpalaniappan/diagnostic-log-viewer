@@ -1,4 +1,4 @@
-let STEP_UID = 0;
+import {getSimpleUID} from "../helper";
 /**
  * This class contains an semantic abstraction.
  */
@@ -10,10 +10,11 @@ class SemanticAbstraction {
     constructor (atomicUid) {
         this.type = "atomic";
         this.atomicUid = atomicUid;
+        this.uid = getSimpleUID();
         this.rootTrace = [];
         this.trace = this.rootTrace;
         this.forkStack = [];
-        this.level = 1;
+        this.level = 0;
         this.forkStack.push({
             trace: this.trace,
             level: this.level,
@@ -39,7 +40,7 @@ class SemanticAbstraction {
         }
 
         // this uid is used to set keys in components and ids in DOM tree
-        step.uid = "STEP_UID" + (++STEP_UID).toString();
+        step.uid = getSimpleUID();
 
         // this uid links every step to the atomic abstraction it is part of
         // TODO: In a good design, this would be redundant, revisit this.
@@ -68,7 +69,7 @@ class SemanticAbstraction {
     displayDebugLog (entry) {
         if (this.printDebugLog) {
             const spacer = "     ";
-            const spacerStr = spacer.repeat(entry.level - 1);
+            const spacerStr = spacer.repeat(entry.level);
             console.log(spacerStr + entry.debugLog);
         }
     }
