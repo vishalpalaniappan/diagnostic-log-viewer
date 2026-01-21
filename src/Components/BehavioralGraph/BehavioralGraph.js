@@ -42,15 +42,6 @@ export function BehavioralGraph () {
         }
     }, [activeBehavior]);
 
-
-    const getAtomicHeaderRow = (node) => {
-        node.level = 0;
-        return <BehavioralNode
-            key={node.atomicUid}
-            node={node}
-        />;
-    };
-
     /**
      * Renders the behavioral tree.
      */
