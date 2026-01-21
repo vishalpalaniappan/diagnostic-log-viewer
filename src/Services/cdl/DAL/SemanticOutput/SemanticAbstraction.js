@@ -9,6 +9,7 @@ class SemanticAbstraction {
         this.rootTrace = [];
         this.trace = this.rootTrace;
         this.forkStack = [this.rootTrace];
+        this.level = 1;
     }
 
     /**
@@ -17,9 +18,26 @@ class SemanticAbstraction {
      * @param {Object} step
      */
     addToTrace (step) {
+        step.level = this.level;
         this.trace.push(step);
+        if (step.type === "selector" || step.type === "selector_repeat") {
+            this.incrementLevel();
+        }
     }
 
+    /**
+     * Increases the level by one.
+     */
+    incrementLevel () {
+        this.level++;
+    }
+
+    /**
+     * Decreases the level by one.
+     */
+    decrementLevel () {
+        this.level--;
+    }
 
     /**
      * Fork from the current trace.
@@ -38,10 +56,14 @@ class SemanticAbstraction {
      * to be able to add multiple forks to a single step.
      */
     startFork () {
-        this.forkStack.push(this.trace);
+        this.forkStack.push({
+            trace: this.trace,
+            level: this.level,
+        });
         const currNode = this.trace[this.trace.length - 1];
         currNode.fork = [];
         this.trace = currNode.fork;
+        this.level = 1;
     }
 
 
@@ -53,7 +75,9 @@ class SemanticAbstraction {
      */
     endFork () {
         this.forkStack.pop();
-        this.trace = this.forkStack[this.forkStack.length - 1];
+        const currNode = this.trace[this.trace.length - 1];
+        this.trace = currNode.trace;
+        this.level = currNode.level;
     }
 }
 

@@ -292,6 +292,7 @@ class AbstractionStack {
                     const top = this.getTopOfStack();
                     const typeStr = "\x1b[31mRETURN\x1b[0m";
                     console.log(`${typeStr} to ${top.name}`);
+                    SemanticTrace.activeAbstraction.decrementLevel();
                 }
                 continue;
             }
