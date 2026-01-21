@@ -21,8 +21,8 @@ export function BehavioralGraph () {
      * @param {String} activeBehavior
      */
     const scrollToNode = (activeBehavior) => {
-        const node = behavior[activeBehavior];
-        const nodeElement = document.getElementById("behavior-row-node-" + node.index);
+        const id = "behavior-row-" + activeBehavior.uid + "-" + activeBehavior.position;
+        const nodeElement = document.getElementById(id);
         if (nodeElement) {
             nodeElement.scrollIntoView({
                 behavior: "smooth",
@@ -44,7 +44,7 @@ export function BehavioralGraph () {
     const getAtomicHeaderRow = (node) => {
         node.level = 0;
         return <BehavioralNode
-            key={node.uid}
+            key={node.atomicUid}
             node={node}
         />;
     };
@@ -80,7 +80,7 @@ export function BehavioralGraph () {
                         collapsing = true;
                         nodes.push(
                             <BehavioralNode
-                                key={i + "-" + index}
+                                key={node.atomicUid + "-" + node.position}
                                 node={node}/>
                         );
                         continue;
@@ -89,19 +89,19 @@ export function BehavioralGraph () {
                     // If we aren't collapsing this node, then add the node.
                     if (!collapsing) {
                         nodes.push(<BehavioralNode
-                            key={i + "-" + index}
+                            key={node.atomicUid + "-" + node.position}
                             node={node}/>
                         );
                     }
                 }
                 setBehavioralInstance(nodes);
+            }
 
-                // if (activeBehavior === undefined || activeBehavior === null ) {
-                //     setActiveBehavior({
-                //         uid: behavior.atomicAbstractions[keys[i]].uid,
-                //         index: i,
-                //     });
-                // }
+            if (activeBehavior === undefined || activeBehavior === null ) {
+                setActiveBehavior({
+                    uid: behavior.atomicAbstractions[keys[0]].atomicUid,
+                    position: 0,
+                });
             }
         }
     };
@@ -127,7 +127,10 @@ export function BehavioralGraph () {
      * @param {Object} node
      */
     const selectNode = (node) => {
-        setActiveBehavior(node.index);
+        setActiveBehavior({
+            uid: node.atomicUid,
+            position: node.position,
+        });
     };
 
 

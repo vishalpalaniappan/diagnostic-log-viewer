@@ -97,7 +97,7 @@ export function BehavioralExecutionTree () {
     useEffect(() => {
         if (behavior && activeBehavior) {
             setTitle("Behavioral Execution Tree");
-            setExecutionTree(behavior[activeBehavior].execution);
+            // setExecutionTree(behavior[activeBehavior].execution);
         }
     }, [behavior, activeBehavior]);
 

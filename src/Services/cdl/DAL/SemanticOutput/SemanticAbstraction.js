@@ -4,11 +4,11 @@
 class SemanticAbstraction {
     /**
      * Initializes the semantic trace.
-     * @param {String} uid
+     * @param {String} atomicUid
      */
-    constructor (uid) {
+    constructor (atomicUid) {
         this.type = "atomic";
-        this.uid = uid;
+        this.atomicUid = atomicUid;
         this.rootTrace = [];
         this.trace = this.rootTrace;
         this.forkStack = [];
@@ -27,9 +27,10 @@ class SemanticAbstraction {
      */
     addToTrace (step) {
         step.level = this.level;
+        step.atomicUid = this.atomicUid;
 
         if (this.trace.length === 0) {
-            this.trace.push(step);
+            this.insertIntoTrace(step);
         } else {
             const lastStep = this.trace[this.trace.length - 1];
             if (step.type === "sequential" && lastStep.type === "sequential") {
@@ -39,15 +40,24 @@ class SemanticAbstraction {
                     lastStep.execution.push(step.execution[0]);
                 } else {
                     // In new step, append step.
-                    this.trace.push(step);
+                    this.insertIntoTrace(step);
                 }
             } else {
-                this.trace.push(step);
+                this.insertIntoTrace(step);
             }
         }
         if (step.type === "selector" || step.type === "selector_repeat") {
             this.incrementLevel();
         }
+    }
+
+    /**
+     * Inserts the step into the trace.
+     * @param {Object} step
+     */
+    insertIntoTrace (step) {
+        step.position = this.trace.length;
+        this.trace.push(step);
     }
 
 

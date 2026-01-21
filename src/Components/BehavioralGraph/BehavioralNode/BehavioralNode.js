@@ -9,7 +9,7 @@ import BehavioralGraphContext from "../BehavioralGraphContext";
 import "./BehavioralNode.scss";
 
 BehavioralNode.propTypes = {
-    node: PropTypes.object,
+    node: PropTypes.object
 };
 
 /**
@@ -25,7 +25,7 @@ export function BehavioralNode ({node}) {
     // Set style if node is selected.
     useEffect(() => {
         if (node && activeBehavior) {
-            if (activeBehavior === node.index) {
+            if (activeBehavior.uid === node.atomicUid && activeBehavior.position === node.position) {
                 setSelectedStyle(
                     {
                         background: "#184b2c",
@@ -58,7 +58,9 @@ export function BehavioralNode ({node}) {
      */
     const clickSelectNode = (e, node) => {
         e.preventDefault();
-        selectNode(node);
+        if (node.type !== "atomic") {
+            selectNode(node);
+        }
     };
 
     /**
@@ -113,8 +115,12 @@ export function BehavioralNode ({node}) {
     const getNode = (node) => {
         if (node.type === "atomic") {
             return `${node.abs.id}`;
+        } else if (node.type === "selector") {
+            return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
+        } else if (node.type === "selector_repeat") {
+            return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
         } else {
-            return `${node.designAbsName}(${node.currStep}/${node.totalSteps})${node.type}`;
+            return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
         };
     };
 
@@ -123,7 +129,7 @@ export function BehavioralNode ({node}) {
             { (node?.level === 0 && node.index !== "0") &&
                 <div style={{width: "100%", height: "20px"}}></div>
             }
-            <div style={selectedStyle} id={"behavior-row-node-" + node.index}
+            <div style={selectedStyle} id={"behavior-row-" + node.atomicUid + "-" + node.position}
                 className="abstractionRow">
 
                 <div className="icon-container">
