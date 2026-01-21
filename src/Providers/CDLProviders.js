@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import PROGRAM_STATE from "../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
+import VIEW_MODE from "../VIEW_MODE";
 import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
 import BehaviorContext from "./BehaviorContext";
@@ -43,6 +44,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [seg, setSeg] = useState();
     const [behavior, setBehavior] = useState();
     const [activeBehavior, setActiveBehavior] = useState();
+    const [viewMode, setViewMode] = useState(VIEW_MODE.CODE);
     const [activeStepExecution, setActiveStepExecution] = useState();
     const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
@@ -105,6 +107,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveBehavior(undefined);
         setActiveStepExecution(undefined);
         setSeg(undefined);
+        setViewMode(VIEW_MODE.CODE);
         setMode(PROGRAM_STATE.STACK);
     };
 
@@ -201,6 +204,12 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         }
     });
 
+    useEffect(() => {
+        if (viewMode) {
+            console.log("Selected View Mode:", viewMode);
+        }
+    }, [viewMode]);
+
     return (
         <StackPositionContext.Provider value={{stackPosition, setStackPosition}}>
             <FileTreeContext.Provider value={{fileTree}}>
@@ -218,7 +227,8 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                             activeBehavior, setActiveBehavior}}>
                                             <SegContext.Provider value={{seg}}>
                                                 <ActionsContext.Provider
-                                                    value={{actions, mode, setMode, setActions}}>
+                                                    value={{actions, mode, setMode,
+                                                        viewMode, setViewMode, setActions}}>
                                                     {children}
                                                 </ActionsContext.Provider>
                                             </SegContext.Provider>

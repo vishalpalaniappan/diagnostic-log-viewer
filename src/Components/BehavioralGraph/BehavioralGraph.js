@@ -1,6 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 
+import ActionsContext from "../../Providers/ActionsContext";
 import BehaviorContext from "../../Providers/BehaviorContext";
+import VIEW_MODE from "../../VIEW_MODE";
 import BehavioralGraphContext from "./BehavioralGraphContext";
 import {BehavioralNode} from "./BehavioralNode/BehavioralNode";
 
@@ -13,6 +15,7 @@ import "./BehavioralGraph.scss";
 export function BehavioralGraph () {
     // eslint-disable-next-line max-len
     const {behavior, activeBehavior, setActiveStepExecution, setActiveBehavior} = useContext(BehaviorContext);
+    const {viewMode, setViewMode} = useContext(ActionsContext);
     const [selectedNode, setSelectedNode] = useState();
     const [behavioralInstance, setBehavioralInstance] = useState();
     const [behavioralTree, setBehavioralTree] = useState();
@@ -174,6 +177,9 @@ export function BehavioralGraph () {
         setActiveStepExecution(node.execution);
     };
 
+    const selectViewMode = (e) => {
+        setViewMode(e.target.value);
+    };
 
     return (
         <BehavioralGraphContext.Provider
@@ -184,9 +190,9 @@ export function BehavioralGraph () {
                         <div className="title">{title}</div>
                         <div className="selectOption">
                             View:
-                            <select>
-                                <option>Code</option>
-                                <option>Diagram</option>
+                            <select value={viewMode} onChange={selectViewMode}>
+                                <option value={VIEW_MODE.CODE}>Code</option>
+                                <option value={VIEW_MODE.DIAGRAM}>Diagram</option>
 
                             </select>
                         </div>
