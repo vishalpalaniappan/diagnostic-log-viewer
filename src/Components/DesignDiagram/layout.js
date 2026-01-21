@@ -1,53 +1,74 @@
-
 /**
- * Laysout the instrumented design.
- * @param {Object} atomicAbstraction
- * @return {Object}
+ * Class to layout the design into nodes and edges.
  */
-export const layoutDesign = (atomicAbstraction) => {
-    const nodes = [];
-    const edges = [];
+class LayoutDesign {
+    /**
+     * Initialize the class
+     */
+    constructor () {
 
-    const design = atomicAbstraction.design;
-    const abstraction = atomicAbstraction.abs;
+    }
 
-    console.log("Laying out design:", design);
+    /**
+     * Processes the design.
+     * @param {Object} atomicAbstraction
+     * @return {Object}
+     */
+    processDesign (atomicAbstraction) {
+        const nodes = [];
+        const edges = [];
 
-    processModule(abstraction, design);
+        this.design = atomicAbstraction.design;
+        const abstraction = atomicAbstraction.abs;
 
-    return {
-        nodes: nodes,
-        edges: edges,
-    };
-};
+        console.log("Laying out design:", this.design);
 
+        this.processModule(abstraction);
 
-const processModule = (node, design) => {
-    console.log("");
-    for (let i = 0; i < node.steps.length; i++) {
-        const step = node.steps[i];
-        console.log(step.id);
-        if (step.type === "selector") {
-            for (let i = 0; i < step.options.length; i++) {
-                const option = step.options[i];
-                const abs = getDesignAbsFromId(option.id, design);
-                processModule(abs, design);
+        return {
+            nodes: nodes,
+            edges: edges,
+        };
+    }
+
+    /**
+     * Processes the module.
+     * @param {Object} node
+     */
+    processModule (node) {
+        console.log("");
+        for (let i = 0; i < node.steps.length; i++) {
+            const step = node.steps[i];
+            console.log(step.id);
+            if (step.type === "selector") {
+                for (let i = 0; i < step.options.length; i++) {
+                    const option = step.options[i];
+                    const abs = this.getDesignAbsFromId(option.id);
+                    this.processModule(abs);
+                }
+            } else if (step.type === "selector_repeat") {
+                const abs = this.getDesignAbsFromId(step.options[0].id);
+                this.processModule(abs,);
             }
-        } else if (step.type === "selector_repeat") {
-            const abs = getDesignAbsFromId(step.options[0].id, design);
-            processModule(abs, design);
         }
     }
-};
 
-const getDesignAbsFromId = (id, design) => {
-    for (let i = 0; i < design.length; i++) {
-        const entry = design[i];
-        if (entry.id === id) {
-            return entry;
+    /**
+     * Gets the design abs given the id.
+     * @param {String} id
+     * @return {Object|null}
+     */
+    getDesignAbsFromId (id) {
+        for (let i = 0; i < this.design.length; i++) {
+            const entry = this.design[i];
+            if (entry.id === id) {
+                return entry;
+            }
         }
     }
-};
+}
+
+export default LayoutDesign;
 
 /**
  * This function creates nodes and edges for the provided

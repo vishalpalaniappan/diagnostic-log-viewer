@@ -11,7 +11,7 @@ import {
 } from "@xyflow/react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
-import {layoutDesign, layoutTrace} from "./layout";
+import LayoutDesign, {layoutTrace} from "./layout";
 
 import "@xyflow/react/dist/style.css";
 import "./DesignDiagram.scss";
@@ -28,7 +28,8 @@ export function DesignDiagram ({}) {
         if (behavior && activeBehavior) {
             const entry = behavior.atomicAbstractions[activeBehavior.atomicUid];
             console.log("Selected Atomic Abstraction:", entry);
-            const layout = layoutDesign(entry);
+            const layoutInstance = new LayoutDesign();
+            const layout = layoutInstance.processDesign(entry);
             setNodes(layout.nodes);
             setEdges(layout.edges);
         }
