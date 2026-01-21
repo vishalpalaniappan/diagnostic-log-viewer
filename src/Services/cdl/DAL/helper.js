@@ -11,3 +11,12 @@ export const buildResponse = (id, args) => {
         "args": args,
     };
 };
+
+/**
+ * Generates a simple random UID.
+ * @return {String}
+ */
+export const getSimpleUID = () => {
+    return Math.random().toString(36).substring(2, 10) +
+    Math.random().toString(36).substring(2, 10);
+};
