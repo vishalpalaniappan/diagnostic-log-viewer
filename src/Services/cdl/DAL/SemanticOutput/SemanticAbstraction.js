@@ -16,6 +16,7 @@ class SemanticAbstraction {
             trace: this.trace,
             level: this.level,
         });
+        this.printDebugLog = true;
     }
 
     /**
@@ -25,7 +26,24 @@ class SemanticAbstraction {
      */
     addToTrace (step) {
         step.level = this.level;
-        this.trace.push(step);
+
+        if (this.trace.length === 0) {
+            this.trace.push(step);
+        } else {
+            const lastStep = this.trace[this.trace.length - 1];
+            if (step.type === "sequential" && lastStep.type === "sequential") {
+                if (lastStep.designAbsName === step.designAbsName &&
+                    lastStep.index === step.index) {
+                    // In same step, append execution to prev step.
+                    lastStep.execution.push(step.execution[0]);
+                } else {
+                    // In new step, append step.
+                    this.trace.push(step);
+                }
+            } else {
+                this.trace.push(step);
+            }
+        }
         if (step.type === "selector" || step.type === "selector_repeat") {
             this.incrementLevel();
         }
@@ -39,10 +57,20 @@ class SemanticAbstraction {
         let pos = 0;
         do {
             const entry = this.trace[pos];
+            this.displayDebugLog(entry);
+        } while (++pos < this.trace.length);
+    }
+
+    /**
+     * Prints the debug log given the entry with the indentation.
+     * @param {Object} entry
+     */
+    displayDebugLog(entry) {
+        if (this.printDebugLog) {
             const spacer = "     ";
             const spacerStr = spacer.repeat(entry.level - 1);
             console.log(spacerStr + entry.debugLog);
-        } while (++pos < this.trace.length);
+        }
     }
 
     /**

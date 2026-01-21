@@ -39,7 +39,7 @@ class SequentialStep {
      * @return {Object|null}
      */
     evaluateBehavior (execution) {
-        this.execution = execution;
+        this.execution = [execution];
         const behavior = execution.behavior.id;
 
         // Check if we are still exhibiting the same behavior in the step.

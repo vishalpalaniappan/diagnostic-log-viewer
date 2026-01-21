@@ -31,7 +31,7 @@ class SelectorRepeatStep {
      * @return {Object|null}
      */
     evaluateBehavior (execution) {
-        this.execution = execution;
+        this.execution = [execution];
         const behavior = execution.behavior.id;
 
         for (let i = 0; i < this.step.options.length; i++) {

@@ -28,7 +28,7 @@ class SelectorStep {
      * @return {Object|null}
      */
     evaluateBehavior (execution) {
-        this.execution = execution;
+        this.execution = [execution];
         const behavior = execution.behavior.id;
 
         // Check if the provided module was selected and go to the module.
