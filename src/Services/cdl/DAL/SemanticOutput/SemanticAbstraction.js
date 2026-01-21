@@ -28,11 +28,9 @@ class SemanticAbstraction {
      */
     addToTrace (step) {
         step.level = this.level;
-        step.atomicUid = this.atomicUid;
         step.position = this.trace.length;
 
         const traceLength = this.trace.length;
-
         if (traceLength > 0 && this.trace[traceLength - 1].instanceUID === step.instanceUID) {
             // In the same instance, so append to execution.
             this.trace[traceLength - 1].execution.push(step.execution[0]);
@@ -42,6 +40,10 @@ class SemanticAbstraction {
 
         // this uid is used to set keys in components and ids in DOM tree
         step.uid = "STEP_UID" + (++STEP_UID).toString();
+
+        // this uid links every step to the atomic abstraction it is part of
+        // TODO: In a good design, this would be redundant, revisit this.
+        step.atomicUid = this.atomicUid;
 
         if (step.type === "selector" || step.type === "selector_repeat") {
             this.incrementLevel();
