@@ -23,22 +23,19 @@ export const layoutDesign = (atomicAbstraction) => {
 
 
 const processModule = (node, design) => {
+    console.log("");
     for (let i = 0; i < node.steps.length; i++) {
         const step = node.steps[i];
+        console.log(step.id);
         if (step.type === "selector") {
-            console.log("Selector", step.id);
             for (let i = 0; i < step.options.length; i++) {
                 const option = step.options[i];
-                console.log("Selector Option:", option.id);
                 const abs = getDesignAbsFromId(option.id, design);
                 processModule(abs, design);
             }
         } else if (step.type === "selector_repeat") {
-            console.log("Selector Repeat:", step.id);
             const abs = getDesignAbsFromId(step.options[0].id, design);
             processModule(abs, design);
-        } else {
-            console.log("Sequential:", step.id);
         }
     }
 };
