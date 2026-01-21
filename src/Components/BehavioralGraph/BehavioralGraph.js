@@ -112,6 +112,7 @@ export function BehavioralGraph () {
         let nodes = [];
         for (let i = 0; i < keys.length; i++) {
             const node = behavior.atomicAbstractions[keys[i]];
+            node.level = 0;
             nodes.push(node);
             nodes = nodes.concat(
                 createNodes(node.rootTrace, 0)

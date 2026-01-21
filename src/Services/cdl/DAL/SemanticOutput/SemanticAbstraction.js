@@ -14,7 +14,7 @@ class SemanticAbstraction {
         this.rootTrace = [];
         this.trace = this.rootTrace;
         this.forkStack = [];
-        this.level = 0;
+        this.level = 1;
         this.forkStack.push({
             trace: this.trace,
             level: this.level,
