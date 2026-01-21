@@ -1,3 +1,4 @@
+let STEP_UID = 0;
 /**
  * This class contains an semantic abstraction.
  */
@@ -28,6 +29,7 @@ class SemanticAbstraction {
     addToTrace (step) {
         step.level = this.level;
         step.atomicUid = this.atomicUid;
+        step.uid = "STEP_UID" + (++STEP_UID).toString();
 
         if (this.trace.length === 0) {
             this.insertIntoTrace(step);
