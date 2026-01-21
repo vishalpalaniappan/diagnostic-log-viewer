@@ -6,8 +6,10 @@ class Step {
     /**
      * Initialize the object with a simple uid.
      */
-    constructor() {
-        this.uid = getSimpleUID();
+    constructor () {
+        // This is a UID that identifies the step in the
+        // design abstraction uniquely.
+        this.instanceUID = getSimpleUID();
     }
 }
 
