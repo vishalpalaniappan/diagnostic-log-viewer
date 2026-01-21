@@ -25,8 +25,7 @@ export function BehavioralNode ({node}) {
     // Set style if node is selected.
     useEffect(() => {
         if (node && activeBehavior) {
-            if (activeBehavior.uid === node.atomicUid
-                && activeBehavior.position === node.position) {
+            if (activeBehavior.uid === node.uid) {
                 setSelectedStyle(
                     {
                         background: "#184b2c",
@@ -130,7 +129,7 @@ export function BehavioralNode ({node}) {
             { (node?.level === 0 && node.index !== "0") &&
                 <div style={{width: "100%", height: "20px"}}></div>
             }
-            <div style={selectedStyle} id={"behavior-row-" + node.atomicUid + "-" + node.position}
+            <div style={selectedStyle} id={"behavior-row-" + node.uid}
                 className="abstractionRow">
 
                 <div className="icon-container">

@@ -22,7 +22,7 @@ export function BehavioralGraph () {
      * @param {String} activeBehavior
      */
     const scrollToNode = (activeBehavior) => {
-        const id = "behavior-row-" + activeBehavior.uid + "-" + activeBehavior.position;
+        const id = "behavior-row-" + activeBehavior.uid;
         const nodeElement = document.getElementById(id);
         if (nodeElement) {
             nodeElement.scrollIntoView({
@@ -50,51 +50,62 @@ export function BehavioralGraph () {
         />;
     };
 
+    const renderRows = (nodes, level) => {
+        let rows = [];
+        let collapsedLevel;
+        let collapsing = false;
+        for (let index = 0; index < nodes.length; index++) {
+            const node = {...nodes[index]};
+            node.level = node.level + level;
+
+            // If we are collapsing and we reached the same
+            // level or below, then stop collapsing.
+            if (collapsing && node.level <= collapsedLevel) {
+                collapsing = false;
+            }
+
+            // If the node is collapsed and we aren't collapsing
+            // then start collapsing
+            if (node.collapsed && !collapsing) {
+                collapsedLevel = node.level;
+                collapsing = true;
+                rows.push(
+                    <BehavioralNode
+                        key={node.uid}
+                        node={node}/>
+                );
+                continue;
+            }
+
+            // If we aren't collapsing this node, then add the node.
+            if (!collapsing) {
+                rows.push(<BehavioralNode
+                    key={node.uid}
+                    node={node}/>
+                );
+            }
+
+            if (node.type === "fanout") {
+                rows = rows.concat(renderRows(node.fork, 1));
+            }
+        }
+        return rows;
+    };
+
     /**
      * Renders the behavioral tree.
      */
     const renderTree = () => {
         if (behavior) {
             const keys = Object.keys(behavior.atomicAbstractions);
-            const nodes = [];
+            let nodes = [];
             for (let i = 0; i < keys.length; i++) {
                 nodes.push(
                     getAtomicHeaderRow(behavior.atomicAbstractions[keys[i]])
                 );
                 const atomic = behavior.atomicAbstractions[keys[i]].rootTrace;
-                let collapsedLevel;
-                let collapsing = false;
 
-                for (let index = 0; index < atomic.length; index++) {
-                    const node = atomic[index];
-
-                    // If we are collapsing and we reached the same
-                    // level or below, then stop collapsing.
-                    if (collapsing && node.level <= collapsedLevel) {
-                        collapsing = false;
-                    }
-
-                    // If the node is collapsed and we aren't collapsing
-                    // then start collapsing
-                    if (node.collapsed && !collapsing) {
-                        collapsedLevel = node.level;
-                        collapsing = true;
-                        nodes.push(
-                            <BehavioralNode
-                                key={node.atomicUid + "-" + node.position}
-                                node={node}/>
-                        );
-                        continue;
-                    }
-
-                    // If we aren't collapsing this node, then add the node.
-                    if (!collapsing) {
-                        nodes.push(<BehavioralNode
-                            key={node.atomicUid + "-" + node.position}
-                            node={node}/>
-                        );
-                    }
-                }
+                nodes = nodes.concat(renderRows(atomic, 0));
                 setBehavioralInstance(nodes);
             }
 
@@ -102,8 +113,7 @@ export function BehavioralGraph () {
                 const node = behavior.atomicAbstractions[keys[keys.length -1]];
                 const step = node.trace[node.trace.length - 1];
                 setActiveBehavior({
-                    uid: node.atomicUid,
-                    position: node.trace.length-1,
+                    uid: step.uid,
                 });
                 setActiveStepExecution(step.execution);
             }
@@ -132,8 +142,7 @@ export function BehavioralGraph () {
      */
     const selectNode = (node) => {
         setActiveBehavior({
-            uid: node.atomicUid,
-            position: node.position,
+            uid: node.uid,
         });
         setActiveStepExecution(node.execution);
     };
