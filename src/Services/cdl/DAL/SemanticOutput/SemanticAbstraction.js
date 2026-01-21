@@ -101,7 +101,7 @@ class SemanticAbstraction {
             }
             // The last entry should not be collapsible
             if (i === entry.execution.length - 1) {
-                currNode.collapsible = true;
+                currNode.collapsible = false;
                 currNode.collapsed = false;
             }
         }
