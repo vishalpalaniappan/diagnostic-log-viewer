@@ -43,6 +43,23 @@ class SemanticModel {
         this.activeAbstraction = null;
     }
 
+
+    /**
+     * Forks the active abstraction at the current position.
+     */
+    startForkActiveAbstraction () {
+        console.log("Forking active abstraction");
+        this.activeAbstraction.startFork();
+    }
+
+    /**
+     * Forks the active abstraction at the current position.
+     */
+    endForkActiveAbstraction () {
+        console.log("Ending Fork from active abstraction");
+        this.activeAbstraction.endFork();
+    }
+
     /**
      * Records the trace into the active abstraction.
      * @param {String} entry

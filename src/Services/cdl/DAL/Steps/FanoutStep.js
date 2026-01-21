@@ -18,7 +18,7 @@ class FanoutStep {
         this.step = step;
         this.totalSteps = totalSteps;
         this.index = index;
-        this.type = "selector";
+        this.type = "fanout";
         this.done = false;
     }
 

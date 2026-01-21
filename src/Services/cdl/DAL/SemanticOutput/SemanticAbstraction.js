@@ -6,7 +6,9 @@ class SemanticAbstraction {
      * Initializes the semantic trace.
      */
     constructor () {
-        this.trace = [];
+        this.rootTrace = [];
+        this.trace = this.rootTrace;
+        this.forkStack = [this.rootTrace];
     }
 
     /**
@@ -18,6 +20,31 @@ class SemanticAbstraction {
      */
     addToTrace (entry) {
         this.trace.push(entry);
+    }
+
+
+    /**
+     * Fork from the current trace. Add the current
+     * trace to the fork stack so that if we fork from
+     * a fork, we can still preserve the structure.
+     */
+    startFork () {
+        this.forkStack.push(this.trace);
+        const currNode = this.trace[this.trace.length - 1];
+        currNode.fork = [];
+        this.trace = currNode.fork;
+        console.log(currNode);
+    }
+
+
+    /**
+     * Ends the current fork and returns the fork below
+     * it on the list.
+     */
+    endFork () {
+        console.log("ENDING FORK");
+        this.forkStack.pop();
+        this.trace = this.forkStack[this.forkStack.length - 1];
     }
 }
 
