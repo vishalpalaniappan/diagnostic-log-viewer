@@ -44,7 +44,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [seg, setSeg] = useState();
     const [behavior, setBehavior] = useState();
     const [activeBehavior, setActiveBehavior] = useState();
-    const [viewMode, setViewMode] = useState(VIEW_MODE.CODE);
+    const [viewMode, setViewMode] = useState(VIEW_MODE.DIAGRAM);
     const [activeStepExecution, setActiveStepExecution] = useState();
     const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
@@ -107,7 +107,7 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveBehavior(undefined);
         setActiveStepExecution(undefined);
         setSeg(undefined);
-        setViewMode(VIEW_MODE.CODE);
+        setViewMode(VIEW_MODE.DIAGRAM);
         setMode(PROGRAM_STATE.STACK);
     };
 
