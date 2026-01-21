@@ -29,39 +29,24 @@ class SemanticAbstraction {
     addToTrace (step) {
         step.level = this.level;
         step.atomicUid = this.atomicUid;
+        step.position = this.trace.length;
+
+        const traceLength = this.trace.length;
+
+        if (traceLength > 0 && this.trace[traceLength - 1].instanceUID === step.instanceUID) {
+            // In the same instance, so append to execution.
+            this.trace[traceLength - 1].execution.push(step.execution[0]);
+        } else {
+            this.trace.push(step);
+        }
+
+        // this uid is used to set keys in components and ids in DOM tree
         step.uid = "STEP_UID" + (++STEP_UID).toString();
 
-        if (this.trace.length === 0) {
-            this.insertIntoTrace(step);
-        } else {
-            const lastStep = this.trace[this.trace.length - 1];
-            if (step.type === "sequential" && lastStep.type === "sequential") {
-                if (lastStep.designAbsName === step.designAbsName &&
-                    lastStep.currStep === step.currStep) {
-                    // In same step, append execution to prev step.
-                    lastStep.execution.push(step.execution[0]);
-                } else {
-                    // In new step, append step.
-                    this.insertIntoTrace(step);
-                }
-            } else {
-                this.insertIntoTrace(step);
-            }
-        }
         if (step.type === "selector" || step.type === "selector_repeat") {
             this.incrementLevel();
         }
     }
-
-    /**
-     * Inserts the step into the trace.
-     * @param {Object} step
-     */
-    insertIntoTrace (step) {
-        step.position = this.trace.length;
-        this.trace.push(step);
-    }
-
 
     /**
      * Process the ndoes when the abstraction finishes.
