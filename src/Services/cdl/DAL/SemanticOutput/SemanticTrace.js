@@ -22,13 +22,25 @@ class SemanticModel {
     }
 
     /**
-     * Adds an atomic abstraction to the
+     * Starts an atomic abstraction to the
      * list and sets its as the active abstraction.
      * @param {String} uid
      */
-    addAtomicAbstraction (uid) {
+    startAtomicAbstraction (uid) {
+        console.log("Started atomic abstraction");
         this.atomicAbstractions[uid] = new SemanticAbstraction();
+        this.atomicAbstractions[uid].complete = false;
         this.activeAbstraction = this.atomicAbstractions[uid];
+    }
+
+    /**
+     * Ends the atomic abstraction.
+     * @param {String} uid
+     */
+    endActiveAtomicAbstraction () {
+        console.log("Ended atomic abstraction");
+        this.activeAbstraction.complete = true;
+        this.activeAbstraction = null;
     }
 
     /**
