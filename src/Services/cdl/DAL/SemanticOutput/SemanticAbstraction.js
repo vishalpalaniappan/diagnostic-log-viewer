@@ -4,8 +4,11 @@
 class SemanticAbstraction {
     /**
      * Initializes the semantic trace.
+     * @param {String} uid
      */
-    constructor () {
+    constructor (uid) {
+        this.type = "atomic";
+        this.uid = uid;
         this.rootTrace = [];
         this.trace = this.rootTrace;
         this.forkStack = [];

@@ -35,13 +35,6 @@ class AbstractionStack {
         this.isFork = isFork;
         console.log("");
         console.log("Initialized stack for position:", initialPosition);
-        const uid = initialPosition.execution.thread + "-" + initialPosition.position;
-
-        if (isFork) {
-            SemanticTrace.startForkActiveAbstraction();
-        } else {
-            SemanticTrace.startAtomicAbstraction(uid);
-        }
         this.walkAbstraction();
     }
 
@@ -55,6 +48,13 @@ class AbstractionStack {
         // Initialize the stack with the initial design abstraction
         const abs = this.getDesignAbsFromExecution(this.initialPosition.execution.behavior.id);
         this.addToStack(abs);
+
+        const uid = this.initialPosition.execution.thread + "-" + this.initialPosition.position;
+        if (this.isFork) {
+            SemanticTrace.startForkActiveAbstraction();
+        } else {
+            SemanticTrace.startAtomicAbstraction(uid, abs);
+        }
 
         /**
          * Evaluate the behavior of the initial position.
