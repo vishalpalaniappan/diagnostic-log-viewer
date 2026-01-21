@@ -6,7 +6,7 @@ class SemanticModel {
     /**
      * Initializes the semantic trace.
      */
-    constructor() {
+    constructor () {
         this.type = "semantic";
         this.atomicAbstractions = {};
         this.activeAbstraction = null;

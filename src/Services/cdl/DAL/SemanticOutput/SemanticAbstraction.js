@@ -42,7 +42,6 @@ class SemanticAbstraction {
      * it on the list.
      */
     endFork () {
-        console.log("ENDING FORK");
         this.forkStack.pop();
         this.trace = this.forkStack[this.forkStack.length - 1];
     }
