@@ -91,6 +91,7 @@ export function BehavioralGraph () {
                 const step = node.trace[node.trace.length - 1];
                 setActiveBehavior({
                     uid: step.uid,
+                    atomicUid: step.atomicUid,
                 });
                 setActiveStepExecution(step.execution);
             }
@@ -173,6 +174,7 @@ export function BehavioralGraph () {
     const selectNode = (node) => {
         setActiveBehavior({
             uid: node.uid,
+            atomicUid: node.atomicUid,
         });
         setActiveStepExecution(node.execution);
     };
