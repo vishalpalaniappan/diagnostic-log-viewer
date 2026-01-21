@@ -106,7 +106,7 @@ export function BehavioralGraph () {
             node.level = 0;
             nodes.push(node);
             nodes = nodes.concat(
-                createNodes(node.rootTrace, 0)
+                createNodes(node.rootTrace, 0, false)
             );
         }
         for (let i = 1; i < nodes.length; i++) {
@@ -124,16 +124,18 @@ export function BehavioralGraph () {
      * Create the nodes. Recurse for fanout node types.
      * @param {Object} nodes
      * @param {Number} level
+     * @param {Boolean} isFork
      * @return {Array}
      */
-    const createNodes = (nodes, level) => {
+    const createNodes = (nodes, level, isFork) => {
         let rows = [];
         for (let index = 0; index < nodes.length; index++) {
             const node = {...nodes[index]};
             node.level = node.level + level;
+            node.isFork = isFork;
             rows.push(node);
             if (node.type === "fanout") {
-                rows = rows.concat(createNodes(node.fork, node.level));
+                rows = rows.concat(createNodes(node.fork, node.level, true));
             }
         }
         return rows;

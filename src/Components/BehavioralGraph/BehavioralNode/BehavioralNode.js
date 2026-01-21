@@ -35,7 +35,15 @@ export function BehavioralNode ({node}) {
                     }
                 );
             } else {
-                setSelectedStyle({});
+                if (node.isFork) {
+                    setSelectedStyle(
+                        {
+                            background: "#181818",
+                        }
+                    );
+                } else {
+                    setSelectedStyle({});
+                }
             }
         }
     }, [activeBehavior, node]);
