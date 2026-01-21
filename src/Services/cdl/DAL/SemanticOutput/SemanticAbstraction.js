@@ -1,3 +1,5 @@
+import { eventNames } from "process";
+
 /**
  * This class contains an semantic abstraction.
  */
@@ -8,8 +10,12 @@ class SemanticAbstraction {
     constructor () {
         this.rootTrace = [];
         this.trace = this.rootTrace;
-        this.forkStack = [this.rootTrace];
+        this.forkStack = [];
         this.level = 1;
+        this.forkStack.push({
+            trace: this.trace,
+            level: this.level,
+        });
     }
 
     /**
@@ -23,6 +29,20 @@ class SemanticAbstraction {
         if (step.type === "selector" || step.type === "selector_repeat") {
             this.incrementLevel();
         }
+    }
+
+
+    /**
+     * Process the ndoes when the abstraction finishes.
+     */
+    processNodes () {
+        let pos = 0;
+        do {
+            const entry = this.trace[pos];
+            const spacer = "     ";
+            const spacerStr = spacer.repeat(entry.level - 1);
+            console.log(spacerStr + entry.debugLog);
+        } while (++pos < this.trace.length);
     }
 
     /**
@@ -75,9 +95,10 @@ class SemanticAbstraction {
      */
     endFork () {
         this.forkStack.pop();
-        const currNode = this.trace[this.trace.length - 1];
-        this.trace = currNode.trace;
-        this.level = currNode.level;
+        const currLevel = this.forkStack[this.forkStack.length - 1];
+        console.log(currLevel);
+        this.trace = currLevel.trace;
+        this.level = currLevel.level;
     }
 }
 
