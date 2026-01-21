@@ -53,7 +53,7 @@ class SemanticModel {
     }
 
     /**
-     * Forks the active abstraction at the current position.
+     * Ends the active for in the active abstraction.
      */
     endForkActiveAbstraction () {
         console.log("Ending Fork from active abstraction");
