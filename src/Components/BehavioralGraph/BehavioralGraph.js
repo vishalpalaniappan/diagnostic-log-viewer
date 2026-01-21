@@ -181,7 +181,15 @@ export function BehavioralGraph () {
             <div className="treeMenuContainer">
                 <div className="topContainer">
                     <div className="titleContainer">
-                        <span className="title">{title}</span>
+                        <div className="title">{title}</div>
+                        <div className="selectOption">
+                            View:
+                            <select>
+                                <option>Code</option>
+                                <option>Diagram</option>
+
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div className="behavioralTreeContainer scrollbar flex-grow-1">
