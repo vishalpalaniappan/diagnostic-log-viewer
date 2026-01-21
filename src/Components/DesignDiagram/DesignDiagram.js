@@ -1,5 +1,7 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 
+import {layoutTrace} from "./layout";
+
 import {
     Background,
     Controls,
@@ -35,6 +37,7 @@ export function DesignDiagram ({}) {
         if (behavior && activeBehavior) {
             const entry = behavior.atomicAbstractions[activeBehavior.atomicUid];
             console.log("Selected Atomic Abstraction:", entry);
+            layoutTrace(entry);
         }
     }, [behavior, activeBehavior]);
 
