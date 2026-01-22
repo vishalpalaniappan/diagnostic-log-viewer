@@ -36,11 +36,11 @@ class DesignAbstraction {
                 );
             } else if (step.type === "selector") {
                 this.steps.push(
-                    new SelectorStep(step, currStep + 1, totalSteps, this.abstraction.id)
+                    new SelectorStep(step, currStep + 1, totalSteps, this)
                 );
             } else if (step.type === "fanout") {
                 this.steps.push(
-                    new FanoutStep(step, currStep + 1, totalSteps, this.abstraction.id)
+                    new FanoutStep(step, currStep + 1, totalSteps, this)
                 );
             }
         }
