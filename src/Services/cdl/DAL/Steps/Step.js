@@ -28,7 +28,7 @@ class Step {
      */
     getPlaceHolders () {
         const values = {};
-        if (this.step.type === "selector") {
+        if (this.step.type === "selector" && this.step?.placeholders) {
             const placeholder = this.step.placeholders[0].placeholder;
             values[placeholder] = this.selectedValue;
         }
