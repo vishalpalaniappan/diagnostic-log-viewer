@@ -40,10 +40,6 @@ class SentenceGenerator {
      * @param {String} absUid
      */
     processAbstraction (index, abstraction, absUid) {
-        console.log("");
-        console.log("Action:", abstraction.action);
-        console.log("placeHolders:", abstraction.placeholders);
-
         const traceGroup = [];
         for (let i = index; i < this.trace.length; i++) {
             const entry = this.trace[i];
@@ -59,7 +55,6 @@ class SentenceGenerator {
                 const foundValues = this.processPlaceHolder(placeHolder, traceGroup);
                 Object.assign(values, foundValues);
             }
-            console.log(values);
             const sentence = this.replacePlaceHolders(abstraction.action, values);
             console.log(sentence);
         }
@@ -72,8 +67,11 @@ class SentenceGenerator {
      * @return {String}
      */
     processPlaceHolder (placeholder, traceGroup) {
-        console.log(placeholder);
         const values = {};
+        if (placeholder.type === "step_existence_check") {
+            values[placeholder.placeholder] = placeholder.value_if_false;
+        }
+
         for (let i = 0; i < traceGroup.length; i++) {
             const entry = traceGroup[i];
             if (placeholder.step !== entry.step.id) {
@@ -92,7 +90,7 @@ class SentenceGenerator {
                     if (behavior === placeholder.behavior && funcId === placeholder.functionalid) {
                         if (placeholder.name in exec.varStack[0]) {
                             const placeholderValue = exec.varStack[0][placeholder.name];
-                            if ("key" in entry) {
+                            if ("key" in placeholder) {
                                 values[placeholder.placeholder] = placeholderValue[placeholder.key];
                             } else {
                                 values[placeholder.placeholder] = placeholderValue;
@@ -100,6 +98,19 @@ class SentenceGenerator {
                         }
                     }
                 }
+            }
+
+            if (placeholder.type === "step_execution_count") {
+                const placeholderKey = placeholder.placeholder;
+                if (!(placeholderKey in values)) {
+                    values[placeholderKey] = 1;
+                } else {
+                    values[placeholderKey] = values[placeholderKey] + 1;
+                }
+            }
+
+            if (placeholder.type === "step_existence_check") {
+                values[placeholder.placeholder] = placeholder.value_if_true;
             }
         }
         return values;
