@@ -45,6 +45,39 @@ class DesignAbstraction {
         return this.steps[this.step];
     }
 
+
+    /**
+     * Generates the instrumented sentences describing what
+     * the design did.
+     */
+    generateSentences () {
+        if (this.abstraction.action) {
+            console.log("Generating sentences for abstraction:", this.abstraction.id);
+            const placeHolderValues = {};
+            for (let i = 0; i < this.steps.length; i++) {
+                const stepPlaceHolderValues = this.steps[i].getPlaceHolders();
+                Object.assign(placeHolderValues, stepPlaceHolderValues);
+            }
+            const action = this.replacePlaceHolders(this.abstraction.action, placeHolderValues);
+            console.log(action);
+        }
+    }
+
+    /**
+     * Replaces the placeholders in the abstractions action sentence.
+     * @param {String} sentence
+     * @param {Object} placeholdersObj
+     * @return {String}
+     */
+    replacePlaceHolders (sentence, placeholdersObj) {
+        const placeholders = Object.keys(placeholdersObj);
+        for (let i = 0; i < placeholders.length; i++) {
+            const key = placeholders[i];
+            sentence = sentence.replace(key, placeholdersObj[key]);
+        }
+        return sentence;
+    }
+
     /**
      * Given the behavioral ID, check if the next step
      * can be taken given the current state.

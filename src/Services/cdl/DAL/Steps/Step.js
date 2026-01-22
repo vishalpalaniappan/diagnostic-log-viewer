@@ -21,6 +21,19 @@ class Step {
         }
         this.done = false;
     }
+
+    /**
+     * Get the place holder values for this step.
+     * @return {Object}
+     */
+    getPlaceHolders () {
+        const values = {};
+        if (this.step.type === "selector") {
+            const placeholder = this.step.placeholders[0].placeholder;
+            values[placeholder] = this.selectedValue;
+        }
+        return values;
+    }
 }
 
 export default Step;

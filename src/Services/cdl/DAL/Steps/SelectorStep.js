@@ -35,11 +35,12 @@ class SelectorStep extends Step {
 
         // Check if the provided module was selected and go to the module.
         for (let i = 0; i < this.step.options.length; i++) {
-            const step = this.step.options[i];
-            if (step.module === behavior) {
+            const option = this.step.options[i];
+            if (option.module === behavior) {
                 this.done = true;
                 this.buildState(execution);
-                return buildResponse(STEP.GOTO_MODULE, {module: step.module});
+                this.selectedValue = option.value;
+                return buildResponse(STEP.GOTO_MODULE, {module: option.module});
             }
         }
 
