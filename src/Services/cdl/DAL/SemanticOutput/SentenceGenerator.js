@@ -38,10 +38,18 @@ class SentenceGenerator {
      */
     processAbstraction (index, abstraction, absUid) {
         console.log("");
+        console.log("Action:", abstraction.action);
+        console.log("Abstraction:", abstraction);
         for (let i = index; i < this.trace.length; i++) {
             const entry = this.trace[i];
-            if (entry.designAbsUid === absUid) {
-                console.log(entry);
+            if (entry.designAbsUid !== absUid) {
+                continue;
+            }
+            const currStep = entry.currStep - 1;
+            const stepInfo = abstraction.steps[currStep];
+            const placeHolders = stepInfo.placeholders;
+            if (placeHolders) {
+                console.log("Step Place Holders:", placeHolders);
             }
         }
     }
