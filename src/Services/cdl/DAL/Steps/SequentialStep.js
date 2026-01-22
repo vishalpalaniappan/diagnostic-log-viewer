@@ -17,7 +17,6 @@ class SequentialStep extends Step {
      */
     constructor (step, currStep, totalSteps, absName, absUid) {
         super();
-        console.log(absUid);
         this.designAbsName = absName;
         this.designAbsUid = absUid;
         this.step = step;
