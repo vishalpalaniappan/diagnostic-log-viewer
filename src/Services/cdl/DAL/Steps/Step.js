@@ -32,6 +32,38 @@ class Step {
             const placeholder = this.step.placeholders[0].placeholder;
             values[placeholder] = this.selectedValue;
         }
+
+        if (this.step.type === "sequential" && this.step?.placeholders) {
+            for (let i = 0; i < this.allExecutionsInStep.length; i++) {
+                const exec = this.allExecutionsInStep[i];
+                const execValues = this.processExecWithPlaceholders(exec);
+                Object.assign(values, execValues);
+            }
+        }
+        return values;
+    }
+
+    /**
+     * Process the execution position to see if it matches
+     * the placeholders we are evaluating.
+     *
+     * TODO: Remove placeholders from the list as they are
+     * processed to reduce the number of times its evaluated.
+     * @param {Object} exec
+     * @return {Object}
+     */
+    processExecWithPlaceholders (exec) {
+        const values = {};
+        for (let j = 0; j < this.step.placeholders.length; j++) {
+            const entry = this.step.placeholders[j];
+            if (entry.behavior === exec.behavior.id &&
+                entry.functionalid === exec.functionalId) {
+                const placeholder = entry.placeholder;
+                if (entry.name in exec.varStack[0]) {
+                    values[placeholder] = exec.varStack[0][entry.name];
+                }
+            }
+        }
         return values;
     }
 }
