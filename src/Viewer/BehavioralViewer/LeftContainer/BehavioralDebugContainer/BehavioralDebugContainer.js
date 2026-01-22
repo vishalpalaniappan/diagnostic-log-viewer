@@ -25,8 +25,8 @@ export function BehavioralDebugContainer () {
         const height = behavioralDebugContainer.current.clientHeight;
         const containerHeight = height - 150;
         violationsRef.current.style.height = 150 - TITLE_HEIGHT + "px";
-        segRef.current.style.height = containerHeight/2 + "px";
-        behavioralRef.current.style.height = containerHeight/2 + "px";
+        segRef.current.style.height = 150 + "px";
+        behavioralRef.current.style.height = containerHeight - 150 + "px";
     };
 
     useEffect(() => {
