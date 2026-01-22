@@ -251,9 +251,7 @@ class AbstractionStack {
      */
     popStack () {
         if (!this.isEmpty()) {
-            const abstraction = this.stack.pop();
-            // Generate sentences after the design abstraction has finished.
-            abstraction.generateSentences();
+            this.stack.pop();
         }
     }
 

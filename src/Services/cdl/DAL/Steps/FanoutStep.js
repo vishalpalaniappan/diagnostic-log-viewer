@@ -10,16 +10,17 @@ class FanoutStep extends Step {
     /**
      * Initializes the abstraction.
      * @param {Object} step
-     * @param {Object} index
+     * @param {Object} currStep
      * @param {Object} totalSteps
-     * @param {Object} designAbsName
+     * @param {Object} designAbstraction
      */
-    constructor (step, index, totalSteps, designAbsName) {
+    constructor (step, currStep, totalSteps, designAbstraction) {
         super();
-        this.designAbsName = designAbsName;
+        this.designAbsName = designAbstraction.abstraction.id;
+        this.designAbsUid = designAbstraction.uid;
         this.step = step;
         this.totalSteps = totalSteps;
-        this.currStep = index + 1;
+        this.currStep = currStep;
         this.type = "fanout";
         this.done = false;
     }

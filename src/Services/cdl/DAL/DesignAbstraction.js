@@ -1,4 +1,5 @@
 import {DESIGN, STEP} from "./DAL_CONSTANTS";
+import {getSimpleUID} from "./helper";
 import {buildResponse} from "./helper";
 import FanoutStep from "./Steps/FanoutStep";
 import SelectorStep from "./Steps/SelectorStep";
@@ -18,21 +19,29 @@ class DesignAbstraction {
         this.name = this.abstraction.name;
         this.initializeSteps();
         this.step = 0;
+        // UID used to uniquely identify this abstraction
+        this.uid = getSimpleUID();
     }
 
     /**
      * Initializes the steps with the relevant object.
      */
     initializeSteps () {
-        for (let i = 0; i < this.abstraction.steps.length; i++) {
-            const step = this.abstraction.steps[i];
+        for (let currStep = 0; currStep < this.abstraction.steps.length; currStep++) {
+            const step = this.abstraction.steps[currStep];
             const totalSteps = this.abstraction.steps.length;
             if (step.type === "sequential") {
-                this.steps.push(new SequentialStep(step, i, totalSteps, this.abstraction.id));
+                this.steps.push(
+                    new SequentialStep(step, currStep + 1, totalSteps, this)
+                );
             } else if (step.type === "selector") {
-                this.steps.push(new SelectorStep(step, i, totalSteps, this.abstraction.id));
+                this.steps.push(
+                    new SelectorStep(step, currStep + 1, totalSteps, this.abstraction.id)
+                );
             } else if (step.type === "fanout") {
-                this.steps.push(new FanoutStep(step, i, totalSteps, this.abstraction.id));
+                this.steps.push(
+                    new FanoutStep(step, currStep + 1, totalSteps, this.abstraction.id)
+                );
             }
         }
     }
@@ -43,39 +52,6 @@ class DesignAbstraction {
      */
     getCurrentStep () {
         return this.steps[this.step];
-    }
-
-
-    /**
-     * Generates the instrumented sentences describing what
-     * the design did.
-     */
-    generateSentences () {
-        if (this.abstraction.action) {
-            console.log("Generating sentences for abstraction:", this.abstraction.id);
-            const placeHolderValues = {};
-            for (let i = 0; i < this.steps.length; i++) {
-                const stepPlaceHolderValues = this.steps[i].getPlaceHolders();
-                Object.assign(placeHolderValues, stepPlaceHolderValues);
-            }
-            const action = this.replacePlaceHolders(this.abstraction.action, placeHolderValues);
-            console.log(action);
-        }
-    }
-
-    /**
-     * Replaces the placeholders in the abstractions action sentence.
-     * @param {String} sentence
-     * @param {Object} placeholdersObj
-     * @return {String}
-     */
-    replacePlaceHolders (sentence, placeholdersObj) {
-        const placeholders = Object.keys(placeholdersObj);
-        for (let i = 0; i < placeholders.length; i++) {
-            const key = placeholders[i];
-            sentence = sentence.replace(key, placeholdersObj[key]);
-        }
-        return sentence;
     }
 
     /**
