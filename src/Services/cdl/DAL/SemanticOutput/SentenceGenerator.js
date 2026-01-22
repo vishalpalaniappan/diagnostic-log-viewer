@@ -59,6 +59,7 @@ class SentenceGenerator {
                 const foundValues = this.processPlaceHolder(placeHolder, traceGroup);
                 Object.assign(values, foundValues);
             }
+            console.log(values);
             const sentence = this.replacePlaceHolders(abstraction.action, values);
             console.log(sentence);
         }
@@ -66,16 +67,39 @@ class SentenceGenerator {
 
     /**
      * Process the entry with the placeholders and return values.
-     * @param {Array} placeHolder
+     * @param {Array} placeholder
      * @param {Object} traceGroup
      * @return {String}
      */
-    processPlaceHolder (placeHolder, traceGroup) {
+    processPlaceHolder (placeholder, traceGroup) {
+        console.log(placeholder);
         const values = {};
         for (let i = 0; i < traceGroup.length; i++) {
             const entry = traceGroup[i];
-            if (placeHolder.type === "option_value" && placeHolder.step === entry.step.id) {
-                values[placeHolder.placeholder] = entry.selectedValue;
+            if (placeholder.step !== entry.step.id) {
+                continue;
+            }
+
+            if (placeholder.type === "option_value") {
+                values[placeholder.placeholder] = entry.selectedValue;
+            }
+
+            if (placeholder.type === "variable_in_behavior") {
+                for (let j = 0; j < entry.execution.length; j++) {
+                    const exec = entry.execution[j];
+                    const behavior = exec.behavior.id;
+                    const funcId = exec.functionalId;
+                    if (behavior === placeholder.behavior && funcId === placeholder.functionalid) {
+                        if (placeholder.name in exec.varStack[0]) {
+                            const placeholderValue = exec.varStack[0][placeholder.name];
+                            if ("key" in entry) {
+                                values[placeholder.placeholder] = placeholderValue[placeholder.key];
+                            } else {
+                                values[placeholder.placeholder] = placeholderValue;
+                            }
+                        }
+                    }
+                }
             }
         }
         return values;
