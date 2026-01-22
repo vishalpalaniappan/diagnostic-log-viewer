@@ -35,10 +35,11 @@ export function BehavioralNode ({node}) {
                     }
                 );
             } else {
-                if (node.isFork) {
+                if (node.type === "selector") {
                     setSelectedStyle(
                         {
-                            background: "#181818",
+                            color: "grey",
+                            cursor: "default",
                         }
                     );
                 } else {
@@ -64,10 +65,10 @@ export function BehavioralNode ({node}) {
      * Call back when a node is selected.
      * @param {Event} e
      * @param {Object} node
-     */
+     */ 
     const clickSelectNode = (e, node) => {
         e.preventDefault();
-        if (node.type !== "atomic") {
+        if (node.type !== "atomic" && node.type !== "selector") {
             selectNode(node);
         }
     };
@@ -115,10 +116,8 @@ export function BehavioralNode ({node}) {
             return <SignIntersection style={{color: "orange"}}/>;
         } else if (node.type === "selector") {
             return <Check2Square title="Select Behavior" style={{color: "grey"}}/>;
-        } else if (node.type === "selector_repeat") {
-            return <ArrowRepeat title="Repeated Select Behavior" style={{color: "grey"}}/>;
-        } else if (node.type === "fanout") {
-            return <SignpostSplit title="Fork Execution" style={{color: "cyan"}}/>;
+        } else if (node.isFork) {
+            return <SignpostSplit title="Forked Execution" style={{color: "cyan"}}/>;
         }
     };
 
