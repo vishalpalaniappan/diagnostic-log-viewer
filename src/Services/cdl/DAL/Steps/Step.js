@@ -56,11 +56,19 @@ class Step {
         const values = {};
         for (let j = 0; j < this.step.placeholders.length; j++) {
             const entry = this.step.placeholders[j];
-            if (entry.behavior === exec.behavior.id &&
-                entry.functionalid === exec.functionalId) {
-                const placeholder = entry.placeholder;
-                if (entry.name in exec.varStack[0]) {
-                    values[placeholder] = exec.varStack[0][entry.name];
+
+            if (entry.type === "variable_in_behavior") {
+                const execBehavior = exec.behavior.id;
+                const execFunctionalId = exec.functionalId;
+                if (entry.behavior === execBehavior && entry.functionalid === execFunctionalId) {
+                    const placeholder = entry.placeholder;
+                    if (entry.name in exec.varStack[0]) {
+                        if ("key" in entry) {
+                            values[placeholder] = exec.varStack[0][entry.name][entry.key];
+                        } else {
+                            values[placeholder] = exec.varStack[0][entry.name];
+                        }
+                    }
                 }
             }
         }
