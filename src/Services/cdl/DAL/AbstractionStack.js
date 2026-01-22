@@ -289,9 +289,9 @@ class AbstractionStack {
                 return true;
             }
             SemanticTrace.activeAbstraction.decrementLevel();
-            // Typically, its bad to modify the array that you are itearting
-            // through but I am removing the element at the top while working
-            // backwards, so the index will never be invalid.
+            // Typically, its bad to modify the array that you are iterating
+            // through but I am removing the element at the end while working
+            // backwards through the array, so the index will never be invalid.
             this.stack.pop();
         }
         return false;
