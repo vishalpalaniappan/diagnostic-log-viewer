@@ -15,12 +15,12 @@ class DesignAbstraction {
      */
     constructor (abstraction) {
         this.abstraction = {...abstraction};
+        // UID used to uniquely identify this abstraction
+        this.absUid = getSimpleUID();
         this.steps = [];
         this.name = this.abstraction.name;
         this.initializeSteps();
         this.step = 0;
-        // UID used to uniquely identify this abstraction
-        this.uid = getSimpleUID();
     }
 
     /**
@@ -30,17 +30,19 @@ class DesignAbstraction {
         for (let currStep = 0; currStep < this.abstraction.steps.length; currStep++) {
             const step = this.abstraction.steps[currStep];
             const totalSteps = this.abstraction.steps.length;
+            const absName = this.abstraction.id;
+            const absUid = this.absUid;
             if (step.type === "sequential") {
                 this.steps.push(
-                    new SequentialStep(step, currStep + 1, totalSteps, this)
+                    new SequentialStep(step, currStep + 1, totalSteps, absName, absUid)
                 );
             } else if (step.type === "selector") {
                 this.steps.push(
-                    new SelectorStep(step, currStep + 1, totalSteps, this)
+                    new SelectorStep(step, currStep + 1, totalSteps, absName, absUid)
                 );
             } else if (step.type === "fanout") {
                 this.steps.push(
-                    new FanoutStep(step, currStep + 1, totalSteps, this)
+                    new FanoutStep(step, currStep + 1, totalSteps, absName, absUid)
                 );
             }
         }

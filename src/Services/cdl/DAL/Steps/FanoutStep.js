@@ -12,12 +12,13 @@ class FanoutStep extends Step {
      * @param {Object} step
      * @param {Object} currStep
      * @param {Object} totalSteps
-     * @param {Object} designAbstraction
+     * @param {Object} absName
+     * @param {Object} absUid
      */
-    constructor (step, currStep, totalSteps, designAbstraction) {
+    constructor (step, currStep, totalSteps, absName, absUid) {
         super();
-        this.designAbsName = designAbstraction.abstraction.id;
-        this.designAbsUid = designAbstraction.uid;
+        this.designAbsName = absName;
+        this.designAbsUid = absUid;
         this.step = step;
         this.totalSteps = totalSteps;
         this.currStep = currStep;
