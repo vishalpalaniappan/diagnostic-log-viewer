@@ -40,8 +40,8 @@ class SelectorStep extends Step {
             const option = this.step.options[i];
             if (option.module === behavior) {
                 this.done = true;
-                this.buildState(execution);
                 this.selectedValue = option.value;
+                this.buildState(execution);
                 return buildResponse(STEP.GOTO_MODULE, {module: option.module});
             }
         }

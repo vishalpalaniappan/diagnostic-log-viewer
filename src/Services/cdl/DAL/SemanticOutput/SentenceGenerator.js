@@ -1,3 +1,6 @@
+import { object } from "prop-types";
+import { Placeholder } from "react-bootstrap";
+
 /**
  * Given an atomic abstraction, this class generates sentences
  * that describes what happend in it.
@@ -39,19 +42,58 @@ class SentenceGenerator {
     processAbstraction (index, abstraction, absUid) {
         console.log("");
         console.log("Action:", abstraction.action);
-        console.log("Abstraction:", abstraction);
+        console.log("placeHolders:", abstraction.placeholders);
+
+        const traceGroup = [];
         for (let i = index; i < this.trace.length; i++) {
             const entry = this.trace[i];
-            if (entry.designAbsUid !== absUid) {
-                continue;
-            }
-            const currStep = entry.currStep - 1;
-            const stepInfo = abstraction.steps[currStep];
-            const placeHolders = stepInfo.placeholders;
-            if (placeHolders) {
-                console.log("Step Place Holders:", placeHolders);
+            if (entry.designAbsUid === absUid) {
+                traceGroup.push(entry);
             }
         }
+
+        if (abstraction?.placeholders) {
+            const values = {};
+            for (let i = 0; i < abstraction.placeholders.length; i++) {
+                const placeHolder = abstraction.placeholders[i];
+                const foundValues = this.processPlaceHolder(placeHolder, traceGroup);
+                Object.assign(values, foundValues);
+            }
+            const sentence = this.replacePlaceHolders(abstraction.action, values);
+            console.log(sentence);
+        }
+    }
+
+    /**
+     * Process the entry with the placeholders and return values.
+     * @param {Array} placeHolder
+     * @param {Object} traceGroup
+     * @return {String}
+     */
+    processPlaceHolder (placeHolder, traceGroup) {
+        const values = {};
+        for (let i = 0; i < traceGroup.length; i++) {
+            const entry = traceGroup[i];
+            if (placeHolder.type === "option_value" && placeHolder.step === entry.step.id) {
+                values[placeHolder.placeholder] = entry.selectedValue;
+            }
+        }
+        return values;
+    }
+
+    /**
+     * Replaces the placeholders in the abstractions action sentence.
+     * @param {String} sentence
+     * @param {Object} placeholdersObj
+     * @return {String}
+     */
+    replacePlaceHolders (sentence, placeholdersObj) {
+        const placeholders = Object.keys(placeholdersObj);
+        for (let i = 0; i < placeholders.length; i++) {
+            const key = placeholders[i];
+            sentence = sentence.replace(key, placeholdersObj[key]);
+        }
+        return sentence;
     }
 
     /**
