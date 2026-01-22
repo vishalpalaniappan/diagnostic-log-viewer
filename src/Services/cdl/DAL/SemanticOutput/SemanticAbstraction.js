@@ -1,4 +1,5 @@
 import {getSimpleUID} from "../helper";
+import SentenceGenerator from "./SentenceGenerator";
 /**
  * This class contains an semantic abstraction.
  */
@@ -65,6 +66,7 @@ class SemanticAbstraction {
             const entry = this.trace[pos];
             this.displayDebugLog(entry);
         } while (++pos < this.trace.length);
+        new SentenceGenerator(this.trace, this.design);
     }
 
     /**
