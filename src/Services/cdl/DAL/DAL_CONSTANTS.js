@@ -1,19 +1,20 @@
 export const STEP = Object.freeze({
-    SAME_STEP: 1,
-    STEP_DONE: 2,
-    GOTO_MODULE_FROM_REPEATED_SELECTOR: 3,
-    FORK: 4,
+    ERROR: 1,
+    FORK: 2,
+    GOTO_MODULE: 3,
+    GOT_MODULE_AND_STEP_IN_STACK: 4,
     JOIN: 5,
-    ERROR: 6,
-    GOTO_MODULE_AND_STEP: 7,
-    SOLVED: 8,
+    SAME_STEP: 6,
+    SOLVED: 7,
+    STEP_DONE: 8,
 });
 
 export const DESIGN = Object.freeze({
-    GOTO_MODULE: 1,
-    FORK: 2,
-    JOIN: 3,
-    CONTINUE: 4,
-    ERROR: 5,
-    STEP_DONE: 6,
+    CONTINUE: 1,
+    ERROR: 2,
+    FORK: 3,
+    GOTO_MODULE: 4,
+    GOT_MODULE_AND_STEP_IN_STACK: 5,
+    JOIN: 6,
+    STEP_DONE: 7,
 });

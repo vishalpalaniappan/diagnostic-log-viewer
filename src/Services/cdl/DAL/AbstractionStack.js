@@ -270,6 +270,34 @@ class AbstractionStack {
     }
 
     /**
+     * Move down the stack until you reach the provided module.
+     * Set the step of the module being evaluated and then
+     * reset the state of the steps after it.
+     * @param {Object} targetModule
+     * @param {Number} step
+     * @return {Boolean}
+     */
+    moveDownToModule (targetModule, step) {
+        for (let i = this.stack.length-1; i >= 0; i--) {
+            if (this.stack[i].abstraction.id === targetModule) {
+                // Set the step and reset the steps after the specified one
+                const top = this.getTopOfStack();
+                top.step = step - 1;
+                for (let i = top.step; i < top.steps.length; i++) {
+                    top.steps[i].reset();
+                }
+                return true;
+            }
+            SemanticTrace.activeAbstraction.decrementLevel();
+            // Typically, its bad to modify the array that you are itearting
+            // through but I am removing the element at the top while working
+            // backwards, so the index will never be invalid.
+            this.stack.pop();
+        }
+        return false;
+    }
+
+    /**
      * Evaluate the executed behavior by solving it with the design.
      *
      * This function performs the semantic transform by projecting
@@ -336,6 +364,15 @@ class AbstractionStack {
                 // Return to main and continue processing execution.
                 if (result.id === DESIGN.CONTINUE) {
                     return;
+                }
+
+                if (result?.id === DESIGN.GOT_MODULE_AND_STEP_IN_STACK) {
+                    const resolved = this.moveDownToModule(result.args.module, result.args.step);
+                    if (!resolved) {
+                        console.error("Unable to resolve the instrumented goto module.");
+                        return false;
+                    }
+                    continue;
                 }
 
                 // Error in instrumentation

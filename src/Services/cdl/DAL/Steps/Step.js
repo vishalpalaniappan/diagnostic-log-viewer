@@ -1,4 +1,4 @@
-import { getSimpleUID } from "../helper";
+import {getSimpleUID} from "../helper";
 /**
  * Base step object.
  */
@@ -10,6 +10,16 @@ class Step {
         // This is a UID that identifies the step in the
         // design abstraction uniquely.
         this.instanceUID = getSimpleUID();
+    }
+
+    /**
+     * Resets the state of the step.
+     */
+    reset () {
+        if (this.step.type === "sequential") {
+            this.behaviorCount = 0;
+        }
+        this.done = false;
     }
 }
 

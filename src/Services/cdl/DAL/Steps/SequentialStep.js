@@ -64,6 +64,12 @@ class SequentialStep extends Step {
             this.buildState(execution);
             return buildResponse(STEP.SOLVED, null);
         } else {
+            if (this.step?.goto) {
+                return buildResponse(STEP.GOT_MODULE_AND_STEP_IN_STACK, {
+                    module: this.step.goto.module,
+                    step: this.step.goto.step,
+                });
+            }
             // If we have moved past the last behavior in the sequential list
             // then we are done.
             this.done = true;

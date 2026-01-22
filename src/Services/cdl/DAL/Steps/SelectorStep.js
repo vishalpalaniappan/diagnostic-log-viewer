@@ -39,7 +39,7 @@ class SelectorStep extends Step {
             if (step.module === behavior) {
                 this.done = true;
                 this.buildState(execution);
-                return buildResponse(STEP.GOTO_MODULE_AND_STEP, {module: step.module});
+                return buildResponse(STEP.GOTO_MODULE, {module: step.module});
             }
         }
 

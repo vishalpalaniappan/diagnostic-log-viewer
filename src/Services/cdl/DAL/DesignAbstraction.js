@@ -1,7 +1,6 @@
 import {DESIGN, STEP} from "./DAL_CONSTANTS";
 import {buildResponse} from "./helper";
 import FanoutStep from "./Steps/FanoutStep";
-import SelectorRepeatStep from "./Steps/SelectorRepeatStep";
 import SelectorStep from "./Steps/SelectorStep";
 import SequentialStep from "./Steps/SequentialStep";
 /**
@@ -32,8 +31,6 @@ class DesignAbstraction {
                 this.steps.push(new SequentialStep(step, i, totalSteps, this.abstraction.id));
             } else if (step.type === "selector") {
                 this.steps.push(new SelectorStep(step, i, totalSteps, this.abstraction.id));
-            } else if (step.type === "selector_repeat") {
-                this.steps.push(new SelectorRepeatStep(step, i, totalSteps, this.abstraction.id));
             } else if (step.type === "fanout") {
                 this.steps.push(new FanoutStep(step, i, totalSteps, this.abstraction.id));
             }
@@ -93,20 +90,8 @@ class DesignAbstraction {
                 return buildResponse(DESIGN.STEP_DONE, result.args);
             }
 
-            // Go to module without moving to next step
-            if (result?.id === STEP.GOTO_MODULE_FROM_REPEATED_SELECTOR) {
-                // Selector module picked this behavior and it repeats
-                // until the it picks different behavior.
-                // So we need to go back to the sequential abstraction
-                // which defines the selector module until it finishes
-                // by not selecting a valid behavior.
-                this.step--;
-                this.getCurrentStep().behaviorCount = 0;
-                return buildResponse(DESIGN.GOTO_MODULE, result.args);
-            }
-
             // Go to module and increment the step
-            if (result?.id === STEP.GOTO_MODULE_AND_STEP) {
+            if (result?.id === STEP.GOTO_MODULE) {
                 this.step++;
                 return buildResponse(DESIGN.GOTO_MODULE, result.args);
             }
@@ -119,6 +104,12 @@ class DesignAbstraction {
             // Error in the instrumentation
             if (result?.id === STEP.ERROR) {
                 return buildResponse(DESIGN.ERROR, result.args);
+            }
+
+            // Go to the specified module and step by moving down
+            // the stack until it is found.
+            if (result?.id === STEP.GOT_MODULE_AND_STEP_IN_STACK) {
+                return buildResponse(DESIGN.GOT_MODULE_AND_STEP_IN_STACK, result.args);
             }
 
             break;
