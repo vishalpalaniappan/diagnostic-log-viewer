@@ -144,7 +144,6 @@ class SemanticAbstraction {
     endFork () {
         this.forkStack.pop();
         const currLevel = this.forkStack[this.forkStack.length - 1];
-        console.log(currLevel);
         this.trace = currLevel.trace;
         this.level = currLevel.level;
     }
