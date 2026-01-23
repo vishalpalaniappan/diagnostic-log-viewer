@@ -1,6 +1,3 @@
-import { object } from "prop-types";
-import { Placeholder } from "react-bootstrap";
-
 /**
  * Given an atomic abstraction, this class generates sentences
  * that describes what happend in it.
