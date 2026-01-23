@@ -171,7 +171,7 @@ export function BehavioralNode ({node}) {
                         <span>{getNode(node)}</span>
                     </div>
 
-                    {/* {node?.exception?.length > 0 ?
+                    {node?.exceptions?.length > 0 ?
                         <div className="status-behavioral-node exception-label">
                             <span className="message">
                                 exception
@@ -180,7 +180,7 @@ export function BehavioralNode ({node}) {
                         <></>
                     }
 
-                    {node?.violation.length > 0 ?
+                    {node?.violations?.length > 0 ?
                         <div className="status-behavioral-node violation-label">
                             <span className="message">
                                 violation
@@ -189,7 +189,7 @@ export function BehavioralNode ({node}) {
                         <></>
                     }
 
-                    {node?.availablityViolation ?
+                    {/* {node?.availablityViolation ?
                         <div className="status-behavioral-node availability-label">
                             <span className="message">
                                 {node?.availablityViolation}
