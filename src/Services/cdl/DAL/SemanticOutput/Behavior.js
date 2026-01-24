@@ -48,7 +48,7 @@ class Behavior {
                     if (variable.name in entry.varStack[varKey]) {
                         const value = entry.varStack[varKey][variable.name];
                         if ("key" in variable) {
-                            variable.value = value[placeholder.key];
+                            variable.value = value[variable.key];
                         } else {
                             variable.value = value;
                         }
