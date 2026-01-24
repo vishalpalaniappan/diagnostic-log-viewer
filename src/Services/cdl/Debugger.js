@@ -174,42 +174,6 @@ class Debugger {
     }
 
     /**
-     * This function sends the behavior to the front end.
-     */
-    sendBehavior () {
-        // this.debuggingMode = PROGRAM_STATE.BEHAVIORAL;
-
-        const fullBehavioralTree = [];
-        for (let i = 0; i < this.transformer.atomicBehaviors.length; i++) {
-            const behavior = this.transformer.atomicBehaviors[i];
-            for (let j = 0; j < behavior.behavioralTree.length; j++) {
-                const entry = behavior.behavioralTree[j];
-                fullBehavioralTree.push(entry);
-            }
-        }
-        for (let i = 0; i < fullBehavioralTree.length - 1; i++) {
-            const entry = fullBehavioralTree[i];
-            const nextEntry = fullBehavioralTree[i + 1];
-            entry.index = i.toString();
-            nextEntry.index = (i + 1).toString();
-            if (nextEntry.level > entry.level) {
-                entry.collapsed = false;
-                entry.collapsible = true;
-            }
-        }
-
-        console.log(fullBehavioralTree);
-        if (fullBehavioralTree.length > 0) {
-            postMessage({
-                code: CDL_WORKER_PROTOCOL.GET_BEHAVIOR,
-                args: {
-                    behavior: fullBehavioralTree,
-                },
-            });
-        }
-    }
-
-    /**
      * This function sends the execution tree to be visualized.
      */
     sendExecutionTree () {
