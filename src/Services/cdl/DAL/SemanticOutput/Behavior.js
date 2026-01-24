@@ -23,6 +23,40 @@ class Behavior {
      * Evaluate the state variables of the behavior.
      */
     evaluateState () {
+        if (!("state_variables" in this.behaviorInfo)) {
+            console.log(this.behaviorInfo.id, " doesn't have any state variables");
+            return;
+        }
+
+        for (let i = 0; i < this.behaviorInfo.state_variables.length; i++) {
+            const variable = this.behaviorInfo.state_variables[i];
+
+            for (let j = 0; j < this.execution.length; j++) {
+                const entry = this.execution[j];
+
+                if (entry.functionalId === variable.functionalId) {
+                    if (variable.scope === "local") {
+                        varKey = 0;
+                    } else if (variable.scope === "global") {
+                        varKey = 1;
+                    } else {
+                        console.error("Unknown variable scope type.");
+                        return;
+                    }
+
+                    if (variable.name in entry.varStack[varKey]) {
+                        const value = entry.varStack[varKey][variable.name];
+                        if ("key" in variable) {
+                            variable.value = value[placeholder.key];
+                        } else {
+                            variable.value = value;
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log(this.behaviorInfo.state_variables);
     }
 }
 
