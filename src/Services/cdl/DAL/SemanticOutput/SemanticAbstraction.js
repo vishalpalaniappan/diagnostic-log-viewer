@@ -36,12 +36,21 @@ class SemanticAbstraction {
         step.execution[0].seg.level = 0;
         step.execution[0].seg.collapsible = false;
         step.execution[0].seg.collapsed = false;
+        const behavior = step.execution[0].behavior.id;
 
         const traceLength = this.trace.length;
         if (traceLength > 0 && this.trace[traceLength - 1].instanceUID === step.instanceUID) {
-            // In the same instance, so append to execution.
-            this.trace[traceLength - 1].execution.push(step.execution[0]);
+            // In the same instance, so append to execution
+            const lastStep = this.trace[traceLength - 1];
+            lastStep.execution.push(step.execution[0]);
+
+            // Save behavior
+            const lastBehavior = lastStep.behavior[lastStep.behavior.length - 1];
+            if (behavior !== lastBehavior) {
+                lastStep.behavior.push(behavior);
+            }
         } else {
+            step.behavior = [behavior];
             this.trace.push(step);
             this.trace[this.trace.length - 1].exceptions = [];
             this.trace[this.trace.length - 1].violations = [];
