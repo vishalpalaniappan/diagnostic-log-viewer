@@ -156,18 +156,18 @@ class CdlHeader {
      * @param {Object} exec
      * @return {String}
      */
-    getBehaviorFromExecution (exec) {
+    getAbstractionFromExecution (exec) {
         if (exec.type === "adli_execution") {
             const absId = this.header.ltMap[exec.value].abstractionId;
             const absInfo = this.header.sdg_meta.abstractions[absId];
             if (!absInfo) {
                 return;
             }
-            const behaviorMap = this.header.design_map.behavior;
-            for (let i = 0; i < behaviorMap.length; i++) {
-                if (behaviorMap[i].abstractions.includes(absInfo.functionalId)) {
+            const abstractions = this.header.design_map.abstractions;
+            for (let i = 0; i < abstractions.length; i++) {
+                if (abstractions[i].abstractions.includes(absInfo.functionalId)) {
                     return {
-                        behavior: behaviorMap[i],
+                        abstraction: abstractions[i],
                         functionalId: absInfo.functionalId,
                     };
                 }

@@ -1,40 +1,41 @@
 /**
- * Class representing a behavior in the design abstraction.
+ * Class representing a Abstraction in the design.
  */
-class Behavior {
+class Abstraction {
     /**
      * Initialize the object.
-     * @param {Object} behaviorInfo
+     * @param {Object} abstractionInfo
      */
-    constructor (behaviorInfo) {
-        this.behaviorInfo = behaviorInfo;
+    constructor (abstractionInfo) {
+        this.abstractionInfo = abstractionInfo;
         this.execution = [];
     }
 
     /**
-     * Adds the execution to the behavior.
-     * @param {Object} entry
+     * Adds the execution to the abstraction.
+     * @param {Object} executionEntry
      */
-    addExecution (entry) {
-        this.execution.push(entry);
+    addExecution (executionEntry) {
+        this.execution.push(executionEntry);
     }
 
     /**
      * Evaluate the state variables of the behavior.
      */
     evaluateState () {
-        if (!("state_variables" in this.behaviorInfo)) {
-            console.log(this.behaviorInfo.id, " doesn't have any state variables");
+        if (!("state_variables" in this.abstractionInfo)) {
+            console.log(this.abstractionInfo.id, " doesn't have any state variables");
             return;
         }
 
-        for (let i = 0; i < this.behaviorInfo.state_variables.length; i++) {
-            const variable = this.behaviorInfo.state_variables[i];
+        for (let i = 0; i < this.abstractionInfo.state_variables.length; i++) {
+            const variable = this.abstractionInfo.state_variables[i];
 
             for (let j = 0; j < this.execution.length; j++) {
                 const entry = this.execution[j];
 
                 if (entry.functionalId === variable.functionalId) {
+                    let varKey;
                     if (variable.scope === "local") {
                         varKey = 0;
                     } else if (variable.scope === "global") {
@@ -56,8 +57,8 @@ class Behavior {
             }
         }
 
-        console.log(this.behaviorInfo.state_variables);
+        console.log(this.abstractionInfo.state_variables);
     }
 }
 
-export default Behavior;
+export default Abstraction;
