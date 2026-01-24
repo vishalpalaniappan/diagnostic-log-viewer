@@ -44,12 +44,31 @@ class SemanticAbstraction {
             const lastStep = this.trace[traceLength - 1];
             lastStep.execution.push(step.execution[0]);
 
-            // Save behavior
+            /**
+             * In the design abstractions, I want to eliminate any references
+             * to the functional ids, so as each behavior is added to the step
+             * I process it to extract the state variables of the behavior. Then
+             * the design abstraction will reference these state variables.
+             *
+             * The state variables of the behavior is defined in the design. So
+             * when mapping the functional id's to the behavior, the variable
+             * values can also be mapped to the state variables of the behavior.
+             * Then the design abstraction references the state variables.
+             *
+             * TODO: I also process the the last behavior in the previous step
+             * when I add a new step to the trace. However, for traces that
+             * never finish or end in exceptions, this algorithm will not
+             * process them, so I might rewrite this in a new way where I simply
+             * add the execution and then process them into behaviors at the
+             * very end before creating the sentences.
+             */
             const lastBehavior = lastStep.behavior[lastStep.behavior.length - 1];
             if (behavior !== lastBehavior) {
                 lastStep.behavior.push(behavior);
+                this.processBehavior();
             }
         } else {
+            this.processBehavior();
             step.behavior = [behavior];
             this.trace.push(step);
             this.trace[this.trace.length - 1].exceptions = [];
@@ -76,6 +95,13 @@ class SemanticAbstraction {
         if (step.type === "selector" || step.type === "selector_repeat") {
             this.incrementLevel();
         }
+    }
+
+    /**
+     * Process the behavior to extract the state variables.
+     */
+    processBehavior () {
+
     }
 
     /**
