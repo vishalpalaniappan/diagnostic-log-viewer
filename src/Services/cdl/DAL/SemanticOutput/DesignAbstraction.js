@@ -4,7 +4,7 @@ import SentenceGenerator from "./SentenceGenerator";
 /**
  * This class contains an semantic abstraction.
  */
-class SemanticAbstraction {
+class DesignAbstraction {
     /**
      * Initializes the semantic trace.
      * @param {String} atomicUid
@@ -234,4 +234,4 @@ class SemanticAbstraction {
     }
 }
 
-export default SemanticAbstraction;
+export default DesignAbstraction;

@@ -1,6 +1,6 @@
 import {STEP} from "../DAL_CONSTANTS";
 import {buildResponse} from "../helper";
-import {SemanticTrace} from "../SemanticOutput/SemanticTrace";
+import {DesignTrace} from "../SemanticOutput/DesignTrace";
 import Step from "./Step";
 
 /**
@@ -60,7 +60,7 @@ class FanoutStep extends Step {
         const typeStr = "\x1b[33mFANOUT\x1b[0m";
         const state = `${typeStr} step ${stepString}: ${infoStr}`;
         this.debugLog = state;
-        SemanticTrace.recordTrace({...this});
+        DesignTrace.recordTrace({...this});
     }
 }
 

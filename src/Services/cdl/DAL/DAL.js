@@ -1,5 +1,5 @@
 import AbstractionStack from "./AbstractionStack";
-import {SemanticTrace} from "./SemanticOutput/SemanticTrace.js";
+import {DesignTrace} from "./SemanticOutput/DesignTrace.js";
 /**
  * Design Abstraction Language (DAL) class to work
  * with an instrumented DAL Specification (DALSpec).
@@ -17,9 +17,9 @@ class DAL {
         console.log("Initialized DAL instance with spec:", this.design);
         this.atomicAbstractions = this.getAtomicAbstractions();
         this.atomicPositions = [];
-        SemanticTrace.setDesign(DALSpec);
+        DesignTrace.setDesign(DALSpec);
         this.walkExecution();
-        SemanticTrace.sendModel();
+        DesignTrace.sendModel();
     }
 
     /**
