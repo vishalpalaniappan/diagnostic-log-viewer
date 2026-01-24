@@ -88,14 +88,16 @@ class SemanticAbstraction {
      * Process the behavior to extract the state variables.
      *
      * In the design abstractions, I want to eliminate any references
-     * to the functional ids, so as each behavior is added to the step
-     * I process it to extract the state variables of the behavior. Then
-     * the design abstraction will reference these state variables.
+     * to the functional ids, so I define the state variables of each
+     * behavior and map those to the functional IDs and the relavant
+     * variables. Then the design abstraction will reference these
+     * state variables.
      *
-     * The state variables of the behavior are defined in the design. So
-     * when mapping the functional id's to the behavior, the variable
-     * values can also be mapped to the state variables of the behavior.
-     * Then the design abstraction references the state variables.
+     * This means that the design abstraction will be defined entirely
+     * through the behaviors and its state variables. This is a very
+     * clean separation and the design specification will survive
+     * any changes to the implementation as it is fully defined in a
+     * separate abstraction.
      *
      * TODO: In each step, there is now a behavior and execution key.
      * The execution is just a list of all the executions in the step
