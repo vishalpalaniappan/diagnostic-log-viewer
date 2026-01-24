@@ -20,7 +20,7 @@ class Abstraction {
     }
 
     /**
-     * Evaluate the state variables of the behavior.
+     * Evaluate the state variables of the abstraction.
      */
     evaluateState () {
         if (!("state_variables" in this.abstractionInfo)) {
