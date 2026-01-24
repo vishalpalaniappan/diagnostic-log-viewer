@@ -20,6 +20,7 @@ class SemanticAbstraction {
         this.trace = this.rootTrace;
         this.forkStack = [];
         this.level = 1;
+        this.state = [];
         this.forkStack.push({
             trace: this.trace,
             level: this.level,
@@ -80,20 +81,15 @@ class SemanticAbstraction {
         do {
             const entry = this.trace[pos];
             this.displayDebugLog(entry);
-            this.processBehavior(entry);
+            entry.state = this.processBehavior(entry);
         } while (++pos < this.trace.length);
-        new SentenceGenerator(this.trace, this.design);
+        // new SentenceGenerator(this.trace, this.design);
+        console.log(this.trace);
     }
 
     /**
      * Group the execution of each step into their behaviors to extract
      * the relevant state variables so the design abstraction can use it.
-     *
-     * In the design abstractions, I want to eliminate any references
-     * to the functional ids, so I define the state variables of each
-     * behavior and map those to the functional IDs and the relavant
-     * variables. Then the design abstraction will reference these
-     * state variables.
      *
      * This means that the design abstraction will be defined entirely
      * through the behaviors and its state variables. This is a very
@@ -109,17 +105,8 @@ class SemanticAbstraction {
      * So when a step is selected, you will have the behaviors in the step
      * and then by selecting a behavior you can see the execution.
      *
-     * TODO: There is also the question of whether a single functional step
-     * should have multiple behaviors or whether the granularity of what is
-     * defined as a behavior is determined by what the design can act and
-     * perform at each step inthe design abstraction. I don't see a problem
-     * with having a list of behaviors in each step, it breaks the step down
-     * into its pieces. In this step, I did A, B and C but I was unable to
-     * realize D, as opposed to I was just unable to realize this step.
-     * Alternatively, each behavior in the sequential set can be its own step
-     * in the design abstraction, this will preserve the details of the design.
-     *
      * @param {Object} entry
+     * @return {Object}
      */
     processBehavior (entry) {
         /**
@@ -157,9 +144,12 @@ class SemanticAbstraction {
             }
         }
         entry.behaviors = behaviors;
+        const state = {};
         for (let i = 0; i < behaviors.length; i++) {
             behaviors[i].evaluateState();
+            Object.assign(state, behaviors[i].stateVariables);
         }
+        return state;
     }
 
 

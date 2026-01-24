@@ -7,8 +7,9 @@ class Behavior {
      * @param {Object} behaviorInfo
      */
     constructor (behaviorInfo) {
-        this.behaviorInfo = behaviorInfo;
+        this.behaviorInfo = {...behaviorInfo};
         this.execution = [];
+        this.stateVariables = {};
     }
 
     /**
@@ -24,7 +25,6 @@ class Behavior {
      */
     evaluateState () {
         if (!("state_variables" in this.behaviorInfo)) {
-            console.log(this.behaviorInfo.id, " doesn't have any state variables");
             return;
         }
 
@@ -47,17 +47,19 @@ class Behavior {
 
                     if (variable.name in entry.varStack[varKey]) {
                         const value = entry.varStack[varKey][variable.name];
-                        if ("key" in variable) {
+                        if ("key" in variable && variable.key === "length") {
+                            variable.value = value.length;
+                        } else if ("key" in variable) {
                             variable.value = value[variable.key];
                         } else {
                             variable.value = value;
                         }
+                        break;
                     }
                 }
             }
+            this.stateVariables[variable.state] = {...variable};
         }
-
-        console.log(this.behaviorInfo.state_variables);
     }
 }
 
