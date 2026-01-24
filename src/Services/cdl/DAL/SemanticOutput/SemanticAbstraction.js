@@ -85,7 +85,8 @@ class SemanticAbstraction {
     }
 
     /**
-     * Process the behavior to extract the state variables.
+     * Group the execution of each step into their behaviors to extract
+     * the relevant state variables so the design abstraction can use it.
      *
      * In the design abstractions, I want to eliminate any references
      * to the functional ids, so I define the state variables of each
