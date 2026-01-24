@@ -148,11 +148,11 @@ class SemanticAbstraction {
         for (let i = 0; i < entry.execution.length; i++) {
             const entryBehavior = entry.execution[i].behavior.id;
             if (currBehavior && currBehavior?.behaviorInfo.id === entryBehavior) {
-                currBehavior.addExecution(entry.execution[i].functionalId);
+                currBehavior.addExecution(entry.execution[i]);
             } else {
                 const behaviorInfo = this.getBehaviorInfo(entryBehavior);
                 currBehavior = new Behavior(behaviorInfo);
-                currBehavior.addExecution(entry.execution[i].functionalId);
+                currBehavior.addExecution(entry.execution[i]);
                 behaviors.push(currBehavior);
             }
         }
