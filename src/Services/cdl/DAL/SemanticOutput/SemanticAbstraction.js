@@ -1,4 +1,5 @@
 import {getSimpleUID} from "../helper";
+import Behavior from "./Behavior";
 import SentenceGenerator from "./SentenceGenerator";
 /**
  * This class contains an semantic abstraction.
@@ -36,40 +37,13 @@ class SemanticAbstraction {
         step.execution[0].seg.level = 0;
         step.execution[0].seg.collapsible = false;
         step.execution[0].seg.collapsed = false;
-        const behavior = step.execution[0].behavior.id;
 
         const traceLength = this.trace.length;
         if (traceLength > 0 && this.trace[traceLength - 1].instanceUID === step.instanceUID) {
             // In the same instance, so append to execution
             const lastStep = this.trace[traceLength - 1];
             lastStep.execution.push(step.execution[0]);
-
-            /**
-             * In the design abstractions, I want to eliminate any references
-             * to the functional ids, so as each behavior is added to the step
-             * I process it to extract the state variables of the behavior. Then
-             * the design abstraction will reference these state variables.
-             *
-             * The state variables of the behavior is defined in the design. So
-             * when mapping the functional id's to the behavior, the variable
-             * values can also be mapped to the state variables of the behavior.
-             * Then the design abstraction references the state variables.
-             *
-             * TODO: I also process the the last behavior in the previous step
-             * when I add a new step to the trace. However, for traces that
-             * never finish or end in exceptions, this algorithm will not
-             * process them, so I might rewrite this in a new way where I simply
-             * add the execution and then process them into behaviors at the
-             * very end before creating the sentences.
-             */
-            const lastBehavior = lastStep.behavior[lastStep.behavior.length - 1];
-            if (behavior !== lastBehavior) {
-                lastStep.behavior.push(behavior);
-                this.processBehavior();
-            }
         } else {
-            this.processBehavior();
-            step.behavior = [behavior];
             this.trace.push(step);
             this.trace[this.trace.length - 1].exceptions = [];
             this.trace[this.trace.length - 1].violations = [];
@@ -98,13 +72,6 @@ class SemanticAbstraction {
     }
 
     /**
-     * Process the behavior to extract the state variables.
-     */
-    processBehavior () {
-
-    }
-
-    /**
      * Process the ndoes when the abstraction finishes.
      */
     processNodes () {
@@ -112,8 +79,57 @@ class SemanticAbstraction {
         do {
             const entry = this.trace[pos];
             this.displayDebugLog(entry);
+            this.processBehavior(entry);
         } while (++pos < this.trace.length);
         new SentenceGenerator(this.trace, this.design);
+    }
+
+    /**
+     * Process the behavior to extract the state variables.
+     *
+     * In the design abstractions, I want to eliminate any references
+     * to the functional ids, so as each behavior is added to the step
+     * I process it to extract the state variables of the behavior. Then
+     * the design abstraction will reference these state variables.
+     *
+     * The state variables of the behavior are defined in the design. So
+     * when mapping the functional id's to the behavior, the variable
+     * values can also be mapped to the state variables of the behavior.
+     * Then the design abstraction references the state variables.
+     *
+     * TODO: In each step, there is now a behavior and execution key.
+     * The execution is just a list of all the executions in the step
+     * and the behavior is a list of all the behaviors with the executions
+     * which define it. I am keeping the execution for now because the UI
+     * uses it but I will be restructing things to use the behavior list.
+     * So when a step is selected, you will have the behaviors in the step
+     * and then by selecting a behavior you can see the execution.
+     *
+     * TODO: There is also the question of whether a single functional step
+     * should have multiple behaviors or whether the granularity of what is
+     * defined as a behavior is determined by what the design can act and
+     * perform at each step inthe design abstraction. I don't see a problem
+     * with having a list of behaviors in each step, it breaks the step down
+     * into its pieces. In this step, I did A, B and C but I was unable to
+     * realize D, as opposed to I was just unable to realize this step.
+     * Alternatively, each behavior in the sequential set can be its own step
+     * in the design abstraction, this will preserve the details of the design.
+     *
+     * @param {Object} entry
+     */
+    processBehavior (entry) {
+        const behaviors = [];
+        let currBehavior;
+        for (let i = 0; i < entry.execution.length; i++) {
+            const entryBehavior = entry.execution[i].behavior.id;
+            if (currBehavior?.id === entryBehavior) {
+                currBehavior.addExecution(entry.execution[i].functionalId);
+            } else {
+                currBehavior = new Behavior(entryBehavior);
+                currBehavior.addExecution(entry.execution[i].functionalId);
+                behaviors.push(currBehavior);
+            }
+        }
     }
 
     /**
