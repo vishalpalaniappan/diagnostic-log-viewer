@@ -4,10 +4,10 @@
 class Behavior {
     /**
      * Initialize the object.
-     * @param {String} id
+     * @param {Object} behaviorInfo
      */
-    constructor (id) {
-        this.id = id;
+    constructor (behaviorInfo) {
+        this.behaviorInfo = behaviorInfo;
         this.execution = [];
     }
 
@@ -17,6 +17,12 @@ class Behavior {
      */
     addExecution (entry) {
         this.execution.push(entry);
+    }
+
+    /**
+     * Evaluate the state variables of the behavior.
+     */
+    evaluateState () {
     }
 }
 

@@ -8,12 +8,13 @@ class SemanticAbstraction {
     /**
      * Initializes the semantic trace.
      * @param {String} atomicUid
-     * @param {Object} design
+     * @param {Object} DALSpec
      */
-    constructor (atomicUid, design) {
+    constructor (atomicUid, DALSpec) {
         this.type = "atomic";
         this.atomicUid = atomicUid;
-        this.design = design;
+        this.design = DALSpec.design;
+        this.behaviorsInDesign = DALSpec.behavior;
         this.uid = getSimpleUID();
         this.rootTrace = [];
         this.trace = this.rootTrace;
@@ -121,18 +122,58 @@ class SemanticAbstraction {
      * @param {Object} entry
      */
     processBehavior (entry) {
+        /**
+         * TODO: Selector types will have a state variable and that is the
+         * option that was selected. I haven't yet decided how I am going to
+         * formalize this. Right now, when performing the transformation,
+         * in SelectorStep.js, I save the selected option in the selectedValue
+         * key of the step. So entry.selectedValue will have the option that
+         * was selected and this is the value of the state variable of the
+         * selector step.
+         *
+         * TODO: If this selectedValue key is undefined, then it means the
+         * selector didn't resolve to an option. This is fine, in some cases
+         * where the selector isn't mutually exclusive. It tells us that this
+         * step didn't select new behavior. However, right now, I don't add
+         * the selector to the design trace unless it selects new behavior.
+         * I might want to change this in the future.
+         */
+        if (entry.type === "selector") {
+            return;
+        }
+
+
         const behaviors = [];
         let currBehavior;
         for (let i = 0; i < entry.execution.length; i++) {
             const entryBehavior = entry.execution[i].behavior.id;
-            if (currBehavior?.id === entryBehavior) {
+            if (currBehavior && currBehavior?.behaviorInfo.id === entryBehavior) {
                 currBehavior.addExecution(entry.execution[i].functionalId);
             } else {
-                currBehavior = new Behavior(entryBehavior);
+                const behaviorInfo = this.getBehaviorInfo(entryBehavior);
+                currBehavior = new Behavior(behaviorInfo);
                 currBehavior.addExecution(entry.execution[i].functionalId);
                 behaviors.push(currBehavior);
             }
         }
+        entry.behaviors = behaviors;
+        for (let i = 0; i < behaviors.length; i++) {
+            behaviors[i].evaluateState();
+        }
+    }
+
+
+    /**
+     * Get the behavior info.
+     * @param {String} behaviorId
+     * @return {Object|null}
+     */
+    getBehaviorInfo (behaviorId) {
+        for (let i = 0; i < this.behaviorsInDesign.length; i++) {
+            if (this.behaviorsInDesign[i].id === behaviorId) {
+                return this.behaviorsInDesign[i];
+            }
+        };
     }
 
     /**

@@ -18,10 +18,10 @@ class SemanticModel {
     /**
      * Sets the instrumented design of the
      * transformed trace.
-     * @param {Object} design
+     * @param {Object} DALSpec
      */
-    setDesign (design) {
-        this.design = design;
+    setDesign (DALSpec) {
+        this.DALSpec = DALSpec;
     }
 
     /**
@@ -32,7 +32,7 @@ class SemanticModel {
      */
     startAtomicAbstraction (uid, abs) {
         console.log("Started atomic abstraction");
-        this.atomicAbstractions[uid] = new SemanticAbstraction(uid, this.design);
+        this.atomicAbstractions[uid] = new SemanticAbstraction(uid, this.DALSpec);
         this.atomicAbstractions[uid].complete = false;
         this.atomicAbstractions[uid].abs = abs;
         this.activeAbstraction = this.atomicAbstractions[uid];

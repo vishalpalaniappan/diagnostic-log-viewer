@@ -17,7 +17,7 @@ class DAL {
         console.log("Initialized DAL instance with spec:", this.design);
         this.atomicBehaviors = this.getAtomicBehaviors();
         this.atomicPositions = [];
-        SemanticTrace.setDesign(DALSpec.design);
+        SemanticTrace.setDesign(DALSpec);
         this.walkExecution();
         SemanticTrace.sendModel();
     }
