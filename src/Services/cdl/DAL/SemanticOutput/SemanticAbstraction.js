@@ -1,5 +1,5 @@
 import {getSimpleUID} from "../helper";
-import Abstraction from "./Abstraction";
+import Behavior from "./Behavior";
 import SentenceGenerator from "./SentenceGenerator";
 /**
  * This class contains an semantic abstraction.
@@ -14,7 +14,7 @@ class SemanticAbstraction {
         this.type = "atomic";
         this.atomicUid = atomicUid;
         this.design = DALSpec.design;
-        this.abstractionsInDesign = DALSpec.abstractions;
+        this.behaviorsInDesign = DALSpec.behavior;
         this.uid = getSimpleUID();
         this.rootTrace = [];
         this.trace = this.rootTrace;
@@ -80,38 +80,48 @@ class SemanticAbstraction {
         do {
             const entry = this.trace[pos];
             this.displayDebugLog(entry);
-            this.processAbstractions(entry);
+            this.processBehavior(entry);
         } while (++pos < this.trace.length);
         new SentenceGenerator(this.trace, this.design);
     }
 
     /**
-     * Group the execution of each step into their abstractions to extract
+     * Group the execution of each step into their behaviors to extract
      * the relevant state variables so the design abstraction can use it.
      *
      * In the design abstractions, I want to eliminate any references
      * to the functional ids, so I define the state variables of each
-     * abstraction and map those to the functional IDs and the relavant
+     * behavior and map those to the functional IDs and the relavant
      * variables. Then the design abstraction will reference these
      * state variables.
      *
      * This means that the design abstraction will be defined entirely
-     * through the abstractions and its state variables. This is a very
+     * through the behaviors and its state variables. This is a very
      * clean separation and the design specification will survive
      * any changes to the implementation as it is fully defined in a
      * separate abstraction.
      *
-     * TODO: In each step, there is now a abstractions and execution key.
+     * TODO: In each step, there is now a behavior and execution key.
      * The execution is just a list of all the executions in the step
-     * and the abstractions is a list of all the abstraction with the executions
-     * which compose it. I am keeping the execution for now because the UI
-     * uses it but I will be restructing things to use the abstraction list.
-     * So when a step is selected, you will have the abstractions in the step
-     * and then by selecting a abstraction you can see the execution.
+     * and the behavior is a list of all the behaviors with the executions
+     * which define it. I am keeping the execution for now because the UI
+     * uses it but I will be restructing things to use the behavior list.
+     * So when a step is selected, you will have the behaviors in the step
+     * and then by selecting a behavior you can see the execution.
+     *
+     * TODO: There is also the question of whether a single functional step
+     * should have multiple behaviors or whether the granularity of what is
+     * defined as a behavior is determined by what the design can act and
+     * perform at each step inthe design abstraction. I don't see a problem
+     * with having a list of behaviors in each step, it breaks the step down
+     * into its pieces. In this step, I did A, B and C but I was unable to
+     * realize D, as opposed to I was just unable to realize this step.
+     * Alternatively, each behavior in the sequential set can be its own step
+     * in the design abstraction, this will preserve the details of the design.
      *
      * @param {Object} entry
      */
-    processAbstractions (entry) {
+    processBehavior (entry) {
         /**
          * TODO: Selector types will have a state variable and that is the
          * option that was selected. I haven't yet decided how I am going to
@@ -133,35 +143,35 @@ class SemanticAbstraction {
         }
 
 
-        const abstractions = [];
-        let currAbstraction;
+        const behaviors = [];
+        let currBehavior;
         for (let i = 0; i < entry.execution.length; i++) {
             const entryBehavior = entry.execution[i].behavior.id;
-            if (currAbstraction && currAbstraction?.abstractionInfo.id === entryBehavior) {
-                currAbstraction.addExecution(entry.execution[i]);
+            if (currBehavior && currBehavior?.behaviorInfo.id === entryBehavior) {
+                currBehavior.addExecution(entry.execution[i]);
             } else {
-                const abstractionInfo = this.getAbstractionInfo(entryBehavior);
-                currAbstraction = new Abstraction(abstractionInfo);
-                currAbstraction.addExecution(entry.execution[i]);
-                abstractions.push(currAbstraction);
+                const behaviorInfo = this.getBehaviorInfo(entryBehavior);
+                currBehavior = new Behavior(behaviorInfo);
+                currBehavior.addExecution(entry.execution[i]);
+                behaviors.push(currBehavior);
             }
         }
-        entry.abstractions = abstractions;
-        for (let i = 0; i < abstractions.length; i++) {
-            abstractions[i].evaluateState();
+        entry.behaviors = behaviors;
+        for (let i = 0; i < behaviors.length; i++) {
+            behaviors[i].evaluateState();
         }
     }
 
 
     /**
      * Get the behavior info.
-     * @param {String} abstractionId
+     * @param {String} behaviorId
      * @return {Object|null}
      */
-    getAbstractionInfo (abstractionId) {
-        for (let i = 0; i < this.abstractionsInDesign.length; i++) {
-            if (this.abstractionsInDesign[i].id === abstractionId) {
-                return this.abstractionsInDesign[i];
+    getBehaviorInfo (behaviorId) {
+        for (let i = 0; i < this.behaviorsInDesign.length; i++) {
+            if (this.behaviorsInDesign[i].id === behaviorId) {
+                return this.behaviorsInDesign[i];
             }
         };
     }

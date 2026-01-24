@@ -1,41 +1,40 @@
 /**
- * Class representing a Abstraction in the design.
+ * Class representing a behavior in the design abstraction.
  */
-class Abstraction {
+class Behavior {
     /**
      * Initialize the object.
-     * @param {Object} abstractionInfo
+     * @param {Object} behaviorInfo
      */
-    constructor (abstractionInfo) {
-        this.abstractionInfo = abstractionInfo;
+    constructor (behaviorInfo) {
+        this.behaviorInfo = behaviorInfo;
         this.execution = [];
     }
 
     /**
-     * Adds the execution to the abstraction.
-     * @param {Object} executionEntry
+     * Adds the execution to the behavior.
+     * @param {Object} entry
      */
-    addExecution (executionEntry) {
-        this.execution.push(executionEntry);
+    addExecution (entry) {
+        this.execution.push(entry);
     }
 
     /**
      * Evaluate the state variables of the behavior.
      */
     evaluateState () {
-        if (!("state_variables" in this.abstractionInfo)) {
-            console.log(this.abstractionInfo.id, " doesn't have any state variables");
+        if (!("state_variables" in this.behaviorInfo)) {
+            console.log(this.behaviorInfo.id, " doesn't have any state variables");
             return;
         }
 
-        for (let i = 0; i < this.abstractionInfo.state_variables.length; i++) {
-            const variable = this.abstractionInfo.state_variables[i];
+        for (let i = 0; i < this.behaviorInfo.state_variables.length; i++) {
+            const variable = this.behaviorInfo.state_variables[i];
 
             for (let j = 0; j < this.execution.length; j++) {
                 const entry = this.execution[j];
 
                 if (entry.functionalId === variable.functionalId) {
-                    let varKey;
                     if (variable.scope === "local") {
                         varKey = 0;
                     } else if (variable.scope === "global") {
@@ -57,8 +56,8 @@ class Abstraction {
             }
         }
 
-        console.log(this.abstractionInfo.state_variables);
+        console.log(this.behaviorInfo.state_variables);
     }
 }
 
-export default Abstraction;
+export default Behavior;

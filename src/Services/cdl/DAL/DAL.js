@@ -33,13 +33,13 @@ class DAL {
             let currBehavior;
             for (let j = 0; j < thread.execution.length; j++ ) {
                 // Get the behavior of the execution
-                const info = thread.header.getAbstractionFromExecution(thread.execution[j]);
+                const info = thread.header.getBehaviorFromExecution(thread.execution[j]);
                 if (info === undefined) {
                     continue;
                 }
 
                 // Save the behavior to the execution for easy access
-                const behavior = info.abstraction;
+                const behavior = info.behavior;
                 thread.execution[j].behavior = behavior;
                 thread.execution[j].functionalId = info.functionalId;
 
