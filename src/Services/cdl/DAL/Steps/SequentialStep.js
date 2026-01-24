@@ -1,6 +1,6 @@
 import {STEP} from "../DAL_CONSTANTS";
 import {buildResponse} from "../helper";
-import {DesignTrace} from "../SemanticOutput/DesignTrace";
+import {SemanticTrace} from "../SemanticOutput/SemanticTrace";
 import Step from "./Step";
 
 /**
@@ -96,7 +96,7 @@ class SequentialStep extends Step {
         const stepString = `(${this.currStep}/${this.totalSteps}) of ${this.designAbsName}`;
         const state = `SOLVED step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
         this.debugLog = state;
-        DesignTrace.recordTrace({...this});
+        SemanticTrace.recordTrace({...this});
     }
 }
 

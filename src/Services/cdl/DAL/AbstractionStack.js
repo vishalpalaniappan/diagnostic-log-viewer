@@ -1,6 +1,6 @@
 import {DESIGN} from "./DAL_CONSTANTS.js";
 import DesignAbstraction from "./DesignAbstraction";
-import {DesignTrace} from "./SemanticOutput/DesignTrace.js";
+import {SemanticTrace} from "./SemanticOutput/SemanticTrace.js";
 
 /**
  * Represents the abstraction stack with entries that
@@ -51,9 +51,9 @@ class AbstractionStack {
 
         const uid = this.initialPosition.execution.thread + "-" + this.initialPosition.position;
         if (this.isFork) {
-            DesignTrace.startForkActiveAbstraction();
+            SemanticTrace.startForkActiveAbstraction();
         } else {
-            DesignTrace.startAtomicAbstraction(uid, abs);
+            SemanticTrace.startAtomicAbstraction(uid, abs);
         }
 
         /**
@@ -117,9 +117,9 @@ class AbstractionStack {
             // Design abstraction is done because abstraction stack is empty.
             if (this.stack.length === 0) {
                 if (this.isFork) {
-                    DesignTrace.endForkActiveAbstraction();
+                    SemanticTrace.endForkActiveAbstraction();
                 } else {
-                    DesignTrace.endActiveAtomicAbstraction();
+                    SemanticTrace.endActiveAtomicAbstraction();
                 }
                 break;
             }
@@ -288,7 +288,7 @@ class AbstractionStack {
                 }
                 return true;
             }
-            DesignTrace.activeAbstraction.decrementLevel();
+            SemanticTrace.activeAbstraction.decrementLevel();
             // Typically, its bad to modify the array that you are iterating
             // through but I am removing the element at the end while working
             // backwards through the array, so the index will never be invalid.
@@ -335,7 +335,7 @@ class AbstractionStack {
                     // const top = this.getTopOfStack();
                     // const typeStr = "\x1b[31mRETURN\x1b[0m";
                     // console.log(`${typeStr} to ${top.name}`);
-                    DesignTrace.activeAbstraction.decrementLevel();
+                    SemanticTrace.activeAbstraction.decrementLevel();
                 }
                 continue;
             }
