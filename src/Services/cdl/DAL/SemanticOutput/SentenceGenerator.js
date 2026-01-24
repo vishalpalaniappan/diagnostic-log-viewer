@@ -82,9 +82,9 @@ class SentenceGenerator {
             if (placeholder.type === "variable_in_behavior") {
                 for (let j = 0; j < entry.execution.length; j++) {
                     const exec = entry.execution[j];
-                    const behavior = exec.behavior.id;
+                    const abstraction = exec.abstraction.id;
                     const funcId = exec.functionalId;
-                    if (behavior === placeholder.behavior && funcId === placeholder.functionalid) {
+                    if (abstraction === placeholder.behavior && funcId === placeholder.functionalid) {
                         if (placeholder.name in exec.varStack[0]) {
                             const placeholderValue = exec.varStack[0][placeholder.name];
                             if ("key" in placeholder) {

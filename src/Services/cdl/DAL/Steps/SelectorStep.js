@@ -27,18 +27,18 @@ class SelectorStep extends Step {
     }
 
     /**
-     * Evaluates the step given the behavior.
+     * Evaluates the step given the abstraction.
      * @param {Object} execution
      * @return {Object|null}
      */
-    evaluateBehavior (execution) {
+    evaluate (execution) {
         this.execution = [execution];
-        const behavior = execution.behavior.id;
+        const abstraction = execution.abstraction.id;
 
         // Check if the provided module was selected and go to the module.
         for (let i = 0; i < this.step.options.length; i++) {
             const option = this.step.options[i];
-            if (option.module === behavior) {
+            if (option.module === abstraction) {
                 this.done = true;
                 this.selectedValue = option.value;
                 this.buildState(execution);
@@ -68,11 +68,11 @@ class SelectorStep extends Step {
      * @param {Object} execution
      */
     buildState (execution) {
-        const behavior = execution.behavior.id;
-        const infoStr = `[${behavior}]`;
+        const abstraction = execution.abstraction.id;
+        const infoStr = `[${abstraction}]`;
         const typeStr = "\x1b[36m[SELECTED]\x1b[0m";
         const stepString = `(${this.currStep}/${this.totalSteps}) of ${this.designAbsName}`;
-        const state = `${typeStr} step ${stepString}, selected module ${behavior}: ${infoStr}`;
+        const state = `${typeStr} step ${stepString}, selected module ${abstraction}: ${infoStr}`;
         this.debugLog = state;
         SemanticTrace.recordTrace({...this});
     }
