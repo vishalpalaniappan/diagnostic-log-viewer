@@ -46,7 +46,7 @@ class AbstractionStack {
         let thread = this.threadDebuggers[this.initialPosition.execution.thread].thread;
 
         // Initialize the stack with the initial design abstraction
-        const abs = this.getDesignAbsFromExecution(this.initialPosition.execution.abstraction.id);
+        const abs = this.getDesignAbsFromExecution(this.initialPosition.execution.behavior.id);
         this.addToStack(abs);
 
         const uid = this.initialPosition.execution.thread + "-" + this.initialPosition.position;
@@ -57,7 +57,7 @@ class AbstractionStack {
         }
 
         /**
-         * Evaluate the abstraction of the initial position.
+         * Evaluate the behavior of the initial position.
          *
          * I manually add the initial position to the stack to start the
          * atomic abstraction (or forked abstraction). There is a more efficient
@@ -66,7 +66,7 @@ class AbstractionStack {
          * The way I see it is that I am  setting the stage before I walk
          * the design abstraction, so I am:
          * - initializing the stack with the atomic abstraction
-         * - evaluating the first abstraction to set the correct initial state
+         * - evaluating the first behavior to set the correct initial state
          * - if I am in a forked stack, I track the output to an input
          *   before i walk the design (if we are starting at an output).
          */
@@ -84,12 +84,12 @@ class AbstractionStack {
             }
         }
 
-        const status = this.evaluateAbstraction(
+        const status = this.evaluateBehavior(
             executionEntry,
             thread.execution[this.initialPosition.position]
         );
         if (status === false) {
-            console.warn("Error in evaluating abstraction of atomic position, terminating");
+            console.warn("Error in evaluating behavior of atomic position, terminating");
             return;
         }
 
@@ -108,7 +108,7 @@ class AbstractionStack {
         // Walk the execution until the design abstraction finishes.
         while (++position < thread.execution.length) {
             const entry = thread.execution[position];
-            if (entry?.abstraction === undefined) {
+            if (entry?.behavior === undefined) {
                 // Execution has variable logs, inputs, outputs etc.
                 // We can ignore those.
                 continue;
@@ -138,7 +138,7 @@ class AbstractionStack {
             }
 
             // Evaluate the execution position using the design.
-            const status = this.evaluateAbstraction(
+            const status = this.evaluateBehavior(
                 executionEntry,
                 {
                     "position": position,
@@ -195,14 +195,14 @@ class AbstractionStack {
 
     /**
      * Gets the design abstraction from the executed abstraction.
-     * @param {String} abstractionId
+     * @param {String} behaviorId
      * @return {Object}
      */
-    getDesignAbsFromExecution (abstractionId) {
+    getDesignAbsFromExecution (behaviorId) {
         for (let i = 0; i < this.design.length; i++) {
             const abs = this.design[i];
             if (abs?.entry) {
-                if (abs.entry === abstractionId) {
+                if (abs.entry === behaviorId) {
                     return abs;
                 }
             }
@@ -298,7 +298,7 @@ class AbstractionStack {
     }
 
     /**
-     * Evaluate the executed abstraction by solving it with the design.
+     * Evaluate the executed behavior by solving it with the design.
      *
      * This function performs the semantic transform by projecting
      * the design abstraction onto the execution. It does this by
@@ -318,7 +318,7 @@ class AbstractionStack {
      * @param {Object} execution
      * @return {Boolean}
      */
-    evaluateAbstraction (info, execution) {
+    evaluateBehavior (info, execution) {
         while (true) {
             if (this.stack.length === 0) {
                 return;

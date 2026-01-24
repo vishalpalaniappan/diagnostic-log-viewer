@@ -57,8 +57,13 @@ class DesignAbstraction {
     }
 
     /**
-     * Given the abstraction, check if the next step
-     * can be taken given the current state
+     * Given the behavioral ID, check if the next step
+     * can be taken given the current state.
+     *
+     * The info argument contains the behavioral id but it
+     * also includes the functional id in the behvior and the
+     * variable stack of the position (will be used to build
+     * behavioral sentences).
      *
      * If it can't, then move to the next step
      * in the design abstraction. If the next
@@ -70,19 +75,14 @@ class DesignAbstraction {
      * If the observed execution position is not what
      * the design expected given the current state,
      * then we have run into an error in the instrumentation
-     * and the user is shown precisely where this gap is.
-     *
-     * The execution argument contains the abstraction id but it
-     * also includes the functional id in the abstraction and the
-     * variable stack of the position (will be used to build
-     * sentences).
+     * and the user is notified precisely where this gap is.
      * @param {String} execution
      * @return {Object|null}
      */
     testNext (execution) {
         while (this.step < this.steps.length) {
             const currentStep = this.getCurrentStep();
-            const result = currentStep.evaluate(execution);
+            const result = currentStep.evaluateBehavior(execution);
 
             // Step was solved, move onto the next execution.
             if (result?.id === STEP.SOLVED) {

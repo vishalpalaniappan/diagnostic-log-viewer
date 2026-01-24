@@ -124,8 +124,8 @@ class SemanticAbstraction {
          * TODO: If this selectedValue key is undefined, then it means the
          * selector didn't resolve to an option. This is fine, in some cases
          * where the selector isn't mutually exclusive. It tells us that this
-         * step didn't select new abstraction. However, right now, I don't add
-         * the selector to the design trace unless it selects new abstraction.
+         * step didn't select new behavior. However, right now, I don't add
+         * the selector to the design trace unless it selects new behavior.
          * I might want to change this in the future.
          */
         if (entry.type === "selector") {
@@ -136,11 +136,11 @@ class SemanticAbstraction {
         const abstractions = [];
         let currAbstraction;
         for (let i = 0; i < entry.execution.length; i++) {
-            const entryAbstraction = entry.execution[i].abstraction.id;
-            if (currAbstraction && currAbstraction?.abstractionInfo.id === entryAbstraction) {
+            const entryBehavior = entry.execution[i].behavior.id;
+            if (currAbstraction && currAbstraction?.abstractionInfo.id === entryBehavior) {
                 currAbstraction.addExecution(entry.execution[i]);
             } else {
-                const abstractionInfo = this.getAbstractionInfo(entryAbstraction);
+                const abstractionInfo = this.getAbstractionInfo(entryBehavior);
                 currAbstraction = new Abstraction(abstractionInfo);
                 currAbstraction.addExecution(entry.execution[i]);
                 abstractions.push(currAbstraction);
@@ -154,7 +154,7 @@ class SemanticAbstraction {
 
 
     /**
-     * Get the abstraction info.
+     * Get the behavior info.
      * @param {String} abstractionId
      * @return {Object|null}
      */

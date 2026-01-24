@@ -39,18 +39,18 @@ class SequentialStep extends Step {
     }
 
     /**
-     * Evaluates the step given the abstraction.
+     * Evaluates the step given the behavior.
      * @param {Object} execution Behavior being evaluated
      * @return {Object|null}
      */
-    evaluate (execution) {
+    evaluateBehavior (execution) {
         this.execution = [execution];
         this.allExecutionsInStep.push(execution);
-        const abstraction = execution.abstraction.id;
+        const behavior = execution.behavior.id;
 
-        // Check if we are still exhibiting the same abstraction in the step.
+        // Check if we are still exhibiting the same behavior in the step.
         const currBehavior = this.step.behavior[this.behaviorCount];
-        if (abstraction === currBehavior) {
+        if (behavior === currBehavior) {
             this.buildState(execution);
             return buildResponse(STEP.SOLVED, null);
         }
@@ -60,9 +60,9 @@ class SequentialStep extends Step {
 
         if (this.behaviorCount < this.step.behavior.length) {
             const expectedBehavior = this.step.behavior[this.behaviorCount];
-            if (expectedBehavior !== abstraction) {
+            if (expectedBehavior !== behavior) {
                 console.warn("The expected behavior was not found.");
-                console.warn(expectedBehavior, abstraction);
+                console.warn(expectedBehavior, behavior);
                 return buildResponse(STEP.ERROR, null);
             }
             this.buildState(execution);
@@ -74,7 +74,7 @@ class SequentialStep extends Step {
                     step: this.step.goto.step,
                 });
             }
-            // If we have moved past the last abstraction in the sequential list
+            // If we have moved past the last behavior in the sequential list
             // then we are done.
             this.done = true;
             return buildResponse(STEP.STEP_DONE, null);
@@ -86,13 +86,13 @@ class SequentialStep extends Step {
      * @param {Object} execution
      */
     buildState (execution) {
-        const abstraction = execution.abstraction.id;
+        const behavior = execution.behavior.id;
 
         const behaviorCount = this.behaviorCount + 1;
         const totalBehavior = this.step.behavior.length;
         const behaviorLength = `(${behaviorCount}/${totalBehavior})`;
 
-        const infoStr = `[${abstraction}]`;
+        const infoStr = `[${behavior}]`;
         const stepString = `(${this.currStep}/${this.totalSteps}) of ${this.designAbsName}`;
         const state = `SOLVED step ${stepString}, behavior ${behaviorLength}: ${infoStr}`;
         this.debugLog = state;

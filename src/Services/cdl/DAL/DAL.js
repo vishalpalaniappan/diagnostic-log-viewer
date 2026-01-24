@@ -15,7 +15,7 @@ class DAL {
         this.design = DALSpec.design;
         this.threadDebuggers = debuggers;
         console.log("Initialized DAL instance with spec:", this.design);
-        this.atomicAbstractions = this.getAtomicAbstractions();
+        this.atomicBehaviors = this.getAtomicBehaviors();
         this.atomicPositions = [];
         SemanticTrace.setDesign(DALSpec);
         this.walkExecution();
@@ -30,28 +30,27 @@ class DAL {
         const keys = Object.keys(this.threadDebuggers);
         for (let i = 0; i < keys.length; i++) {
             const thread = this.threadDebuggers[keys[i]].thread;
-            let currAbstraction;
+            let currBehavior;
             for (let j = 0; j < thread.execution.length; j++ ) {
-                // Get the abstraction of the execution
+                // Get the behavior of the execution
                 const info = thread.header.getAbstractionFromExecution(thread.execution[j]);
                 if (info === undefined) {
                     continue;
                 }
 
-                // Save the abstraction to the execution for easy access
-                const abstraction = info.abstraction;
-                thread.execution[j].abstraction = abstraction;
+                // Save the behavior to the execution for easy access
+                const behavior = info.abstraction;
+                thread.execution[j].behavior = behavior;
                 thread.execution[j].functionalId = info.functionalId;
 
-                // If we enter new abstraction and its atomic, add it to list.
-                const isAtomic = this.atomicAbstractions.includes(abstraction.id);
-                if (currAbstraction !== abstraction.id && isAtomic) {
+                // If we enter new behavior and its atomic, add it to list.
+                if (currBehavior !== behavior.id && this.atomicBehaviors.includes(behavior.id)) {
                     this.atomicPositions.push({
                         "position": j,
                         "execution": thread.execution[j],
                     });
                 }
-                currAbstraction = abstraction.id;
+                currBehavior = behavior.id;
             }
         }
         console.log(this.atomicPositions);
@@ -63,19 +62,19 @@ class DAL {
     }
 
     /**
-     * Returns the atomic abstractions as specified by the design.
-     * @return {Array} atomicAbstractions
+     * Returns the atomic behaviors as specified by the design.
+     * @return {Array} atomicBehaviors
      */
-    getAtomicAbstractions () {
-        const atomicAbstractions = [];
+    getAtomicBehaviors () {
+        const atomicBehaviors = [];
         for (let i = 0; i < this.design.length; i++) {
             if (this.design[i]?.type === "atomic") {
-                atomicAbstractions.push(
+                atomicBehaviors.push(
                     this.design[i]?.entry
                 );
             }
         }
-        return atomicAbstractions;
+        return atomicBehaviors;
     }
 }
 

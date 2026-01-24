@@ -27,22 +27,22 @@ class FanoutStep extends Step {
     }
 
     /**
-     * Evaluates the step given the abstraction.
+     * Evaluates the step given the behavior.
      * @param {Object} execution
      * @return {Object|null}
      */
-    evaluate (execution) {
+    evaluateBehavior (execution) {
         this.execution = [execution];
-        const abstractionId = execution.abstraction.id;
+        const behavior = execution.behavior.id;
 
-        if (this.step.module === abstractionId) {
-            // If the provided abstractionId is what we are fanning
+        if (this.step.module === behavior) {
+            // If the provided behavior is what we are fanning
             // out to, then FORK.
             this.done = true;
             this.buildState(execution);
             return buildResponse(STEP.FORK, null);
         } else {
-            // If the provided abstractionId is not what we are fanning
+            // If the provided behavior is not what we are fanning
             // out to, then this step is done.
             this.done = true;
             return buildResponse(STEP.STEP_DONE, null);
@@ -54,8 +54,8 @@ class FanoutStep extends Step {
      * @param {Object} execution
      */
     buildState (execution) {
-        const abstraction = execution.abstraction.id;
-        const infoStr = `[${abstraction}]`;
+        const behavior = execution.behavior.id;
+        const infoStr = `[${behavior}]`;
         const stepString = `(${this.currStep}/${this.totalSteps}) of ${this.designAbsName}`;
         const typeStr = "\x1b[33mFANOUT\x1b[0m";
         const state = `${typeStr} step ${stepString}: ${infoStr}`;
