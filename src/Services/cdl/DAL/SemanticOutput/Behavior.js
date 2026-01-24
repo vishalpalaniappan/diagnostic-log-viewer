@@ -35,6 +35,7 @@ class Behavior {
                 const entry = this.execution[j];
 
                 if (entry.functionalId === variable.functionalId) {
+                    let varKey;
                     if (variable.scope === "local") {
                         varKey = 0;
                     } else if (variable.scope === "global") {
