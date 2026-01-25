@@ -95,13 +95,13 @@ class AtomicSemanticAbstraction {
         }
 
         // Add the root abstraction
-        this.traceRoot = new SemanticAbstraction(this.trace[0], this.DALSpec);
-        this.traceRoot.addStep(this.trace[0]);
+        let pos = 0;
+        this.traceRoot = new SemanticAbstraction(this.trace[pos], this.DALSpec);
+        this.traceRoot.addStep(this.trace[pos]);
 
         // Process each entry and create the abstraction tree.
-        let pos = 1;
         const stack = [this.traceRoot];
-        do {
+        while (++pos < this.trace.length) {
             const entry = this.trace[pos];
             this.displayDebugLog(entry);
 
@@ -116,7 +116,9 @@ class AtomicSemanticAbstraction {
                 }
             }
             stack[stack.length - 1].addStep(entry);
-        } while (++pos < this.trace.length);
+        };
+
+        console.log(this.traceRoot);
     }
 
     /**
