@@ -12,6 +12,7 @@ class SemanticModel {
     constructor () {
         this.type = "semantic";
         this.atomicAbstractions = {};
+        this.atomicAbstractionTrees = {};
         this.activeAbstraction = null;
     }
 
@@ -45,7 +46,8 @@ class SemanticModel {
     endActiveAtomicAbstraction () {
         console.log("Ended atomic abstraction");
         this.activeAbstraction.complete = true;
-        this.activeAbstraction.processSteps();
+        const tree = this.activeAbstraction.processSteps();
+        this.atomicAbstractionTrees[this.activeAbstraction.atomicUid] = tree;
         this.activeAbstraction = null;
     }
 
@@ -63,7 +65,6 @@ class SemanticModel {
      */
     endForkActiveAbstraction () {
         console.log("Ending Fork from active abstraction");
-        this.activeAbstraction.processSteps();
         this.activeAbstraction.endFork();
     }
 

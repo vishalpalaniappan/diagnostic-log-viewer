@@ -87,6 +87,7 @@ class AtomicSemanticAbstraction {
      * state variables will fully define the behavior of the design
      * and the behavior moves up the abstraction tree until the behavior
      * of the atomic abstraction is fully defined.
+     * @return {SemanticAbstraction}
      */
     processSteps () {
         if (this.trace.length === 0) {
@@ -95,11 +96,11 @@ class AtomicSemanticAbstraction {
 
         // Add the root abstraction
         let pos = 0;
-        this.traceRoot = new SemanticAbstraction(this.trace[pos], this.DALSpec);
-        this.traceRoot.addStep(this.trace[pos]);
+        const traceRoot = new SemanticAbstraction(this.trace[pos], this.DALSpec);
+        traceRoot.addStep(this.trace[pos]);
 
         // Process each entry and create the abstraction tree.
-        const stack = [this.traceRoot];
+        const stack = [traceRoot];
         while (++pos < this.trace.length) {
             const entry = this.trace[pos];
             this.displayDebugLog(entry);
@@ -117,7 +118,7 @@ class AtomicSemanticAbstraction {
             stack[stack.length - 1].addStep(entry);
         };
 
-        console.log(this.traceRoot);
+        return traceRoot;
     }
 
     /**
@@ -181,10 +182,12 @@ class AtomicSemanticAbstraction {
      * See start fork doc for more information.
      */
     endFork () {
+        const forkedTree = this.processSteps();
         this.forkStack.pop();
         const currLevel = this.forkStack[this.forkStack.length - 1];
         this.trace = currLevel.trace;
         this.level = currLevel.level;
+        this.trace[this.trace.length - 1].frokedTree = forkedTree;
     }
 }
 
