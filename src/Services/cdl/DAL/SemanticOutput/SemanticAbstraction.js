@@ -1,12 +1,125 @@
+import Behavior from "./Behavior.js";
 /**
  * This class contains a semantic abstraction.
  */
 class SemanticAbstraction {
     /**
      * Initializes the semantic abstraction.
+     * @param {String} entry
+     * @param {Object} DALSpec
      */
-    constructor () {
+    constructor (entry, DALSpec) {
+        this.steps = [];
+        this.currentStep;
 
+        this.DALSpec = DALSpec;
+        this.designAbsUid = entry.designAbsUid;
+        this.behaviorsInDesign = DALSpec.behavior;
+
+        for (let i = 0; i < DALSpec.design.length; i++) {
+            const abs = DALSpec.design[i];
+            if (abs.id === entry.designAbsName) {
+                this.designAbs = abs;
+                break;
+            }
+        }
+    }
+
+    /**
+     * Adds a step to the semantic abstraction.
+     * @param {Object} step
+     */
+    addStep (step) {
+        step.state = this.processBehavior(step);
+        this.steps.push(step);
+        this.currentStep = step;
+    }
+
+    /**
+     * Adds a selection to the current step. This builds the
+     * abstraction tree.
+     * @param {Object} abs
+     */
+    addSelection (abs) {
+        this.currentStep.selection = abs;
+    }
+
+    /**
+     * Group the execution of each step into their behaviors to extract
+     * the relevant state variables so the design abstraction can use it.
+     *
+     * This means that the design abstraction will be defined entirely
+     * through the behaviors and its state variables. This is a very
+     * clean separation and the design specification will survive
+     * any changes to the implementation as it is fully defined in a
+     * separate abstraction.
+     *
+     * TODO: In each step, there is now a behavior and execution key.
+     * The execution is just a list of all the executions in the step
+     * and the behavior is a list of all the behaviors with the executions
+     * which define it. I am keeping the execution for now because the UI
+     * uses it but I will be restructing things to use the behavior list.
+     * So when a step is selected, you will have the behaviors in the step
+     * and then by selecting a behavior you can see the execution.
+     *
+     * @param {Object} entry
+     * @return {Object}
+     */
+    processBehavior (entry) {
+        /**
+         * TODO: Selector types will have a state variable and that is the
+         * option that was selected. I haven't yet decided how I am going to
+         * formalize this. Right now, when performing the transformation,
+         * in SelectorStep.js, I save the selected option in the selectedValue
+         * key of the step. So entry.selectedValue will have the option that
+         * was selected and this is the value of the state variable of the
+         * selector step.
+         *
+         * TODO: If this selectedValue key is undefined, then it means the
+         * selector didn't resolve to an option. This is fine, in some cases
+         * where the selector isn't mutually exclusive. It tells us that this
+         * step didn't select new behavior. However, right now, I don't add
+         * the selector to the design trace unless it selects new behavior.
+         * I might want to change this in the future.
+         */
+        if (entry.type === "selector") {
+            return;
+        }
+
+
+        const behaviors = [];
+        let currBehavior;
+        for (let i = 0; i < entry.execution.length; i++) {
+            const entryBehavior = entry.execution[i].behavior.id;
+            if (currBehavior && currBehavior?.behaviorInfo.id === entryBehavior) {
+                currBehavior.addExecution(entry.execution[i]);
+            } else {
+                const behaviorInfo = this.getBehaviorInfo(entryBehavior);
+                currBehavior = new Behavior(behaviorInfo);
+                currBehavior.addExecution(entry.execution[i]);
+                behaviors.push(currBehavior);
+            }
+        }
+        entry.behaviors = behaviors;
+        const state = {};
+        for (let i = 0; i < behaviors.length; i++) {
+            behaviors[i].evaluateState();
+            Object.assign(state, behaviors[i].stateVariables);
+        }
+        return state;
+    }
+
+    /**
+     * Get the behavior info.
+     * @param {String} behaviorId
+     * @return {Object|null}
+     */
+    getBehaviorInfo (behaviorId) {
+        for (let i = 0; i < this.behaviorsInDesign.length; i++) {
+            if (this.behaviorsInDesign[i].id === behaviorId) {
+                return this.behaviorsInDesign[i];
+            }
+        };
     }
 }
 

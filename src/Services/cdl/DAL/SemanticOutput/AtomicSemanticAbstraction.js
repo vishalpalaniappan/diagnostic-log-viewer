@@ -1,5 +1,5 @@
 import {getSimpleUID} from "../helper";
-import Behavior from "./Behavior";
+import SemanticAbstraction from "./SemanticAbstraction";
 /**
  * This class contains an atomic semantic abstraction.
  */
@@ -12,6 +12,7 @@ class AtomicSemanticAbstraction {
     constructor (atomicUid, DALSpec) {
         this.type = "atomic";
         this.atomicUid = atomicUid;
+        this.DALSpec = DALSpec;
         this.design = DALSpec.design;
         this.behaviorsInDesign = DALSpec.behavior;
         this.uid = getSimpleUID();
@@ -73,95 +74,49 @@ class AtomicSemanticAbstraction {
     }
 
     /**
-     * Process the ndoes when the abstraction finishes.
+     * Process the steps when the abstraction finishes.
+     *
+     * This builds the semantic abstraction tree from the trace. This
+     * defines the heirarchy of the abstractions established through
+     * the selections made by the design.
+     *
+     * This also processes each step to extract the behaviors and
+     * their state variables. These state variables will define the
+     * state of the design abstraction at each step.
+     *
+     * Since each design abstraction is unambiguous and defined, the
+     * state variables will fully define the behavior of the design
+     * and the behavior moves up the abstraction tree until the behavior
+     * of the atomic abstraction is fully defined.
      */
-    processNodes () {
-        let pos = 0;
-        do {
-            const entry = this.trace[pos];
-            this.displayDebugLog(entry);
-            entry.state = this.processBehavior(entry);
-        } while (++pos < this.trace.length);
-        console.log(this.trace);
-    }
-
-    /**
-     * Group the execution of each step into their behaviors to extract
-     * the relevant state variables so the design abstraction can use it.
-     *
-     * This means that the design abstraction will be defined entirely
-     * through the behaviors and its state variables. This is a very
-     * clean separation and the design specification will survive
-     * any changes to the implementation as it is fully defined in a
-     * separate abstraction.
-     *
-     * TODO: In each step, there is now a behavior and execution key.
-     * The execution is just a list of all the executions in the step
-     * and the behavior is a list of all the behaviors with the executions
-     * which define it. I am keeping the execution for now because the UI
-     * uses it but I will be restructing things to use the behavior list.
-     * So when a step is selected, you will have the behaviors in the step
-     * and then by selecting a behavior you can see the execution.
-     *
-     * @param {Object} entry
-     * @return {Object}
-     */
-    processBehavior (entry) {
-        /**
-         * TODO: Selector types will have a state variable and that is the
-         * option that was selected. I haven't yet decided how I am going to
-         * formalize this. Right now, when performing the transformation,
-         * in SelectorStep.js, I save the selected option in the selectedValue
-         * key of the step. So entry.selectedValue will have the option that
-         * was selected and this is the value of the state variable of the
-         * selector step.
-         *
-         * TODO: If this selectedValue key is undefined, then it means the
-         * selector didn't resolve to an option. This is fine, in some cases
-         * where the selector isn't mutually exclusive. It tells us that this
-         * step didn't select new behavior. However, right now, I don't add
-         * the selector to the design trace unless it selects new behavior.
-         * I might want to change this in the future.
-         */
-        if (entry.type === "selector") {
+    processSteps () {
+        if (this.trace.length === 0) {
             return;
         }
 
+        // Add the root abstraction
+        this.traceRoot = new SemanticAbstraction(this.trace[0], this.DALSpec);
+        this.traceRoot.addStep(this.trace[0]);
 
-        const behaviors = [];
-        let currBehavior;
-        for (let i = 0; i < entry.execution.length; i++) {
-            const entryBehavior = entry.execution[i].behavior.id;
-            if (currBehavior && currBehavior?.behaviorInfo.id === entryBehavior) {
-                currBehavior.addExecution(entry.execution[i]);
-            } else {
-                const behaviorInfo = this.getBehaviorInfo(entryBehavior);
-                currBehavior = new Behavior(behaviorInfo);
-                currBehavior.addExecution(entry.execution[i]);
-                behaviors.push(currBehavior);
+        // Process each entry and create the abstraction tree.
+        let pos = 1;
+        const stack = [this.traceRoot];
+        do {
+            const entry = this.trace[pos];
+            this.displayDebugLog(entry);
+
+            // Adjust the stack and add the step to the correct abstraction.
+            if (entry.level > stack.length) {
+                const abs = new SemanticAbstraction(entry, this.DALSpec);
+                stack[stack.length - 1].addSelection(abs);
+                stack.push(abs);
+            } else if (entry.level < stack.length) {
+                while (entry.level < stack.length && stack.length > 0) {
+                    stack.pop();
+                }
             }
-        }
-        entry.behaviors = behaviors;
-        const state = {};
-        for (let i = 0; i < behaviors.length; i++) {
-            behaviors[i].evaluateState();
-            Object.assign(state, behaviors[i].stateVariables);
-        }
-        return state;
-    }
-
-
-    /**
-     * Get the behavior info.
-     * @param {String} behaviorId
-     * @return {Object|null}
-     */
-    getBehaviorInfo (behaviorId) {
-        for (let i = 0; i < this.behaviorsInDesign.length; i++) {
-            if (this.behaviorsInDesign[i].id === behaviorId) {
-                return this.behaviorsInDesign[i];
-            }
-        };
+            stack[stack.length - 1].addStep(entry);
+        } while (++pos < this.trace.length);
     }
 
     /**

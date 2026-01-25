@@ -45,7 +45,7 @@ class SemanticModel {
     endActiveAtomicAbstraction () {
         console.log("Ended atomic abstraction");
         this.activeAbstraction.complete = true;
-        this.activeAbstraction.processNodes();
+        this.activeAbstraction.processSteps();
         this.activeAbstraction = null;
     }
 
@@ -63,7 +63,7 @@ class SemanticModel {
      */
     endForkActiveAbstraction () {
         console.log("Ending Fork from active abstraction");
-        this.activeAbstraction.processNodes();
+        this.activeAbstraction.processSteps();
         this.activeAbstraction.endFork();
     }
 
