@@ -40,17 +40,38 @@ class SemanticAbstraction {
 
         for (let i = 0; i < placeholders.length; i++) {
             const placeholder = placeholders[i];
-            const stateName = placeholder.state;
-            if (!(stateName in this.state)) {
-                // console.log("var " + stateName + " not found in state.");
-                continue;
+            if (placeholder.type === "step_execution_count") {
+                const value = this.getStepExecutionCount(placeholder.step);
+                const regex = new RegExp(placeholder.key, "g");
+                actionSentence = actionSentence.replace(regex, value);
+            } else {
+                const stateName = placeholder.state;
+                if (!(stateName in this.state)) {
+                    continue;
+                }
+                const regex = new RegExp(placeholder.key, "g");
+                actionSentence = actionSentence.replace(regex, this.state[stateName].value);
             }
-            const value = this.state[stateName].value;
-            const regex = new RegExp(placeholder.key, "g");
-            actionSentence = actionSentence.replace(regex, value);
         }
         return actionSentence;
     }
+
+    /**
+     * Get the step execution count for the given step id.
+     * @param {String} stepId
+     * @return {Number}
+     */
+    getStepExecutionCount (stepId) {
+        let count = 0;
+        for (let i = 0; i < this.steps.length; i++) {
+            const step = this.steps[i];
+            if (step.step.id === stepId) {
+                console.log(step.state);
+                count++;
+            }
+        }
+        return count;
+    };
 
     /**
      * Displays the semantic abstraction.
