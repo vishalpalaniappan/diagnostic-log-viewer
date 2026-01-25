@@ -20,7 +20,6 @@ class AtomicSemanticAbstraction {
         this.trace = this.rootTrace;
         this.forkStack = [];
         this.level = 1;
-        this.state = [];
         this.forkStack.push({
             trace: this.trace,
             level: this.level,
@@ -68,7 +67,7 @@ class AtomicSemanticAbstraction {
         // TODO: In a good design, this would be redundant, revisit this.
         step.atomicUid = this.atomicUid;
 
-        if (step.type === "selector" || step.type === "selector_repeat") {
+        if (step.type === "selector") {
             this.incrementLevel();
         }
     }
