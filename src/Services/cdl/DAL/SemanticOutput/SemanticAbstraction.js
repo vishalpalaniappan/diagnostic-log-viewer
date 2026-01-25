@@ -46,7 +46,7 @@ class SemanticAbstraction {
                 continue;
             }
             const value = this.state[stateName].value;
-            const regex = new RegExp(placeholder.placeholder, "g");
+            const regex = new RegExp(placeholder.key, "g");
             actionSentence = actionSentence.replace(regex, value);
         }
         return actionSentence;
