@@ -187,7 +187,7 @@ class AtomicSemanticAbstraction {
         const currLevel = this.forkStack[this.forkStack.length - 1];
         this.trace = currLevel.trace;
         this.level = currLevel.level;
-        this.trace[this.trace.length - 1].frokedTree = forkedTree;
+        this.trace[this.trace.length - 1].forkedTree = forkedTree;
     }
 }
 
