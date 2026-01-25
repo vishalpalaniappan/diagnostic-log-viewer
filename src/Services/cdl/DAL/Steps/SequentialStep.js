@@ -26,7 +26,6 @@ class SequentialStep extends Step {
         this.type = "sequential";
         this.behaviorCount = 0;
         this.done = false;
-        this.allExecutionsInStep = [];
     }
 
     /**
@@ -45,7 +44,6 @@ class SequentialStep extends Step {
      */
     evaluateBehavior (execution) {
         this.execution = [execution];
-        this.allExecutionsInStep.push(execution);
         const behavior = execution.behavior.id;
 
         // Check if we are still exhibiting the same behavior in the step.
