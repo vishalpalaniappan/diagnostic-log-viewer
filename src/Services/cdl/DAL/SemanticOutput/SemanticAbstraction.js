@@ -11,6 +11,7 @@ class SemanticAbstraction {
     constructor (entry, DALSpec) {
         this.steps = [];
         this.currentStep;
+        this.state = {};
 
         this.DALSpec = DALSpec;
         this.designAbsUid = entry.designAbsUid;
@@ -26,23 +27,42 @@ class SemanticAbstraction {
     }
 
     /**
+     * Composes the state of the semantic abstraction.
+     * @return {String}
+     */
+    composeState () {
+        let actionSentence = this.designAbs.action;
+        const placeholders = this.designAbs.placeholders;
+
+        if (!placeholders || placeholders.length === 0) {
+            return;
+        }
+
+        for (let i = 0; i < placeholders.length; i++) {
+            const placeholder = placeholders[i];
+            const stateName = placeholder.state;
+            if (!(stateName in this.state)) {
+                // console.log("var " + stateName + " not found in state.");
+                continue;
+            }
+            const value = this.state[stateName].value;
+            const regex = new RegExp(placeholder.placeholder, "g");
+            actionSentence = actionSentence.replace(regex, value);
+        }
+        return actionSentence;
+    }
+
+    /**
      * Displays the semantic abstraction.
      */
     display () {
+        const spacer = "     ";
+        const spacerStr = spacer.repeat(this.steps[0].level);
+        const sentence = this.composeState();
+        console.log("\x1b[36m" + spacerStr + ">  " + sentence + "\x1b[0m");
         for (let i = 0; i < this.steps.length; i++) {
             const step = this.steps[i];
-            const spacer = "     ";
-            const spacerStr = spacer.repeat(step.level);
-
-            let stateStr = "";
-            if (step?.state) {
-                const keys = Object.keys(step.state);
-                for (let j = 0; j < keys.length; j++) {
-                    const key = keys[j];
-                    stateStr = stateStr + key + ":" + step.state[key].value + " ";
-                }
-            }
-            console.log(spacerStr + step.step.id, stateStr);
+            console.log(spacerStr + step.step.id);
             if (step.selection) {
                 step.selection.display();
             }
@@ -61,6 +81,16 @@ class SemanticAbstraction {
      * @param {Object} step
      */
     addStep (step) {
+        if (step.type === "selector") {
+            const stateName = "option_" + step.step.id;
+            const state = {
+                [stateName]: {
+                    name: stateName,
+                    value: step.selectedValue,
+                },
+            };
+            Object.assign(this.state, state);
+        }
         step.state = this.processBehavior(step);
         this.steps.push(step);
         this.currentStep = step;
@@ -136,6 +166,7 @@ class SemanticAbstraction {
         for (let i = 0; i < behaviors.length; i++) {
             behaviors[i].evaluateState();
             Object.assign(state, behaviors[i].stateVariables);
+            Object.assign(this.state, behaviors[i].stateVariables);
         }
         return state;
     }
