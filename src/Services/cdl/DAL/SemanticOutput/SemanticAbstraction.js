@@ -42,9 +42,16 @@ class SemanticAbstraction {
                     stateStr = stateStr + key + ":" + step.state[key].value + " ";
                 }
             }
-            console.log(spacerStr + step.designAbsName, stateStr);
+            console.log(spacerStr + step.step.id, stateStr);
             if (step.selection) {
                 step.selection.display();
+            }
+            if (step.forkedTree) {
+                console.log("");
+                console.log("----forked tree----");
+                step.forkedTree.display();
+                console.log("----end forked tree----");
+                console.log("");
             }
         }
     }
