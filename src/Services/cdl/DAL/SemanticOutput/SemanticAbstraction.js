@@ -1,6 +1,5 @@
 import {getSimpleUID} from "../helper";
 import Behavior from "./Behavior";
-import SentenceGenerator from "./SentenceGenerator";
 /**
  * This class contains an semantic abstraction.
  */
@@ -83,7 +82,6 @@ class SemanticAbstraction {
             this.displayDebugLog(entry);
             entry.state = this.processBehavior(entry);
         } while (++pos < this.trace.length);
-        // new SentenceGenerator(this.trace, this.design);
         console.log(this.trace);
     }
 
