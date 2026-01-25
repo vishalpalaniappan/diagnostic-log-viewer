@@ -1,6 +1,6 @@
 
 import CDL_WORKER_PROTOCOL from "../../../CDL_WORKER_PROTOCOL";
-import SemanticAbstraction from "./SemanticAbstraction";
+import AtomicSemanticAbstraction from "./AtomicSemanticAbstraction";
 
 /**
  * This class contains the output of the semantic transform.
@@ -32,7 +32,7 @@ class SemanticModel {
      */
     startAtomicAbstraction (uid, abs) {
         console.log("Started atomic abstraction");
-        this.atomicAbstractions[uid] = new SemanticAbstraction(uid, this.DALSpec);
+        this.atomicAbstractions[uid] = new AtomicSemanticAbstraction(uid, this.DALSpec);
         this.atomicAbstractions[uid].complete = false;
         this.atomicAbstractions[uid].abs = abs;
         this.activeAbstraction = this.atomicAbstractions[uid];

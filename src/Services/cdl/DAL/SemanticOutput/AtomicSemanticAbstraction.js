@@ -1,9 +1,9 @@
 import {getSimpleUID} from "../helper";
 import Behavior from "./Behavior";
 /**
- * This class contains an semantic abstraction.
+ * This class contains an atomic semantic abstraction.
  */
-class SemanticAbstraction {
+class AtomicSemanticAbstraction {
     /**
      * Initializes the semantic trace.
      * @param {String} atomicUid
@@ -232,4 +232,4 @@ class SemanticAbstraction {
     }
 }
 
-export default SemanticAbstraction;
+export default AtomicSemanticAbstraction;
