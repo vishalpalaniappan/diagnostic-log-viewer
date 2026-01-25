@@ -47,6 +47,7 @@ class SemanticModel {
         console.log("Ended atomic abstraction");
         this.activeAbstraction.complete = true;
         const tree = this.activeAbstraction.processSteps();
+        tree.display();
         this.atomicAbstractionTrees[this.activeAbstraction.atomicUid] = tree;
         this.activeAbstraction = null;
     }

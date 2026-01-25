@@ -26,6 +26,30 @@ class SemanticAbstraction {
     }
 
     /**
+     * Displays the semantic abstraction.
+     */
+    display () {
+        for (let i = 0; i < this.steps.length; i++) {
+            const step = this.steps[i];
+            const spacer = "     ";
+            const spacerStr = spacer.repeat(step.level);
+
+            let stateStr = "";
+            if (step?.state) {
+                const keys = Object.keys(step.state);
+                for (let j = 0; j < keys.length; j++) {
+                    const key = keys[j];
+                    stateStr = stateStr + key + ":" + step.state[key].value + " ";
+                }
+            }
+            console.log(spacerStr + step.designAbsName, stateStr);
+            if (step.selection) {
+                step.selection.display();
+            }
+        }
+    }
+
+    /**
      * Adds a step to the semantic abstraction.
      * @param {Object} step
      */
