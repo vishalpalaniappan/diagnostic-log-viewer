@@ -51,7 +51,6 @@ class SemanticAbstraction {
                         };
                     }
                 }
-                console.log(this.state);
             }
         }
 
@@ -66,14 +65,14 @@ class SemanticAbstraction {
             const placeholder = placeholders[i];
             if (placeholder.type === "step_execution_count") {
                 const value = this.getStepExecutionCount(placeholder.step);
-                const regex = new RegExp(placeholder.key, "g");
+                const regex = new RegExp("<" + placeholder.state + ">", "g");
                 actionSentence = actionSentence.replace(regex, value);
             } else {
                 const stateName = placeholder.state;
                 if (!(stateName in this.state)) {
                     continue;
                 }
-                const regex = new RegExp(placeholder.key, "g");
+                const regex = new RegExp("<" + placeholder.state + ">", "g");
                 actionSentence = actionSentence.replace(regex, this.state[stateName].value);
             }
         }
