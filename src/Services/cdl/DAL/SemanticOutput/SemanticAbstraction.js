@@ -67,6 +67,15 @@ class SemanticAbstraction {
                 const value = this.getStepExecutionCount(placeholder.step);
                 const regex = new RegExp("<" + placeholder.state + ">", "g");
                 actionSentence = actionSentence.replace(regex, value);
+            } else if (placeholder.type === "build_sentence_if_state_exists") {
+                let subSentence = "";
+                if (this.state[placeholder.state] && this.state[placeholder.state].value) {
+                    const stateName = placeholder.state;
+                    const regex = new RegExp("<" + placeholder.state + ">", "g");
+                    subSentence = placeholder.action.replace(regex, this.state[stateName].value);
+                }
+                const regex = new RegExp("<" + placeholder.state + ">", "g");
+                actionSentence = actionSentence.replace(regex, subSentence);
             } else {
                 const stateName = placeholder.state;
                 if (!(stateName in this.state)) {
