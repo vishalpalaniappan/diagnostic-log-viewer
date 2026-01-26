@@ -47,10 +47,11 @@ class SemanticAbstraction {
                     if (stateVar in step.selection.state) {
                         this.state[stateVars[j].state] = {
                             name: stateVar,
-                            value: step.selection.state[stateVar],
+                            value: step.selection.state[stateVar].value,
                         };
                     }
                 }
+                console.log(this.state);
             }
         }
 
