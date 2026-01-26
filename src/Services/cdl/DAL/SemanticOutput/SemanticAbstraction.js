@@ -31,6 +31,29 @@ class SemanticAbstraction {
      * @return {String}
      */
     composeState () {
+        /**
+         * Before building sentences, raise the state with all selector steps.
+         * This moves the state up the hierarchy so that the design can use it
+         * to summarize the action at higher levels of abstraction.
+         */
+        for (let i = 0; i < this.steps.length; i++) {
+            const step = this.steps[i];
+            if (step.type === "selector" && step.step?.state_variables) {
+                const stateVars = step.step.state_variables;
+                // For each of the variables, load the value of the specified
+                // variables from the selected abstraction into the selector.
+                for (let j = 0; j < stateVars.length; j++) {
+                    const stateVar = stateVars[j].select_state;
+                    if (stateVar in step.selection.state) {
+                        this.state[stateVars[j].state] = {
+                            name: stateVar,
+                            value: step.selection.state[stateVar],
+                        };
+                    }
+                }
+            }
+        }
+
         let actionSentence = this.designAbs.action;
         const placeholders = this.designAbs.placeholders;
 
@@ -66,7 +89,6 @@ class SemanticAbstraction {
         for (let i = 0; i < this.steps.length; i++) {
             const step = this.steps[i];
             if (step.step.id === stepId) {
-                console.log(step.state);
                 count++;
             }
         }
@@ -84,6 +106,7 @@ class SemanticAbstraction {
         for (let i = 0; i < this.steps.length; i++) {
             const step = this.steps[i];
             console.log(spacerStr + step.step.id);
+
             if (step.selection) {
                 step.selection.display();
             }
