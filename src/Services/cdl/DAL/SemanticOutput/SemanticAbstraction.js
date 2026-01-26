@@ -44,7 +44,19 @@ class SemanticAbstraction {
                 const value = this.getStepExecutionCount(placeholder.step);
                 const regex = new RegExp("<" + placeholder.state + ">", "g");
                 actionSentence = actionSentence.replace(regex, value);
-            } else {
+                continue;
+            }
+
+            if (placeholder.type === "select_sentence_boolean") {
+                const value = this.getValue(placeholder);
+                const p = placeholder;
+                const sentence = (value)?p.if_value_exists:p.if_value_does_not_exist;
+                const regex = new RegExp("<" + placeholder.state + ">", "g");
+                actionSentence = actionSentence.replace(regex, sentence);
+                continue;
+            }
+
+            if (placeholder.type === "state") {
                 const value = this.getValue(placeholder);
                 if (value === undefined) {
                     // TODO: Handle undefined values more gracefully, right now
@@ -53,7 +65,10 @@ class SemanticAbstraction {
                 }
                 const regex = new RegExp("<" + placeholder.state + ">", "g");
                 actionSentence = actionSentence.replace(regex, value);
+                continue;
             }
+
+            console.warn("Unknown placeholder type: " + placeholder.type);
         }
         return actionSentence;
     }
