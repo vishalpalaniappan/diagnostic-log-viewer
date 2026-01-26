@@ -45,15 +45,40 @@ class SemanticAbstraction {
                 const regex = new RegExp("<" + placeholder.state + ">", "g");
                 actionSentence = actionSentence.replace(regex, value);
             } else {
-                const stateName = placeholder.state;
-                if (!(stateName in this.state)) {
+                const value = this.getValue(placeholder);
+                if (value === undefined) {
+                    // TODO: Handle undefined values more gracefully, right now
+                    // the placeholder just remains in the sentence.
                     continue;
                 }
                 const regex = new RegExp("<" + placeholder.state + ">", "g");
-                actionSentence = actionSentence.replace(regex, this.state[stateName].value);
+                actionSentence = actionSentence.replace(regex, value);
             }
         }
         return actionSentence;
+    }
+
+    /**
+     * Get the value for the given placeholder.
+     * @param {Object} placeholder
+     * @return {*}
+     */
+    getValue (placeholder) {
+        if ("selection" in placeholder) {
+            /**
+             * If the state is from a selection, we need to find the step
+             * that made the selection and get the value from there.
+             */
+            for (let i = 0; i < this.steps.length; i++) {
+                const step = this.steps[i];
+                const stepId = step.step.id;
+                if (stepId === placeholder.step && placeholder.state in step.selection.state) {
+                    return step.selection.state[placeholder.state].value;
+                }
+            }
+        } else {
+            return this.state[placeholder.state].value;
+        }
     }
 
     /**
