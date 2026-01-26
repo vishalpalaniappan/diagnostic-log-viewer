@@ -31,29 +31,6 @@ class SemanticAbstraction {
      * @return {String}
      */
     composeState () {
-        /**
-         * Before building sentences, raise the state with all selector steps.
-         * This moves the state up the hierarchy so that the design can use it
-         * to summarize the action at higher levels of abstraction.
-         */
-        for (let i = 0; i < this.steps.length; i++) {
-            const step = this.steps[i];
-            if (step.type === "selector" && step.step?.state_variables) {
-                const stateVars = step.step.state_variables;
-                // For each of the variables, load the value of the specified
-                // variables from the selected abstraction into the selector.
-                for (let j = 0; j < stateVars.length; j++) {
-                    const stateVar = stateVars[j].select_state;
-                    if (stateVar in step.selection.state) {
-                        this.state[stateVars[j].state] = {
-                            name: stateVar,
-                            value: step.selection.state[stateVar].value,
-                        };
-                    }
-                }
-            }
-        }
-
         let actionSentence = this.designAbs.action;
         const placeholders = this.designAbs.placeholders;
 
@@ -67,15 +44,6 @@ class SemanticAbstraction {
                 const value = this.getStepExecutionCount(placeholder.step);
                 const regex = new RegExp("<" + placeholder.state + ">", "g");
                 actionSentence = actionSentence.replace(regex, value);
-            } else if (placeholder.type === "build_sentence_if_state_exists") {
-                let subSentence = "";
-                if (this.state[placeholder.state] && this.state[placeholder.state].value) {
-                    const stateName = placeholder.state;
-                    const regex = new RegExp("<" + placeholder.state + ">", "g");
-                    subSentence = placeholder.action.replace(regex, this.state[stateName].value);
-                }
-                const regex = new RegExp("<" + placeholder.state + ">", "g");
-                actionSentence = actionSentence.replace(regex, subSentence);
             } else {
                 const stateName = placeholder.state;
                 if (!(stateName in this.state)) {
