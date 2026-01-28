@@ -11,6 +11,12 @@
  * basket and the book. This defines the behavior
  * uniquely and allows the semantic abstraction to
  * refer to these participants in its action sentences.
+ *
+ * The semantic participants will also be semantically
+ * validated within this class. For example the book
+ * is expected to have a name. This will then highlight
+ * the behavior as semantically invalid and provide a
+ * specific reason why.
  */
 class SemanticParticipant {
     /**
