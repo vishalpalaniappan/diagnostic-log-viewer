@@ -50,17 +50,16 @@ class Behavior {
                     if (variable.name in entry.varStack[varKey]) {
                         const value = entry.varStack[varKey][variable.name];
                         if ("key" in variable && variable.key === "length") {
-                            participant.value = value.length;
+                            participant.setValue(value.length);
                         } else if ("key" in variable) {
-                            participant.value = value[variable.key];
+                            participant.setValue(value[variable.key]);
                         } else {
-                            participant.value = value;
+                            participant.setValue(value);
                         }
                         break;
                     }
                 }
             }
-            console.log(participant.participant);
         }
     }
 }
