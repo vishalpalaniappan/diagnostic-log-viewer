@@ -80,7 +80,11 @@ class PlaceHolder {
      * @return {*}
      */
     getValue () {
-        return this.value;
+        if (this.value !== undefined && this.value !== null) {
+            return this.value.toString();
+        } else {
+            return this.value;
+        }
     }
 
     /**
