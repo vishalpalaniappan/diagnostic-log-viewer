@@ -28,7 +28,6 @@ class Behavior {
      * Load the participants of this behavior.
      */
     loadParticiants () {
-        console.log(this.behaviorInfo.intent);
         if (!("participants" in this.behaviorInfo)) {
             return;
         }
@@ -94,7 +93,7 @@ class Behavior {
                 sentence = sentence.replace(placeholder.getString(), value);
             }
         }
-        console.log("    Realized Intent:", sentence);
+        console.log(sentence);
     }
 
 
