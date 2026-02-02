@@ -11,9 +11,26 @@
 class PlaceHolder {
     /**
      * Initialize the placeholder.
+     * @param {Object} placeholder
      */
-    constructor () {
+    constructor (placeholder) {
+        Object.assign(this, placeholder);
+    }
 
+    /**
+     * Sets the value of the placeholder
+     * @param {*} value
+     */
+    setValue (value) {
+        this.value = value;
+    }
+
+    /**
+     * Returns the value of the placeholder.
+     * @return {*}
+     */
+    getValue () {
+        return this.value;
     }
 }
 
