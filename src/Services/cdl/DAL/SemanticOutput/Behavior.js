@@ -12,6 +12,7 @@ class Behavior {
         this.execution = [];
         this.stateVariables = {};
         this.participants = [];
+        this.evaluatedPlaceholders = [];
     }
 
     /**
@@ -74,6 +75,25 @@ class Behavior {
         }
         for (let i = 0; i < this.behaviorInfo.placeholders.length; i++) {
             const placeholder = this.behaviorInfo.placeholders[i];
+            const participant = this.getParticipant(placeholder.name);
+            if (participant) {
+                placeholder.value = participant.value;
+                this.evaluatedPlaceholders.push({...placeholder});
+            }
+        }
+    }
+
+    /**
+     * Get the participant given the name.
+     * @param {String} name
+     * @return {SemanticParticipant|null}
+     */
+    getParticipant (name) {
+        for (let i = 0; i < this.participants.length; i++) {
+            const participant = this.participants[i];
+            if (participant.participant.participantName === name) {
+                return participant;
+            }
         }
     }
 
@@ -82,8 +102,14 @@ class Behavior {
      * participants and placeholders.
      */
     generateRealizedIntent () {
-
+        for (let i = 0; i < this.evaluatedPlaceholders.length; i++) {
+            const placeholder = this.evaluatedPlaceholders[i];
+            const value = placeholder.value;
+            const sentence = this.behaviorInfo.intent.replace(placeholder.string, value);
+            console.log("Realized Intent:", sentence);
+        }
     }
 }
 
 export default Behavior;
+
