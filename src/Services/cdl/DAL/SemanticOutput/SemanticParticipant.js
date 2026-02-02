@@ -35,6 +35,38 @@ class SemanticParticipant {
     setValue (value) {
         this.value = value;
         console.log("Set semantic participant value:", this.participant.name, "=", this.value);
+        this.validate();
+    }
+
+    /**
+     * Validate the semantic participant.
+     */
+    validate () {
+        if (!("constraint" in this.participant)) {
+            return;
+        }
+
+        const constraints = this.participant.constraint;
+
+        for (let i = 0; i < constraints.length; i++) {
+            const rule = constraints[i];
+
+            if (rule.type === "minLength") {
+                /**
+                 * Flag if:
+                 *  - null
+                 *  - not a string
+                 *  - string is shorter than specified
+                 */
+                if (this.value === null || typeof this.value !== "string" ||
+                    this.value.length < rule.value) {
+                    console.error("Semantic participant validation failed:",
+                        this.value,
+                        "does not meet minLength of",
+                        rule.value);
+                }
+            }
+        }
     }
 }
 
