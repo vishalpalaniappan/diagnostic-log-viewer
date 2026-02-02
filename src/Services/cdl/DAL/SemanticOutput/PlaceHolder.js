@@ -12,17 +12,23 @@ class PlaceHolder {
     /**
      * Initialize the placeholder.
      * @param {Object} placeholder
+     * @param {Object} participants
      */
-    constructor (placeholder) {
-        Object.assign(this, placeholder);
+    constructor (placeholder, participants) {
+        this.info = placeholder;
+        this.participants = participants;
+        this.setValue();
     }
 
     /**
      * Sets the value of the placeholder
-     * @param {*} value
+     * @param {SemanticParticipant} participant
      */
-    setValue (value) {
-        this.value = value;
+    setValue () {
+        if (this.info.type === "value") {
+            const participant = this.getParticipant(this.info.participantName);
+            this.value = participant.value;
+        }
     }
 
     /**
@@ -31,6 +37,28 @@ class PlaceHolder {
      */
     getValue () {
         return this.value;
+    }
+
+    /**
+     * Returns the placeholder string. Ex: <num_books>
+     * @return {String}
+     */
+    getString () {
+        return this.info.string;
+    }
+
+    /**
+     * Get the participant given the name.
+     * @param {String} name
+     * @return {SemanticParticipant|null}
+     */
+    getParticipant (name) {
+        for (let i = 0; i < this.participants.length; i++) {
+            const participant = this.participants[i];
+            if (participant.participant.name === name) {
+                return participant;
+            }
+        }
     }
 }
 

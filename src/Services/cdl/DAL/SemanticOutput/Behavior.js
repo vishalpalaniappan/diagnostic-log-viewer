@@ -75,26 +75,9 @@ class Behavior {
             return;
         }
         for (let i = 0; i < this.behaviorInfo.placeholders.length; i++) {
-            const placeholder = new PlaceHolder(this.behaviorInfo.placeholders[i]);
-            const participant = this.getParticipant(placeholder.participantName);
-            if (participant) {
-                placeholder.setValue(participant.value);
-            }
+            const info = this.behaviorInfo.placeholders[i];
+            const placeholder = new PlaceHolder(info, this.participants);
             this.placeholders.push(placeholder);
-        }
-    }
-
-    /**
-     * Get the participant given the name.
-     * @param {String} name
-     * @return {SemanticParticipant|null}
-     */
-    getParticipant (name) {
-        for (let i = 0; i < this.participants.length; i++) {
-            const participant = this.participants[i];
-            if (participant.participant.name === name) {
-                return participant;
-            }
         }
     }
 
@@ -108,7 +91,7 @@ class Behavior {
             const placeholder = this.placeholders[i];
             const value = placeholder.getValue();
             if (value) {
-                sentence = sentence.replace(placeholder.string, value);
+                sentence = sentence.replace(placeholder.getString(), value);
             }
         }
         console.log("    Realized Intent:", sentence);
