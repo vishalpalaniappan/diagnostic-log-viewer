@@ -110,6 +110,17 @@ class Behavior {
         }
         console.log("    Realized Intent:", sentence);
     }
+
+
+    /**
+     * Validate that the intent was realized correctly.
+     */
+    validateRealizedIntent () {
+        if (!("intent_validation" in this.behaviorInfo)) {
+            return;
+        }
+        console.log("Validating that intent was realized:", this.behaviorInfo.intent_validation);
+    }
 }
 
 export default Behavior;

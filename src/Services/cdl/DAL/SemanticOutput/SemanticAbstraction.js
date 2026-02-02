@@ -129,6 +129,7 @@ class SemanticAbstraction {
         for (let i = 0; i < behaviors.length; i++) {
             behaviors[i].loadParticiants();
             behaviors[i].loadPlaceHolders();
+            behaviors[i].validateRealizedIntent();
             behaviors[i].generateRealizedIntent();
         }
     }
