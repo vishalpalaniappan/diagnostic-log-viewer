@@ -91,7 +91,7 @@ class SemanticAbstraction {
                     return step.selection.state[placeholder.state].value;
                 }
             }
-        } else {
+        } else if (placeholder.state in this.state) {
             return this.state[placeholder.state].value;
         }
     }

@@ -1,3 +1,4 @@
+import SemanticParticipant from "./SemanticParticipant";
 /**
  * Class representing a behavior in the design abstraction.
  */
@@ -30,6 +31,7 @@ class Behavior {
 
         for (let i = 0; i < this.behaviorInfo.state_variables.length; i++) {
             const variable = this.behaviorInfo.state_variables[i];
+            const participant = new SemanticParticipant(variable);
 
             for (let j = 0; j < this.execution.length; j++) {
                 const entry = this.execution[j];
@@ -48,17 +50,17 @@ class Behavior {
                     if (variable.name in entry.varStack[varKey]) {
                         const value = entry.varStack[varKey][variable.name];
                         if ("key" in variable && variable.key === "length") {
-                            variable.value = value.length;
+                            participant.value = value.length;
                         } else if ("key" in variable) {
-                            variable.value = value[variable.key];
+                            participant.value = value[variable.key];
                         } else {
-                            variable.value = value;
+                            participant.value = value;
                         }
                         break;
                     }
                 }
             }
-            this.stateVariables[variable.state] = {...variable};
+            console.log(participant.participant);
         }
     }
 }

@@ -21,9 +21,11 @@
 class SemanticParticipant {
     /**
      * Initialize the semantic participant.
+     * @param {Object} participant
      */
-    constructor () {
-
+    constructor (participant) {
+        this.participant = {...participant};
+        // console.log("Initialized semantic participant:", this.participant);
     }
 }
 
