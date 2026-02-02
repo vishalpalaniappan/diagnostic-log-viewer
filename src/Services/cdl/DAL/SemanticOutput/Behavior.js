@@ -22,13 +22,13 @@ class Behavior {
     }
 
     /**
-     * Evaluate the state variables of the behavior.
+     * Load the participants of this behavior.
      */
-    evaluateState () {
+    loadParticiants () {
+        console.log(this.behaviorInfo.intent);
         if (!("participants" in this.behaviorInfo)) {
             return;
         }
-
         for (let i = 0; i < this.behaviorInfo.participants.length; i++) {
             const variable = this.behaviorInfo.participants[i];
             const participant = new SemanticParticipant(variable);
@@ -61,6 +61,23 @@ class Behavior {
                 }
             }
         }
+    }
+
+    /**
+     * Load the placeholders in the behavior.
+     */
+    loadPlaceHolders () {
+        if (!("placeholders" in this.behaviorInfo)) {
+            return;
+        }
+    }
+
+    /**
+     * Generate the realized intent of behavior from
+     * participants and placeholders.
+     */
+    generateRealizedIntent () {
+
     }
 }
 

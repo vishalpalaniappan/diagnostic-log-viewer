@@ -27,76 +27,6 @@ class SemanticAbstraction {
     }
 
     /**
-     * Composes the state of the semantic abstraction.
-     * @return {String}
-     */
-    composeState () {
-        let actionSentence = this.designAbs.action;
-        const placeholders = this.designAbs.placeholders;
-
-        if (!placeholders || placeholders.length === 0) {
-            return;
-        }
-
-        for (let i = 0; i < placeholders.length; i++) {
-            const placeholder = placeholders[i];
-            if (placeholder.type === "step_execution_count") {
-                const value = this.getStepExecutionCount(placeholder.step);
-                const regex = new RegExp("<" + placeholder.state + ">", "g");
-                actionSentence = actionSentence.replace(regex, value);
-                continue;
-            }
-
-            if (placeholder.type === "select_sentence_boolean") {
-                const value = this.getValue(placeholder);
-                const p = placeholder;
-                const sentence = (value)?p.if_value_exists:p.if_value_does_not_exist;
-                const regex = new RegExp("<" + placeholder.state + ">", "g");
-                actionSentence = actionSentence.replace(regex, sentence);
-                continue;
-            }
-
-            if (placeholder.type === "state") {
-                const value = this.getValue(placeholder);
-                if (value === undefined) {
-                    // TODO: Handle undefined values more gracefully, right now
-                    // the placeholder just remains in the sentence.
-                    continue;
-                }
-                const regex = new RegExp("<" + placeholder.state + ">", "g");
-                actionSentence = actionSentence.replace(regex, value);
-                continue;
-            }
-
-            console.warn("Unknown placeholder type: " + placeholder.type);
-        }
-        return actionSentence;
-    }
-
-    /**
-     * Get the value for the given placeholder.
-     * @param {Object} placeholder
-     * @return {*}
-     */
-    getValue (placeholder) {
-        if ("selection" in placeholder) {
-            /**
-             * If the state is from a selection, we need to find the step
-             * that made the selection and get the value from there.
-             */
-            for (let i = 0; i < this.steps.length; i++) {
-                const step = this.steps[i];
-                const stepId = step.step.id;
-                if (stepId === placeholder.step && placeholder.state in step.selection.state) {
-                    return step.selection.state[placeholder.state].value;
-                }
-            }
-        } else if (placeholder.state in this.state) {
-            return this.state[placeholder.state].value;
-        }
-    }
-
-    /**
      * Get the step execution count for the given step id.
      * @param {String} stepId
      * @return {Number}
@@ -118,8 +48,6 @@ class SemanticAbstraction {
     display () {
         const spacer = "     ";
         const spacerStr = spacer.repeat(this.steps[0].level);
-        const sentence = this.composeState();
-        console.log("\x1b[36m" + spacerStr + ">  " + sentence + "\x1b[0m");
         for (let i = 0; i < this.steps.length; i++) {
             const step = this.steps[i];
             console.log(spacerStr + step.step.id);
@@ -177,7 +105,6 @@ class SemanticAbstraction {
      * separate abstraction.
      *
      * @param {Object} entry
-     * @return {Object}
      */
     processBehavior (entry) {
         if (entry.type === "selector") {
@@ -199,13 +126,11 @@ class SemanticAbstraction {
             }
         }
         entry.behaviors = behaviors;
-        const state = {};
         for (let i = 0; i < behaviors.length; i++) {
-            behaviors[i].evaluateState();
-            Object.assign(state, behaviors[i].stateVariables);
-            Object.assign(this.state, behaviors[i].stateVariables);
+            behaviors[i].loadParticiants();
+            behaviors[i].loadPlaceHolders();
+            behaviors[i].generateRealizedIntent();
         }
-        return state;
     }
 
     /**

@@ -25,7 +25,7 @@ class SemanticParticipant {
      */
     constructor (participant) {
         this.participant = {...participant};
-        console.log("Initialized semantic participant:", this.participant);
+        // console.log("Initialized semantic participant:", this.participant);
     }
 
     /**
@@ -34,7 +34,7 @@ class SemanticParticipant {
      */
     setValue (value) {
         this.value = value;
-        console.log("Set semantic participant value:", this.participant.name, "=", this.value);
+        // console.log("Set semantic participant value:", this.participant.name, "=", this.value);
         this.validate();
     }
 
