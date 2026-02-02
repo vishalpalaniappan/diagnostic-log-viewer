@@ -11,6 +11,7 @@ class Behavior {
         this.behaviorInfo = {...behaviorInfo};
         this.execution = [];
         this.stateVariables = {};
+        this.participants = [];
     }
 
     /**
@@ -60,6 +61,7 @@ class Behavior {
                     }
                 }
             }
+            this.participants.push(participant);
         }
     }
 
@@ -69,6 +71,9 @@ class Behavior {
     loadPlaceHolders () {
         if (!("placeholders" in this.behaviorInfo)) {
             return;
+        }
+        for (let i = 0; i < this.behaviorInfo.placeholders.length; i++) {
+            const placeholder = this.behaviorInfo.placeholders[i];
         }
     }
 
