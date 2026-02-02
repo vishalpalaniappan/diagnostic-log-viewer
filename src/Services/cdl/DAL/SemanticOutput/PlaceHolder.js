@@ -25,10 +25,33 @@ class PlaceHolder {
      * @param {SemanticParticipant} participant
      */
     setValue () {
-        if (this.info.type === "value") {
-            const participant = this.getParticipant(this.info.participantName);
-            this.value = participant.value;
+        switch (this.info.type) {
+            case "value":
+                this.processValue();
+                break;
+            case "semantic_property":
+                this.processSemanticProperty();
+                break;
+            default:
+                break;
         }
+    }
+
+    /**
+     * Process placeholders of type "value". These placeholders
+     * simply assign the participants value to the placeholder.
+     */
+    processValue () {
+        const participant = this.getParticipant(this.info.participantName);
+        this.value = participant.value;
+    }
+
+    /**
+     * Process placeholders of type "semantic_property". These placeholders
+     * get a specific property of the participant and then assignes it
+     * to the palceholder value.
+     */
+    processSemanticProperty () {
     }
 
     /**
