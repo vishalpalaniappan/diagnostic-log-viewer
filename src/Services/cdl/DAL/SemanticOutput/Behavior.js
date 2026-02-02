@@ -25,12 +25,12 @@ class Behavior {
      * Evaluate the state variables of the behavior.
      */
     evaluateState () {
-        if (!("state_variables" in this.behaviorInfo)) {
+        if (!("participants" in this.behaviorInfo)) {
             return;
         }
 
-        for (let i = 0; i < this.behaviorInfo.state_variables.length; i++) {
-            const variable = this.behaviorInfo.state_variables[i];
+        for (let i = 0; i < this.behaviorInfo.participants.length; i++) {
+            const variable = this.behaviorInfo.participants[i];
             const participant = new SemanticParticipant(variable);
 
             for (let j = 0; j < this.execution.length; j++) {
