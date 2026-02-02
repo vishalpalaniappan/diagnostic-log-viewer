@@ -75,7 +75,7 @@ class Behavior {
         }
         for (let i = 0; i < this.behaviorInfo.placeholders.length; i++) {
             const placeholder = this.behaviorInfo.placeholders[i];
-            const participant = this.getParticipant(placeholder.name);
+            const participant = this.getParticipant(placeholder.participantName);
             if (participant) {
                 placeholder.value = participant.value;
                 this.evaluatedPlaceholders.push({...placeholder});
@@ -91,7 +91,7 @@ class Behavior {
     getParticipant (name) {
         for (let i = 0; i < this.participants.length; i++) {
             const participant = this.participants[i];
-            if (participant.participant.participantName === name) {
+            if (participant.participant.name === name) {
                 return participant;
             }
         }
@@ -102,12 +102,13 @@ class Behavior {
      * participants and placeholders.
      */
     generateRealizedIntent () {
+        let sentence = this.behaviorInfo.intent;
         for (let i = 0; i < this.evaluatedPlaceholders.length; i++) {
             const placeholder = this.evaluatedPlaceholders[i];
             const value = placeholder.value;
-            const sentence = this.behaviorInfo.intent.replace(placeholder.string, value);
-            console.log("Realized Intent:", sentence);
+            sentence = sentence.replace(placeholder.string, value);
         }
+        console.log("    Realized Intent:", sentence);
     }
 }
 
