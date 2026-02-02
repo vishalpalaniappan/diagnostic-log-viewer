@@ -1,3 +1,4 @@
+import PlaceHolder from "./PlaceHolder";
 import SemanticParticipant from "./SemanticParticipant";
 /**
  * Class representing a behavior in the design abstraction.
@@ -12,7 +13,7 @@ class Behavior {
         this.execution = [];
         this.stateVariables = {};
         this.participants = [];
-        this.evaluatedPlaceholders = [];
+        this.placeholders = [];
     }
 
     /**
@@ -74,12 +75,12 @@ class Behavior {
             return;
         }
         for (let i = 0; i < this.behaviorInfo.placeholders.length; i++) {
-            const placeholder = this.behaviorInfo.placeholders[i];
+            const placeholder = new PlaceHolder(this.behaviorInfo.placeholders[i]);
             const participant = this.getParticipant(placeholder.participantName);
             if (participant) {
-                placeholder.value = participant.value;
-                this.evaluatedPlaceholders.push({...placeholder});
+                placeholder.setValue(participant.value);
             }
+            this.placeholders.push(placeholder);
         }
     }
 
@@ -103,10 +104,12 @@ class Behavior {
      */
     generateRealizedIntent () {
         let sentence = this.behaviorInfo.intent;
-        for (let i = 0; i < this.evaluatedPlaceholders.length; i++) {
-            const placeholder = this.evaluatedPlaceholders[i];
-            const value = placeholder.value;
-            sentence = sentence.replace(placeholder.string, value);
+        for (let i = 0; i < this.placeholders.length; i++) {
+            const placeholder = this.placeholders[i];
+            const value = placeholder.getValue();
+            if (value) {
+                sentence = sentence.replace(placeholder.string, value);
+            }
         }
         console.log("    Realized Intent:", sentence);
     }
