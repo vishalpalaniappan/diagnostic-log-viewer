@@ -48,7 +48,7 @@ class SemanticModel {
         this.activeAbstraction.complete = true;
         const tree = this.activeAbstraction.processSteps();
         console.log("");
-        tree.display();
+        // tree.display();
         this.atomicAbstractionTrees[this.activeAbstraction.atomicUid] = tree;
         this.activeAbstraction = null;
     }
