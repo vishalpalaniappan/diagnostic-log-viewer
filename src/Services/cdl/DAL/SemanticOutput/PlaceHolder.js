@@ -52,6 +52,10 @@ class PlaceHolder {
      * to the palceholder value.
      */
     processSemanticProperty () {
+        if (this.info.property === "length") {
+            const participant = this.getParticipant(this.info.participantName);
+            this.value = participant.value.length;
+        }
     }
 
     /**
