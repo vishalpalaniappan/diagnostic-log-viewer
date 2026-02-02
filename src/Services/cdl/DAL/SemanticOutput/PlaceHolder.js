@@ -29,6 +29,9 @@ class PlaceHolder {
             case "value":
                 this.processValue();
                 break;
+            case "key_value":
+                this.processKeyValue();
+                break;
             case "semantic_property":
                 this.processSemanticProperty();
                 break;
@@ -44,6 +47,20 @@ class PlaceHolder {
     processValue () {
         const participant = this.getParticipant(this.info.participantName);
         this.value = participant.value;
+    }
+
+    /**
+     * Process the placeholder of type key_value. These palceholders
+     * assign a specific key (or keys) from the participants value.
+     */
+    processKeyValue () {
+        const participant = this.getParticipant(this.info.participantName);
+        let value = participant.value;
+        for (let i = 0; i < this.info.keys.length; i++) {
+            const key = this.info.keys[i];
+            value = value[key];
+        }
+        this.value = value;
     }
 
     /**
