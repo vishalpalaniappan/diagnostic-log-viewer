@@ -95,22 +95,14 @@ class SemanticAbstraction {
     }
 
     /**
-     * Group the execution of each step into their behaviors to extract
-     * the relevant state variables so the design abstraction can use it.
-     *
-     * This means that the design abstraction will be defined entirely
-     * through the behaviors and its state variables. This is a very
-     * clean separation and the design specification will survive
-     * any changes to the implementation as it is fully defined in a
-     * separate abstraction.
-     *
+     * Group the execution of each step into their behaviors to process
+     * them and identify semantic violations and to summarize it.
      * @param {Object} entry
      */
     processBehavior (entry) {
         if (entry.type === "selector") {
             return;
         }
-
 
         const behaviors = [];
         let currBehavior;
