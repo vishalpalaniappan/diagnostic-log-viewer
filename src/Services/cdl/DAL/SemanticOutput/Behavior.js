@@ -1,5 +1,8 @@
+import {isEqual} from "lodash-es";
+
 import PlaceHolder from "./PlaceHolder";
 import SemanticParticipant from "./SemanticParticipant";
+
 /**
  * Class representing a behavior in the design abstraction.
  */
@@ -14,6 +17,7 @@ class Behavior {
         this.stateVariables = {};
         this.participants = [];
         this.placeholders = [];
+        this.violations = [];
     }
 
     /**
@@ -104,7 +108,34 @@ class Behavior {
         if (!("intent_validation" in this.behaviorInfo)) {
             return;
         }
-        console.log("Validating that intent was realized:", this.behaviorInfo.intent_validation);
+
+        for (let i = 0; i < this.behaviorInfo.intent_validation.length; i++) {
+            const info = this.behaviorInfo.intent_validation[i];
+
+            if (info.type === "data_exists" && info.position === "end") {
+                const targetParticipant = this.getParticipant(info.target_var);
+                const targetValue = targetParticipant.value[targetParticipant.value.length -1];
+
+                if (!isEqual(this.getParticipant(info.source_var).value, targetValue)) {
+                    // TODO: TEMP, Replace once violation node format is defined
+                    this.violations.push("Intent was not realized");
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the participant given the name.
+     * @param {String} name
+     * @return {SemanticParticipant|null}
+     */
+    getParticipant (name) {
+        for (let i = 0; i < this.participants.length; i++) {
+            const participant = this.participants[i];
+            if (participant.participant.name === name) {
+                return participant;
+            }
+        }
     }
 }
 
