@@ -131,10 +131,12 @@ export function BehavioralNode ({node}) {
             return `${node.abs.id}`;
         } else if (node.type === "selector") {
             return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
-        } else if (node.type === "selector_repeat") {
-            return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
         } else {
-            return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
+            if ("behaviors" in node) {
+                return `${node.behaviors[0].sentence}`;
+            } else {
+                return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
+            }
         };
     };
 
