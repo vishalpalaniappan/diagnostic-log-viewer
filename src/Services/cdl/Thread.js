@@ -57,6 +57,10 @@ class Thread {
                     this._saveGlobalVariables(currLog);
                     break;
                 case "adli_exception":
+                    // TODO: Better to work back until adli_execution is found,
+                    // this makes too many assumptions. It also doesn't check
+                    // the size of the execution array.
+                    this.execution[this.execution.length - 2].exception = currLog.value;
                     this.exception = currLog.value;
                     break;
                 case "adli_input":
