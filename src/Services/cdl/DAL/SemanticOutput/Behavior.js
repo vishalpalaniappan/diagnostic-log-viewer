@@ -93,7 +93,7 @@ class Behavior {
                 sentence = sentence.replace(placeholder.getString(), value);
             }
         }
-        console.log(sentence);
+        this.sentence = sentence;
     }
 
 
