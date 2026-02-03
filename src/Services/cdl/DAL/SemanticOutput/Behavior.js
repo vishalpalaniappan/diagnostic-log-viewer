@@ -67,6 +67,11 @@ class Behavior {
                 }
             }
             this.participants.push(participant);
+
+            // Append the violations to the array
+            if (participant.violations.length > 0) {
+                this.violations = this.violations.concat(participant.violations);
+            }
         }
     }
 
@@ -113,12 +118,15 @@ class Behavior {
             const info = this.behaviorInfo.intent_validation[i];
 
             if (info.type === "data_exists" && info.position === "end") {
+                const sourceParticipant = this.getParticipant(info.source_var);
                 const targetParticipant = this.getParticipant(info.target_var);
                 const targetValue = targetParticipant.value[targetParticipant.value.length -1];
 
-                if (!isEqual(this.getParticipant(info.source_var).value, targetValue)) {
-                    // TODO: TEMP, Replace once violation node format is defined
-                    this.violations.push("Intent was not realized");
+                if (!isEqual(sourceParticipant.value, targetValue)) {
+                    const violation = `${sourceParticipant.name} was not found at the\
+                     end of the ${targetParticipant.name}`;
+                    info.sentence = violation;
+                    this.violations.push(info);
                 }
             }
         }
