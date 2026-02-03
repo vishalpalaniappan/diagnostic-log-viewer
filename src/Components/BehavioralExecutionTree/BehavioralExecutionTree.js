@@ -96,7 +96,7 @@ export function BehavioralExecutionTree () {
 
     useEffect(() => {
         if (activeStepExecution) {
-            setTitle("Behavioral Execution Tree");
+            setTitle("Execution");
             const segTree = [];
             // Extract the SEG from the active step's execution array
             for (let i = 0; i < activeStepExecution.length; i++) {
