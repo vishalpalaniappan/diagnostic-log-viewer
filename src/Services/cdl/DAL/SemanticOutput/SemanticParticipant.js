@@ -25,7 +25,7 @@ class SemanticParticipant {
      */
     constructor (participant) {
         this.participant = {...participant};
-        // console.log("Initialized semantic participant:", this.participant);
+        this.violations = [];
     }
 
     /**
@@ -34,7 +34,6 @@ class SemanticParticipant {
      */
     setValue (value) {
         this.value = value;
-        // console.log("Set semantic participant value:", this.participant.name, "=", this.value);
         this.validate();
     }
 
@@ -60,10 +59,10 @@ class SemanticParticipant {
                  */
                 if (this.value === null || typeof this.value !== "string" ||
                     this.value.length < rule.value) {
-                    console.error("Semantic participant validation failed:",
-                        this.value,
-                        "does not meet minLength of",
-                        rule.value);
+                    const violation = `Semantic participant validation failed: ${this.value}\
+                    , does not meet minLength of ${rule.value}`;
+                    console.error(violation);
+                    this.violations.push(violation);
                 }
             }
         }
