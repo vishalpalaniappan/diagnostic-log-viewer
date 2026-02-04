@@ -162,14 +162,6 @@ class AbstractionStack {
                 }
             }
         }
-
-        // End the active abstraction even if it doesn't end through the
-        // transform. This could happen because of failure or termination.
-        if (SemanticTrace && SemanticTrace.activeAbstraction && this.isFork) {
-            SemanticTrace.endForkActiveAbstraction();
-        } else if (SemanticTrace && SemanticTrace.activeAbstraction) {
-            SemanticTrace.endActiveAtomicAbstraction();
-        }
     }
 
     /**
