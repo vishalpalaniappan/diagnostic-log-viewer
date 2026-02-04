@@ -116,11 +116,6 @@ class AbstractionStack {
 
             // Design abstraction is done because abstraction stack is empty.
             if (this.stack.length === 0) {
-                if (this.isFork) {
-                    SemanticTrace.endForkActiveAbstraction();
-                } else {
-                    SemanticTrace.endActiveAtomicAbstraction();
-                }
                 break;
             }
 
@@ -161,6 +156,13 @@ class AbstractionStack {
                     position = input.position - 1;
                 }
             }
+        }
+
+        // End atomic abs or fork, so  design abstraction is processed.
+        if (this.isFork) {
+            SemanticTrace.endForkActiveAbstraction();
+        } else {
+            SemanticTrace.endActiveAtomicAbstraction();
         }
     }
 
