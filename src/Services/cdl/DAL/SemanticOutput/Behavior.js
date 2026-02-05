@@ -30,6 +30,11 @@ class Behavior {
         if (entry.exception) {
             this.exceptions.push(entry.exception);
         }
+        if (entry.availabilityViolation) {
+            this.violations.push({
+                "type": "availability violation",
+            });
+        }
     }
 
     /**
