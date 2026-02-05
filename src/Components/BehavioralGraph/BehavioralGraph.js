@@ -138,10 +138,10 @@ export function BehavioralGraph () {
             node.level = node.level + level;
             node.isFork = isFork;
             rows.push(node);
-            if (node.type === "fanout") {
+            if (node.type === "fanout" && node.fork) {
                 rows = rows.concat(createNodes(node.fork, node.level, true));
-            }
-        }
+            
+        }}
         return rows;
     };
 
