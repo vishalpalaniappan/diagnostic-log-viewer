@@ -140,8 +140,8 @@ export function BehavioralGraph () {
             rows.push(node);
             if (node.type === "fanout" && node.fork) {
                 rows = rows.concat(createNodes(node.fork, node.level, true));
-            
-        }}
+            }
+        }
         return rows;
     };
 
