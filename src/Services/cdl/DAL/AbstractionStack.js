@@ -359,7 +359,12 @@ class AbstractionStack {
 
                 // Create new stack and fork from position
                 if (result.id === DESIGN.FORK) {
-                    new AbstractionStack(this.design, this.threadDebuggers, execution, true);
+                    if (this.trackOutput(info)) {
+                        new AbstractionStack(this.design, this.threadDebuggers, execution, true);
+                    } else {
+                        // Availability violation
+                        info.availabilityViolation = true;
+                    }
                     return;
                 }
 
