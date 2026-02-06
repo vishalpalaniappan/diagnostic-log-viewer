@@ -12,7 +12,6 @@ class SemanticAbstraction {
         this.steps = [];
         this.currentStep;
         this.state = {};
-        this.violations = [];
 
         this.DALSpec = DALSpec;
         this.designAbsUid = entry.designAbsUid;
@@ -124,9 +123,6 @@ class SemanticAbstraction {
             behaviors[i].loadPlaceHolders();
             behaviors[i].validateRealizedIntent();
             behaviors[i].generateRealizedIntent();
-
-            this.violations = this.violations.concat(behaviors[i].violations);
-            this.violations = this.violations.concat(behaviors[i].exceptions);
         }
     }
 
