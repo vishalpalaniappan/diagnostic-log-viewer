@@ -1,6 +1,7 @@
 
 import CDL_WORKER_PROTOCOL from "../../../CDL_WORKER_PROTOCOL";
 import AtomicSemanticAbstraction from "./AtomicSemanticAbstraction";
+import AutomatedDebugger from "./AutomatedDebugger";
 
 /**
  * This class contains the output of the semantic transform.
@@ -23,6 +24,14 @@ class SemanticModel {
      */
     setDesign (DALSpec) {
         this.DALSpec = DALSpec;
+    }
+
+    /**
+     * Debug the abstrations that were identified at
+     * the output of the transform.
+     */
+    debug () {
+        this.debugger = new AutomatedDebugger(this.atomicAbstractions);
     }
 
     /**
