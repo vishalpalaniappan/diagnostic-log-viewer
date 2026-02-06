@@ -25,7 +25,7 @@ class AtomicSemanticAbstraction {
             level: this.level,
         });
         this.printDebugLog = false;
-        this.violations = [];
+        this.designAbstractions = [];
     }
 
     /**
@@ -88,6 +88,14 @@ class AtomicSemanticAbstraction {
         const traceRoot = new SemanticAbstraction(this.trace[pos], this.DALSpec);
         traceRoot.addStep(this.trace[pos]);
 
+        /**
+         * Adding a note here: The design abstractions are identified while
+         * I walk the execution and I am using the levels that I identified
+         * to recreate the design abstractions as a class. However, it is pretty
+         * obvious that there are many redundant steps here and I will optimize
+         * this later.
+         */
+
         // Process each entry and create the abstraction tree.
         const stack = [traceRoot];
         while (++pos < this.trace.length) {
@@ -101,14 +109,16 @@ class AtomicSemanticAbstraction {
                 stack.push(abs);
             } else if (entry.level < stack.length) {
                 while (entry.level < stack.length && stack.length > 0) {
-                    stack.pop();
+                    this.designAbstractions.push(stack.pop());
                 }
             }
             stack[stack.length - 1].addStep(entry);
-            this.violations = this.violations.concat(
-                stack[stack.length - 1].violations
-            );
         };
+
+        // If trace ended in failure, empty the abstractions in the stack.
+        while (stack.length > 0) {
+            this.designAbstractions.push(stack.pop());
+        }
 
         return traceRoot;
     }
