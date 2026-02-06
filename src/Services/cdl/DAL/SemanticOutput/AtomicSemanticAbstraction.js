@@ -46,18 +46,6 @@ class AtomicSemanticAbstraction {
             lastStep.execution.push(step.execution[0]);
         } else {
             this.trace.push(step);
-            this.trace[this.trace.length - 1].exceptions = [];
-            this.trace[this.trace.length - 1].violations = [];
-        }
-
-        // Add the exceptions and violations to current step in the trace.
-        const currentStep = this.trace[this.trace.length - 1];
-        if (step.execution[0]?.seg?.exception) {
-            const exception = step.execution[0].seg.exception;
-            currentStep.exceptions.push(exception);
-        } else if (step.execution[0]?.seg?.violations) {
-            const violations = step.execution[0].seg.violations;
-            currentStep.violations = currentStep.violations.concat(violations);
         }
 
         // this uid is used to set keys in components and ids in DOM tree
