@@ -16,7 +16,7 @@ class AutomatedDebugger {
      * @param {Object} abstractions
      */
     constructor (abstractions) {
-
+        console.log(abstractions);
     }
 }
 

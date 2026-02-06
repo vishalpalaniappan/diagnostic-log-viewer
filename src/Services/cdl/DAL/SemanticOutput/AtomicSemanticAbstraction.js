@@ -25,6 +25,7 @@ class AtomicSemanticAbstraction {
             level: this.level,
         });
         this.printDebugLog = false;
+        this.violations = [];
     }
 
     /**
@@ -104,6 +105,9 @@ class AtomicSemanticAbstraction {
                 }
             }
             stack[stack.length - 1].addStep(entry);
+            this.violations = this.violations.concat(
+                stack[stack.length - 1].violations
+            );
         };
 
         return traceRoot;
