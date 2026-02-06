@@ -20,7 +20,10 @@ const getExceptionMessage = (exception) => {
         };
     }
 
-    const exceptionValue = exception.trim().split("\n").pop();
+    let exceptionValue = exception.trim().split("\n").pop();
+    if (exceptionValue.length > 100) {
+        exceptionValue = exceptionValue.slice(0, 100) + "...";
+    }
     const exceptionMessage = [
         <span key={0} style={{whiteSpace: "pre-wrap"}}>
             {exceptionValue}
@@ -36,7 +39,7 @@ const getExceptionMessage = (exception) => {
     );
     return {
         domNode: domNode,
-        numLines: exceptionValue.split("\n").length,
+        numLines: exceptionValue.split("\n").length + 1,
     };
 };
 
