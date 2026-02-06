@@ -17,6 +17,33 @@ class AutomatedDebugger {
      */
     constructor (abstractions) {
         console.log(abstractions);
+        this.atomicAbstractions = abstractions;
+        this.getViolations();
+    }
+
+    /**
+     * Gets the violations from the list of atoimc abstractions.
+     */
+    getViolations () {
+        const absIds = Object.keys(this.atomicAbstractions);
+        for (let i = 0; i < absIds.length; i++) {
+            const atomicAbs = this.atomicAbstractions[absIds[i]];
+            for (let j = 0; j < atomicAbs.designAbstractions.length; j++) {
+                const abs = atomicAbs.designAbstractions[j];
+                this.getViolationsFromDesignAbs(abs);
+            }
+        }
+    }
+
+    /**
+     * Gets the violations from the provided design abstraction.
+     * @param {Object} abs
+     */
+    getViolationsFromDesignAbs (abs) {
+        for (let i = 0; i < abs.steps.length; i++) {
+            const violations = abs.steps[i].behaviors[0].violations;
+            const exceptions = abs.steps[i].behaviors[0].exceptions;
+        }
     }
 }
 
