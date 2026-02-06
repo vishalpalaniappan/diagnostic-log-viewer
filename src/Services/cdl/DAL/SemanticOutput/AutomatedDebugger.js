@@ -41,8 +41,18 @@ class AutomatedDebugger {
      */
     getViolationsFromDesignAbs (abs) {
         for (let i = 0; i < abs.steps.length; i++) {
-            // const violations = abs.steps[i].behaviors[0].violations;
-            // const exceptions = abs.steps[i].behaviors[0].exceptions;
+            if (!("behaviors" in abs.steps[i])) {
+                continue;
+            }
+            const behavior = abs.steps[i].behaviors[0];
+            if (!"violations" in behavior) {
+                continue;
+            }
+            const violations = abs.steps[i].behaviors[0].violations;
+            if (violations.length > 0) {
+                const id = behavior.behaviorInfo.id;
+                console.log(id + ": " + violations[0].violation_type, violations[0].guards);
+            }
         }
     }
 }

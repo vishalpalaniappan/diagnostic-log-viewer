@@ -69,6 +69,7 @@ class SemanticParticipant {
                     violation = violation + ` , does not meet minLength of ${rule.value}`;
                     console.error(violation);
                     rule.sentence = violation;
+                    rule.violation_type = "invariant";
                     this.violations.push(rule);
                 }
             }

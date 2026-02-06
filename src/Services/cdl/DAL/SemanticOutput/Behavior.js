@@ -18,7 +18,6 @@ class Behavior {
         this.participants = [];
         this.placeholders = [];
         this.violations = [];
-        this.exceptions = [];
     }
 
     /**
@@ -28,11 +27,14 @@ class Behavior {
     addExecution (entry) {
         this.execution.push(entry);
         if (entry.exception) {
-            this.exceptions.push(entry.exception);
+            this.violations.push({
+                "violation_type": "exception",
+                "exception": entry.exception,
+            });
         }
         if (entry.availabilityViolation) {
             this.violations.push({
-                "type": "availability violation",
+                "violation_type": "availability_violation",
             });
         }
     }
