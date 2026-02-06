@@ -57,9 +57,15 @@ class SemanticParticipant {
                  *  - not a string
                  *  - string is shorter than specified
                  */
-                if (this.value === null || typeof this.value !== "string" ||
-                    this.value.length < rule.value) {
-                    let violation = `Semantic participant validation failed: ${this.value}`;
+                let value = this.value;
+                if ("keys" in rule) {
+                    for (let i = 0; i < rule["keys"].length; i++) {
+                        value = value[rule["keys"][i]];
+                    }
+                };
+                if (value === null || typeof value !== "string" ||
+                    value.length < rule.value) {
+                    let violation = `Semantic participant validation failed: ${value}`;
                     violation = violation + ` , does not meet minLength of ${rule.value}`;
                     console.error(violation);
                     rule.sentence = violation;
