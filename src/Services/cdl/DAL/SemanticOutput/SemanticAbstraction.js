@@ -70,16 +70,6 @@ class SemanticAbstraction {
      * @param {Object} step
      */
     addStep (step) {
-        if (step.type === "selector") {
-            const stateName = "option_" + step.step.id;
-            const state = {
-                [stateName]: {
-                    name: stateName,
-                    value: step.selectedValue,
-                },
-            };
-            Object.assign(this.state, state);
-        }
         step.state = this.processBehavior(step);
         this.steps.push(step);
         this.currentStep = step;
