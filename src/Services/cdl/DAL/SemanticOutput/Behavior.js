@@ -131,9 +131,23 @@ class Behavior {
             if (info.type === "data_exists" && info.position === "end") {
                 const sourceParticipant = this.getParticipant(info.source_var);
                 const targetParticipant = this.getParticipant(info.target_var);
-                const targetValue = targetParticipant.value[targetParticipant.value.length -1];
 
-                if (!isEqual(sourceParticipant.value, targetValue)) {
+                let targetValue = targetParticipant.value;
+                if ("target_var_keys" in info) {
+                    for (let i = 0; i < info["target_var_keys"].length; i++) {
+                        targetValue = targetValue[info["target_var_keys"][i]];
+                    }
+                }
+                targetValue = targetValue[targetValue.length -1];
+
+                let sourceValue = sourceParticipant.value;
+                if ("source_var_keys" in info) {
+                    for (let i = 0; i < info["source_var_keys"].length; i++) {
+                        sourceValue = sourceValue[info["source_var_keys"][i]];
+                    }
+                }
+
+                if (!isEqual(sourceValue, targetValue)) {
                     const violation = `${sourceParticipant.name} was not found at the\
                      end of the ${targetParticipant.name}`;
                     info.sentence = violation;
