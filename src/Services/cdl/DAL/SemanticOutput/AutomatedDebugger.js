@@ -73,17 +73,19 @@ class AutomatedDebugger {
 
             if (violation.violation_type === "invariant") {
                 const uid = violation.uid;
-                const guardedBehavior = violation.guards[0];
-                const behaviorId = behavior.behaviorInfo.id;
-                console.log("");
-                console.log("For invariant violation in",
-                    behaviorId,
-                    "I looked for guarded behavior",
-                    guardedBehavior,
-                    "with uid",
-                    uid
-                );
-                this.getBehaviorGivenInvariant(guardedBehavior, uid);
+                for (let j = 0; j < violation.guards.length; j++) {
+                    const guardedBehavior = violation.guards[j];
+                    const behaviorId = behavior.behaviorInfo.id;
+                    console.log("");
+                    console.log("For invariant violation in",
+                        behaviorId,
+                        "I looked for guarded behavior",
+                        guardedBehavior,
+                        "with uid",
+                        uid
+                    );
+                    this.getBehaviorGivenInvariant(guardedBehavior, uid);
+                }
             }
         }
     }
@@ -104,6 +106,9 @@ class AutomatedDebugger {
             }
 
             for (let j = 0; j < behavior.participants.length; j++) {
+                if (!(behavior.participants[j]?.value?.uid)) {
+                    continue;
+                }
                 if (behavior.participants[j].value.uid === uid) {
                     console.log("Found guarded behavior",
                         guardedBehavior,
