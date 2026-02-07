@@ -70,7 +70,9 @@ class SemanticParticipant {
                     console.error(violation);
                     rule.sentence = violation;
                     rule.violation_type = "invariant";
-                    this.violations.push(rule);
+                    rule.participantName = this.participant.name;
+                    rule.uid = this.value.uid;
+                    this.violations.push({...rule});
                 }
             }
         }
