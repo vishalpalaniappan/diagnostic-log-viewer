@@ -49,6 +49,12 @@ class SemanticParticipant {
 
         for (let i = 0; i < constraints.length; i++) {
             const rule = constraints[i];
+            let value = this.value;
+            if ("keys" in rule) {
+                for (let i = 0; i < rule["keys"].length; i++) {
+                    value = value[rule["keys"][i]];
+                }
+            };
 
             if (rule.type === "minLength") {
                 /**
@@ -57,16 +63,22 @@ class SemanticParticipant {
                  *  - not a string
                  *  - string is shorter than specified
                  */
-                let value = this.value;
-                if ("keys" in rule) {
-                    for (let i = 0; i < rule["keys"].length; i++) {
-                        value = value[rule["keys"][i]];
-                    }
-                };
                 if (value === null || typeof value !== "string" ||
                     value.length < rule.value) {
                     let violation = `Semantic participant validation failed: ${value}`;
                     violation = violation + ` , does not meet minLength of ${rule.value}`;
+                    console.error(violation);
+                    rule.sentence = violation;
+                    rule.violation_type = "invariant";
+                    rule.participantName = this.participant.name;
+                    rule.uid = this.value.uid;
+                    this.violations.push({...rule});
+                }
+            } else if (rule.type === "maxLength") {
+                if (value === null || typeof value !== "string" ||
+                    value.length > rule.value) {
+                    let violation = `Semantic participant validation failed: ${value}`;
+                    violation = violation + ` , does not meet maxLength of ${rule.value}`;
                     console.error(violation);
                     rule.sentence = violation;
                     rule.violation_type = "invariant";
