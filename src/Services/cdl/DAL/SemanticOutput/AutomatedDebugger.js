@@ -18,7 +18,9 @@ class AutomatedDebugger {
     constructor (abstractions) {
         console.log(abstractions);
         this.atomicAbstractions = abstractions;
+        this.violations = [];
         this.getViolations();
+        this.processViolations();
     }
 
     /**
@@ -49,9 +51,66 @@ class AutomatedDebugger {
                 continue;
             }
             const violations = abs.steps[i].behaviors[0].violations;
-            if (violations.length > 0) {
-                const id = behavior.behaviorInfo.id;
-                console.log(id + ": " + violations[0].violation_type, violations[0].guards);
+            if (violations.length === 0) {
+                continue;
+            }
+            for (let i = 0; i < violations.length; i++) {
+                this.violations.push({
+                    behavior: behavior,
+                    violation: violations[i],
+                });
+            }
+        }
+    }
+
+    /**
+     * Process the extracted violations
+     */
+    processViolations () {
+        for (let i = 0; i < this.violations.length; i++) {
+            const violation = this.violations[i].violation;
+            const behavior = this.violations[i].behavior;
+
+            if (violation.violation_type === "invariant") {
+                const uid = violation.uid;
+                const guardedBehavior = violation.guards[0];
+                const behaviorId = behavior.behaviorInfo.id;
+                console.log("");
+                console.log("For invariant violation in",
+                    behaviorId,
+                    "I looked for guarded behavior",
+                    guardedBehavior,
+                    "with uid",
+                    uid
+                );
+                this.getBehaviorGivenInvariant(guardedBehavior, uid);
+            }
+        }
+    }
+
+
+    /**
+     * Given an invariant, get the behavior it guards with a participant
+     * that has the same uid.
+     * @param {String} guardedBehavior
+     * @param {String} uid
+     */
+    getBehaviorGivenInvariant (guardedBehavior, uid) {
+        for (let i = 0; i < this.violations.length; i++) {
+            const behavior = this.violations[i].behavior;
+
+            if (behavior.behaviorInfo.id !== guardedBehavior) {
+                continue;
+            }
+
+            for (let j = 0; j < behavior.participants.length; j++) {
+                if (behavior.participants[j].value.uid === uid) {
+                    console.log("Found guarded behavior",
+                        guardedBehavior,
+                        "of invariant using uid",
+                        uid
+                    );
+                }
             }
         }
     }
