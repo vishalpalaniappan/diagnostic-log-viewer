@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
-import SegContext from "../../Providers/SegContext";
-import {SemanticViolationRow} from "./SemanticViolationRow/SemanticViolationRow";
+import BehaviorContext from "../../Providers/BehaviorContext";
+import {ExceptionRow} from "./ExceptionRow/ExceptionRow";
 
 import "./AutomatedDebuggingContainer.scss";
 
@@ -10,37 +10,33 @@ import "./AutomatedDebuggingContainer.scss";
  * @return {JSX.Element}
  */
 export function AutomatedDebuggingContainer ({}) {
-    const {seg} = useContext(SegContext);
-    const [violations, setViolations] = useState();
+    const {behavior} = useContext(BehaviorContext);
+    const [rows, setRows] = useState();
 
     useEffect(() => {
-        if (seg) {
-            const violationsFound = [];
-            const threads = Object.keys(seg);
-
-            threads.forEach((thread) => {
-                seg[thread].forEach((node, nodeIndex) => {
-                    if (node.violations.length > 0) {
-                        node.violations.forEach((violation, index) => {
-                            violationsFound.push(
-                                <SemanticViolationRow
-                                    key={thread + "-" + nodeIndex + "-" + index}
-                                    violationIndex = {index}
-                                    violation = {violation}
-                                    node = {node}
-                                />
-                            );
-                        });
-                    }
-                });
-            });
-            setViolations(violationsFound);
+        if (behavior) {
+            console.log(behavior);
+            processExceptions(behavior.debugger.exceptions);
         }
-    }, [seg]);
+    }, [behavior]);
+
+    /**
+     * Proces the exceptions in the file.
+     * @param {Array} exceptions
+     */
+    const processExceptions = (exceptions) => {
+        const exceptionsList = [];
+        for (let i = 0; i < exceptions.length; i++) {
+            exceptionsList.push(
+                <ExceptionRow violation={exceptions[i]}/>
+            );
+        }
+        setRows(exceptionsList);
+    };
 
     return (
         <div className="w-100 h-100 automated-debugging-container">
-            {violations}
+            {rows}
         </div>
     );
 }
