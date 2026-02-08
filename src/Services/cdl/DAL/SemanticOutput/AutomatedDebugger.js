@@ -130,8 +130,6 @@ class AutomatedDebugger {
             }
         }
 
-        // Identify the root cause of each exception and remove
-        // from invariant violations after assigning it to exception.
         let pos = this.invariantViolations.length - 1;
         do {
             const violationUid = this.invariantViolations[pos].violation.uid;
