@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 // eslint-disable-next-line max-len
-import {Bug, CaretDownFill, CaretRightFill, Check2Square, SignIntersection, SignpostSplit} from "react-bootstrap-icons";
+import {ArrowReturnRight, Bug, CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
 import "./DebuggerNode.scss";
 
@@ -98,9 +98,6 @@ export function DebuggerNode ({node}) {
 
     return (
         <>
-            { (node?.level === 0 && node.index !== "0") &&
-                <div style={{width: "100%", height: "10px"}}></div>
-            }
             <div style={selectedStyle} id={"debugging-row-" + node.uid} className="debuggingRow">
 
                 <div className="icon-container">
@@ -129,6 +126,9 @@ export function DebuggerNode ({node}) {
                     </div>
                 </div>
             </div>
+            { (node.violation.violation_type === "invariant") &&
+                <div style={{width: "100%", height: "15px"}}></div>
+            }
         </>
     );
 }

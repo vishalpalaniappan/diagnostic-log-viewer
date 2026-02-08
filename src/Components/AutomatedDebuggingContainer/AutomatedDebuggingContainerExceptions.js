@@ -27,17 +27,16 @@ export function AutomatedDebuggingContainerExceptions ({}) {
     const processExceptions = (exceptions) => {
         const exceptionsList = [];
         for (let i = 0; i < exceptions.length; i++) {
-            const node = exceptions[i];
-            node.level = 0;
-            node.collapsible = true;
-            node.text = node.behavior.behaviorInfo.intent_failed;
+            const exception = {...exceptions[i]};
+            exception.level = 0;
+            exception.text = exception.behavior.behaviorInfo.intent_failed;
             exceptionsList.push(
-                <DebuggerNode node={node} />
+                <DebuggerNode node={exception} />
             );
-            if (node.rootCause) {
-                const node = exceptions[i].rootCause;
-                node.level = 1;
-                node.text = `Root cause: ${node.violation.violationSentence}`;
+            if (exception.rootCause) {
+                const node = {...exceptions[i].rootCause};
+                node.level = 0;
+                node.text = `${node.violation.violationSentence}`;
                 exceptionsList.push(
                     <DebuggerNode node={node} />
                 );
@@ -47,7 +46,7 @@ export function AutomatedDebuggingContainerExceptions ({}) {
     };
 
     return (
-        <div className="w-100 h-100 automated-debugging-container">
+        <div className="debuggingContainer">
             <div className="topContainerDebugger">
                 <div className="titleContainerDebugger">
                     <span className="titleDebugger">
@@ -55,7 +54,11 @@ export function AutomatedDebuggingContainerExceptions ({}) {
                     </span>
                 </div>
             </div>
-            {rows}
+            <div className="automatedDebuggingContainer">
+                <div className="automatedDebuggingContainerScroll">
+                    {rows}
+                </div>
+            </div>
         </div>
     );
 }

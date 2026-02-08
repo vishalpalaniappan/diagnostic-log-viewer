@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
-import { DebuggerNode } from "./DebuggerNode/DebuggerNode";
+import {DebuggerNode} from "./DebuggerNode/DebuggerNode";
 
 import "./AutomatedDebuggingContainer.scss";
 
@@ -15,39 +15,32 @@ export function AutomatedDebuggingContainerInvariants ({}) {
 
     useEffect(() => {
         if (behavior) {
-            console.log(behavior);
-            processExceptions(behavior.debugger.exceptions);
+            const debug = behavior.debugger;
+            const invariants = debug.invariantViolations.concat(debug.availabilityViolations);
+            processInvariants(invariants);
         }
     }, [behavior]);
 
     /**
      * Proces the exceptions in the file.
-     * @param {Array} exceptions
+     * @param {Array} invariants
      */
-    const processExceptions = (exceptions) => {
-        const exceptionsList = [];
-        for (let i = 0; i < exceptions.length; i++) {
-            const node = exceptions[i];
+    const processInvariants = (invariants) => {
+        const invariantsList = [];
+        for (let i = 0; i < invariants.length; i++) {
+            const node = {...invariants[i]};
             node.level = 0;
             node.collapsible = true;
-            node.text = node.behavior.behaviorInfo.intent_failed;
-            exceptionsList.push(
+            node.text = node.violation.violationSentence;
+            invariantsList.push(
                 <DebuggerNode node={node} />
             );
-            if (node.rootCause) {
-                const node = exceptions[i].rootCause;
-                node.level = 1;
-                node.text = `Root cause: ${node.violation.violationSentence}`;
-                exceptionsList.push(
-                    <DebuggerNode node={node} />
-                );
-            }
         }
-        setRows(exceptionsList);
+        setRows(invariantsList);
     };
 
     return (
-        <div className="w-100 h-100 automated-debugging-container">
+        <div className="debuggingContainer">
             <div className="topContainerDebugger">
                 <div className="titleContainerDebugger">
                     <span className="titleDebugger">
@@ -55,7 +48,11 @@ export function AutomatedDebuggingContainerInvariants ({}) {
                     </span>
                 </div>
             </div>
-            {rows}
+            <div className="automatedDebuggingContainer">
+                <div className="automatedDebuggingContainerScroll">
+                    {rows}
+                </div>
+            </div>
         </div>
     );
 }
