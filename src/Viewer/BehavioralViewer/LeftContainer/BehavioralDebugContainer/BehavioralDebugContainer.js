@@ -15,7 +15,6 @@ import "./BehavioralDebugContainer.scss";
  */
 export function BehavioralDebugContainer () {
     const behavioralDebugContainer = useRef();
-    const segRef = useRef();
     const behavioralRef = useRef();
     const violationsRef = useRef();
 
@@ -24,8 +23,8 @@ export function BehavioralDebugContainer () {
     const redrawContainers = () => {
         const height = behavioralDebugContainer.current.clientHeight;
         const containerHeight = height;
-        violationsRef.current.style.height = 300 - TITLE_HEIGHT + "px";
-        behavioralRef.current.style.height = containerHeight - 300 + "px";
+        violationsRef.current.style.height = 200 + "px";
+        behavioralRef.current.style.height = containerHeight - 200 + "px";
     };
 
     useEffect(() => {
@@ -39,11 +38,8 @@ export function BehavioralDebugContainer () {
                 <BehavioralGraph />
             </div>
             <VerticalHandle topDiv={behavioralRef} bottomDiv={violationsRef}/>
-            <div className="w-100 violation-title" style={{height: TITLE_HEIGHT + "px"}}>
-                Semantic Violations
-            </div>
             <div className="section" ref={violationsRef}>
-                <AutomatedDebuggingContainerBehavioral />
+                <BehavioralExecutionTree />
             </div>
         </div>
     );

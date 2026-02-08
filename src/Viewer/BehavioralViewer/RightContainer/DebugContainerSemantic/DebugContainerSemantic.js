@@ -1,6 +1,7 @@
 import React, {useEffect, useRef} from "react";
 
-import BehavioralExecutionTree from "../../../../Components/BehavioralExecutionTree/BehavioralExecutionTree";
+// eslint-disable-next-line max-len
+import {AutomatedDebuggingContainerBehavioral} from "../../../../Components/AutomatedDebuggingContainer/AutomatedDebuggingContainerBehavioral";
 // eslint-disable-next-line max-len
 import {VariableStackContainer} from "../../../../Components/VariableStackContainer/VariableStackContainer";
 import {VerticalHandle} from "../../../../Components/VerticalHandle/VerticalHandle";
@@ -13,7 +14,7 @@ import "./DebugContainer.scss";
  */
 export function DebugContainerSemantic () {
     const debugContainerRef = useRef();
-    const executionTreeRef = useRef();
+    const automatedDebuggingContainer = useRef();
     const variableStackRef = useRef();
 
     const TITLE_HEIGHT = 20;
@@ -21,8 +22,8 @@ export function DebugContainerSemantic () {
     const redrawContainers = () => {
         const height = debugContainerRef.current.clientHeight;
         const containerHeight = height;
-        executionTreeRef.current.style.height = 150 + "px";
-        variableStackRef.current.style.height = containerHeight - 150 - TITLE_HEIGHT + "px";
+        automatedDebuggingContainer.current.style.height = 400 + "px";
+        variableStackRef.current.style.height = containerHeight - 400 - TITLE_HEIGHT + "px";
     };
 
     useEffect(() => {
@@ -31,10 +32,13 @@ export function DebugContainerSemantic () {
 
     return (
         <div ref={debugContainerRef} className="debug-container w-100 d-flex flex-column">
-            <div className="section" ref={executionTreeRef}>
-                <BehavioralExecutionTree />
+            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>
+                Automated Debugging
             </div>
-            <VerticalHandle topDiv={executionTreeRef} bottomDiv={variableStackRef}/>
+            <div className="section" ref={automatedDebuggingContainer}>
+                <AutomatedDebuggingContainerBehavioral />
+            </div>
+            <VerticalHandle topDiv={automatedDebuggingContainer} bottomDiv={variableStackRef}/>
             <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Variables</div>
             <div className="section" ref={variableStackRef}>
                 <VariableStackContainer />

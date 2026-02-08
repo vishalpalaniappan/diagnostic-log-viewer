@@ -1,4 +1,4 @@
-.abstractionRow {
+.abstractionRowExecutionNode {
     width:100%;
     color:#d1d1d1;
     overflow:hidden;
@@ -8,7 +8,7 @@
     flex-direction: row;
 }
 
-.abstractionRow:hover{
+.abstractionRowExecutionNode:hover{
     background-color:rgb(44, 44, 44);
     cursor:pointer;
 }
@@ -76,5 +76,4 @@
     .message {
         align-self: center;
     }
-    padding-right:50px;
 }
