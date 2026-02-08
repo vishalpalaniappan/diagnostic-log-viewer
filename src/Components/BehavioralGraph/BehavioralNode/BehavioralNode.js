@@ -66,7 +66,7 @@ export function BehavioralNode ({node}) {
      * Call back when a node is selected.
      * @param {Event} e
      * @param {Object} node
-     */ 
+     */
     const clickSelectNode = (e, node) => {
         e.preventDefault();
         if (node.type !== "atomic" && node.type !== "selector") {

@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
-import { DebuggerNodeRootCause } from "./DebuggerNodeRootCause/DebuggerNodeRootCause";
+import {DebuggerNodeRootCause} from "./DebuggerNodeRootCause/DebuggerNodeRootCause";
 
 import "./AutomatedDebuggingContainer.scss";
 
