@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 // eslint-disable-next-line max-len
-import {ArrowRepeat, CaretDownFill, CaretRightFill, Check2Square, SignIntersection, SignpostSplit} from "react-bootstrap-icons";
+import {CaretDownFill, CaretRightFill, Check2Square, SignIntersection, SignpostSplit} from "react-bootstrap-icons";
 
 import BehaviorContext from "../../../Providers/BehaviorContext";
 import BehavioralGraphContext from "../BehavioralGraphContext";
@@ -58,7 +58,7 @@ export function BehavioralNode ({node}) {
     const clickToggle = (e, node) => {
         e.preventDefault();
         if (node.collapsible) {
-            // toggleCollapse(node);
+            toggleCollapse(node);
         }
     };
 
