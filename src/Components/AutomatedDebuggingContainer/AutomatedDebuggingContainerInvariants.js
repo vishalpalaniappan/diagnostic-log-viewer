@@ -6,10 +6,10 @@ import { DebuggerNode } from "./DebuggerNode/DebuggerNode";
 import "./AutomatedDebuggingContainer.scss";
 
 /**
- * Container for automated debugging information.
+ * Container for automated debugging about invariants.
  * @return {JSX.Element}
  */
-export function AutomatedDebuggingContainer ({}) {
+export function AutomatedDebuggingContainerInvariants ({}) {
     const {behavior} = useContext(BehaviorContext);
     const [rows, setRows] = useState();
 
@@ -50,7 +50,9 @@ export function AutomatedDebuggingContainer ({}) {
         <div className="w-100 h-100 automated-debugging-container">
             <div className="topContainerDebugger">
                 <div className="titleContainerDebugger">
-                    <span className="titleDebugger">Automated Debugging Container</span>
+                    <span className="titleDebugger">
+                        Automated Debugging Container - Invariant Violations
+                    </span>
                 </div>
             </div>
             {rows}

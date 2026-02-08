@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from "react";
 
 // eslint-disable-next-line max-len
-import {AutomatedDebuggingContainer} from "../AutomatedDebuggingContainer/AutomatedDebuggingContainer";
 import {SemanticExecutionGraph} from "../SemanticExecutionGraph/SemanticExecutionGraph";
 import {VerticalHandle} from "./VerticalHandle/VerticalHandle";
 
