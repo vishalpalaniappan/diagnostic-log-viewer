@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 // eslint-disable-next-line max-len
 import {ArrowReturnRight, Bug, CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
-import "./DebuggerNode.scss";
+import "./DebuggerNodeRootCause.scss";
 
-DebuggerNode.propTypes = {
+DebuggerNodeRootCause.propTypes = {
     node: PropTypes.object,
 };
 
@@ -15,7 +15,7 @@ DebuggerNode.propTypes = {
  * @param {Object} node
  * @return {JSX.Element}
  */
-export function DebuggerNode ({node}) {
+export function DebuggerNodeRootCause ({node}) {
     const [selectedStyle, setSelectedStyle] = useState();
 
     // Set style if node is selected.
@@ -85,6 +85,8 @@ export function DebuggerNode ({node}) {
     const getNodeIconType = () => {
         if (node.violation.violation_type === "exception") {
             return <Bug style={{color: "red"}} />;
+        } else if (node.violation.violation_type === "invariant") {
+            return <ArrowReturnRight />;
         }
     };
 

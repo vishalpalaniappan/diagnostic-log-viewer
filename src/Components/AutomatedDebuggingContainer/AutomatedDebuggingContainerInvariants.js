@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
-import {DebuggerNode} from "./DebuggerNode/DebuggerNode";
+import {DebuggerNodeInvariant} from "./DebuggerNodeInvariant/DebuggerNodeInvariant";
 
 import "./AutomatedDebuggingContainer.scss";
 
@@ -30,10 +30,9 @@ export function AutomatedDebuggingContainerInvariants ({}) {
         for (let i = 0; i < invariants.length; i++) {
             const node = {...invariants[i]};
             node.level = 0;
-            node.collapsible = true;
             node.text = node.violation.violationSentence;
             invariantsList.push(
-                <DebuggerNode node={node} />
+                <DebuggerNodeInvariant node={node} />
             );
         }
         setRows(invariantsList);

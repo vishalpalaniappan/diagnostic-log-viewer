@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
-import { DebuggerNode } from "./DebuggerNode/DebuggerNode";
+import { DebuggerNodeRootCause } from "./DebuggerNodeRootCause/DebuggerNodeRootCause";
 
 import "./AutomatedDebuggingContainer.scss";
 
@@ -31,14 +31,14 @@ export function AutomatedDebuggingContainerExceptions ({}) {
             exception.level = 0;
             exception.text = exception.behavior.behaviorInfo.intent_failed;
             exceptionsList.push(
-                <DebuggerNode node={exception} />
+                <DebuggerNodeRootCause node={exception} />
             );
             if (exception.rootCause) {
                 const node = {...exceptions[i].rootCause};
                 node.level = 0;
-                node.text = `${node.violation.violationSentence}`;
+                node.text = `${node.violation.rootCauseSentence}`;
                 exceptionsList.push(
-                    <DebuggerNode node={node} />
+                    <DebuggerNodeRootCause node={node} />
                 );
             }
         }
