@@ -35,6 +35,7 @@ class Behavior {
         if (entry.availabilityViolation) {
             this.violations.push({
                 "violation_type": "availability_violation",
+                "violationSentence": entry.availabilitySentence,
             });
         }
     }
