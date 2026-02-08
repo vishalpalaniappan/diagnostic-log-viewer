@@ -109,7 +109,7 @@ class Behavior {
         for (let i = 0; i < this.placeholders.length; i++) {
             const placeholder = this.placeholders[i];
             const value = placeholder.getValue();
-            if (value) {
+            if (typeof value === "string") {
                 sentence = sentence.replace(placeholder.getString(), value);
             }
         }
