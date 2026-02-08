@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 
 // eslint-disable-next-line max-len
-import {AutomatedDebuggingContainerBehavioral} from "../../../../Components/AutomatedDebuggingContainer/AutomatedDebuggingContainerBehavioral";
-// eslint-disable-next-line max-len
 import {BehavioralExecutionTree} from "../../../../Components/BehavioralExecutionTree/BehavioralExecutionTree";
 import {BehavioralGraph} from "../../../../Components/BehavioralGraph/BehavioralGraph";
 import { VerticalHandle } from "../../../../Components/VerticalHandle/VerticalHandle";
