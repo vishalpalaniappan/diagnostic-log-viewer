@@ -133,7 +133,21 @@ export function BehavioralNode ({node}) {
             return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
         } else {
             if ("behaviors" in node) {
-                return `${node.behaviors[0].sentence}`;
+                // Check if the node has an exception
+                let hasException;
+                for (let i = 0; i < node.behaviors[0].violations.length; i++) {
+                    const violation = node.behaviors[0].violations[i];
+                    if (violation.violation_type === "exception") {
+                        hasException = true;
+                        break;
+                    }
+                }
+
+                if (hasException) {
+                    return `${node.behaviors[0].behaviorInfo.intent_failed}`;
+                } else {
+                    return `${node.behaviors[0].sentence}`;
+                }
             } else {
                 return `${node.step.id}(${node.currStep}/${node.totalSteps})`;
             }
