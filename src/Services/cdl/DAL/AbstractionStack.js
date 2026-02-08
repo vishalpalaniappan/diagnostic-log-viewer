@@ -364,6 +364,11 @@ class AbstractionStack {
                     } else {
                         // Availability violation
                         info.availabilityViolation = true;
+                        if (info?.behavior?.availability_failed) {
+                            info.availabilitySentence = info.behavior.availability_failed;
+                        } else {
+                            info.availabilitySentence = "The design abstraction failed because of an unavailable participant.";
+                        }
                     }
                     return;
                 }
