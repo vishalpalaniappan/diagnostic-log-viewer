@@ -86,7 +86,7 @@ export function DebuggerNodeRootCause ({node}) {
      */
     const getNodeIconType = () => {
         if (node.violation.violation_type === "exception") {
-            return <Bug style={{color: "red"}} />;
+            return <Bug style={{color: "orange"}} />;
         } else if (node.violation.violation_type === "invariant") {
             return <ArrowReturnRight />;
         }

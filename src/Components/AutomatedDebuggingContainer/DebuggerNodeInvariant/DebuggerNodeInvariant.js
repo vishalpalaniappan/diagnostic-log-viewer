@@ -87,9 +87,12 @@ export function DebuggerNodeInvariant ({node}) {
      */
     const getNodeIconType = () => {
         if (node.violation.violation_type === "invariant") {
-            return <BanFill style={{color: "#6d0000"}} />;
+            return <BanFill
+                style={{color: "#a76c00"}} />;
         } else if (node.violation.violation_type === "availability_violation") {
-            return <BuildingFillExclamation style={{color: "#835500"}} />;
+            return <BuildingFillExclamation
+                title="Availability Violation"
+                style={{color: "#007a5c"}} />;
         }
     };
 
