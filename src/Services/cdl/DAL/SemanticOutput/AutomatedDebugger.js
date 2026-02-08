@@ -56,22 +56,39 @@ class AutomatedDebugger {
             if (violations.length === 0) {
                 continue;
             }
-            for (let i = 0; i < violations.length; i++) {
-                const type = violations[i].violation_type;
+            for (let j = 0; j < violations.length; j++) {
+                const type = violations[j].violation_type;
+                /**
+                 * This allows the debug container to select
+                 * the behavior but this is for backwards
+                 * compatibility. I am using the atomic and step uid
+                 * to select the behavior in the behavior graph. I am
+                 * adding this so that the I can select the behavior from
+                 * the debugging containers.
+                 * TODO: Use the behavior UID that is created when each behavior
+                 * is created. This is much easier to work with.
+                */
+                const activeBehaviorKey = {
+                    atomicUid: abs.steps[i].atomicUid,
+                    uid: abs.steps[i].uid,
+                };
                 if (type === "exception") {
                     this.exceptions.push({
                         behavior: behavior,
-                        violation: violations[i],
+                        violation: violations[j],
+                        activeBehaviorKey: activeBehaviorKey,
                     });
                 } else if (type === "invariant") {
                     this.invariantViolations.push({
                         behavior: behavior,
-                        violation: violations[i],
+                        violation: violations[j],
+                        activeBehaviorKey: activeBehaviorKey,
                     });
                 } else if (type === "availability_violation") {
                     this.availabilityViolations.push({
                         behavior: behavior,
-                        violation: violations[i],
+                        violation: violations[j],
+                        activeBehaviorKey: activeBehaviorKey,
                     });
                 }
             }
