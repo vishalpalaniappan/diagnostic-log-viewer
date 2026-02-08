@@ -17,10 +17,13 @@ class AutomatedDebugger {
      */
     constructor (abstractions) {
         console.log(abstractions);
+        this.exceptions = [];
+        this.invariantViolations = [];
+        this.availabilityViolations = [];
+
         this.atomicAbstractions = abstractions;
-        this.violations = [];
         this.getViolations();
-        this.processViolations();
+        this.processExceptions();
     }
 
     /**
@@ -55,69 +58,71 @@ class AutomatedDebugger {
                 continue;
             }
             for (let i = 0; i < violations.length; i++) {
-                this.violations.push({
-                    behavior: behavior,
-                    violation: violations[i],
-                });
-            }
-        }
-    }
-
-    /**
-     * Process the extracted violations
-     */
-    processViolations () {
-        for (let i = 0; i < this.violations.length; i++) {
-            const violation = this.violations[i].violation;
-            const behavior = this.violations[i].behavior;
-
-            if (violation.violation_type === "invariant") {
-                const uid = violation.uid;
-                for (let j = 0; j < violation.guards.length; j++) {
-                    const guardedBehavior = violation.guards[j];
-                    const behaviorId = behavior.behaviorInfo.id;
-                    console.log("");
-                    console.log("For invariant violation in",
-                        behaviorId,
-                        "I looked for guarded behavior",
-                        guardedBehavior,
-                        "with uid",
-                        uid
-                    );
-                    this.getBehaviorGivenInvariant(guardedBehavior, uid);
+                console.log(violations[i].violation_type);
+                const type = violations[i].violation_type;
+                if (type === "exception") {
+                    this.exceptions.push({
+                        behavior: behavior,
+                        violation: violations[i],
+                    });
+                } else if (type === "invariant") {
+                    this.invariantViolations.push({
+                        behavior: behavior,
+                        violation: violations[i],
+                    });
+                } else if (type === "availability_violation") {
+                    this.availabilityViolations.push({
+                        behavior: behavior,
+                        violation: violations[i],
+                    });
                 }
             }
         }
     }
 
+    /**
+     * Process the exceptions from the execution
+     */
+    processExceptions () {
+        for (let i = 0; i < this.exceptions.length; i++) {
+            const exception = this.exceptions[i];
+            this.findViolationGivenException(exception);
+        }
+    }
 
     /**
-     * Given an invariant, get the behavior it guards with a participant
-     * that has the same uid.
-     * @param {String} guardedBehavior
-     * @param {String} uid
+     * Given an exception find the violation
+     * @param {Object} exception
      */
-    getBehaviorGivenInvariant (guardedBehavior, uid) {
-        for (let i = 0; i < this.violations.length; i++) {
-            const behavior = this.violations[i].behavior;
-
-            if (behavior.behaviorInfo.id !== guardedBehavior) {
+    findViolationGivenException (exception) {
+        const uids = [];
+        for (let j = 0; j < exception.behavior.participants.length; j++) {
+            const participant = exception.behavior.participants[j];
+            if (!"value" in participant) {
                 continue;
             }
-
-            for (let j = 0; j < behavior.participants.length; j++) {
-                if (!(behavior.participants[j]?.value?.uid)) {
-                    continue;
-                }
-                if (behavior.participants[j].value.uid === uid) {
-                    console.log("Found guarded behavior",
-                        guardedBehavior,
-                        "of invariant using uid",
-                        uid
-                    );
-                }
+            const value = participant.value;
+            if (!(typeof value === "object" && !Array.isArray(value) && value !== null)) {
+                continue;
+            }
+            if ("uid" in participant?.value) {
+                uids.push(participant.value.uid);
             }
         }
+
+        // Identify the root cause of each exception and remove
+        // from invariant violations after assigning it to exception.
+        let pos = this.invariantViolations.length;
+        do {
+            const violationUid = this.invariantViolations[pos].violation.uid;
+            if (uids.includes(violationUid)) {
+                exception.rootCause = this.invariantViolations[i];
+                this.invariantViolations.pop();
+            }
+        } while (--pos > 0);
+
+        // Note: The violations that remain in invariantViolations will not
+        // have resulted in a failure but would have if the execution continued.
     }
 }
 
