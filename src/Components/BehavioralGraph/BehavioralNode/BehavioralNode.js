@@ -57,7 +57,7 @@ export function BehavioralNode ({node}) {
     const clickToggle = (e, node) => {
         e.preventDefault();
         if (node.collapsible) {
-            toggleCollapse(node);
+            // toggleCollapse(node);
         }
     };
 

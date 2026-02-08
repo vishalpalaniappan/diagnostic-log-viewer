@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 
 import BehaviorContext from "../../Providers/BehaviorContext";
-import {ExceptionRow} from "./ExceptionRow/ExceptionRow";
+import { DebuggerNode } from "./DebuggerNode/DebuggerNode";
 
 import "./AutomatedDebuggingContainer.scss";
 
@@ -27,9 +27,21 @@ export function AutomatedDebuggingContainer ({}) {
     const processExceptions = (exceptions) => {
         const exceptionsList = [];
         for (let i = 0; i < exceptions.length; i++) {
+            const node = exceptions[i];
+            node.level = 0;
+            node.collapsible = true;
+            node.text = "Exception: " + node.behavior.sentence;
             exceptionsList.push(
-                <ExceptionRow violation={exceptions[i]}/>
+                <DebuggerNode node={node} />
             );
+            if (node.rootCause) {
+                const node = exceptions[i].rootCause;
+                node.level = 1;
+                node.text = `Root cause: ${node.violation.participantName} violated constraint ${node.violation.type} with value ${node.violation.value}`;
+                exceptionsList.push(
+                    <DebuggerNode node={node} />
+                );
+            }
         }
         setRows(exceptionsList);
     };
