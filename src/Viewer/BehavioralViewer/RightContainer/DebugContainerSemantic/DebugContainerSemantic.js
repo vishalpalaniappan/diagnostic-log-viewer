@@ -32,9 +32,6 @@ export function DebugContainerSemantic () {
 
     return (
         <div ref={debugContainerRef} className="debug-container w-100 d-flex flex-column">
-            <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>
-                Automated Debugging
-            </div>
             <div className="section" ref={automatedDebuggingContainer}>
                 <AutomatedDebuggingContainer />
             </div>
