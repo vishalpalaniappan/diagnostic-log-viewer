@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 // eslint-disable-next-line max-len
 import {ArrowReturnRight, Bug, CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
 
+import BehaviorContext from "../../../Providers/BehaviorContext";
+
 import "./DebuggerNodeRootCause.scss";
 
 DebuggerNodeRootCause.propTypes = {
@@ -16,6 +18,7 @@ DebuggerNodeRootCause.propTypes = {
  * @return {JSX.Element}
  */
 export function DebuggerNodeRootCause ({node}) {
+    const {setActiveBehavior} = useContext(BehaviorContext);
     const [selectedStyle, setSelectedStyle] = useState();
 
     // Set style if node is selected.
@@ -41,8 +44,8 @@ export function DebuggerNodeRootCause ({node}) {
      */
     const clickSelectNode = (e, node) => {
         e.preventDefault();
+        setActiveBehavior(node.activeBehaviorKey);
     };
-
     /**
      * Gets the icon indicating if node can be collapsed
      * or if it is collapsed.
@@ -92,9 +95,6 @@ export function DebuggerNodeRootCause ({node}) {
 
     const getBreakPoint = () => {
 
-    };
-
-    const getNode = (node) => {
     };
 
     return (

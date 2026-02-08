@@ -2,7 +2,9 @@ import React, {useContext, useEffect, useState} from "react";
 
 import PropTypes from "prop-types";
 // eslint-disable-next-line max-len
-import {Bug, BanFill, BuildingFillExclamation, CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
+import {BanFill, BuildingFillExclamation, CaretDownFill, CaretRightFill} from "react-bootstrap-icons";
+
+import BehaviorContext from "../../../Providers/BehaviorContext";
 
 import "./DebuggerNodeInvariant.scss";
 
@@ -16,6 +18,7 @@ DebuggerNodeInvariant.propTypes = {
  * @return {JSX.Element}
  */
 export function DebuggerNodeInvariant ({node}) {
+    const {setActiveBehavior} = useContext(BehaviorContext);
     const [selectedStyle, setSelectedStyle] = useState();
 
     // Set style if node is selected.
@@ -40,6 +43,7 @@ export function DebuggerNodeInvariant ({node}) {
      * @param {Object} node
      */
     const clickSelectNode = (e, node) => {
+        setActiveBehavior(node.activeBehaviorKey);
         e.preventDefault();
     };
 
@@ -92,9 +96,6 @@ export function DebuggerNodeInvariant ({node}) {
 
     const getBreakPoint = () => {
 
-    };
-
-    const getNode = (node) => {
     };
 
     return (
