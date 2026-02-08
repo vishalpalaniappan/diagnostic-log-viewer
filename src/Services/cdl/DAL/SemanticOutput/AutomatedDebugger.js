@@ -140,9 +140,6 @@ class AutomatedDebugger {
                 this.invariantViolations[pos].isRootCause = true;
             }
         } while (--pos > 0);
-
-        // Note: The violations that remain in invariantViolations will not
-        // have resulted in a failure but would have if the execution continued.
     }
 }
 
