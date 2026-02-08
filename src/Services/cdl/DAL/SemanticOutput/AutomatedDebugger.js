@@ -94,6 +94,11 @@ class AutomatedDebugger {
      * @param {Object} exception
      */
     findViolationGivenException (exception) {
+        // There is no root cause to this exception that can be found.
+        if (this.invariantViolations.length === 0) {
+            return;
+        }
+
         const uids = [];
         for (let j = 0; j < exception.behavior.participants.length; j++) {
             const participant = exception.behavior.participants[j];
@@ -111,11 +116,11 @@ class AutomatedDebugger {
 
         // Identify the root cause of each exception and remove
         // from invariant violations after assigning it to exception.
-        let pos = this.invariantViolations.length;
+        let pos = this.invariantViolations.length - 1;
         do {
             const violationUid = this.invariantViolations[pos].violation.uid;
             if (uids.includes(violationUid)) {
-                exception.rootCause = this.invariantViolations[i];
+                exception.rootCause = this.invariantViolations[pos];
                 this.invariantViolations.pop();
             }
         } while (--pos > 0);
