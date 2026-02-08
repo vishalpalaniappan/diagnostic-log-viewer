@@ -28,10 +28,11 @@ export function DesignDiagram ({}) {
         if (behavior && activeBehavior) {
             const entry = behavior.atomicAbstractions[activeBehavior.atomicUid];
             console.log("Selected Atomic Abstraction:", entry);
-            const layoutInstance = new LayoutDesign();
-            const layout = layoutInstance.processDesign(entry);
-            setNodes(layout.nodes);
-            setEdges(layout.edges);
+            // TODO: These functions are oudated, disabling them for now.
+            // const layoutInstance = new LayoutDesign();
+            // const layout = layoutInstance.processDesign(entry);
+            // setNodes(layout.nodes);
+            // setEdges(layout.edges);
         }
     }, [behavior, activeBehavior]);
 
