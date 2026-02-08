@@ -30,14 +30,14 @@ export function AutomatedDebuggingContainer ({}) {
             const node = exceptions[i];
             node.level = 0;
             node.collapsible = true;
-            node.text = "Exception: " + node.behavior.sentence;
+            node.text = node.behavior.behaviorInfo.intent_failed;
             exceptionsList.push(
                 <DebuggerNode node={node} />
             );
             if (node.rootCause) {
                 const node = exceptions[i].rootCause;
                 node.level = 1;
-                node.text = `Root cause: ${node.violation.participantName} violated constraint ${node.violation.type} with value ${node.violation.value}`;
+                node.text = `Root cause: ${node.violation.violationSentence}`;
                 exceptionsList.push(
                     <DebuggerNode node={node} />
                 );
@@ -48,6 +48,11 @@ export function AutomatedDebuggingContainer ({}) {
 
     return (
         <div className="w-100 h-100 automated-debugging-container">
+            <div className="topContainerDebugger">
+                <div className="titleContainerDebugger">
+                    <span className="titleDebugger">Automated Debugging Container</span>
+                </div>
+            </div>
             {rows}
         </div>
     );
