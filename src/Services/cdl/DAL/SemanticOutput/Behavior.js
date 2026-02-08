@@ -1,5 +1,6 @@
 import {isEqual} from "lodash-es";
 
+import {getSimpleUID} from "../helper";
 import PlaceHolder from "./PlaceHolder";
 import SemanticParticipant from "./SemanticParticipant";
 
@@ -13,6 +14,7 @@ class Behavior {
      */
     constructor (behaviorInfo) {
         this.behaviorInfo = {...behaviorInfo};
+        this.behaviorUID = getSimpleUID();
         this.execution = [];
         this.stateVariables = {};
         this.participants = [];
