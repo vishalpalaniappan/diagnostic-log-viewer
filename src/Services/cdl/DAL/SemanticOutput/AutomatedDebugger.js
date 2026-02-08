@@ -121,7 +121,7 @@ class AutomatedDebugger {
             const violationUid = this.invariantViolations[pos].violation.uid;
             if (uids.includes(violationUid)) {
                 exception.rootCause = this.invariantViolations[pos];
-                this.invariantViolations.pop();
+                this.invariantViolations[pos].isRootCause = true;
             }
         } while (--pos > 0);
 
