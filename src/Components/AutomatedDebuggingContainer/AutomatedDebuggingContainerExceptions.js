@@ -15,7 +15,6 @@ export function AutomatedDebuggingContainerExceptions ({}) {
 
     useEffect(() => {
         if (behavior) {
-            console.log(behavior);
             processExceptions(behavior.debugger.exceptions);
         }
     }, [behavior]);
@@ -31,14 +30,14 @@ export function AutomatedDebuggingContainerExceptions ({}) {
             exception.level = 0;
             exception.text = exception.behavior.behaviorInfo.intent_failed;
             exceptionsList.push(
-                <DebuggerNodeRootCause node={exception} />
+                <DebuggerNodeRootCause key={i} node={exception} />
             );
             if (exception.rootCause) {
                 const node = {...exceptions[i].rootCause};
                 node.level = 0;
                 node.text = `${node.violation.rootCauseSentence}`;
                 exceptionsList.push(
-                    <DebuggerNodeRootCause node={node} />
+                    <DebuggerNodeRootCause key={i + "r"} node={node} />
                 );
             }
         }

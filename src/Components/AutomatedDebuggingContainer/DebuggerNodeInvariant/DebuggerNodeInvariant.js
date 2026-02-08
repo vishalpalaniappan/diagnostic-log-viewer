@@ -20,7 +20,6 @@ export function DebuggerNodeInvariant ({node}) {
 
     // Set style if node is selected.
     useEffect(() => {
-        console.log(node);
     }, [node]);
 
     /**

@@ -32,7 +32,7 @@ export function AutomatedDebuggingContainerInvariants ({}) {
             node.level = 0;
             node.text = node.violation.violationSentence;
             invariantsList.push(
-                <DebuggerNodeInvariant node={node} />
+                <DebuggerNodeInvariant key={i} node={node} />
             );
         }
         setRows(invariantsList);

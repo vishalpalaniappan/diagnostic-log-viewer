@@ -20,7 +20,6 @@ export function DebuggerNodeRootCause ({node}) {
 
     // Set style if node is selected.
     useEffect(() => {
-        console.log(node);
     }, [node]);
 
     /**
