@@ -57,7 +57,6 @@ class AutomatedDebugger {
                 continue;
             }
             for (let i = 0; i < violations.length; i++) {
-                console.log(violations[i].violation_type);
                 const type = violations[i].violation_type;
                 if (type === "exception") {
                     this.exceptions.push({
@@ -86,13 +85,6 @@ class AutomatedDebugger {
         for (let i = 0; i < this.exceptions.length; i++) {
             const exception = this.exceptions[i];
             this.findViolationGivenException(exception);
-        }
-
-        for (let i = 0; i < this.exceptions.length; i++) {
-            const exception = this.exceptions[i];
-            if (exception?.rootCause) {
-                exception.sentence = "This exception has a root cause.";
-            }
         }
     }
 
