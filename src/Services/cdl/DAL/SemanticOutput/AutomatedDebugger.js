@@ -87,6 +87,13 @@ class AutomatedDebugger {
             const exception = this.exceptions[i];
             this.findViolationGivenException(exception);
         }
+
+        for (let i = 0; i < this.exceptions.length; i++) {
+            const exception = this.exceptions[i];
+            if (exception?.rootCause) {
+                exception.sentence = "This exception has a root cause.";
+            }
+        }
     }
 
     /**
