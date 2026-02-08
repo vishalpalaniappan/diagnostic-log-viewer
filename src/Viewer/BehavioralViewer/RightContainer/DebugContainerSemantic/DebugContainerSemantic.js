@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 
 // eslint-disable-next-line max-len
-import {AutomatedDebuggingContainerBehavioral} from "../../../../Components/AutomatedDebuggingContainer/AutomatedDebuggingContainerBehavioral";
+import { AutomatedDebuggingContainer } from "../../../../Components/AutomatedDebuggingContainer/AutomatedDebuggingContainer";
 // eslint-disable-next-line max-len
 import {VariableStackContainer} from "../../../../Components/VariableStackContainer/VariableStackContainer";
 import {VerticalHandle} from "../../../../Components/VerticalHandle/VerticalHandle";
@@ -36,7 +36,7 @@ export function DebugContainerSemantic () {
                 Automated Debugging
             </div>
             <div className="section" ref={automatedDebuggingContainer}>
-                <AutomatedDebuggingContainerBehavioral />
+                <AutomatedDebuggingContainer />
             </div>
             <VerticalHandle topDiv={automatedDebuggingContainer} bottomDiv={variableStackRef}/>
             <div className="w-100 title" style={{height: TITLE_HEIGHT + "px"}}>Variables</div>
