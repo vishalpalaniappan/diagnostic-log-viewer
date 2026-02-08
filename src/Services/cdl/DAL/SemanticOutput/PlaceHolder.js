@@ -71,7 +71,14 @@ class PlaceHolder {
     processSemanticProperty () {
         if (this.info.property === "length") {
             const participant = this.getParticipant(this.info.participantName);
-            this.value = participant.value.length;
+            let value = participant.value;
+            if ("keys" in this.info) {
+                for (let i = 0; i < this.info.keys.length; i++) {
+                    const key = this.info.keys[i];
+                    value = value[key];
+                }
+            }
+            this.value = value.length;
         }
     }
 
