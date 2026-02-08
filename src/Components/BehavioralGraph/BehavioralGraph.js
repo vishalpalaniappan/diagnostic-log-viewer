@@ -176,7 +176,6 @@ export function BehavioralGraph () {
             uid: node.uid,
             atomicUid: node.atomicUid,
         });
-        setActiveStepExecution(node.execution);
     };
 
     const selectViewMode = (e) => {

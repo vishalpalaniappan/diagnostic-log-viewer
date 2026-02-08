@@ -19,7 +19,7 @@ BehavioralNode.propTypes = {
  * @return {JSX.Element}
  */
 export function BehavioralNode ({node}) {
-    const {activeBehavior} = useContext(BehaviorContext);
+    const {activeBehavior, setActiveStepExecution} = useContext(BehaviorContext);
     const {selectNode, toggleCollapse} = useContext(BehavioralGraphContext);
     const [selectedStyle, setSelectedStyle] = useState();
 
@@ -27,6 +27,7 @@ export function BehavioralNode ({node}) {
     useEffect(() => {
         if (node && activeBehavior) {
             if (activeBehavior.uid === node.uid) {
+                setActiveStepExecution(node.execution);
                 setSelectedStyle(
                     {
                         background: "#184b2c",
