@@ -121,7 +121,6 @@ export function BehavioralExecutionTree () {
      * @param {Object} node
      */
     const selectNode = (node) => {
-        console.log("selecting node");
         setActiveAbstraction({
             node: node,
         });
@@ -131,7 +130,7 @@ export function BehavioralExecutionTree () {
     return (
         <BehavioralExecutionTreeContext.Provider
             value={{selectedNode, selectNode, toggleCollapse}}>
-            <div className="treeMenuContainer">
+            <div className="treeMenuContainerBehavioralExecutionTree">
                 <div className="topContainer">
                     <div className="titleContainer">
                         <span className="title">{title}</span>
