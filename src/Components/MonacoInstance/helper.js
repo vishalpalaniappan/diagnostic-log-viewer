@@ -13,14 +13,13 @@ import {createRoot} from "react-dom/client";
  * @return {Object}
  */
 const getExceptionMessage = (exception) => {
-    if (!exception || !exception.length) {
+    if (!exception || !exception.value.length) {
         return {
             domNode: document.createElement("div"),
             numLines: 0,
         };
     }
-
-    let exceptionValue = exception.trim().split("\n").pop();
+    let exceptionValue = exception.value.trim().split("\n").pop();
     if (exceptionValue.length > 100) {
         exceptionValue = exceptionValue.slice(0, 100) + "...";
     }

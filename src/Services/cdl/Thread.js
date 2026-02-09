@@ -60,8 +60,8 @@ class Thread {
                     // TODO: Better to work back until adli_execution is found,
                     // this makes too many assumptions. It also doesn't check
                     // the size of the execution array.
-                    this.execution[this.execution.length - 2].exception = currLog.value;
-                    this.exception = currLog.value;
+                    this.execution[this.execution.length - 2].exception = currLog;
+                    this.exception = currLog;
                     break;
                 case "adli_input":
                     this.inputs.push({
