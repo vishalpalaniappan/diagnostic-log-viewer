@@ -86,24 +86,15 @@ export function DebuggerNodeRootCause ({node}) {
      */
     const getNodeIconType = () => {
         if (node.violation.violation_type === "exception") {
-            return <Bug style={{color: "orange"}} />;
+            return <Bug style={{color: "red"}} />;
         } else if (node.violation.violation_type === "invariant") {
             return <ArrowReturnRight />;
         }
     };
 
-
-    const getBreakPoint = () => {
-
-    };
-
     return (
         <>
             <div style={selectedStyle} id={"debugging-row-" + node.uid} className="debuggingRow">
-
-                <div className="icon-container">
-                    {getBreakPoint()}
-                </div>
 
                 <div className="icon-container">
                     <div className="icon">

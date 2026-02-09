@@ -96,18 +96,9 @@ export function DebuggerNodeInvariant ({node}) {
         }
     };
 
-
-    const getBreakPoint = () => {
-
-    };
-
     return (
         <>
             <div style={selectedStyle} id={"debugging-row-" + node.uid} className="debuggingRow">
-
-                <div className="icon-container">
-                    {getBreakPoint()}
-                </div>
 
                 <div className="icon-container">
                     <div className="icon">
