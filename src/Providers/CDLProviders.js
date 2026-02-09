@@ -4,8 +4,10 @@ import PropTypes from "prop-types";
 
 import PROGRAM_STATE from "../PROGRAM_STATE";
 import CDL_WORKER_PROTOCOL from "../Services/CDL_WORKER_PROTOCOL";
+import VIEW_MODE from "../VIEW_MODE";
 import ActionsContext from "./ActionsContext";
 import ActiveFileContext from "./ActiveFileContext";
+import BehaviorContext from "./BehaviorContext";
 import BreakpointsContext from "./BreakpointsContext";
 import FileTreeContext from "./FileTreeContext";
 import SegContext from "./SegContext";
@@ -40,6 +42,10 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
     const [threads, setThreads] = useState();
     const [activeAbstraction, setActiveAbstraction] = useState();
     const [seg, setSeg] = useState();
+    const [behavior, setBehavior] = useState();
+    const [activeBehavior, setActiveBehavior] = useState();
+    const [viewMode, setViewMode] = useState(VIEW_MODE.CODE);
+    const [activeStepExecution, setActiveStepExecution] = useState();
     const [mode, setMode] = useState(PROGRAM_STATE.STACK);
     const [actions, setActions] = useState({value: "", tick: 0});
 
@@ -98,7 +104,10 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
         setActiveThread(undefined);
         setActiveFile(undefined);
         setBreakPoints(undefined);
+        setActiveBehavior(undefined);
+        setActiveStepExecution(undefined);
         setSeg(undefined);
+        setViewMode(VIEW_MODE.CODE);
         setMode(PROGRAM_STATE.STACK);
     };
 
@@ -185,10 +194,21 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                 setMode(PROGRAM_STATE.SEG);
                 setSeg(event.data.args.seg);
                 break;
+            case CDL_WORKER_PROTOCOL.GET_BEHAVIOR:
+                console.log("Semantic model:", event.data.args.semanticModel);
+                setMode(PROGRAM_STATE.BEHAVIORAL);
+                setBehavior(event.data.args.semanticModel);
+                break;
             default:
                 break;
         }
     });
+
+    useEffect(() => {
+        if (viewMode) {
+            console.log("Selected View Mode:", viewMode);
+        }
+    }, [viewMode]);
 
     return (
         <StackPositionContext.Provider value={{stackPosition, setStackPosition}}>
@@ -202,12 +222,17 @@ function CDLProviders ({children, fileInfo, executionIndex}) {
                                         setActiveThread, setActiveAbstraction}}>
                                     <ActiveFileContext.Provider
                                         value={{activeFile, setActiveFile}}>
-                                        <SegContext.Provider value={{seg}}>
-                                            <ActionsContext.Provider
-                                                value={{actions, mode, setMode, setActions}}>
-                                                {children}
-                                            </ActionsContext.Provider>
-                                        </SegContext.Provider>
+                                        <BehaviorContext.Provider value={{behavior,
+                                            activeStepExecution, setActiveStepExecution,
+                                            activeBehavior, setActiveBehavior}}>
+                                            <SegContext.Provider value={{seg}}>
+                                                <ActionsContext.Provider
+                                                    value={{actions, mode, setMode,
+                                                        viewMode, setViewMode, setActions}}>
+                                                    {children}
+                                                </ActionsContext.Provider>
+                                            </SegContext.Provider>
+                                        </BehaviorContext.Provider>
                                     </ActiveFileContext.Provider>
                                 </StackContext.Provider>
                             </BreakpointsContext.Provider>

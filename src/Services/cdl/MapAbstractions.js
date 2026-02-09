@@ -239,9 +239,11 @@ class MapAbstractions {
         // Calculate the current level based on the stack depth and lengths.
         const level = this.stack.reduce((sum, level) => sum + level.length, 0);
 
-        const intentViolations = this.validateIntent(abstraction);
-        const constraintViolations = this.validateConstraints(abstraction);
-        const violations = intentViolations.concat(constraintViolations);
+        // Disable SEG Violation calculations
+        // const intentViolations = this.validateIntent(abstraction);
+        // const constraintViolations = this.validateConstraints(abstraction);
+        // const violations = intentViolations.concat(constraintViolations);
+        const violations = [];
 
         const updatedIntent = this.replacePlaceHoldersInIntent(
             this.sdgMeta.abstractions[id], abstraction.varStack

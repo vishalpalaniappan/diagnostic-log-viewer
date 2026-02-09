@@ -1,10 +1,46 @@
-.automated-debugging-container {
+.debuggingContainer {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display:flex;
+    flex-direction: column;
     color:white;
+}
+
+.automatedDebuggingContainer {
     display: flex;
+    width: 100%;
+    flex-grow: 1;
     background: #1e1e1e;
+    height:100%;
     flex-direction: column;
     overflow-y: auto;
     scrollbar-gutter: stable;
     scrollbar-color: #47474766 #252526;
     scrollbar-width: thin;
+    font-size:14px;
 }
+
+.topContainerDebugger {
+    width:100%;
+    height:40px;
+    display:flex;
+    flex-direction: row;
+    border-bottom: solid 1px rgb(65, 65, 65);
+    background-color: #252526;
+
+    .titleContainerDebugger {
+        width:100%;
+        height:100%;
+        display:flex;
+
+        .titleDebugger {
+            font-size: 12px;
+            flex-grow: 1;
+            align-self:center;
+            margin-left:10px;
+            background-color: none;
+        }
+    }
+
+}   

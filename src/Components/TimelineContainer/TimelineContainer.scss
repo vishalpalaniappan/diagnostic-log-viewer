@@ -1,0 +1,16 @@
+.timelineContainer {
+    width:100%;
+    height:100%;
+    border-top: solid 1px #474747;
+    display:flex;
+    flex-direction: row;
+}   
+
+.timelineContainer > .labelsContainer {
+    height:100%;
+    background:#252526;
+}
+
+.timelineContainer > .tracksContainer {
+    height:100%;
+}

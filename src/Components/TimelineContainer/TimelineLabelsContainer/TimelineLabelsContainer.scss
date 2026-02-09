@@ -1,0 +1,30 @@
+.timelineLabelsContainer {
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    
+
+    .label-row-title {
+        border-bottom: solid 1px grey;
+    }
+
+    .label-row {
+        height: 30px;
+        color: white;
+        font-size:12px;
+        display: flex;
+        align-items: center;
+        border-bottom: solid 1px #414040;
+
+        .icon-row {
+            width: 20px;
+            height: 100%;
+            margin: 0 5px;
+            display:flex;
+            align-items: center;
+            font-size:12px;
+            justify-content: center;
+        }
+    }
+}   

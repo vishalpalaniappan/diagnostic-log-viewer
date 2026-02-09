@@ -57,20 +57,52 @@ class Thread {
                     this._saveGlobalVariables(currLog);
                     break;
                 case "adli_exception":
-                    this.exception = currLog.value;
+                    // TODO: Better to work back until adli_execution is found,
+                    // this makes too many assumptions. It also doesn't check
+                    // the size of the execution array.
+                    this.execution[this.execution.length - 2].exception = currLog;
+                    this.exception = currLog;
                     break;
                 case "adli_input":
-                    this.inputs.push(currLog.value);
+                    this.inputs.push({
+                        position: position,
+                        value: currLog,
+                    });
                     break;
                 case "adli_output":
-                    this.outputs.push(currLog.value);
+                    this.outputs.push({
+                        position: position,
+                        value: currLog,
+                    });
                     break;
                 default:
                     break;
             }
         } while (++position < logFile.length);
+        this._assignInputsOutputs();
     }
 
+    /**
+     * Assign the inputs and outputs to the execution.
+     */
+    _assignInputsOutputs () {
+        for (let i = 0; i < this.outputs.length; i++) {
+            const output = this.outputs[i];
+            const nextPosition = this._getNextPosition(output.position);
+            if (nextPosition) {
+                const entry = this.execution[nextPosition];
+                entry.output = output.value;
+            }
+        }
+        for (let i = 0; i < this.inputs.length; i++) {
+            const input = this.inputs[i];
+            const prevPosition = this._getPreviousPosition(input.position);
+            if (prevPosition) {
+                const entry = this.execution[prevPosition];
+                entry.input = input.value;
+            }
+        }
+    }
 
     /**
      * Convert the logged stack to a list of positions

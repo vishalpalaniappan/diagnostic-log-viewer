@@ -1,0 +1,48 @@
+@use "sass:color";
+
+$status-bar-background-color: #68217a;
+
+$side-menu-width: 50px;
+$menu-bar-height: 0px;
+$status-bar-height: 23px;
+
+.viewer-container-seg {
+    position:relative;
+    width:100%;
+    height:100%;
+}
+
+.menu-container-seg{
+    position:absolute;
+    top:0;
+    height:$menu-bar-height;
+    width:100%;
+    background-color: #3c3c3c;
+}
+
+.side-menu-container-seg {
+    position:absolute;
+    top:$menu-bar-height;
+    bottom:$status-bar-height;
+    width:$side-menu-width;
+    left:0;
+    background-color: #661e1e;
+}
+
+.body-container-seg{
+    position:absolute;
+    top:$menu-bar-height;
+    bottom:$status-bar-height;
+    left: $side-menu-width;
+    right:0;
+    width:100%;
+    background-color: #2d2d2d;
+}
+
+.status-bar-container-seg{
+    position:absolute;
+    bottom:0;
+    height:$status-bar-height;
+    width:100%;
+    background-color: $status-bar-background-color;
+}

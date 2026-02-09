@@ -1,0 +1,10 @@
+.vertical-handle {
+    width:100%;
+    height:2px;
+    background-color: #474747;
+    cursor: ns-resize;
+}
+
+.handle-active{
+    background-color:#007acc;
+}

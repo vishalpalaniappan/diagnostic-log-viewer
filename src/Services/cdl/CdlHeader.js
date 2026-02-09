@@ -150,6 +150,30 @@ class CdlHeader {
             return null;
         }
     }
+
+    /**
+     * Given the lt, return the abstraction.
+     * @param {Object} exec
+     * @return {String}
+     */
+    getBehaviorFromExecution (exec) {
+        if (exec.type === "adli_execution") {
+            const absId = this.header.ltMap[exec.value].abstractionId;
+            const absInfo = this.header.sdg_meta.abstractions[absId];
+            if (!absInfo) {
+                return;
+            }
+            const behaviorMap = this.header.design_map.behavior;
+            for (let i = 0; i < behaviorMap.length; i++) {
+                if (behaviorMap[i].abstractions.includes(absInfo.functionalId)) {
+                    return {
+                        behavior: behaviorMap[i],
+                        functionalId: absInfo.functionalId,
+                    };
+                }
+            }
+        }
+    }
 }
 
 export default CdlHeader;

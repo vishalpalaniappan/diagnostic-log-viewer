@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import PROGRAM_STATE from "../../../PROGRAM_STATE";
 import ActionsContext from "../../../Providers/ActionsContext";
+import BehaviorContext from "../../../Providers/BehaviorContext";
 import SegContext from "../../../Providers/SegContext";
 
 import "./StatusBarMenu.scss";
@@ -27,6 +28,7 @@ StatusBarMenu.propTypes = {
  */
 export function StatusBarMenu ({className, disabled, children}) {
     const {seg} = useContext(SegContext);
+    const {behavior} = useContext(BehaviorContext);
     const {setMode} = useContext(ActionsContext);
     const [showMenu, setShowMenu] = useState(false);
     const [bottom, setBottom] = useState(null);
@@ -97,6 +99,13 @@ export function StatusBarMenu ({className, disabled, children}) {
                         width: `${MENU_WIDTH}px`,
                     }}
                 >
+                    {
+                        behavior &&
+                        <div className="menu-option px-2"
+                            onClick={(e) => selectMenu(e, PROGRAM_STATE.BEHAVIORAL)}>
+                            Behavioral Debugging
+                        </div>
+                    }
                     {
                         seg &&
                         <div className="menu-option px-2"

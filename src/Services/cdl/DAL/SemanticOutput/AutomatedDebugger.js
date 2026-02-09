@@ -1,0 +1,144 @@
+/**
+ * This class accepts the abstractions that were
+ * obtained at the output of the transform and
+ * uses the semantic invariants to automatically
+ * debug the execution and identify root causes.
+ *
+ * Technically the automated debugging already
+ * happens when the invariants are validated but
+ * this puts it all together and connects the
+ * violations to downstream violations or
+ * exceptions.
+ */
+class AutomatedDebugger {
+    /**
+     * Initialze the automated debugger.
+     * @param {Object} abstractions
+     */
+    constructor (abstractions) {
+        this.exceptions = [];
+        this.invariantViolations = [];
+        this.availabilityViolations = [];
+
+        this.atomicAbstractions = abstractions;
+        this.getViolations();
+        this.processExceptions();
+    }
+
+    /**
+     * Gets the violations from the list of atoimc abstractions.
+     */
+    getViolations () {
+        const absIds = Object.keys(this.atomicAbstractions);
+        for (let i = 0; i < absIds.length; i++) {
+            const atomicAbs = this.atomicAbstractions[absIds[i]];
+            for (let j = 0; j < atomicAbs.designAbstractions.length; j++) {
+                const abs = atomicAbs.designAbstractions[j];
+                this.getViolationsFromDesignAbs(abs);
+            }
+        }
+    }
+
+    /**
+     * Gets the violations from the provided design abstraction.
+     * @param {Object} abs
+     */
+    getViolationsFromDesignAbs (abs) {
+        for (let i = 0; i < abs.steps.length; i++) {
+            if (!("behaviors" in abs.steps[i])) {
+                continue;
+            }
+            const behavior = abs.steps[i].behaviors[0];
+            if (!"violations" in behavior) {
+                continue;
+            }
+            const violations = abs.steps[i].behaviors[0].violations;
+            if (violations.length === 0) {
+                continue;
+            }
+            for (let j = 0; j < violations.length; j++) {
+                const type = violations[j].violation_type;
+                /**
+                 * This allows the debug container to select
+                 * the behavior but this is for backwards
+                 * compatibility. I am using the atomic and step uid
+                 * to select the behavior in the behavior graph. I am
+                 * adding this so that the I can select the behavior from
+                 * the debugging containers.
+                 * TODO: Use the behavior UID that is created when each behavior
+                 * is created. This is much easier to work with.
+                */
+                const activeBehaviorKey = {
+                    atomicUid: abs.steps[i].atomicUid,
+                    uid: abs.steps[i].uid,
+                };
+                if (type === "exception") {
+                    this.exceptions.push({
+                        behavior: behavior,
+                        violation: violations[j],
+                        activeBehaviorKey: activeBehaviorKey,
+                    });
+                } else if (type === "invariant") {
+                    this.invariantViolations.push({
+                        behavior: behavior,
+                        violation: violations[j],
+                        activeBehaviorKey: activeBehaviorKey,
+                    });
+                } else if (type === "availability_violation") {
+                    this.availabilityViolations.push({
+                        behavior: behavior,
+                        violation: violations[j],
+                        activeBehaviorKey: activeBehaviorKey,
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Process the exceptions from the execution
+     */
+    processExceptions () {
+        for (let i = 0; i < this.exceptions.length; i++) {
+            const exception = this.exceptions[i];
+            this.findViolationGivenException(exception);
+        }
+    }
+
+    /**
+     * Given an exception find the violation
+     * @param {Object} exception
+     */
+    findViolationGivenException (exception) {
+        // There is no root cause to this exception that can be found.
+        if (this.invariantViolations.length === 0) {
+            return;
+        }
+
+        const uids = [];
+        for (let j = 0; j < exception.behavior.participants.length; j++) {
+            const participant = exception.behavior.participants[j];
+            if (!"value" in participant) {
+                continue;
+            }
+            const value = participant.value;
+            if (!(typeof value === "object" && !Array.isArray(value) && value !== null)) {
+                continue;
+            }
+            if ("uid" in participant?.value) {
+                uids.push(participant.value.uid);
+            }
+        }
+
+        let pos = this.invariantViolations.length - 1;
+        do {
+            const violationUid = this.invariantViolations[pos].violation.uid;
+            if (uids.includes(violationUid)) {
+                exception.rootCause = this.invariantViolations[pos];
+                this.invariantViolations[pos].isRootCause = true;
+            }
+        } while (--pos > 0);
+    }
+}
+
+export default AutomatedDebugger;
